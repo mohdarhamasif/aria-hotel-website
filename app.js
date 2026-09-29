@@ -290,7 +290,10 @@ function renderRoi() {
 function roiSummary(p) {
   const roi = computeRoi(p);
   if (!roi) return "Not enough data for an ROI estimate yet — ask for the number of rooms or monthly calls.";
-  return `Estimated monthly impact: ${roi.recovered} missed calls recovered, about ${fmtMoney(roi.revenue)} in extra direct bookings, and ${roi.hours} staff hours freed.`;
+  // Pre-rounded spoken form so the agent doesn't round the exact figure itself (and get it wrong).
+  const k = Math.round(roi.revenue / 500) / 2;
+  const spoken = k >= 1 ? `about ${k.toLocaleString("en-US")} thousand dollars` : `about ${Math.round(roi.revenue / 50) * 50} dollars`;
+  return `Estimated monthly impact: ${roi.recovered} missed calls recovered, ${fmtMoney(roi.revenue)} in extra direct bookings (say it as "${spoken} a month"), and ${roi.hours} staff hours freed. Use these exact figures; do not recalculate.`;
 }
 
 /** Type text into a field like a person would, so visitors see Aria "writing". */
