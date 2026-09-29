@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aria — AI Receptionist for Hotels</title>
+  <meta name="description" content="A voice-guided website: talk to Aria, the AI front desk that answers every call, books rooms and speaks your guests' language." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --bg: #0e1116;
+  --bg-2: #141922;
+  --card: #181e29;
+  --line: #2a3242;
+  --text: #f3efe6;
+  --muted: #a3a9b6;
+  --gold: #d6b370;
+  --gold-2: #f0d9a4;
+  --teal: #5fd0c0;
+  --radius: 18px;
+  --serif: "Fraunces", Georgia, serif;
+  --sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(214, 179, 112, .12), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(95, 208, 192, .07), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.1; margin: 0 0 .5em; }
+h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); letter-spacing: -.02em; }
+h1 em { color: var(--gold); font-style: italic; font-weight: 400; }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+h3 { font-size: 1.25rem; }
+p { margin: 0 0 1em; }
+a { color: inherit; }
+.muted { color: var(--muted); }
+.tiny { font-size: .8rem; }
+.eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: .75rem; color: var(--gold); font-weight: 600; margin-bottom: .8em; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: .55em;
+  border: 1px solid transparent; border-radius: 999px; cursor: pointer;
+  font: 600 .95rem var(--sans); padding: .75em 1.3em; text-decoration: none;
+  transition: transform .15s, box-shadow .2s, background .2s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-gold { background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1b1408; box-shadow: 0 8px 30px rgba(214, 179, 112, .25); }
+.btn-ghost { border-color: var(--line); color: var(--text); background: transparent; }
+.btn-sm { padding: .5em 1em; font-size: .85rem; }
+.btn-lg { padding: .95em 1.6em; font-size: 1rem; }
+.mic-ico { width: 10px; height: 16px; border: 2px solid currentColor; border-radius: 6px; position: relative; }
+.mic-ico::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 2px; height: 4px; background: currentColor; transform: translateX(-50%); }
+
+/* Top bar */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px clamp(16px, 4vw, 48px);
+  background: rgba(14, 17, 22, .78); backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, .05);
+}
+.logo { display: flex; align-items: center; gap: 10px; font: 600 1.25rem var(--serif); text-decoration: none; }
+.logo-mark { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1b1408; font-size: 1rem; }
+.stepper { display: flex; gap: 4px; }
+.step { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; text-decoration: none; color: var(--muted); font-size: .85rem; transition: all .25s; }
+.step i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); font-size: .72rem; }
+.step.done i { background: rgba(214, 179, 112, .18); border-color: var(--gold); color: var(--gold); }
+.step.active { color: var(--text); background: rgba(255, 255, 255, .06); }
+.step.active i { background: var(--gold); border-color: var(--gold); color: #1b1408; }
+
+/* Sections */
+main { padding: 0 clamp(16px, 4vw, 48px) 160px; max-width: 1200px; margin: 0 auto; }
+.section { padding: 96px 0 40px; }
+.section-head { max-width: 640px; margin-bottom: 36px; }
+.card { background: linear-gradient(180deg, var(--card), var(--bg-2)); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; transition: border-color .3s, box-shadow .3s, transform .3s; }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: center; min-height: calc(100vh - 70px); padding-top: 40px; }
+.lede { font-size: 1.15rem; color: #d7d3ca; max-width: 560px; }
+.lede.small { font-size: 1rem; color: var(--muted); }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+.hero-orb { background: none; border: 0; cursor: pointer; display: grid; justify-items: center; gap: 22px; color: var(--muted); font: 500 .95rem var(--sans); }
+
+/* Orb */
+.orb {
+  --level: 0;
+  position: relative; display: grid; place-items: center;
+  width: clamp(200px, 28vw, 320px); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff6dd 0%, var(--gold-2) 18%, var(--gold) 45%, #6b5226 80%, #2b2213 100%);
+  box-shadow: 0 0 calc(40px + var(--level) * 120px) rgba(214, 179, 112, calc(.25 + var(--level) * .5)), inset 0 -20px 60px rgba(0, 0, 0, .35);
+  transform: scale(calc(1 + var(--level) * .12));
+  transition: transform .08s linear, box-shadow .08s linear;
+  animation: breathe 5s ease-in-out infinite;
+}
+.orb::before, .orb::after { content: ""; position: absolute; inset: -14px; border-radius: 50%; border: 1px solid rgba(214, 179, 112, .25); animation: ripple 3.2s ease-out infinite; }
+.orb::after { animation-delay: 1.6s; }
+.orb-core { width: 36%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, .7), transparent 70%); filter: blur(6px); }
+.orb-sm { width: 56px; }
+.orb-sm::before, .orb-sm::after { inset: -6px; }
+[data-state="listening"] .orb { background: radial-gradient(circle at 35% 30%, #e9fffb 0%, #9ff0e4 18%, var(--teal) 45%, #1e5c55 80%, #0e2825 100%); box-shadow: 0 0 calc(40px + var(--level) * 120px) rgba(95, 208, 192, calc(.25 + var(--level) * .5)); }
+[data-state="connecting"] .orb { animation: breathe 1s ease-in-out infinite; }
+@keyframes breathe { 50% { filter: brightness(1.12); } }
+@keyframes ripple { from { transform: scale(.95); opacity: .9; } to { transform: scale(1.35); opacity: 0; } }
+
+/* Profile + ROI */
+.profile-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }
+label { display: grid; gap: 6px; font-size: .82rem; color: var(--muted); font-weight: 500; margin-bottom: 14px; }
+input, select, textarea {
+  font: 1rem var(--sans); color: var(--text);
+  background: rgba(255, 255, 255, .03); border: 1px solid var(--line); border-radius: 10px; padding: .7em .85em;
+  transition: border-color .3s, background .6s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
+select option { background: var(--bg-2); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.flash { border-color: var(--gold) !important; background: rgba(214, 179, 112, .14) !important; }
+.roi-card { display: flex; flex-direction: column; justify-content: center; }
+.roi-stats { display: grid; gap: 18px; margin: 12px 0 18px; }
+.roi-stats b { display: block; font: 600 2.2rem var(--serif); color: var(--gold-2); }
+.roi-stats span { color: var(--muted); font-size: .88rem; }
+
+/* Features */
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.feature p { color: var(--muted); margin: 0; }
+.f-ico { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgba(214, 179, 112, .12); color: var(--gold); margin-bottom: 14px; font-size: 1.1rem; }
+.card.spotlight, .card.spotlight.reveal.in { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 20px 60px rgba(214, 179, 112, .18); transform: translateY(-4px); }
+
+/* Pricing */
+.plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
+.plan { position: relative; }
+.plan ul { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 8px; }
+.plan li::before { content: "✓"; color: var(--gold); margin-right: 8px; }
+.price { font: 600 2.4rem var(--serif); margin: 0; }
+.price small { font: 400 .95rem var(--sans); color: var(--muted); }
+.plan-badge { position: absolute; top: -12px; right: 18px; background: var(--gold); color: #1b1408; font-size: .72rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; opacity: 0; transform: translateY(6px); transition: all .3s; }
+.card.plan.recommended, .card.plan.recommended.reveal.in { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 24px 70px rgba(214, 179, 112, .2); transform: translateY(-6px); }
+.plan.recommended .plan-badge { opacity: 1; transform: none; }
+.plan-reason { margin-top: 22px; padding: 14px 18px; border-left: 3px solid var(--gold); background: rgba(214, 179, 112, .07); border-radius: 0 12px 12px 0; }
+
+/* Demo */
+.demo-form { max-width: 760px; }
+.demo-form .btn { margin-top: 6px; }
+
+/* Hero note */
+.hero-note { margin-top: 18px; font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.hero-note a { color: var(--gold-2); }
+.dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 0 rgba(95, 208, 192, .6); animation: live 2s infinite; }
+@keyframes live { 70% { box-shadow: 0 0 0 8px rgba(95, 208, 192, 0); } 100% { box-shadow: 0 0 0 0 rgba(95, 208, 192, 0); } }
+
+/* Demo success (inline, doesn't block the conversation) */
+.demo-success { max-width: 760px; text-align: center; padding: 44px 26px; animation: pop .5s cubic-bezier(.2, .9, .3, 1.2); }
+.success-mark { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1b1408; font-size: 1.6rem; font-weight: 700; margin-bottom: 14px; }
+@keyframes pop { from { opacity: 0; transform: scale(.94) translateY(10px); } }
+
+/* Dock */
+.dock {
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 30;
+  width: min(560px, calc(100% - 32px));
+  background: rgba(20, 25, 34, .92); backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid var(--line); border-radius: 28px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .5);
+  transition: width .45s var(--ease), border-color .4s;
+}
+.dock[data-state="speaking"] { border-color: rgba(214, 179, 112, .45); }
+.dock[data-state="listening"] { border-color: rgba(95, 208, 192, .4); }
+.dock-bar { display: flex; align-items: center; gap: 12px; padding: 10px 12px; }
+.dock-orb { background: none; border: 0; padding: 0; cursor: pointer; flex: none; border-radius: 50%; }
+.dock-body { flex: 1; min-width: 0; }
+.dock-status { margin: 0; display: flex; align-items: center; gap: 10px; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+[data-state="listening"] .dock-status { color: var(--teal); }
+.dock-caption { margin: 2px 0 0; font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .25s; }
+.dock-caption.user { color: #bfeee7; }
+.dock-caption.swap { opacity: 0; }
+.dock-actions { display: flex; gap: 6px; }
+
+/* Voice waveform (driven by --level from JS) */
+.wave { display: none; align-items: center; gap: 3px; height: 14px; }
+[data-state="speaking"] .wave, [data-state="listening"] .wave { display: inline-flex; }
+.wave i { width: 3px; border-radius: 2px; background: currentColor; height: calc(3px + var(--level, 0) * 11px * var(--k, 1)); transition: height .09s linear; }
+.wave i:nth-child(1) { --k: .5; } .wave i:nth-child(2) { --k: .85; } .wave i:nth-child(3) { --k: 1; } .wave i:nth-child(4) { --k: .7; } .wave i:nth-child(5) { --k: .4; }
+[data-state="thinking"] .dock-status::after { content: ""; width: 18px; height: 6px; background: radial-gradient(circle, currentColor 2px, transparent 2.5px) 0 0 / 6px 6px repeat-x; animation: dots 1s steps(4) infinite; }
+@keyframes dots { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -10% 0 0); } }
+
+/* Icon buttons */
+.icon-btn { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: rgba(255, 255, 255, .04); color: var(--text); cursor: pointer; transition: background .2s, border-color .2s, transform .15s; }
+.icon-btn:hover { background: rgba(255, 255, 255, .09); }
+.icon-btn:active { transform: scale(.94); }
+.icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.icon-btn .ico-mic-off, .icon-btn[aria-pressed="true"] .ico-mic { display: none; }
+.icon-btn[aria-pressed="true"] .ico-mic-off { display: block; }
+.icon-btn[aria-pressed="true"] { background: #4a2626; border-color: #9a5050; }
+.icon-btn[aria-expanded="true"] { background: rgba(214, 179, 112, .16); border-color: var(--gold); color: var(--gold-2); }
+.icon-end:hover { background: #4a2626; border-color: #9a5050; }
+.icon-sm { width: 32px; height: 32px; }
+.icon-send { width: 38px; height: 38px; background: var(--gold); border-color: var(--gold); color: #1b1408; flex: none; }
+.icon-send:hover { background: var(--gold-2); }
+
+/* Conversation panel */
+.panel { border-bottom: 1px solid var(--line); animation: panelIn .4s var(--ease); }
+@keyframes panelIn { from { opacity: 0; transform: translateY(12px); } }
+.panel-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px 4px 20px; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.thread { list-style: none; margin: 0; padding: 8px 16px 12px; max-height: min(46vh, 380px); overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; overscroll-behavior: contain; }
+.msg { max-width: 85%; padding: 9px 13px; border-radius: 16px; font-size: .92rem; line-height: 1.45; animation: msgIn .35s var(--ease); }
+@keyframes msgIn { from { opacity: 0; transform: translateY(6px); } }
+.msg.ai { align-self: flex-start; background: rgba(255, 255, 255, .06); border-bottom-left-radius: 5px; }
+.msg.user { align-self: flex-end; background: rgba(95, 208, 192, .16); color: #dff8f4; border-bottom-right-radius: 5px; }
+.msg.activity { align-self: center; max-width: none; background: none; padding: 2px 8px; font-size: .76rem; color: var(--gold); }
+.msg.activity::before { content: "✦ "; }
+.msg.typing { display: inline-flex; gap: 4px; padding: 12px 14px; }
+.msg.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
+.msg.typing i:nth-child(2) { animation-delay: .15s; } .msg.typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 30% { transform: translateY(-4px); opacity: 1; } 0%, 60%, 100% { opacity: .45; } }
+.composer { display: flex; gap: 8px; padding: 0 12px 12px; }
+.composer input { flex: 1; border-radius: 999px; padding: .6em 1em; font-size: .92rem; }
+
+/* Follow pill */
+.follow-pill { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 29; display: flex; gap: 8px; align-items: center; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--gold); background: var(--card); color: var(--text); font: 500 .88rem var(--sans); cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); animation: pillIn .35s cubic-bezier(.22, 1, .36, 1); }
+.follow-pill b { color: var(--gold-2); text-transform: capitalize; }
+@keyframes pillIn { from { opacity: 0; transform: translate(-50%, 10px); } }
+
+/* Start sheet */
+.sheet { color: var(--text); background: linear-gradient(180deg, var(--card), var(--bg-2)); border: 1px solid var(--line); border-radius: 24px; padding: 34px 30px 28px; width: min(460px, calc(100% - 32px)); }
+.sheet[open] { animation: sheetIn .4s cubic-bezier(.22, 1, .36, 1); }
+@keyframes sheetIn { from { opacity: 0; transform: translateY(16px) scale(.98); } }
+.sheet::backdrop { background: rgba(5, 7, 10, .65); backdrop-filter: blur(6px); }
+.sheet h3 { font-size: 1.6rem; margin: 16px 0 14px; }
+.sheet-list { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 12px; color: var(--muted); font-size: .94rem; }
+.sheet-list b { color: var(--text); font-weight: 600; }
+.sheet-actions { display: grid; gap: 10px; }
+.sheet-actions .btn { justify-content: center; }
+.sheet-close { position: absolute; top: 14px; right: 14px; background: none; border: 0; color: var(--muted); font-size: 1rem; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; }
+.sheet-close:hover { background: rgba(255, 255, 255, .06); color: var(--text); }
+.orb-xs { width: 52px; animation: none; }
+.orb-xs::before, .orb-xs::after { inset: -5px; }
+
+/* Toast */
+.toast { position: fixed; top: 84px; left: 50%; transform: translate(-50%, -20px); opacity: 0; pointer-events: none; z-index: 40; background: var(--card); border: 1px solid var(--gold); padding: 10px 18px; border-radius: 999px; font-size: .9rem; transition: all .3s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 60px 0 0; }
+
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1); transition-delay: var(--d, 0s); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* Focus */
+:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+::placeholder { color: #6f7685; }
+
+/* Field being filled in by Aria */
+.filling { border-color: var(--gold) !important; box-shadow: 0 0 0 3px rgba(214, 179, 112, .15); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .stepper span { display: none; }
+  .hero { grid-template-columns: 1fr; text-align: left; min-height: auto; }
+  .hero-orb { order: -1; }
+  .profile-grid, .feature-grid, .plan-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .topbar .btn { display: none; }
+  .dock { width: calc(100% - 16px); bottom: calc(8px + env(safe-area-inset-bottom)); border-radius: 22px; }
+  .dock-bar { gap: 10px; padding: 8px 10px; }
+  .icon-btn { width: 40px; height: 40px; }
+  .hero-orb .orb { width: 150px; }
+  .hero { gap: 24px; padding-top: 24px; }
+  .thread { max-height: 42vh; }
+  .row2 { grid-template-columns: 1fr; }
+  .stepper .step { padding: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after { animation-duration: .01ms !important; }
+  .orb, .orb::before, .orb::after { animation: none; }
+}
+
+/* Expanded conversation docks to the side on wide screens so the page stays visible */
+@media (min-width: 900px) {
+  .dock.expanded { left: auto; right: 24px; transform: none; width: 400px; }
+}
+.dock[data-mode="text"] .wave { display: none; }
+
+/* Orb colour follows the emotion of what Aria is saying */
+.orb { transition: transform .08s linear, box-shadow .08s linear, filter .8s ease; }
+[data-tone="bright"][data-state="speaking"] .orb { filter: saturate(1.35) brightness(1.15); }
+[data-tone="soft"][data-state="speaking"] .orb { filter: saturate(.75) brightness(.88); }
+[data-tone="calm"][data-state="speaking"] .orb { filter: hue-rotate(-12deg) saturate(.9); }
+
+</style>
+</head>
+<body>
+  <!-- Top bar with guided steps -->
+  <header class="topbar">
+    <a class="logo" href="#welcome" data-nav="welcome"><span class="logo-mark">A</span>Aria</a>
+    <nav class="stepper" aria-label="Guided steps">
+      <a href="#welcome" data-nav="welcome" class="step"><i>1</i><span>Welcome</span></a>
+      <a href="#profile" data-nav="profile" class="step"><i>2</i><span>Your hotel</span></a>
+      <a href="#features" data-nav="features" class="step"><i>3</i><span>Features</span></a>
+      <a href="#pricing" data-nav="pricing" class="step"><i>4</i><span>Plans</span></a>
+      <a href="#demo" data-nav="demo" class="step"><i>5</i><span>Book demo</span></a>
+    </nav>
+    <button class="btn btn-gold btn-sm js-talk">Talk to Aria</button>
+  </header>
+
+  <main>
+    <!-- 1. Welcome -->
+    <section id="welcome" class="section hero">
+      <div class="hero-copy">
+        <p class="eyebrow">AI front desk for hotels</p>
+        <h1>Every call answered.<br /><em>Every guest welcomed.</em></h1>
+        <p class="lede">Aria is a voice AI receptionist that picks up 24/7, books rooms, answers guest questions in 30+ languages and hands off to your team when it matters.</p>
+        <p class="lede small">This website talks. Say hello, and Aria will walk you through everything — just answer out loud.</p>
+        <div class="hero-actions">
+          <button class="btn btn-gold btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Start talking</button>
+          <button class="btn btn-ghost btn-lg js-type">Chat by text</button>
+        </div>
+        <p class="hero-note"><span class="dot-live" aria-hidden="true"></span>About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
+      </div>
+      <button class="hero-orb js-talk" aria-label="Start voice conversation">
+        <span class="orb" data-orb><span class="orb-core"></span></span>
+        <span class="hero-orb-label" data-orb-label>Tap to talk</span>
+      </button>
+    </section>
+
+    <!-- 2. Your hotel -->
+    <section id="profile" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step 2</p>
+        <h2>Tell Aria about your hotel</h2>
+        <p class="muted">Aria fills this in as you talk. You can also type — she'll see your changes.</p>
+      </div>
+      <div class="profile-grid">
+        <form class="card profile-card" id="profileForm" autocomplete="off">
+          <label>Hotel name<input name="hotel_name" placeholder="e.g. The Harbour House" /></label>
+          <label>Type of property
+            <select name="hotel_type">
+              <option value="">Select…</option>
+              <option>Boutique hotel</option>
+              <option>City hotel</option>
+              <option>Resort</option>
+              <option>Hotel chain / group</option>
+              <option>B&amp;B / guesthouse</option>
+              <option>Serviced apartments</option>
+            </select>
+          </label>
+          <div class="row2">
+            <label>Rooms<input name="rooms" type="number" min="1" placeholder="80" /></label>
+            <label>Calls per month<input name="monthly_calls" type="number" min="0" placeholder="1200" /></label>
+          </div>
+          <label>Guest languages<input name="languages" placeholder="English, Spanish, Arabic" /></label>
+          <label>Biggest front-desk challenge<textarea name="pain_points" rows="2" placeholder="Missed calls at night, repetitive questions…"></textarea></label>
+        </form>
+
+        <div class="card roi-card" id="roi">
+          <p class="eyebrow">Your estimate</p>
+          <h3 data-roi-title>What Aria could recover each month</h3>
+          <div class="roi-stats">
+            <div><b data-roi="recovered">—</b><span>calls recovered</span></div>
+            <div><b data-roi="revenue">—</b><span>extra booking revenue</span></div>
+            <div><b data-roi="hours">—</b><span>staff hours freed</span></div>
+          </div>
+          <p class="muted tiny" data-roi-note>Add rooms or monthly calls to see your numbers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Features -->
+    <section id="features" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step 3</p>
+        <h2>What Aria does at your front desk</h2>
+      </div>
+      <div class="feature-grid">
+        <article class="card feature" data-feature="answering">
+          <span class="f-ico">☎</span><h3>24/7 call answering</h3>
+          <p>Picks up on the first ring, day or night, holidays included. No hold music, no voicemail.</p>
+        </article>
+        <article class="card feature" data-feature="bookings">
+          <span class="f-ico">▣</span><h3>Direct bookings</h3>
+          <p>Checks live availability, quotes rates and books rooms straight into your PMS — no OTA commission.</p>
+        </article>
+        <article class="card feature" data-feature="multilingual">
+          <span class="f-ico">✦</span><h3>30+ languages</h3>
+          <p>Detects the caller's language and switches instantly, with natural, warm voices.</p>
+        </article>
+        <article class="card feature" data-feature="guest_requests">
+          <span class="f-ico">✓</span><h3>Guest requests</h3>
+          <p>Late checkout, extra towels, taxis, restaurant hours — handled and routed to the right team.</p>
+        </article>
+        <article class="card feature" data-feature="upsells">
+          <span class="f-ico">↑</span><h3>Smart upsells</h3>
+          <p>Offers room upgrades, breakfast and spa packages at the right moment in the conversation.</p>
+        </article>
+        <article class="card feature" data-feature="integrations">
+          <span class="f-ico">⇄</span><h3>PMS &amp; tool integrations</h3>
+          <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4. Pricing -->
+    <section id="pricing" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step 4</p>
+        <h2>Plans that fit your property</h2>
+      </div>
+      <div class="plan-grid">
+        <article class="card plan" data-plan="starter">
+          <span class="plan-badge">Recommended for you</span>
+          <h3>Starter</h3>
+          <p class="price">$299<small>/month</small></p>
+          <p class="muted">Up to 40 rooms</p>
+          <ul><li>24/7 call answering</li><li>FAQ &amp; guest requests</li><li>5 languages</li><li>500 calls / month</li></ul>
+        </article>
+        <article class="card plan" data-plan="professional">
+          <span class="plan-badge">Recommended for you</span>
+          <h3>Professional</h3>
+          <p class="price">$799<small>/month</small></p>
+          <p class="muted">Up to 150 rooms</p>
+          <ul><li>Everything in Starter</li><li>Direct bookings via PMS</li><li>30+ languages</li><li>Upsells &amp; analytics</li><li>2,500 calls / month</li></ul>
+        </article>
+        <article class="card plan" data-plan="enterprise">
+          <span class="plan-badge">Recommended for you</span>
+          <h3>Enterprise</h3>
+          <p class="price">Custom</p>
+          <p class="muted">Groups &amp; 150+ rooms</p>
+          <ul><li>Everything in Professional</li><li>Multi-property setup</li><li>Custom voice &amp; brand persona</li><li>Dedicated success manager</li><li>Unlimited calls</li></ul>
+        </article>
+      </div>
+      <p class="plan-reason" data-plan-reason hidden></p>
+    </section>
+
+    <!-- 5. Book a demo -->
+    <section id="demo" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step 5</p>
+        <h2>Book your live demo</h2>
+        <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
+      </div>
+      <form class="card demo-form" id="demoForm">
+        <div class="row2">
+          <label>Your name<input name="name" required /></label>
+          <label>Hotel<input name="hotel_name" required /></label>
+        </div>
+        <div class="row2">
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Phone<input name="phone" type="tel" /></label>
+        </div>
+        <div class="row2">
+          <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
+          <label>Plan of interest
+            <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
+          </label>
+        </div>
+        <label>Notes<textarea name="notes" rows="2"></textarea></label>
+        <button class="btn btn-gold btn-lg" type="submit">Request my demo</button>
+      </form>
+      <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
+        <span class="success-mark" aria-hidden="true">✓</span>
+        <h3>You're booked in</h3>
+        <p data-confirm-text>Our team will be in touch shortly.</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© <span data-year></span> Aria Hospitality AI · Voice powered by ElevenLabs</p>
+    </footer>
+  </main>
+
+  <!-- "Aria moved the page" pill (shown instead of yanking the scroll while the visitor is reading) -->
+  <button class="follow-pill" id="followPill" hidden>Aria is showing <b></b><span aria-hidden="true">↓</span></button>
+
+  <!-- Conversation dock -->
+  <aside class="dock" id="dock" data-state="idle" aria-label="Conversation with Aria">
+    <div class="panel" id="panel" hidden>
+      <header class="panel-head">
+        <span>Conversation</span>
+        <button class="icon-btn icon-sm" id="collapseBtn" aria-label="Hide conversation">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </header>
+      <ol class="thread" id="thread" aria-live="polite"></ol>
+      <form class="composer" id="typeForm" autocomplete="off">
+        <input name="msg" placeholder="Type a message…" aria-label="Message Aria" />
+        <button class="icon-btn icon-send" aria-label="Send">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+    </div>
+    <div class="dock-bar">
+      <button class="dock-orb js-talk" aria-label="Start or end conversation">
+        <span class="orb orb-sm" data-orb><span class="orb-core"></span></span>
+      </button>
+      <div class="dock-body">
+        <p class="dock-status"><span data-status>Aria is ready to talk</span><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></p>
+        <p class="dock-caption" data-caption>Press the orb and say hello.</p>
+      </div>
+      <div class="dock-actions" data-live-only hidden>
+        <button class="icon-btn" id="transcriptBtn" aria-label="Show conversation" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+        </button>
+        <button class="icon-btn" id="muteBtn" aria-label="Mute microphone" aria-pressed="false">
+          <svg class="ico-mic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+          <svg class="ico-mic-off" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18"/></svg>
+        </button>
+        <button class="icon-btn icon-end" id="endBtn" aria-label="End conversation">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Start sheet: sets expectations before the mic prompt -->
+  <dialog id="startSheet" class="sheet">
+    <form method="dialog">
+      <span class="orb orb-xs" aria-hidden="true"><span class="orb-core"></span></span>
+      <h3>Say hello to Aria</h3>
+      <ul class="sheet-list">
+        <li><b>A quick chat, about 3 minutes.</b> She'll ask about your hotel and walk you through the site as you talk.</li>
+        <li><b>Uses your microphone.</b> Your browser will ask for permission. You can mute or switch to typing any time.</li>
+        <li><b>Interrupt her whenever you like</b>, just like a normal conversation.</li>
+      </ul>
+      <div class="sheet-actions">
+        <button class="btn btn-gold btn-lg" value="voice" autofocus><span class="mic-ico" aria-hidden="true"></span>Start with voice</button>
+        <button class="btn btn-ghost btn-lg" value="text">Type instead</button>
+      </div>
+      <button class="sheet-close" value="cancel" aria-label="Close">✕</button>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+// Site configuration — edit these values.
+window.SITE_CONFIG = {
+  // Your ElevenLabs agent ID (ElevenLabs dashboard → Agents → your agent → "Agent ID").
+  // The agent must be public (authentication off) for the browser to connect directly.
+  AGENT_ID: "agent_9101m3n1hwxffey830jzf43chj6x",
+
+  // Optional: a URL that receives demo requests as JSON (Zapier, Make, n8n, your own API…).
+  // Leave empty to only save requests in the browser (localStorage) and the console.
+  FORM_WEBHOOK_URL: "",
+
+  // Assumptions used by the ROI estimate.
+  ROI: {
+    missedCallRate: 0.25,     // share of calls a busy front desk misses today
+    bookingConversion: 0.3,   // share of recovered calls that turn into bookings
+    avgBookingValue: 220,     // average booking value (USD)
+    minutesPerCall: 4,        // staff minutes per call handled by the AI
+  },
+};
+
+</script>
+  <script type="module">
+// Aria — voice-guided website powered by the ElevenLabs Agents SDK.
+// The agent drives the page through "client tools" (see AGENT_SETUP.md).
+
+const CONFIG = window.SITE_CONFIG || {};
+const SECTIONS = ["welcome", "profile", "features", "pricing", "demo"];
+const SECTION_LABELS = { welcome: "the intro", profile: "your hotel", features: "features", pricing: "plans", demo: "demo booking" };
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+const dock = $("#dock");
+const panel = $("#panel");
+const thread = $("#thread");
+const statusEl = $("[data-status]");
+const captionEl = $("[data-caption]");
+const profileForm = $("#profileForm");
+const demoForm = $("#demoForm");
+
+let conversation = null;
+let mode = "voice"; // "voice" | "text"
+let muted = false;
+let lastAgentScroll = 0;
+let lastUserInput = 0;
+let currentSection = "welcome";
+
+$("[data-year]").textContent = new Date().getFullYear();
+
+/* ---------- Small UI helpers ---------- */
+
+const STATUS = {
+  idle: "Aria is ready to talk",
+  connecting: "Connecting",
+  listening: "Listening",
+  thinking: "Thinking",
+  speaking: "Aria is speaking",
+};
+
+function setState(state) {
+  dock.dataset.state = state;
+  dock.dataset.mode = mode;
+  document.body.dataset.state = state;
+  statusEl.textContent =
+    muted && state === "listening" ? "Mic muted" : mode === "text" && state === "listening" ? "Your turn" : STATUS[state];
+  $("[data-orb-label]").textContent = state === "idle" ? "Tap to talk" : state === "connecting" ? "Connecting…" : "Tap to end";
+  $("[data-live-only]").hidden = state === "idle" || state === "connecting";
+  $("#muteBtn").hidden = mode === "text";
+}
+
+/** Tint the orb with the emotion of Aria's current line, e.g. [excited] or [softly]. */
+const TONES = {
+  excited: "bright", playfully: "bright", "laughs softly": "bright",
+  softly: "soft", sighs: "soft", thoughtful: "soft",
+  reassuring: "calm", warmly: "warm", curious: "warm",
+};
+function setTone(raw) {
+  const tag = (String(raw).match(/\[([^\]]{1,32})\]/) || [])[1]?.toLowerCase();
+  dock.dataset.tone = TONES[tag] || "warm";
+  document.body.dataset.tone = dock.dataset.tone;
+}
+
+/** Strip ElevenLabs v3 audio tags like [warmly] from displayed text. */
+const clean = (t) => String(t || "").replace(/\[[^\]]{1,32}\]\s*/g, "").replace(/\s{2,}/g, " ").trim();
+
+function caption(text, who = "ai") {
+  captionEl.classList.add("swap");
+  setTimeout(() => {
+    captionEl.textContent = text;
+    captionEl.title = text;
+    captionEl.classList.toggle("user", who === "user");
+    captionEl.classList.remove("swap");
+  }, 120);
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+function flash(el) {
+  el.classList.add("flash");
+  setTimeout(() => el.classList.remove("flash"), 1400);
+}
+
+/* ---------- Conversation thread ---------- */
+
+function openPanel(open = true) {
+  panel.hidden = !open;
+  dock.classList.toggle("expanded", open);
+  const btn = $("#transcriptBtn");
+  btn.setAttribute("aria-expanded", String(open));
+  btn.setAttribute("aria-label", open ? "Hide conversation" : "Show conversation");
+  if (open) thread.scrollTop = thread.scrollHeight;
+}
+
+function addMsg(role, text) {
+  removeTyping();
+  const li = document.createElement("li");
+  li.className = `msg ${role}`;
+  li.textContent = text;
+  thread.append(li);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function showTyping() {
+  if ($(".msg.typing", thread)) return;
+  const li = document.createElement("li");
+  li.className = "msg ai typing";
+  li.setAttribute("aria-label", "Aria is thinking");
+  li.innerHTML = "<i></i><i></i><i></i>";
+  thread.append(li);
+  thread.scrollTop = thread.scrollHeight;
+}
+const removeTyping = () => $(".msg.typing", thread)?.remove();
+
+function activity(text) {
+  const li = document.createElement("li");
+  li.className = "msg activity";
+  li.textContent = text;
+  const typing = $(".msg.typing", thread);
+  typing ? thread.insertBefore(li, typing) : thread.append(li);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+/* ---------- Smooth, polite scrolling ---------- */
+
+let cancelScroll = null;
+
+// Track real visitor input so Aria doesn't yank the page while they're reading.
+["wheel", "touchmove", "keydown", "pointerdown"].forEach((ev) =>
+  addEventListener(ev, (e) => {
+    if (e.target.closest?.("#dock, .sheet, .follow-pill")) return;
+    lastUserInput = Date.now();
+    cancelScroll?.();
+  }, { passive: true })
+);
+
+function smoothScrollTo(el) {
+  cancelScroll?.();
+  const offset = $(".topbar").offsetHeight + 12;
+  const target = Math.max(0, el.getBoundingClientRect().top + scrollY - offset);
+  if (reducedMotion) return scrollTo({ top: target, behavior: "instant" });
+  const start = scrollY;
+  const dist = target - start;
+  const dur = Math.min(1100, Math.max(500, Math.abs(dist) * 0.45));
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const t0 = performance.now();
+  let raf;
+  const step = (now) => {
+    const p = Math.min(1, (now - t0) / dur);
+    scrollTo({ top: start + dist * ease(p), behavior: "instant" });
+    if (p < 1) raf = requestAnimationFrame(step);
+    else cancelScroll = null;
+  };
+  raf = requestAnimationFrame(step);
+  cancelScroll = () => { cancelAnimationFrame(raf); cancelScroll = null; };
+}
+
+const pill = $("#followPill");
+let pillTarget = null;
+
+function goTo(section, fromAgent = false) {
+  const el = document.getElementById(section);
+  if (!el) return false;
+  if (fromAgent) {
+    lastAgentScroll = Date.now();
+    // Visitor is actively scrolling or reading: offer to follow instead of hijacking the page.
+    if (Date.now() - lastUserInput < 2500 && section !== currentSection) {
+      pillTarget = section;
+      $("b", pill).textContent = SECTION_LABELS[section] || section;
+      pill.hidden = false;
+      return true;
+    }
+  }
+  pill.hidden = true;
+  smoothScrollTo(el);
+  history.replaceState(null, "", `#${section}`);
+  return true;
+}
+
+pill.addEventListener("click", () => {
+  pill.hidden = true;
+  if (!pillTarget) return;
+  lastAgentScroll = Date.now();
+  smoothScrollTo(document.getElementById(pillTarget));
+});
+
+/* ---------- Step tracking & reveal ---------- */
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.id;
+      if (id === currentSection) return;
+      currentSection = id;
+      if (id === pillTarget) pill.hidden = true;
+      const idx = SECTIONS.indexOf(id);
+      $$(".step").forEach((s, i) => {
+        s.classList.toggle("active", i === idx);
+        s.classList.toggle("done", i < idx);
+        s.toggleAttribute("aria-current", i === idx);
+      });
+      // Only report navigation the visitor did themselves.
+      if (Date.now() - lastAgentScroll > 1800) {
+        contextUpdate(`The visitor scrolled to the "${id}" section of the website on their own.`);
+      }
+    });
+  },
+  { rootMargin: "-45% 0px -50% 0px" }
+);
+SECTIONS.forEach((id) => observer.observe(document.getElementById(id)));
+
+const revealer = new IntersectionObserver(
+  (entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in");
+    revealer.unobserve(e.target);
+  }),
+  { rootMargin: "0px 0px -8% 0px" }
+);
+$$(".section:not(.hero) .section-head, .section:not(.hero) .card").forEach((el) => {
+  const cards = [...el.parentElement.children].filter((c) => c.classList.contains("card"));
+  const i = cards.indexOf(el);
+  if (i > 0) el.style.setProperty("--d", `${Math.min(i, 5) * 0.07}s`);
+  el.classList.add("reveal");
+  revealer.observe(el);
+});
+
+$$("[data-nav]").forEach((a) =>
+  a.addEventListener("click", (e) => {
+    e.preventDefault();
+    goTo(a.dataset.nav);
+  })
+);
+
+/** Tell the agent what the visitor did on their own, without interrupting it. */
+function contextUpdate(text) {
+  try { conversation?.sendContextualUpdate(text); } catch (e) { console.warn(e); }
+}
+
+/* ---------- Hotel profile + ROI ---------- */
+
+const fmtMoney = (n) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+const readProfile = () => Object.fromEntries(new FormData(profileForm));
+
+function computeRoi(p = readProfile()) {
+  const r = CONFIG.ROI || {};
+  let calls = Number(p.monthly_calls) || 0;
+  // Rough fallback: ~12 calls per room per month.
+  if (!calls && Number(p.rooms)) calls = Math.round(Number(p.rooms) * 12);
+  if (!calls) return null;
+  const recovered = Math.round(calls * (r.missedCallRate ?? 0.25));
+  const revenue = Math.round(recovered * (r.bookingConversion ?? 0.3) * (r.avgBookingValue ?? 220));
+  const hours = Math.round((calls * (r.minutesPerCall ?? 4)) / 60);
+  return { calls, recovered, revenue, hours, estimatedCalls: !Number(p.monthly_calls) };
+}
+
+function countUp(el, to, fmt = (n) => n.toLocaleString()) {
+  const from = Number(el.dataset.value) || 0;
+  el.dataset.value = to;
+  if (reducedMotion || from === to) { el.textContent = fmt(to); return; }
+  const t0 = performance.now();
+  const step = (now) => {
+    const p = Math.min(1, (now - t0) / 900);
+    el.textContent = fmt(Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3))));
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function renderRoi() {
+  const roi = computeRoi();
+  const name = readProfile().hotel_name;
+  $("[data-roi-title]").textContent = name ? `What Aria could recover for ${name} each month` : "What Aria could recover each month";
+  if (!roi) return;
+  countUp($('[data-roi="recovered"]'), roi.recovered);
+  countUp($('[data-roi="revenue"]'), roi.revenue, fmtMoney);
+  countUp($('[data-roi="hours"]'), roi.hours);
+  $("[data-roi-note]").textContent =
+    `Based on ${roi.calls.toLocaleString()} calls/month${roi.estimatedCalls ? " (estimated from room count)" : ""}, ` +
+    `${Math.round((CONFIG.ROI?.missedCallRate ?? 0.25) * 100)}% currently missed and an average booking of ${fmtMoney(CONFIG.ROI?.avgBookingValue ?? 220)}.`;
+}
+
+function roiSummary(p) {
+  const roi = computeRoi(p);
+  if (!roi) return "Not enough data for an ROI estimate yet — ask for the number of rooms or monthly calls.";
+  return `Estimated monthly impact: ${roi.recovered} missed calls recovered, about ${fmtMoney(roi.revenue)} in extra direct bookings, and ${roi.hours} staff hours freed.`;
+}
+
+/** Type text into a field like a person would, so visitors see Aria "writing". */
+async function typeInto(el, text) {
+  el.classList.add("filling");
+  if (reducedMotion || text.length > 60) {
+    el.value = text;
+  } else {
+    el.value = "";
+    for (const ch of text) {
+      el.value += ch;
+      await sleep(14 + Math.random() * 26);
+    }
+  }
+  el.classList.remove("filling");
+  flash(el);
+}
+
+/** Returns a promise when the field animates, true when set instantly, false when not applicable. */
+function setField(form, name, value) {
+  const el = form.elements[name];
+  if (!el || value === undefined || value === null || value === "") return false;
+  if (el.tagName === "SELECT") {
+    const v = String(value).toLowerCase();
+    const opt = [...el.options].find(
+      (o) => o.value.toLowerCase() === v || o.text.toLowerCase() === v || (v && o.text.toLowerCase().includes(v))
+    );
+    if (!opt) return false;
+    el.value = opt.value || opt.text;
+    flash(el);
+    return true;
+  }
+  const text = Array.isArray(value) ? value.join(", ") : String(value);
+  if (el.value === text) return true;
+  return typeInto(el, text);
+}
+
+/** Set several fields; returns the names that were set and a promise for when typing finishes. */
+function fillForm(form, fields, params) {
+  const results = fields.map((k) => [k, setField(form, k, params[k])]).filter(([, r]) => r);
+  return { names: results.map(([k]) => k), done: Promise.all(results.map(([, r]) => r)) };
+}
+
+let profileDebounce;
+profileForm.addEventListener("input", (e) => {
+  if (!e.isTrusted) return;
+  renderRoi();
+  clearTimeout(profileDebounce);
+  profileDebounce = setTimeout(
+    () => contextUpdate(`The visitor edited their hotel profile by hand: ${JSON.stringify(readProfile())}. ${roiSummary()}`),
+    1200
+  );
+});
+
+/* ---------- Features & plans ---------- */
+
+function spotlightFeature(key) {
+  const el = $(`[data-feature="${key}"]`);
+  if (!el) return false;
+  $$(".feature").forEach((f) => f.classList.remove("spotlight"));
+  el.classList.add("spotlight");
+  return true;
+}
+
+function recommendPlan(plan, reason) {
+  const el = $(`[data-plan="${plan}"]`);
+  if (!el) return false;
+  $$(".plan").forEach((p) => p.classList.remove("recommended"));
+  el.classList.add("recommended");
+  const r = $("[data-plan-reason]");
+  if (reason) {
+    r.textContent = `Why ${el.querySelector("h3").textContent}: ${reason}`;
+    r.hidden = false;
+  }
+  demoForm.elements.plan.value = plan;
+  return true;
+}
+
+/* ---------- Demo request ---------- */
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function missingDemoFields(d = Object.fromEntries(new FormData(demoForm))) {
+  const missing = [];
+  if (!d.name) missing.push("name");
+  if (!d.hotel_name) missing.push("hotel name");
+  if (!d.email) missing.push("email");
+  else if (!EMAIL_RE.test(d.email)) missing.push("a valid email address");
+  return missing;
+}
+
+async function submitDemo() {
+  const data = {
+    ...Object.fromEntries(new FormData(demoForm)),
+    hotel_profile: readProfile(),
+    submitted_at: new Date().toISOString(),
+    conversation_id: conversation?.getId?.() ?? null,
+  };
+  try {
+    const all = JSON.parse(localStorage.getItem("aria_demo_requests") || "[]");
+    all.push(data);
+    localStorage.setItem("aria_demo_requests", JSON.stringify(all));
+  } catch {}
+  console.info("Demo request:", data);
+  if (CONFIG.FORM_WEBHOOK_URL) {
+    try {
+      await fetch(CONFIG.FORM_WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+    } catch (e) {
+      console.error("Webhook failed", e);
+    }
+  }
+  $("[data-confirm-text]").textContent =
+    `Thanks ${data.name}! We'll email ${data.email} to confirm your demo${data.preferred_time ? ` for ${data.preferred_time}` : ""}.`;
+  demoForm.hidden = true;
+  const ok = $("#demoSuccess");
+  ok.hidden = false;
+  goTo("demo", true);
+  ok.focus({ preventScroll: true });
+  return data;
+}
+
+demoForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const missing = missingDemoFields();
+  if (missing.length) return toast(`Please add your ${missing.join(", ")}.`);
+  const data = await submitDemo();
+  contextUpdate(`The visitor submitted the demo request form themselves: ${JSON.stringify(data)}.`);
+});
+
+/* ---------- Client tools (called by the ElevenLabs agent) ---------- */
+
+let pendingTyping = Promise.resolve();
+
+const clientTools = {
+  navigate_to_section: ({ section }) => {
+    const ok = goTo(String(section || "").toLowerCase(), true);
+    return ok ? `Now showing the ${section} section.` : `Unknown section. Use one of: ${SECTIONS.join(", ")}.`;
+  },
+
+  update_hotel_profile: (params = {}) => {
+    goTo("profile", true);
+    const { names, done } = fillForm(profileForm, ["hotel_name", "hotel_type", "rooms", "monthly_calls", "languages", "pain_points"], params);
+    if (params.hotel_name) fillForm(demoForm, ["hotel_name"], params);
+    pendingTyping = done.then(renderRoi);
+    if (names.length) activity("Updated your hotel profile");
+    // Answer immediately from the final values; the page catches up as it types.
+    return `Updated: ${names.join(", ") || "nothing"}. ${roiSummary({ ...readProfile(), ...params })}`;
+  },
+
+  get_roi_estimate: async () => {
+    goTo("profile", true);
+    await pendingTyping;
+    flash($("#roi"));
+    activity("Calculated your estimate");
+    return roiSummary();
+  },
+
+  highlight_feature: ({ feature }) => {
+    goTo("features", true);
+    return spotlightFeature(feature)
+      ? `Highlighting ${feature}.`
+      : "Unknown feature. Use: answering, bookings, multilingual, guest_requests, upsells, integrations.";
+  },
+
+  recommend_plan: ({ plan, reason }) => {
+    goTo("pricing", true);
+    const ok = recommendPlan(String(plan || "").toLowerCase(), reason);
+    if (ok) activity(`Recommended the ${plan} plan`);
+    return ok ? `Showing ${plan} as the recommended plan.` : "Unknown plan. Use: starter, professional, enterprise.";
+  },
+
+  fill_demo_form: (params = {}) => {
+    goTo("demo", true);
+    const fields = ["name", "hotel_name", "email", "phone", "preferred_time", "plan", "notes"];
+    const { names, done } = fillForm(demoForm, fields, params);
+    pendingTyping = done;
+    if (names.length) activity("Filled in your demo details");
+    const missing = missingDemoFields({ ...Object.fromEntries(new FormData(demoForm)), ...params });
+    return `Filled: ${names.join(", ") || "nothing"}.` + (missing.length ? ` Still needed: ${missing.join(", ")}.` : " All required fields are complete.");
+  },
+
+  submit_demo_request: async () => {
+    await pendingTyping;
+    const missing = missingDemoFields();
+    if (missing.length) return `Cannot submit yet. Missing: ${missing.join(", ")}.`;
+    const data = await submitDemo();
+    activity("Demo request sent");
+    return `Demo request submitted for ${data.name} (${data.email}).`;
+  },
+};
+
+// Exposed for testing tools from the browser console.
+window.ariaTools = clientTools;
+
+/* ---------- Visit context: shapes Aria's tone, pace and greeting ---------- */
+
+function visitContext() {
+  let returning = false;
+  try {
+    returning = !!localStorage.getItem("aria_visited");
+    localStorage.setItem("aria_visited", "1");
+  } catch {}
+  const h = new Date().getHours();
+  const part = h < 12 ? "morning" : h < 18 ? "afternoon" : "evening";
+  const mobile = matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+  // Brisker in the morning, calmer in the evening; a little natural variation per visit.
+  const pace = { morning: 1.04, afternoon: 1.0, evening: 0.95 }[part] + (mobile ? 0.02 : 0);
+  const jitter = (range) => (Math.random() * 2 - 1) * range;
+  return {
+    part,
+    returning,
+    dynamicVariables: { time_of_day: part, visitor_status: returning ? "returning" : "new", visitor_device: mobile ? "mobile" : "desktop" },
+    tts: { speed: +(pace + jitter(0.02)).toFixed(2), stability: +(0.3 + jitter(0.04)).toFixed(2) },
+  };
+}
+
+/* ---------- Varied, human greetings ---------- */
+
+function pickGreeting({ part, returning }) {
+  if (part === "evening" && !returning && Math.random() < 0.5) {
+    return "Good evening... [warmly] thanks for stopping by this late. I'm Aria — I look after hotel front desks, and I'll show you around. So, what's your hotel called?";
+  }
+  if (returning) {
+    return pick([
+      "Oh — welcome back! [warmly] Good to hear from you again. So... remind me, what's the name of your hotel?",
+      "Hey, you're back! [laughs softly] Okay, let's pick up where we left off — what's your hotel called?",
+    ]);
+  }
+  return pick([
+    `Good ${part}! [warmly] I'm Aria... I'm an AI receptionist for hotels, and I'll be showing you around today. So, first things first — what's your hotel called?`,
+    "Hey there... welcome! [warmly] I'm Aria — I'm an AI receptionist for hotels, and, um, I'll be your guide around here today. So, tell me — what's the name of your hotel?",
+    "Hi! Oh, lovely to meet you. [warmly] I'm Aria — I basically run the front desk for hotels, and I'll walk you through how. What's the name of your place?",
+    `Hello, and good ${part}! I'm Aria. [curious] I'd love to hear a bit about your hotel before I show you anything... what's it called?`,
+  ]);
+}
+
+/* ---------- Conversation lifecycle ---------- */
+
+let Conversation;
+async function loadSdk() {
+  if (!Conversation) ({ Conversation } = await import("https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/+esm"));
+  return Conversation;
+}
+// Warm up the SDK so starting feels instant.
+addEventListener("load", () => setTimeout(() => loadSdk().catch(() => {}), 800));
+
+/** Soft two-note chime when Aria joins. */
+function chime() {
+  try {
+    const ctx = new AudioContext();
+    [[660, 0], [880, 0.12]].forEach(([f, t]) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0, ctx.currentTime + t);
+      g.gain.linearRampToValueAtTime(0.06, ctx.currentTime + t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.35);
+      o.connect(g).connect(ctx.destination);
+      o.start(ctx.currentTime + t);
+      o.stop(ctx.currentTime + t + 0.4);
+    });
+    setTimeout(() => ctx.close(), 800);
+  } catch {}
+}
+
+let sheetSeen = false;
+function requestStart(preferred) {
+  if (!CONFIG.AGENT_ID || CONFIG.AGENT_ID === "YOUR_AGENT_ID") {
+    toast("Add your ElevenLabs agent ID in config.js to enable voice.");
+    return;
+  }
+  if (preferred === "text") return start("text");
+  if (sheetSeen) return start("voice");
+  const sheet = $("#startSheet");
+  sheet.returnValue = "";
+  sheet.showModal();
+  sheet.addEventListener("close", () => {
+    if (sheet.returnValue === "voice" || sheet.returnValue === "text") {
+      sheetSeen = true;
+      start(sheet.returnValue);
+    }
+  }, { once: true });
+}
+
+async function start(chosen) {
+  mode = chosen;
+  thread.innerHTML = "";
+  setState("connecting");
+  caption(mode === "voice" ? "Allow microphone access to talk with Aria…" : "Opening the chat…");
+  try {
+    if (mode === "voice") await navigator.mediaDevices.getUserMedia({ audio: true });
+    const SDK = await loadSdk();
+    const ctx = visitContext();
+    conversation = await SDK.startSession({
+      agentId: CONFIG.AGENT_ID,
+      ...(mode === "voice" ? { connectionType: "webrtc" } : { textOnly: true }),
+      dynamicVariables: ctx.dynamicVariables,
+      overrides: { agent: { firstMessage: pickGreeting(ctx) }, tts: ctx.tts },
+      clientTools,
+      onConnect: () => {
+        chime();
+        setState("thinking");
+        caption("Aria is joining…");
+        showTyping();
+        if (mode === "text") {
+          openPanel(true);
+          $("#typeForm").elements.msg.focus();
+        }
+      },
+      onDisconnect: () => stopUi(),
+      onError: (err) => {
+        console.error(err);
+        toast("Connection hiccup — please try again.");
+      },
+      onModeChange: ({ mode: m }) => {
+        if (mode === "text") return;
+        if (m === "speaking") {
+          removeTyping();
+          setState("speaking");
+        } else if (dock.dataset.state !== "thinking") {
+          setState("listening");
+        }
+      },
+      onMessage: (msg) => {
+        const who = msg.role === "user" || msg.source === "user" ? "user" : "ai";
+        if (who === "ai") setTone(msg.message);
+        const text = clean(msg.message);
+        if (!text) return;
+        addMsg(who, text);
+        caption(who === "user" ? `You: ${text}` : text, who);
+        if (who === "user") {
+          setState("thinking");
+          showTyping();
+        } else if (mode === "text" || dock.dataset.state === "thinking") {
+          setState(mode === "text" ? "listening" : "speaking");
+        }
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    stopUi();
+    if (err?.name === "NotAllowedError") {
+      toast("No microphone access — switching to text chat.");
+      return start("text");
+    }
+    toast("Couldn't start the conversation. Please try again.");
+  }
+}
+
+async function stop() {
+  const c = conversation;
+  conversation = null;
+  stopUi();
+  try { await c?.endSession(); } catch {}
+}
+
+function stopUi() {
+  conversation = null;
+  muted = false;
+  $("#muteBtn").setAttribute("aria-pressed", "false");
+  removeTyping();
+  openPanel(false);
+  setState("idle");
+  caption(thread.children.length ? "Thanks for chatting — tap the orb to pick it back up." : "Press the orb and say hello.");
+}
+
+$$(".js-talk").forEach((b) =>
+  b.addEventListener("click", () => {
+    const state = dock.dataset.state;
+    if (state === "idle") requestStart("voice");
+    else if (state !== "connecting") stop();
+  })
+);
+$$(".js-type").forEach((b) =>
+  b.addEventListener("click", () => (dock.dataset.state === "idle" ? requestStart("text") : openPanel(true)))
+);
+$("#endBtn").addEventListener("click", stop);
+$("#transcriptBtn").addEventListener("click", () => openPanel(panel.hidden));
+$("#collapseBtn").addEventListener("click", () => openPanel(false));
+addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !panel.hidden && !$("#startSheet").open) openPanel(false);
+});
+$("#muteBtn").addEventListener("click", (e) => {
+  muted = !muted;
+  conversation?.setMicMuted(muted);
+  e.currentTarget.setAttribute("aria-pressed", String(muted));
+  e.currentTarget.setAttribute("aria-label", muted ? "Unmute microphone" : "Mute microphone");
+  setState(dock.dataset.state);
+});
+$("#typeForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const input = e.currentTarget.elements.msg;
+  const text = input.value.trim();
+  if (!text || !conversation) return;
+  conversation.sendUserMessage(text);
+  addMsg("user", text);
+  caption(`You: ${text}`, "user");
+  setState("thinking");
+  showTyping();
+  input.value = "";
+});
+$("#typeForm").addEventListener("input", () => conversation?.sendUserActivity());
+
+/* ---------- Audio-reactive orb + waveform ---------- */
+
+const levelEls = [...$$("[data-orb]"), $(".wave")];
+let smooth = 0;
+function animate() {
+  let level = 0;
+  if (conversation && mode === "voice") {
+    try {
+      const s = dock.dataset.state;
+      level = s === "speaking" ? conversation.getOutputVolume() : s === "listening" && !muted ? conversation.getInputVolume() : 0;
+    } catch {}
+  }
+  smooth += (Math.min(1, level * 2.2) - smooth) * 0.35;
+  const v = smooth.toFixed(3);
+  levelEls.forEach((o) => o.style.setProperty("--level", v));
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+setState("idle");
+renderRoi();
+
+</script>
+</body>
+</html>
