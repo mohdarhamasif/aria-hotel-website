@@ -1,7 +1,7 @@
-"""Build aria-standalone.html: index.html with styles.css, config.js and app.js inlined.
+"""Build aria-standalone.html: index.html with styles.css, config.js, app.js and experience.js inlined.
 
 Usage (from the repo root):  python tools/build_standalone.py
-Standard library only. Re-run after any change to the four source files.
+Standard library only. Re-run after any change to the five source files.
 """
 from pathlib import Path
 
@@ -22,6 +22,7 @@ html = read("index.html")
 html = replace_once(html, '<link rel="stylesheet" href="styles.css" />', "<style>\n" + read("styles.css") + "</style>")
 html = replace_once(html, '<script src="config.js"></script>', "<script>\n" + read("config.js") + "</script>")
 html = replace_once(html, '<script type="module" src="app.js"></script>', '<script type="module">\n' + read("app.js") + "</script>")
+html = replace_once(html, '<script type="module" src="experience.js"></script>', '<script type="module">\n' + read("experience.js") + "</script>")
 
 with open(ROOT / "aria-standalone.html", "w", encoding="utf-8", newline="\n") as f:
     f.write(html)
