@@ -1,6 +1,6 @@
 # Setting up the ElevenLabs voice agent
 
-> **Already done:** the agent **"Aria – Hotel Sales Guide"** (`agent_9101m3n1hwxffey830jzf43chj6x`) was created through the ElevenLabs MCP connection with everything below: prompt, first message, voice "Bella", the 7 client tools and end_call. Its ID is already in `config.js`. The allowlist currently contains only `localhost`, so add your real domain before going live. The steps below are for recreating the agent by hand.
+> **Already done:** the agent **"Aria – Hotel Sales Guide"** (`agent_9101m3n1hwxffey830jzf43chj6x`) was created through the ElevenLabs MCP connection with everything below: prompt, first message, voice "Bella", the 7 client tools and end_call. Its ID is already in `config.js`. The allowlist currently contains `localhost` and `mohdarhamasif.github.io`. Add any other domain (a custom domain or a preview deploy) before using it. The steps below are for recreating the agent by hand.
 >
 > **Human-sounding voice (updated):** the live agent uses the expressive `eleven_v3_conversational` voice model (stability 0.4, LLM temperature 0.7), a prompt section that asks for natural pauses, filler words, varied reactions and occasional audio tags like `[warmly]`, AI-generated "hmm, one sec…" fillers when it needs a moment, and stricter tool rules. The website picks one of several greetings per visit, including a "welcome back" for returning visitors, so first-message overrides are enabled. The ElevenLabs dashboard has the current prompt; the prompt below is the original version.
 >

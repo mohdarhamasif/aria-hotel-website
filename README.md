@@ -18,11 +18,30 @@ Then open http://localhost:8080.
 
 | File | What it is |
 |---|---|
-| `index.html` | Page structure: hero, hotel profile + ROI, features, plans, demo form, conversation dock |
-| `styles.css` | Visual design, animations, responsive layout |
+| `index.html` | Page structure: hero, hotel profile + ROI, features, plans, demo form, FAQ, conversation dock. Also the SEO head (meta, Open Graph, JSON-LD) |
+| `styles.css` | "Editorial Concierge" design: tokens, layout, voice motif, animations, responsive rules |
 | `app.js` | ElevenLabs conversation, client tools the agent calls, transcript, smooth scrolling |
 | `config.js` | Agent ID, optional webhook for demo requests, ROI assumptions |
+| `aria-standalone.html` | The whole site in one file. Generated, don't edit by hand |
+| `tools/build_standalone.py` | Rebuilds `aria-standalone.html` from the four source files |
+| `robots.txt`, `sitemap.xml`, `404.html`, `site.webmanifest` | SEO and crawl files |
+| `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `og-image.svg/.png` | Icons and the social share image |
+| `design-system/aria/MASTER.md` | Design system notes: tokens, style, motion, checklist |
 | `AGENT_SETUP.md` | How the ElevenLabs agent is configured: prompt, tools, voice, tone |
+
+## Standalone build
+
+After changing `index.html`, `styles.css`, `app.js` or `config.js`, regenerate the single-file version:
+
+```bash
+python tools/build_standalone.py
+```
+
+## Design and SEO tooling
+
+- **UI/UX:** the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) skill is in `.claude/skills/ui-ux-pro-max/`, so Claude Code picks it up automatically. It needs Python 3 and nothing else. Example search: `python .claude/skills/ui-ux-pro-max/scripts/search.py "form labels inline errors" --domain ux`.
+- **SEO:** [claude-seo](https://github.com/AgriciDaniel/claude-seo) installs globally (`install.ps1` / `install.sh`) and needs **Python 3.10+**. After installing, run `/seo audit <url>`.
+- The redesign must keep every ID, `data-*` attribute and form field name that `app.js` uses. The agent's client tools depend on them.
 
 ## Configuration
 

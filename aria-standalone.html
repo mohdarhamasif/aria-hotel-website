@@ -3,13 +3,46 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aria — AI Receptionist for Hotels</title>
-  <meta name="description" content="A voice-guided website: talk to Aria, the AI front desk that answers every call, books rooms and speaks your guests' language." />
+  <title>Aria — AI Receptionist &amp; Voice Concierge for Hotels</title>
+  <meta name="description" content="Aria is a voice AI receptionist for hotels: it answers every call 24/7, books rooms into your PMS, handles guest requests in 30+ languages and hands off to staff." />
+  <link rel="canonical" href="https://mohdarhamasif.github.io/aria-hotel-website/" />
+  <meta name="theme-color" content="#0e1116" />
+  <meta name="color-scheme" content="dark" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aria" />
+  <meta property="og:title" content="Aria — AI Receptionist &amp; Voice Concierge for Hotels" />
+  <meta property="og:description" content="Every call answered, every guest welcomed. Talk to Aria, the AI front desk that books rooms and speaks your guests' language." />
+  <meta property="og:url" content="https://mohdarhamasif.github.io/aria-hotel-website/" />
+  <meta property="og:image" content="https://mohdarhamasif.github.io/aria-hotel-website/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Aria — the AI front desk for hotels. Every call answered. Every guest welcomed." />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Aria — AI Receptionist &amp; Voice Concierge for Hotels" />
+  <meta name="twitter:description" content="Every call answered, every guest welcomed. Talk to Aria, the AI front desk for hotels." />
+  <meta name="twitter:image" content="https://mohdarhamasif.github.io/aria-hotel-website/og-image.png" />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&amp;family=Inter:wght@400;500;600&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet" /></noscript>
   <style>
+/* ==========================================================================
+   Aria — "Editorial Concierge"
+   A hotel-brochure layout: ink paper, gold hairlines, numbered chapters.
+   All motion is CSS/SVG, driven by the hooks app.js already sets
+   (data-state, data-tone, --level, .reveal/.in, .spotlight, .recommended…).
+   ========================================================================== */
+
 :root {
+  /* Palette (unchanged theme) */
   --bg: #0e1116;
   --bg-2: #141922;
   --card: #181e29;
@@ -19,311 +52,776 @@
   --gold: #d6b370;
   --gold-2: #f0d9a4;
   --teal: #5fd0c0;
-  --radius: 18px;
-  --serif: "Fraunces", Georgia, serif;
-  --sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Semantic tokens */
+  --text-soft: #d7d3ca;
+  --placeholder: #7d8494;
+  --ink-on-gold: #1b1408;
+  --caption-user: #bfeee7;
+  --msg-user: #dff8f4;
+  --danger: #c46a6a;
+  --danger-bg: #4a2626;
+  --rule: rgba(214, 179, 112, .38);
+  --rule-soft: rgba(243, 239, 230, .09);
+  --gold-wash: rgba(214, 179, 112, .07);
+  --gold-wash-2: rgba(214, 179, 112, .14);
+  --teal-wash: rgba(95, 208, 192, .14);
+  --scrim: rgba(5, 7, 10, .72);
+  --motif: var(--gold);
+
+  /* Type */
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Space (4/8 rhythm) */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+  --gutter: clamp(16px, 4vw, 48px);
+  --topbar-h: 68px;
+
+  /* Shape */
+  --radius: 2px;
+  --radius-lg: 4px;
+
+  /* Motion */
+  --t-fast: 160ms;
+  --t-base: 320ms;
+  --t-slow: 700ms;
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
 }
 
+/* ---------- Base ---------- */
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--topbar-h) + 16px); -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  font-family: var(--sans);
-  background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(214, 179, 112, .12), transparent 60%),
-    radial-gradient(900px 500px at -10% 30%, rgba(95, 208, 192, .07), transparent 60%),
-    var(--bg);
+  font: 400 1rem/1.6 var(--sans);
+  background: var(--bg);
   color: var(--text);
-  line-height: 1.55;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
-h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.1; margin: 0 0 .5em; }
-h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); letter-spacing: -.02em; }
+/* Paper grain — static, a few percent, no blur or glow */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.08; margin: 0 0 .5em; font-optical-sizing: auto; }
+h1 { font-size: clamp(2.7rem, 6.6vw, 5.6rem); letter-spacing: -.025em; font-weight: 400; }
 h1 em { color: var(--gold); font-style: italic; font-weight: 400; }
-h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
-h3 { font-size: 1.25rem; }
+h2 { font-size: clamp(2rem, 4.2vw, 3.2rem); letter-spacing: -.015em; font-weight: 400; }
+h3 { font-size: 1.3rem; letter-spacing: -.005em; }
 p { margin: 0 0 1em; }
 a { color: inherit; }
 .muted { color: var(--muted); }
-.tiny { font-size: .8rem; }
-.eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: .75rem; color: var(--gold); font-weight: 600; margin-bottom: .8em; }
-
-/* Buttons */
-.btn {
-  display: inline-flex; align-items: center; gap: .55em;
-  border: 1px solid transparent; border-radius: 999px; cursor: pointer;
-  font: 600 .95rem var(--sans); padding: .75em 1.3em; text-decoration: none;
-  transition: transform .15s, box-shadow .2s, background .2s;
+.tiny { font-size: .82rem; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+svg use, .f-ico, .btn-arrow, .follow-pill svg, .sheet-close svg, .success-mark svg {
+  fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
 }
-.btn:hover { transform: translateY(-1px); }
-.btn-gold { background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1b1408; box-shadow: 0 8px 30px rgba(214, 179, 112, .25); }
-.btn-ghost { border-color: var(--line); color: var(--text); background: transparent; }
-.btn-sm { padding: .5em 1em; font-size: .85rem; }
-.btn-lg { padding: .95em 1.6em; font-size: 1rem; }
-.mic-ico { width: 10px; height: 16px; border: 2px solid currentColor; border-radius: 6px; position: relative; }
-.mic-ico::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 2px; height: 4px; background: currentColor; transform: translateX(-50%); }
 
-/* Top bar */
+.skip-link {
+  position: absolute; left: var(--s-4); top: -60px; z-index: 50;
+  background: var(--gold); color: var(--ink-on-gold); padding: var(--s-2) var(--s-4); font-weight: 600; text-decoration: none;
+  transition: top var(--t-fast) var(--ease-out);
+}
+.skip-link:focus { top: var(--s-3); }
+
+/* Small caps label used across forms, cards and chapters */
+.form-cap, .folio, .kicker span:last-child, .step span, .dock-status, .panel-head, .call-log b {
+  font: 600 .72rem/1.2 var(--sans); letter-spacing: .16em; text-transform: uppercase;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .65em;
+  min-height: 48px; padding: 0 1.6em;
+  border: 1px solid transparent; border-radius: var(--radius); cursor: pointer; text-decoration: none;
+  font: 600 .8rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase;
+  transition: background-color var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out),
+              border-color var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out);
+}
+.btn::after { /* underline that draws in on hover */
+  content: ""; position: absolute; left: 1.6em; right: 1.6em; bottom: 11px; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: right;
+  transition: transform var(--t-base) var(--ease-out);
+}
+.btn:hover::after { transform: scaleX(1); transform-origin: left; }
+.btn:active { transform: translateY(1px); }
+.btn-gold { background: var(--gold); color: var(--ink-on-gold); }
+.btn-gold:hover { background: var(--gold-2); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--rule); }
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold-2); }
+.btn-sm { min-height: 40px; padding: 0 1.2em; font-size: .72rem; }
+.btn-sm::after { left: 1.2em; right: 1.2em; bottom: 9px; }
+.btn-lg { min-height: 52px; }
+.btn-arrow { width: 18px; height: 18px; transition: transform var(--t-base) var(--ease-out); }
+.btn:hover .btn-arrow { transform: translateX(4px); }
+.mic-ico { width: 10px; height: 15px; border: 1.5px solid currentColor; border-radius: 6px; position: relative; flex: none; }
+.mic-ico::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 1.5px; height: 4px; background: currentColor; transform: translateX(-50%); }
+
+/* ---------- Masthead ---------- */
 .topbar {
   position: sticky; top: 0; z-index: 20;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 14px clamp(16px, 4vw, 48px);
-  background: rgba(14, 17, 22, .78); backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255, 255, 255, .05);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  min-height: var(--topbar-h); padding: 0 var(--gutter);
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule-soft);
 }
-.logo { display: flex; align-items: center; gap: 10px; font: 600 1.25rem var(--serif); text-decoration: none; }
-.logo-mark { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1b1408; font-size: 1rem; }
-.stepper { display: flex; gap: 4px; }
-.step { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; text-decoration: none; color: var(--muted); font-size: .85rem; transition: all .25s; }
-.step i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); font-size: .72rem; }
-.step.done i { background: rgba(214, 179, 112, .18); border-color: var(--gold); color: var(--gold); }
-.step.active { color: var(--text); background: rgba(255, 255, 255, .06); }
-.step.active i { background: var(--gold); border-color: var(--gold); color: #1b1408; }
+.topbar::after { /* gold hairline that draws in on load */
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--rule);
+  transform-origin: left; animation: drawX 1.2s var(--ease-out) .2s both;
+}
+.logo { display: flex; align-items: baseline; gap: var(--s-3); text-decoration: none; min-height: 44px; align-items: center; }
+.logo-word { font: italic 400 1.7rem/1 var(--serif); color: var(--gold-2); letter-spacing: -.01em; }
+.logo-sub { font: 500 .66rem/1 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); padding-left: var(--s-3); border-left: 1px solid var(--line); }
 
-/* Sections */
-main { padding: 0 clamp(16px, 4vw, 48px) 160px; max-width: 1200px; margin: 0 auto; }
-.section { padding: 96px 0 40px; }
-.section-head { max-width: 640px; margin-bottom: 36px; }
-.card { background: linear-gradient(180deg, var(--card), var(--bg-2)); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; transition: border-color .3s, box-shadow .3s, transform .3s; }
+.stepper { display: flex; gap: var(--s-1); }
+.step {
+  position: relative; display: flex; align-items: baseline; gap: var(--s-2);
+  min-height: 44px; align-items: center; padding: 0 var(--s-3);
+  color: var(--muted); text-decoration: none;
+  transition: color var(--t-base) var(--ease-out);
+}
+.step i { position: relative; font: italic 400 1rem/1 var(--serif); color: var(--gold); opacity: .7; transition: opacity var(--t-base); }
+.step span { font-size: .68rem; }
+.step::after { /* sliding underline */
+  content: ""; position: absolute; left: var(--s-3); right: var(--s-3); bottom: 8px; height: 1px;
+  background: var(--gold); transform: scaleX(0); transform-origin: right;
+  transition: transform var(--t-base) var(--ease-out);
+}
+.step:hover { color: var(--text); }
+.step:hover::after { transform: scaleX(.35); transform-origin: left; }
+.step.active { color: var(--text); }
+.step.active i { opacity: 1; }
+.step.active::after { transform: scaleX(1); transform-origin: left; }
+.step.done i { color: transparent; opacity: 1; }
+.step.done i::after { /* numeral becomes a drawn check mark */
+  content: ""; position: absolute; left: 50%; top: 45%; width: .62em; height: .32em;
+  border-left: 1.5px solid var(--gold); border-bottom: 1.5px solid var(--gold);
+  transform: translate(-50%, -50%) rotate(-45deg);
+  animation: wipe var(--t-base) var(--ease-out) both;
+}
 
-/* Hero */
-.hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: center; min-height: calc(100vh - 70px); padding-top: 40px; }
-.lede { font-size: 1.15rem; color: #d7d3ca; max-width: 560px; }
+/* ---------- Layout ---------- */
+main { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter) var(--s-9); }
+.section { padding: clamp(72px, 11vw, 136px) 0 var(--s-5); }
+.card { position: relative; }
+
+/* Chapter heads: big numeral, small-caps label, headline, double rule */
+.section-head { max-width: 760px; margin-bottom: clamp(32px, 5vw, 56px); position: relative; padding-bottom: var(--s-5); }
+.section-head::after {
+  content: ""; position: absolute; left: 0; bottom: 0; width: min(220px, 40%); height: 4px;
+  border-top: 1px solid var(--gold); border-bottom: 1px solid var(--rule);
+  transform-origin: left;
+}
+.kicker { display: flex; align-items: flex-end; gap: var(--s-4); margin-bottom: var(--s-3); color: var(--gold); }
+.kicker .num { font: italic 400 clamp(3rem, 6vw, 4.6rem)/.8 var(--serif); color: var(--gold); letter-spacing: -.03em; }
+.kicker span:last-child { padding-bottom: .4em; color: var(--gold-2); }
+.section-head h2 { margin-bottom: .35em; }
+.section-head .muted { font-size: 1.05rem; max-width: 560px; margin: 0; }
+
+/* ---------- Hero ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  grid-template-areas: "copy motif" "log log";
+  column-gap: clamp(24px, 6vw, 88px); row-gap: var(--s-7);
+  align-items: center;
+  min-height: calc(100svh - var(--topbar-h));
+  padding: clamp(32px, 7vh, 80px) 0 var(--s-6);
+}
+.hero-copy { grid-area: copy; }
+.folio { display: flex; gap: var(--s-4); align-items: center; color: var(--muted); margin-bottom: var(--s-5); }
+.folio-no { color: var(--gold); padding-right: var(--s-4); border-right: 1px solid var(--rule); }
+.hero h1 { margin-bottom: .45em; }
+.hero h1 .line { display: block; overflow: hidden; padding: 0 .06em .1em 0; margin-bottom: -.08em; }
+.hero h1 .line > span { display: inline-block; animation: rise var(--t-slow) var(--ease-out) both; }
+.hero h1 .line:nth-child(1) > span { animation-delay: .15s; }
+.hero h1 .line:nth-child(2) > span { animation-delay: .27s; }
+.lede { font-size: clamp(1.08rem, 1.4vw, 1.22rem); color: var(--text-soft); max-width: 36em; }
+.hero .lede:not(.small)::first-letter { /* drop cap */
+  float: left; font: 400 3.6em/.8 var(--serif); color: var(--gold); padding: .06em .1em 0 0;
+}
 .lede.small { font-size: 1rem; color: var(--muted); }
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
-.hero-orb { background: none; border: 0; cursor: pointer; display: grid; justify-items: center; gap: 22px; color: var(--muted); font: 500 .95rem var(--sans); }
+.hero .folio, .hero .lede, .hero-actions, .hero-note { animation: fadeUp var(--t-slow) var(--ease-out) both; }
+.hero .folio { animation-delay: .05s; }
+.hero .lede { animation-delay: .42s; }
+.hero .lede.small { animation-delay: .5s; }
+.hero-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; margin-top: var(--s-6); animation-delay: .6s; }
+.hero-note { margin: var(--s-4) 0 0; font-size: .88rem; color: var(--muted); display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; animation-delay: .7s; }
+.hero-note a { color: var(--gold-2); text-underline-offset: 3px; }
+.dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: blink 2.4s ease-in-out infinite; }
 
-/* Orb */
+.hero-orb {
+  grid-area: motif; justify-self: center;
+  display: grid; justify-items: center; gap: var(--s-4);
+  background: none; border: 0; padding: var(--s-2); cursor: pointer;
+  color: var(--muted); font: 600 .72rem/1 var(--sans); letter-spacing: .16em; text-transform: uppercase;
+}
+.hero-orb-label { display: flex; align-items: center; gap: var(--s-3); }
+.hero-orb-label::before, .hero-orb-label::after { content: ""; width: 28px; height: 1px; background: var(--rule); }
+.hero-orb:hover .hero-orb-label { color: var(--gold-2); }
+
+/* Reception call log — presentational strip */
+.call-log {
+  grid-area: log; list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule-soft);
+}
+.call-log li {
+  display: grid; gap: var(--s-1); padding: var(--s-4) var(--s-4) var(--s-4) 0;
+  animation: fadeUp var(--t-slow) var(--ease-out) both;
+}
+.call-log li + li { padding-left: var(--s-4); border-left: 1px solid var(--rule-soft); }
+.call-log li:nth-child(1) { animation-delay: .9s; }
+.call-log li:nth-child(2) { animation-delay: 1s; }
+.call-log li:nth-child(3) { animation-delay: 1.1s; }
+.call-log li:nth-child(4) { animation-delay: 1.2s; }
+.call-log time { font: italic 400 1.1rem/1 var(--serif); color: var(--gold); }
+.call-log span { font-size: .9rem; color: var(--text-soft); }
+.call-log b { color: var(--teal); font-size: .64rem; }
+
+/* ---------- Voice motif (replaces the orb; [data-orb] still receives --level) ---------- */
 .orb {
   --level: 0;
-  position: relative; display: grid; place-items: center;
-  width: clamp(200px, 28vw, 320px); aspect-ratio: 1; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff6dd 0%, var(--gold-2) 18%, var(--gold) 45%, #6b5226 80%, #2b2213 100%);
-  box-shadow: 0 0 calc(40px + var(--level) * 120px) rgba(214, 179, 112, calc(.25 + var(--level) * .5)), inset 0 -20px 60px rgba(0, 0, 0, .35);
-  transform: scale(calc(1 + var(--level) * .12));
-  transition: transform .08s linear, box-shadow .08s linear;
-  animation: breathe 5s ease-in-out infinite;
+  display: block; width: clamp(210px, 27vw, 330px); aspect-ratio: 200 / 240;
+  color: var(--motif);
+  transition: color var(--t-slow) var(--ease-out), filter .8s ease;
 }
-.orb::before, .orb::after { content: ""; position: absolute; inset: -14px; border-radius: 50%; border: 1px solid rgba(214, 179, 112, .25); animation: ripple 3.2s ease-out infinite; }
-.orb::after { animation-delay: 1.6s; }
-.orb-core { width: 36%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, .7), transparent 70%); filter: blur(6px); }
-.orb-sm { width: 56px; }
-.orb-sm::before, .orb-sm::after { inset: -6px; }
-[data-state="listening"] .orb { background: radial-gradient(circle at 35% 30%, #e9fffb 0%, #9ff0e4 18%, var(--teal) 45%, #1e5c55 80%, #0e2825 100%); box-shadow: 0 0 calc(40px + var(--level) * 120px) rgba(95, 208, 192, calc(.25 + var(--level) * .5)); }
-[data-state="connecting"] .orb { animation: breathe 1s ease-in-out infinite; }
-@keyframes breathe { 50% { filter: brightness(1.12); } }
-@keyframes ripple { from { transform: scale(.95); opacity: .9; } to { transform: scale(1.35); opacity: 0; } }
-
-/* Profile + ROI */
-.profile-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }
-label { display: grid; gap: 6px; font-size: .82rem; color: var(--muted); font-weight: 500; margin-bottom: 14px; }
-input, select, textarea {
-  font: 1rem var(--sans); color: var(--text);
-  background: rgba(255, 255, 255, .03); border: 1px solid var(--line); border-radius: 10px; padding: .7em .85em;
-  transition: border-color .3s, background .6s;
+.motif { display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.motif .arch { stroke-dasharray: 100; stroke-dashoffset: 0; animation: draw 1.6s var(--ease-in-out) .2s both; }
+.motif .arch-in { stroke: var(--rule); animation-delay: .45s; }
+.motif .bell { transform-box: view-box; transform-origin: 100px 160px; animation: fadeIn var(--t-slow) var(--ease-out) .9s both; }
+.motif .rings path { opacity: 0; transition: opacity .12s linear; }
+.motif .bars rect {
+  fill: currentColor; stroke: none;
+  transform-box: fill-box; transform-origin: center;
+  transform: scaleY(calc(.12 + var(--level) * var(--k, 1) * .88));
+  transition: transform .09s linear;
 }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
-select option { background: var(--bg-2); }
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.flash { border-color: var(--gold) !important; background: rgba(214, 179, 112, .14) !important; }
-.roi-card { display: flex; flex-direction: column; justify-content: center; }
-.roi-stats { display: grid; gap: 18px; margin: 12px 0 18px; }
-.roi-stats b { display: block; font: 600 2.2rem var(--serif); color: var(--gold-2); }
-.roi-stats span { color: var(--muted); font-size: .88rem; }
-
-/* Features */
-.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.feature p { color: var(--muted); margin: 0; }
-.f-ico { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgba(214, 179, 112, .12); color: var(--gold); margin-bottom: 14px; font-size: 1.1rem; }
-.card.spotlight, .card.spotlight.reveal.in { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 20px 60px rgba(214, 179, 112, .18); transform: translateY(-4px); }
-
-/* Pricing */
-.plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
-.plan { position: relative; }
-.plan ul { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 8px; }
-.plan li::before { content: "✓"; color: var(--gold); margin-right: 8px; }
-.price { font: 600 2.4rem var(--serif); margin: 0; }
-.price small { font: 400 .95rem var(--sans); color: var(--muted); }
-.plan-badge { position: absolute; top: -12px; right: 18px; background: var(--gold); color: #1b1408; font-size: .72rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; opacity: 0; transform: translateY(6px); transition: all .3s; }
-.card.plan.recommended, .card.plan.recommended.reveal.in { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 24px 70px rgba(214, 179, 112, .2); transform: translateY(-6px); }
-.plan.recommended .plan-badge { opacity: 1; transform: none; }
-.plan-reason { margin-top: 22px; padding: 14px 18px; border-left: 3px solid var(--gold); background: rgba(214, 179, 112, .07); border-radius: 0 12px 12px 0; }
-
-/* Demo */
-.demo-form { max-width: 760px; }
-.demo-form .btn { margin-top: 6px; }
-
-/* Hero note */
-.hero-note { margin-top: 18px; font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.hero-note a { color: var(--gold-2); }
-.dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 0 rgba(95, 208, 192, .6); animation: live 2s infinite; }
-@keyframes live { 70% { box-shadow: 0 0 0 8px rgba(95, 208, 192, 0); } 100% { box-shadow: 0 0 0 0 rgba(95, 208, 192, 0); } }
-
-/* Demo success (inline, doesn't block the conversation) */
-.demo-success { max-width: 760px; text-align: center; padding: 44px 26px; animation: pop .5s cubic-bezier(.2, .9, .3, 1.2); }
-.success-mark { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1b1408; font-size: 1.6rem; font-weight: 700; margin-bottom: 14px; }
-@keyframes pop { from { opacity: 0; transform: scale(.94) translateY(10px); } }
-
-/* Dock */
-.dock {
-  --ease: cubic-bezier(.22, 1, .36, 1);
-  position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 30;
-  width: min(560px, calc(100% - 32px));
-  background: rgba(20, 25, 34, .92); backdrop-filter: blur(18px) saturate(1.2);
-  border: 1px solid var(--line); border-radius: 28px;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, .5);
-  transition: width .45s var(--ease), border-color .4s;
-}
-.dock[data-state="speaking"] { border-color: rgba(214, 179, 112, .45); }
-.dock[data-state="listening"] { border-color: rgba(95, 208, 192, .4); }
-.dock-bar { display: flex; align-items: center; gap: 12px; padding: 10px 12px; }
-.dock-orb { background: none; border: 0; padding: 0; cursor: pointer; flex: none; border-radius: 50%; }
-.dock-body { flex: 1; min-width: 0; }
-.dock-status { margin: 0; display: flex; align-items: center; gap: 10px; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
-[data-state="listening"] .dock-status { color: var(--teal); }
-.dock-caption { margin: 2px 0 0; font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .25s; }
-.dock-caption.user { color: #bfeee7; }
-.dock-caption.swap { opacity: 0; }
-.dock-actions { display: flex; gap: 6px; }
-
-/* Voice waveform (driven by --level from JS) */
-.wave { display: none; align-items: center; gap: 3px; height: 14px; }
-[data-state="speaking"] .wave, [data-state="listening"] .wave { display: inline-flex; }
-.wave i { width: 3px; border-radius: 2px; background: currentColor; height: calc(3px + var(--level, 0) * 11px * var(--k, 1)); transition: height .09s linear; }
-.wave i:nth-child(1) { --k: .5; } .wave i:nth-child(2) { --k: .85; } .wave i:nth-child(3) { --k: 1; } .wave i:nth-child(4) { --k: .7; } .wave i:nth-child(5) { --k: .4; }
-[data-state="thinking"] .dock-status::after { content: ""; width: 18px; height: 6px; background: radial-gradient(circle, currentColor 2px, transparent 2.5px) 0 0 / 6px 6px repeat-x; animation: dots 1s steps(4) infinite; }
-@keyframes dots { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -10% 0 0); } }
-
-/* Icon buttons */
-.icon-btn { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: rgba(255, 255, 255, .04); color: var(--text); cursor: pointer; transition: background .2s, border-color .2s, transform .15s; }
-.icon-btn:hover { background: rgba(255, 255, 255, .09); }
-.icon-btn:active { transform: scale(.94); }
-.icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.icon-btn .ico-mic-off, .icon-btn[aria-pressed="true"] .ico-mic { display: none; }
-.icon-btn[aria-pressed="true"] .ico-mic-off { display: block; }
-.icon-btn[aria-pressed="true"] { background: #4a2626; border-color: #9a5050; }
-.icon-btn[aria-expanded="true"] { background: rgba(214, 179, 112, .16); border-color: var(--gold); color: var(--gold-2); }
-.icon-end:hover { background: #4a2626; border-color: #9a5050; }
-.icon-sm { width: 32px; height: 32px; }
-.icon-send { width: 38px; height: 38px; background: var(--gold); border-color: var(--gold); color: #1b1408; flex: none; }
-.icon-send:hover { background: var(--gold-2); }
-
-/* Conversation panel */
-.panel { border-bottom: 1px solid var(--line); animation: panelIn .4s var(--ease); }
-@keyframes panelIn { from { opacity: 0; transform: translateY(12px); } }
-.panel-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px 4px 20px; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-.thread { list-style: none; margin: 0; padding: 8px 16px 12px; max-height: min(46vh, 380px); overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; overscroll-behavior: contain; }
-.msg { max-width: 85%; padding: 9px 13px; border-radius: 16px; font-size: .92rem; line-height: 1.45; animation: msgIn .35s var(--ease); }
-@keyframes msgIn { from { opacity: 0; transform: translateY(6px); } }
-.msg.ai { align-self: flex-start; background: rgba(255, 255, 255, .06); border-bottom-left-radius: 5px; }
-.msg.user { align-self: flex-end; background: rgba(95, 208, 192, .16); color: #dff8f4; border-bottom-right-radius: 5px; }
-.msg.activity { align-self: center; max-width: none; background: none; padding: 2px 8px; font-size: .76rem; color: var(--gold); }
-.msg.activity::before { content: "✦ "; }
-.msg.typing { display: inline-flex; gap: 4px; padding: 12px 14px; }
-.msg.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
-.msg.typing i:nth-child(2) { animation-delay: .15s; } .msg.typing i:nth-child(3) { animation-delay: .3s; }
-@keyframes bounce { 30% { transform: translateY(-4px); opacity: 1; } 0%, 60%, 100% { opacity: .45; } }
-.composer { display: flex; gap: 8px; padding: 0 12px 12px; }
-.composer input { flex: 1; border-radius: 999px; padding: .6em 1em; font-size: .92rem; }
-
-/* Follow pill */
-.follow-pill { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 29; display: flex; gap: 8px; align-items: center; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--gold); background: var(--card); color: var(--text); font: 500 .88rem var(--sans); cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); animation: pillIn .35s cubic-bezier(.22, 1, .36, 1); }
-.follow-pill b { color: var(--gold-2); text-transform: capitalize; }
-@keyframes pillIn { from { opacity: 0; transform: translate(-50%, 10px); } }
-
-/* Start sheet */
-.sheet { color: var(--text); background: linear-gradient(180deg, var(--card), var(--bg-2)); border: 1px solid var(--line); border-radius: 24px; padding: 34px 30px 28px; width: min(460px, calc(100% - 32px)); }
-.sheet[open] { animation: sheetIn .4s cubic-bezier(.22, 1, .36, 1); }
-@keyframes sheetIn { from { opacity: 0; transform: translateY(16px) scale(.98); } }
-.sheet::backdrop { background: rgba(5, 7, 10, .65); backdrop-filter: blur(6px); }
-.sheet h3 { font-size: 1.6rem; margin: 16px 0 14px; }
-.sheet-list { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 12px; color: var(--muted); font-size: .94rem; }
-.sheet-list b { color: var(--text); font-weight: 600; }
-.sheet-actions { display: grid; gap: 10px; }
-.sheet-actions .btn { justify-content: center; }
-.sheet-close { position: absolute; top: 14px; right: 14px; background: none; border: 0; color: var(--muted); font-size: 1rem; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; }
-.sheet-close:hover { background: rgba(255, 255, 255, .06); color: var(--text); }
-.orb-xs { width: 52px; animation: none; }
-.orb-xs::before, .orb-xs::after { inset: -5px; }
-
-/* Toast */
-.toast { position: fixed; top: 84px; left: 50%; transform: translate(-50%, -20px); opacity: 0; pointer-events: none; z-index: 40; background: var(--card); border: 1px solid var(--gold); padding: 10px 18px; border-radius: 999px; font-size: .9rem; transition: all .3s; }
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
-.footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 60px 0 0; }
-
-/* Scroll reveal */
-.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1); transition-delay: var(--d, 0s); }
-.reveal.in { opacity: 1; transform: none; }
-
-/* Focus */
-:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
-input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
-::placeholder { color: #6f7685; }
-
-/* Field being filled in by Aria */
-.filling { border-color: var(--gold) !important; box-shadow: 0 0 0 3px rgba(214, 179, 112, .15); }
-
-/* Responsive */
-@media (max-width: 900px) {
-  .stepper span { display: none; }
-  .hero { grid-template-columns: 1fr; text-align: left; min-height: auto; }
-  .hero-orb { order: -1; }
-  .profile-grid, .feature-grid, .plan-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 560px) {
-  .topbar .btn { display: none; }
-  .dock { width: calc(100% - 16px); bottom: calc(8px + env(safe-area-inset-bottom)); border-radius: 22px; }
-  .dock-bar { gap: 10px; padding: 8px 10px; }
-  .icon-btn { width: 40px; height: 40px; }
-  .hero-orb .orb { width: 150px; }
-  .hero { gap: 24px; padding-top: 24px; }
-  .thread { max-height: 42vh; }
-  .row2 { grid-template-columns: 1fr; }
-  .stepper .step { padding: 4px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
-  *, *::before, *::after { animation-duration: .01ms !important; }
-  .orb, .orb::before, .orb::after { animation: none; }
-}
-
-/* Expanded conversation docks to the side on wide screens so the page stays visible */
-@media (min-width: 900px) {
-  .dock.expanded { left: auto; right: 24px; transform: none; width: 400px; }
-}
-.dock[data-mode="text"] .wave { display: none; }
-
-/* Orb colour follows the emotion of what Aria is saying */
-.orb { transition: transform .08s linear, box-shadow .08s linear, filter .8s ease; }
+/* Idle: a slow, quiet breath so the button reads as "live" */
+[data-state="idle"] .motif .bars rect { animation: idleBar 3.2s var(--ease-in-out) infinite; animation-delay: calc(var(--k) * -1.6s); }
+/* Connecting: a stroke chases around the arch */
+[data-state="connecting"] .motif .arch { stroke-dasharray: 14 86; animation: chase 1.3s linear infinite; }
+/* Listening: teal, bars follow the mic */
+[data-state="listening"] .orb { --motif: var(--teal); }
+/* Thinking: bars pulse in sequence */
+[data-state="thinking"] .motif .bars rect { animation: thinkBar 1s var(--ease-in-out) infinite; animation-delay: calc(var(--k) * -.8s); }
+/* Speaking: bell rings once on entry, sound rings follow the voice */
+[data-state="speaking"] .motif .bell { animation: fadeIn var(--t-slow) var(--ease-out) .9s both, ring .9s var(--ease-out) both; }
+[data-state="speaking"] .motif .rings path { opacity: calc(.15 + var(--level) * 1.2); }
+[data-state="speaking"] .motif .rings path:nth-child(n+3) { opacity: calc(var(--level) * 1.4 - .2); }
+/* Tone of what Aria is saying */
 [data-tone="bright"][data-state="speaking"] .orb { filter: saturate(1.35) brightness(1.15); }
 [data-tone="soft"][data-state="speaking"] .orb { filter: saturate(.75) brightness(.88); }
 [data-tone="calm"][data-state="speaking"] .orb { filter: hue-rotate(-12deg) saturate(.9); }
 
+.orb-sm { width: 40px; }
+.orb-sm .motif { stroke-width: 7; }
+.orb-xs { width: 44px; margin-bottom: var(--s-4); }
+.orb-xs .motif { stroke-width: 6; }
+
+/* ---------- Forms (registration-card style) ---------- */
+.form-cap { display: flex; justify-content: space-between; gap: var(--s-4); color: var(--gold); margin: 0 0 var(--s-5); padding-bottom: var(--s-3); border-bottom: 1px solid var(--rule-soft); }
+.form-cap span + span { color: var(--muted); }
+label { display: grid; gap: var(--s-1); font-size: .78rem; font-weight: 500; letter-spacing: .04em; color: var(--muted); margin-bottom: var(--s-5); }
+input, select, textarea {
+  width: 100%; min-height: 44px;
+  font: 400 1rem/1.4 var(--sans); color: var(--text);
+  background: linear-gradient(var(--gold), var(--gold)) no-repeat 0 100% / 0 1px, transparent;
+  border: 0; border-bottom: 1px solid var(--line); border-radius: 0;
+  padding: .5em 0;
+  transition: background-size var(--t-base) var(--ease-out), border-color var(--t-base), background-color var(--t-slow);
+}
+textarea { resize: vertical; min-height: 64px; }
+select {
+  appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 28px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%23d6b370' stroke-width='1.5'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 4px center,
+    linear-gradient(var(--gold), var(--gold)) no-repeat 0 100% / 0 1px, transparent;
+}
+select option { background: var(--bg-2); color: var(--text); }
+input:focus, select:focus, textarea:focus { outline: none; background-size: 100% 1px; }
+select:focus { background-size: auto, 100% 1px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+::placeholder { color: var(--placeholder); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-5); }
+
+/* Aria typing into a field: a moving ink shimmer */
+.filling {
+  border-bottom-color: var(--gold) !important;
+  background-image: linear-gradient(90deg, transparent, var(--gold-wash-2), transparent) !important;
+  background-size: 50% 100% !important; background-repeat: no-repeat !important;
+  animation: shimmer 1.1s linear infinite;
+}
+/* Field just set by Aria: a gold ink bloom that fades */
+.flash { animation: bloom 1.4s var(--ease-out); border-bottom-color: var(--gold) !important; }
+
+/* Profile */
+.profile-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.profile-card, .demo-form {
+  background: var(--card); padding: clamp(24px, 3.5vw, 40px);
+  border-top: 2px solid var(--gold); border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* ROI — a printed folio receipt */
+.roi-card {
+  position: sticky; top: calc(var(--topbar-h) + 24px);
+  background: var(--bg-2); padding: clamp(24px, 3vw, 36px);
+  border: 1px solid var(--rule-soft); border-radius: var(--radius-lg);
+}
+.roi-card::before { /* perforated top edge */
+  content: ""; position: absolute; left: 12px; right: 12px; top: -1px; height: 2px;
+  background: radial-gradient(circle, var(--bg) 1.5px, transparent 2px) 0 0 / 10px 2px repeat-x;
+}
+.roi-card h3 { font-size: 1.45rem; font-weight: 400; margin-bottom: var(--s-5); }
+.roi-stats { display: grid; gap: var(--s-4); margin: 0 0 var(--s-5); }
+.roi-stats div { display: flex; align-items: baseline; gap: var(--s-2); }
+.roi-stats div::before { content: ""; order: 1; flex: 1; min-width: 16px; border-bottom: 1px dotted var(--rule); transform: translateY(-4px); }
+.roi-stats span { order: 0; color: var(--muted); font-size: .9rem; }
+.roi-stats b { order: 2; font: 400 clamp(1.7rem, 3vw, 2.2rem)/1 var(--serif); color: var(--gold-2); font-variant-numeric: tabular-nums; }
+.roi-card.flash { animation: none; }
+.roi-card.flash b { animation: roll var(--t-slow) var(--ease-out); }
+.roi-card.flash::after {
+  content: ""; position: absolute; inset: -1px; border: 1px solid var(--gold); border-radius: var(--radius-lg);
+  pointer-events: none; animation: frameFade 1.4s var(--ease-out) both;
+}
+
+/* ---------- Features: an editorial index ---------- */
+.feature-grid {
+  counter-reset: feat;
+  display: grid; grid-template-columns: 1fr 1fr; column-gap: clamp(24px, 5vw, 72px);
+  border-top: 1px solid var(--rule);
+}
+.feature {
+  counter-increment: feat;
+  display: grid; grid-template-columns: auto 1fr; column-gap: var(--s-5); align-content: start;
+  padding: var(--s-6) var(--s-4) var(--s-6) var(--s-5);
+  border-bottom: 1px solid var(--rule-soft);
+  transition: background-color var(--t-base) var(--ease-out);
+}
+.feature::before {
+  content: counter(feat, decimal-leading-zero);
+  grid-row: span 3; font: italic 400 2.4rem/1 var(--serif); color: var(--gold); opacity: .55;
+  transition: opacity var(--t-base);
+}
+.feature::after { /* gold rule that sweeps down on spotlight */
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--gold);
+  transform: scaleY(0); transform-origin: top; transition: transform var(--t-slow) var(--ease-out);
+}
+.f-ico { width: 26px; height: 26px; color: var(--gold-2); margin-bottom: var(--s-3); }
+.feature h3 { margin-bottom: .4em; transition: color var(--t-base); }
+.feature p { color: var(--muted); margin: 0; max-width: 38em; }
+.feature:hover::before { opacity: 1; }
+.feature.spotlight, .feature.spotlight.reveal.in { background: var(--gold-wash); }
+.feature.spotlight::after { transform: scaleY(1); }
+.feature.spotlight::before { opacity: 1; }
+.feature.spotlight h3 { color: var(--gold-2); }
+.feature.spotlight .f-ico { animation: nudge .6s var(--ease-out); }
+
+/* ---------- Pricing: a hotel rate card ---------- */
+.plan-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.plan {
+  padding: var(--s-7) clamp(20px, 3vw, 36px) var(--s-6);
+  transition: background-color var(--t-base) var(--ease-out);
+}
+.plan + .plan { border-left: 1px solid var(--rule-soft); }
+.plan h3 { font: 600 .78rem/1.2 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: var(--s-5); }
+.price { font: 400 clamp(2.6rem, 4.5vw, 3.4rem)/1 var(--serif); letter-spacing: -.02em; margin: 0 0 var(--s-2); }
+.price small { font: 400 .9rem var(--sans); color: var(--muted); letter-spacing: 0; margin-left: .2em; }
+.plan > .muted { font-size: .92rem; padding-bottom: var(--s-5); border-bottom: 1px solid var(--rule-soft); }
+.plan ul { list-style: none; padding: 0; margin: var(--s-5) 0 0; display: grid; gap: var(--s-3); font-size: .95rem; color: var(--text-soft); }
+.plan li { position: relative; padding-left: 22px; }
+.plan li::before {
+  content: ""; position: absolute; left: 2px; top: .55em; width: 9px; height: 5px;
+  border-left: 1.5px solid var(--gold); border-bottom: 1.5px solid var(--gold); transform: rotate(-45deg);
+}
+.plan::before { /* gold frame that draws around the recommended plan */
+  content: ""; position: absolute; inset: 0; border: 1px solid var(--gold); pointer-events: none;
+  clip-path: inset(0 100% 100% 0); transition: clip-path var(--t-slow) var(--ease-in-out);
+}
+.plan-badge { display: none; }
+.card.plan.recommended, .card.plan.recommended.reveal.in { background: var(--gold-wash); }
+.plan.recommended::before { clip-path: inset(0 0 0 0); }
+.plan.recommended .plan-badge {
+  display: block; position: absolute; top: 0; right: clamp(20px, 3vw, 36px);
+  background: var(--gold); color: var(--ink-on-gold);
+  font: 600 .64rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase;
+  padding: 10px 10px 14px; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  animation: ribbon .6s var(--ease-out) .25s both;
+}
+.plan-reason {
+  margin: var(--s-6) 0 0; max-width: 760px; padding-left: var(--s-5); border-left: 2px solid var(--gold);
+  font: italic 400 1.25rem/1.45 var(--serif); color: var(--text-soft);
+  animation: fadeUp var(--t-slow) var(--ease-out);
+}
+
+/* ---------- Demo ---------- */
+.demo-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.demo-form .btn { margin-top: var(--s-2); }
+.next-steps { padding-top: var(--s-2); }
+.next-steps h3 { font-size: 1.45rem; font-weight: 400; padding-bottom: var(--s-3); border-bottom: 1px solid var(--rule); }
+.next-steps ol { list-style: none; margin: 0; padding: 0; counter-reset: next; }
+.next-steps li {
+  counter-increment: next; position: relative; display: grid; gap: var(--s-1);
+  padding: var(--s-4) 0 var(--s-4) 44px; border-bottom: 1px solid var(--rule-soft);
+}
+.next-steps li::before {
+  content: counter(next, upper-roman); position: absolute; left: 0; top: var(--s-4);
+  font: italic 400 1.2rem/1.2 var(--serif); color: var(--gold);
+}
+.next-steps b { font-weight: 600; }
+.next-steps span { color: var(--muted); font-size: .92rem; }
+
+/* Confirmation slip */
+.demo-success {
+  padding: clamp(28px, 4vw, 44px); background: var(--card);
+  border: 1px dashed var(--rule); border-radius: var(--radius-lg);
+  animation: stamp .6s var(--ease-out);
+}
+.demo-success h3 { font-size: 2rem; font-weight: 400; }
+.success-mark {
+  float: right; display: grid; place-items: center; width: 76px; height: 76px; margin: 0 0 var(--s-4) var(--s-4);
+  border-radius: 50%; color: var(--gold); border: 1px solid var(--gold); outline: 1px solid var(--rule); outline-offset: 4px;
+  animation: seal .9s var(--ease-out) .15s both;
+}
+.success-mark svg { width: 30px; height: 30px; stroke-width: 2; }
+
+/* ---------- FAQ ---------- */
+.faq-list { border-top: 1px solid var(--rule); max-width: 900px; }
+.faq-list details { border-bottom: 1px solid var(--rule-soft); }
+.faq-list summary {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  min-height: 64px; padding: var(--s-4) 0; cursor: pointer; list-style: none;
+}
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary h3 { margin: 0; font-size: clamp(1.1rem, 2vw, 1.35rem); font-weight: 400; transition: color var(--t-fast); }
+.faq-list summary::after { /* plus that turns into a minus */
+  content: ""; flex: none; width: 14px; height: 14px;
+  background: linear-gradient(var(--gold), var(--gold)) center / 100% 1.5px no-repeat,
+              linear-gradient(var(--gold), var(--gold)) center / 1.5px 100% no-repeat;
+  transition: transform var(--t-base) var(--ease-out);
+}
+.faq-list details[open] summary::after { transform: rotate(135deg); }
+.faq-list summary:hover h3 { color: var(--gold-2); }
+.faq-list details p { color: var(--text-soft); max-width: 44em; margin: 0 0 var(--s-5); animation: fadeUp var(--t-base) var(--ease-out); }
+
+/* ---------- Footer (colophon) ---------- */
+.footer {
+  max-width: 1240px; margin: 0 auto; padding: var(--s-7) var(--gutter) 150px;
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); flex-wrap: wrap;
+  border-top: 1px solid var(--rule-soft); color: var(--muted); font-size: .85rem;
+}
+.footer p { margin: 0; }
+.colophon-mark { font: italic 400 1.8rem/1 var(--serif); color: var(--gold-2); }
+
+/* ---------- Dock ---------- */
+.dock {
+  position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 30;
+  width: min(560px, calc(100% - 32px));
+  background: var(--bg-2);
+  border: 1px solid var(--line); border-top-color: var(--rule); border-radius: var(--radius-lg);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .55);
+  animation: dockIn var(--t-slow) var(--ease-out) .8s backwards;
+  transition: width .45s var(--ease-out), border-color .4s;
+}
+.dock[data-state="speaking"] { border-color: var(--rule); border-top-color: var(--gold); }
+.dock[data-state="listening"] { border-color: rgba(95, 208, 192, .35); border-top-color: var(--teal); }
+.dock-bar { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) var(--s-3); }
+.dock-orb {
+  flex: none; display: grid; place-items: center; width: 52px; height: 52px; padding: 0; cursor: pointer;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  transition: border-color var(--t-base);
+}
+.dock-orb:hover { border-color: var(--gold); }
+.dock-body { flex: 1; min-width: 0; }
+.dock-status { margin: 0; display: flex; align-items: center; gap: var(--s-2); color: var(--gold); font-size: .66rem; white-space: nowrap; min-width: 0; }
+.dock-status [data-status] { overflow: hidden; text-overflow: ellipsis; }
+[data-state="listening"] .dock-status { color: var(--teal); }
+.dock-caption { margin: 2px 0 0; font: 400 1rem/1.35 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity var(--t-fast), transform var(--t-fast); }
+.dock-caption.user { color: var(--caption-user); font-family: var(--sans); font-size: .92rem; }
+.dock-caption.swap { opacity: 0; transform: translateY(4px); }
+.dock-actions { display: flex; gap: var(--s-1); }
+
+/* Small level meter next to the status (driven by --level from JS) */
+.wave { display: none; align-items: center; gap: 2px; height: 12px; }
+[data-state="speaking"] .wave, [data-state="listening"] .wave { display: inline-flex; }
+.wave i { width: 2px; height: 12px; background: currentColor; transform-origin: center; transform: scaleY(calc(.2 + var(--level, 0) * var(--k, 1) * .8)); transition: transform .09s linear; }
+.wave i:nth-child(1) { --k: .5; } .wave i:nth-child(2) { --k: .85; } .wave i:nth-child(3) { --k: 1; } .wave i:nth-child(4) { --k: .7; } .wave i:nth-child(5) { --k: .4; }
+.dock[data-mode="text"] .wave { display: none; }
+[data-state="thinking"] .dock-status::after {
+  content: ""; width: 18px; height: 4px;
+  background: radial-gradient(circle, currentColor 1.5px, transparent 2px) 0 0 / 6px 4px repeat-x;
+  animation: dots 1s steps(4) infinite;
+}
+
+/* Icon buttons */
+.icon-btn {
+  width: 44px; height: 44px; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--line); border-radius: var(--radius-lg); background: transparent; color: var(--text);
+  transition: background-color var(--t-fast), border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+.icon-btn:hover { border-color: var(--gold); color: var(--gold-2); }
+.icon-btn:active { transform: translateY(1px); }
+.icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.icon-btn .ico-mic-off, .icon-btn[aria-pressed="true"] .ico-mic { display: none; }
+.icon-btn[aria-pressed="true"] .ico-mic-off { display: block; }
+.icon-btn[aria-pressed="true"] { background: var(--danger-bg); border-color: var(--danger); color: var(--text); }
+.icon-btn[aria-expanded="true"] { background: var(--gold-wash-2); border-color: var(--gold); color: var(--gold-2); }
+.icon-end:hover { background: var(--danger-bg); border-color: var(--danger); color: var(--text); }
+.icon-sm { width: 36px; height: 36px; }
+.icon-send { background: var(--gold); border-color: var(--gold); color: var(--ink-on-gold); flex: none; }
+.icon-send:hover { background: var(--gold-2); color: var(--ink-on-gold); }
+
+/* Conversation panel — unfolds like a folded note */
+.panel { border-bottom: 1px solid var(--rule-soft); animation: unfold .5s var(--ease-out); }
+.panel-head { display: flex; justify-content: space-between; align-items: center; padding: var(--s-3) var(--s-3) var(--s-1) var(--s-5); color: var(--muted); font-size: .66rem; }
+.thread { list-style: none; margin: 0; padding: var(--s-2) var(--s-5) var(--s-3); max-height: min(46vh, 380px); overflow-y: auto; display: flex; flex-direction: column; gap: var(--s-3); scroll-behavior: smooth; overscroll-behavior: contain; }
+.msg { max-width: 88%; font-size: .95rem; line-height: 1.5; animation: msgIn var(--t-base) var(--ease-out); }
+.msg.ai { align-self: flex-start; font: 400 1.02rem/1.5 var(--serif); color: var(--text); padding-left: var(--s-3); border-left: 1px solid var(--rule); }
+.msg.user { align-self: flex-end; text-align: right; color: var(--msg-user); padding-right: var(--s-3); border-right: 1px solid var(--teal); }
+.msg.activity { align-self: stretch; max-width: none; display: flex; align-items: center; gap: var(--s-2); font: 600 .66rem/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.msg.activity::before { content: ""; width: 7px; height: 7px; flex: none; border: 1px solid var(--gold); transform: rotate(45deg); }
+.msg.activity::after { content: ""; flex: 1; height: 1px; background: var(--rule-soft); }
+.msg.typing { display: inline-flex; gap: 5px; padding: var(--s-2) 0 var(--s-2) var(--s-3); }
+.msg.typing i { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); animation: ink 1.2s var(--ease-in-out) infinite; }
+.msg.typing i:nth-child(2) { animation-delay: .15s; } .msg.typing i:nth-child(3) { animation-delay: .3s; }
+.composer { display: flex; gap: var(--s-2); align-items: center; padding: 0 var(--s-3) var(--s-3) var(--s-5); }
+.composer input { flex: 1; font-size: .95rem; }
+
+/* Follow pill */
+.follow-pill {
+  position: fixed; left: 50%; bottom: calc(104px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 29;
+  display: flex; gap: var(--s-2); align-items: center; min-height: 44px; padding: 0 var(--s-4);
+  border: 1px solid var(--gold); border-radius: var(--radius-lg); background: var(--bg-2); color: var(--text);
+  font: 500 .9rem var(--sans); cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  animation: pillIn var(--t-base) var(--ease-out);
+}
+.follow-pill b { color: var(--gold-2); text-transform: capitalize; font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 1.02rem; }
+.follow-pill svg { width: 16px; height: 16px; color: var(--gold); animation: bob 1.4s var(--ease-in-out) infinite; }
+
+/* Start sheet */
+.sheet {
+  color: var(--text); background: var(--bg-2);
+  border: 1px solid var(--line); border-top: 2px solid var(--gold); border-radius: var(--radius-lg);
+  padding: var(--s-7) var(--s-6) var(--s-6); width: min(480px, calc(100% - 32px));
+}
+.sheet[open] { animation: sheetIn .5s var(--ease-out); }
+.sheet::backdrop { background: var(--scrim); animation: fadeIn var(--t-base) ease both; }
+.sheet .form-cap { margin-bottom: var(--s-2); border: 0; padding: 0; }
+.sheet h2 { font-size: 2rem; margin: 0 0 var(--s-5); }
+.sheet-list { list-style: none; padding: 0; margin: 0 0 var(--s-6); display: grid; gap: var(--s-3); color: var(--muted); font-size: .95rem; }
+.sheet-list li { padding-left: var(--s-4); border-left: 1px solid var(--rule); }
+.sheet-list b { color: var(--text); font-weight: 600; }
+.sheet-actions { display: grid; gap: var(--s-3); }
+.sheet-close { position: absolute; top: var(--s-3); right: var(--s-3); display: grid; place-items: center; width: 44px; height: 44px; background: none; border: 0; color: var(--muted); cursor: pointer; border-radius: var(--radius-lg); transition: color var(--t-fast), transform var(--t-base) var(--ease-out); }
+.sheet-close svg { width: 18px; height: 18px; }
+.sheet-close:hover { color: var(--gold-2); transform: rotate(90deg); }
+
+/* Toast */
+.toast {
+  position: fixed; top: calc(var(--topbar-h) + 12px); left: 50%; transform: translate(-50%, -16px); opacity: 0; pointer-events: none; z-index: 40;
+  background: var(--bg-2); border: 1px solid var(--line); border-left: 2px solid var(--gold); border-radius: var(--radius-lg);
+  padding: var(--s-3) var(--s-4); font-size: .92rem;
+  transition: opacity var(--t-base) var(--ease-out), transform var(--t-base) var(--ease-out);
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Scroll reveal (classes applied by app.js) ---------- */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out), background-color var(--t-base); transition-delay: var(--d, 0s); }
+.reveal.in { opacity: 1; transform: none; }
+/* Chapter heads animate their parts instead of moving as one block */
+.section-head.reveal { opacity: 1; transform: none; }
+.section-head.reveal .num { clip-path: inset(0 100% 0 0); transition: clip-path .9s var(--ease-in-out); }
+.section-head.reveal .kicker span:last-child,
+.section-head.reveal h2,
+.section-head.reveal .muted { opacity: 0; transform: translateY(16px); transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out); }
+.section-head.reveal h2 { transition-delay: .15s; }
+.section-head.reveal .muted { transition-delay: .25s; }
+.section-head.reveal::after { transform: scaleX(0); transition: transform 1s var(--ease-in-out) .3s; }
+.section-head.reveal.in .num { clip-path: inset(0 0 0 0); }
+.section-head.reveal.in .kicker span:last-child,
+.section-head.reveal.in h2,
+.section-head.reveal.in .muted { opacity: 1; transform: none; }
+.section-head.reveal.in::after { transform: scaleX(1); }
+
+/* Focus */
+:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+
+/* ---------- Keyframes ---------- */
+@keyframes rise { from { transform: translateY(105%); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } }
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes drawX { from { transform: scaleX(0); } }
+@keyframes draw { from { stroke-dashoffset: 100; } }
+@keyframes chase { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+@keyframes idleBar { 0%, 100% { transform: scaleY(.12); } 50% { transform: scaleY(calc(.12 + var(--k) * .28)); } }
+@keyframes thinkBar { 0%, 100% { transform: scaleY(.12); } 40% { transform: scaleY(.5); } }
+@keyframes ring { 0% { transform: rotate(0); } 20% { transform: rotate(-6deg); } 40% { transform: rotate(5deg); } 60% { transform: rotate(-3deg); } 80% { transform: rotate(1.5deg); } 100% { transform: rotate(0); } }
+@keyframes blink { 50% { opacity: .35; } }
+@keyframes shimmer { from { background-position: -100% 0; } to { background-position: 200% 0; } }
+@keyframes bloom { 0% { background-color: var(--gold-wash-2); } 100% { background-color: transparent; } }
+@keyframes roll { from { clip-path: inset(0 0 100% 0); transform: translateY(40%); } to { clip-path: inset(0); transform: none; } }
+@keyframes frameFade { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes nudge { 40% { transform: translateY(-3px); } }
+@keyframes ribbon { from { transform: translateY(-100%); } }
+@keyframes stamp { 0% { opacity: 0; transform: scale(1.04); } 60% { opacity: 1; transform: scale(.99); } 100% { transform: none; } }
+@keyframes seal { from { opacity: 0; transform: scale(1.4) rotate(-40deg); } }
+@keyframes dockIn { from { opacity: 0; transform: translate(-50%, 24px); } }
+@keyframes unfold { from { clip-path: inset(100% 0 0 0); opacity: .4; } to { clip-path: inset(0); opacity: 1; } }
+@keyframes msgIn { from { opacity: 0; transform: translateY(8px); } }
+@keyframes ink { 0%, 60%, 100% { opacity: .3; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+@keyframes dots { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -10% 0 0); } }
+@keyframes pillIn { from { opacity: 0; transform: translate(-50%, 12px); } }
+@keyframes bob { 50% { transform: translateY(3px); } }
+@keyframes sheetIn { from { opacity: 0; transform: translateY(24px); } }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1080px) {
+  .logo-sub { display: none; }
+  .stepper span { display: none; }
+  .step { padding: 0 var(--s-2); }
+  .step::after { left: var(--s-2); right: var(--s-2); }
+  .step i { font-size: 1.1rem; }
+}
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; grid-template-areas: "motif" "copy" "log"; min-height: auto; row-gap: var(--s-6); }
+  .hero-orb .orb { width: 170px; }
+  .call-log { grid-template-columns: 1fr 1fr; }
+  .call-log li:nth-child(3) { padding-left: 0; border-left: 0; }
+  .call-log li:nth-child(n+3) { border-top: 1px solid var(--rule-soft); }
+  .profile-grid, .demo-grid, .feature-grid, .plan-grid { grid-template-columns: 1fr; }
+  .roi-card { position: relative; top: 0; }
+  .plan + .plan { border-left: 0; border-top: 1px solid var(--rule-soft); }
+}
+@media (max-width: 560px) {
+  :root { --topbar-h: 60px; }
+  .topbar .btn { display: none; }
+  .stepper { gap: 0; }
+  .dock { width: calc(100% - 16px); bottom: calc(8px + env(safe-area-inset-bottom)); }
+  .dock-bar { gap: var(--s-2); padding: var(--s-2); }
+  .dock-orb { width: 48px; height: 48px; }
+  .hero-orb .orb { width: 96px; }
+  .hero-orb { gap: var(--s-2); }
+  .hero { padding-top: var(--s-5); row-gap: var(--s-5); }
+  .folio { margin-bottom: var(--s-4); }
+  .hero-actions .btn { flex: 1 1 100%; }
+  .thread { max-height: 42vh; }
+  .row2 { grid-template-columns: 1fr; gap: 0; }
+  .feature { padding-left: var(--s-4); }
+  .footer { padding-bottom: 130px; }
+}
+/* Expanded conversation docks to the side on wide screens so the page stays visible */
+@media (min-width: 900px) {
+  .dock.expanded { left: auto; right: 24px; transform: none; width: 400px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
+  .reveal, .section-head.reveal .kicker span:last-child, .section-head.reveal h2, .section-head.reveal .muted { opacity: 1; transform: none; }
+  .section-head.reveal .num { clip-path: none; }
+  .section-head.reveal::after { transform: none; }
+}
 </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://mohdarhamasif.github.io/aria-hotel-website/#org",
+        "name": "Aria Hospitality AI",
+        "url": "https://mohdarhamasif.github.io/aria-hotel-website/",
+        "logo": "https://mohdarhamasif.github.io/aria-hotel-website/apple-touch-icon.png"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://mohdarhamasif.github.io/aria-hotel-website/#website",
+        "url": "https://mohdarhamasif.github.io/aria-hotel-website/",
+        "name": "Aria — AI Receptionist for Hotels",
+        "inLanguage": "en",
+        "publisher": { "@id": "https://mohdarhamasif.github.io/aria-hotel-website/#org" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://mohdarhamasif.github.io/aria-hotel-website/#app",
+        "name": "Aria",
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": "AI receptionist for hotels",
+        "operatingSystem": "Web, telephone",
+        "description": "Voice AI receptionist for hotels that answers calls 24/7, books rooms directly into the PMS, handles guest requests in 30+ languages and warm-transfers to staff.",
+        "url": "https://mohdarhamasif.github.io/aria-hotel-website/",
+        "publisher": { "@id": "https://mohdarhamasif.github.io/aria-hotel-website/#org" },
+        "featureList": ["24/7 call answering", "Direct bookings via PMS", "30+ languages", "Guest requests", "Smart upsells", "PMS integrations: Opera, Mews, Cloudbeds, Apaleo"],
+        "offers": [
+          { "@type": "Offer", "name": "Starter", "price": "299", "priceCurrency": "USD", "description": "Up to 40 rooms, 500 calls per month", "url": "https://mohdarhamasif.github.io/aria-hotel-website/#pricing" },
+          { "@type": "Offer", "name": "Professional", "price": "799", "priceCurrency": "USD", "description": "Up to 150 rooms, 2,500 calls per month", "url": "https://mohdarhamasif.github.io/aria-hotel-website/#pricing" }
+        ]
+      },
+      {
+        "@type": "Service",
+        "@id": "https://mohdarhamasif.github.io/aria-hotel-website/#service",
+        "serviceType": "AI hotel receptionist",
+        "name": "Aria AI front desk",
+        "provider": { "@id": "https://mohdarhamasif.github.io/aria-hotel-website/#org" },
+        "audience": { "@type": "BusinessAudience", "audienceType": "Hotels, resorts, B&Bs and serviced apartments" },
+        "areaServed": "Worldwide",
+        "availableChannel": { "@type": "ServiceChannel", "serviceUrl": "https://mohdarhamasif.github.io/aria-hotel-website/#demo" }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
-  <!-- Top bar with guided steps -->
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Line icon set (one family, 1.5px stroke) -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l1.6 4.2-2.2 1.4a11 11 0 0 0 6.5 6.5l1.4-2.2L20 15.5V19a1.5 1.5 0 0 1-1.6 1.5A16 16 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4z"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2.5 2.5M14 9l2 2"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.5 5.2 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.2-3.5-8.5S9.6 5.9 12 3.5z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M4.5 17a7.5 7.5 0 0 1 15 0M3 17h18M3 20h18M12 9.5V7.5M10.5 7.5h3"/></symbol>
+    <symbol id="i-upgrade" viewBox="0 0 24 24"><path d="M4 20h16M12 16V4M7 9l5-5 5 5"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  </svg>
+
+  <!-- Masthead with guided steps -->
   <header class="topbar">
-    <a class="logo" href="#welcome" data-nav="welcome"><span class="logo-mark">A</span>Aria</a>
+    <a class="logo" href="#welcome" data-nav="welcome" aria-label="Aria, back to the top">
+      <span class="logo-word">Aria</span><span class="logo-sub">The AI front desk</span>
+    </a>
     <nav class="stepper" aria-label="Guided steps">
-      <a href="#welcome" data-nav="welcome" class="step"><i>1</i><span>Welcome</span></a>
-      <a href="#profile" data-nav="profile" class="step"><i>2</i><span>Your hotel</span></a>
-      <a href="#features" data-nav="features" class="step"><i>3</i><span>Features</span></a>
-      <a href="#pricing" data-nav="pricing" class="step"><i>4</i><span>Plans</span></a>
-      <a href="#demo" data-nav="demo" class="step"><i>5</i><span>Book demo</span></a>
+      <a href="#welcome" data-nav="welcome" class="step"><i>01</i><span>Welcome</span></a>
+      <a href="#profile" data-nav="profile" class="step"><i>02</i><span>Your hotel</span></a>
+      <a href="#features" data-nav="features" class="step"><i>03</i><span>Features</span></a>
+      <a href="#pricing" data-nav="pricing" class="step"><i>04</i><span>Plans</span></a>
+      <a href="#demo" data-nav="demo" class="step"><i>05</i><span>Book demo</span></a>
     </nav>
     <button class="btn btn-gold btn-sm js-talk">Talk to Aria</button>
   </header>
 
-  <main>
+  <main id="main">
     <!-- 1. Welcome -->
-    <section id="welcome" class="section hero">
+    <section id="welcome" class="section hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow">AI front desk for hotels</p>
-        <h1>Every call answered.<br /><em>Every guest welcomed.</em></h1>
-        <p class="lede">Aria is a voice AI receptionist that picks up 24/7, books rooms, answers guest questions in 30+ languages and hands off to your team when it matters.</p>
+        <p class="folio"><span class="folio-no">No. 01</span><span>The AI front desk for hotels</span></p>
+        <h1 id="hero-title">
+          <span class="line"><span>Every call answered.</span></span>
+          <span class="line"><span><em>Every guest welcomed.</em></span></span>
+        </h1>
+        <p class="lede">Aria is a voice AI receptionist for hotels. It picks up 24/7, books rooms, answers guest questions in 30+ languages and hands off to your team when it matters.</p>
         <p class="lede small">This website talks. Say hello, and Aria will walk you through everything — just answer out loud.</p>
         <div class="hero-actions">
           <button class="btn btn-gold btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Start talking</button>
@@ -331,21 +829,53 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         </div>
         <p class="hero-note"><span class="dot-live" aria-hidden="true"></span>About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
       </div>
-      <button class="hero-orb js-talk" aria-label="Start voice conversation">
-        <span class="orb" data-orb><span class="orb-core"></span></span>
+
+      <button class="hero-orb js-talk" aria-describedby="hero-title">
+        <span class="orb" data-orb>
+          <svg class="motif" viewBox="0 0 200 240" aria-hidden="true" focusable="false">
+            <path class="arch" pathLength="100" d="M16 236V100a84 84 0 0 1 168 0v136" />
+            <path class="arch arch-in" pathLength="100" d="M28 236V102a72 72 0 0 1 144 0v134" />
+            <g class="rings">
+              <path d="M62 86a44 44 0 0 1 12-16" /><path d="M138 86a44 44 0 0 0-12-16" />
+              <path d="M50 80a58 58 0 0 1 16-22" /><path d="M150 80a58 58 0 0 0-16-22" />
+            </g>
+            <g class="bell">
+              <circle cx="100" cy="96" r="5" />
+              <path d="M100 101v6M56 150a44 44 0 0 1 88 0M48 150h104M40 160h120" />
+            </g>
+            <g class="bars">
+              <rect x="55" y="182" width="4" height="36" rx="2" style="--k:.45" />
+              <rect x="67" y="182" width="4" height="36" rx="2" style="--k:.7" />
+              <rect x="79" y="182" width="4" height="36" rx="2" style="--k:.9" />
+              <rect x="91" y="182" width="4" height="36" rx="2" style="--k:1" />
+              <rect x="103" y="182" width="4" height="36" rx="2" style="--k:.95" />
+              <rect x="115" y="182" width="4" height="36" rx="2" style="--k:.8" />
+              <rect x="127" y="182" width="4" height="36" rx="2" style="--k:.6" />
+              <rect x="139" y="182" width="4" height="36" rx="2" style="--k:.4" />
+            </g>
+          </svg>
+        </span>
         <span class="hero-orb-label" data-orb-label>Tap to talk</span>
       </button>
+
+      <ol class="call-log" aria-label="Examples of calls Aria handles">
+        <li><time>02:14</time><span>Late check-in, room 312</span><b>Handled</b></li>
+        <li><time>06:40</time><span>Airport taxi for two</span><b>Booked</b></li>
+        <li><time>11:05</time><span>Suite for the weekend · Español</span><b>Reserved</b></li>
+        <li><time>19:32</time><span>Spa package upgrade</span><b>Upsold</b></li>
+      </ol>
     </section>
 
     <!-- 2. Your hotel -->
-    <section id="profile" class="section">
+    <section id="profile" class="section" aria-labelledby="profile-title">
       <div class="section-head">
-        <p class="eyebrow">Step 2</p>
-        <h2>Tell Aria about your hotel</h2>
+        <p class="kicker"><span class="num" aria-hidden="true">02</span><span>Your hotel</span></p>
+        <h2 id="profile-title">Tell Aria about your hotel</h2>
         <p class="muted">Aria fills this in as you talk. You can also type — she'll see your changes.</p>
       </div>
       <div class="profile-grid">
         <form class="card profile-card" id="profileForm" autocomplete="off">
+          <p class="form-cap"><span>Registration card</span><span>Property details</span></p>
           <label>Hotel name<input name="hotel_name" placeholder="e.g. The Harbour House" /></label>
           <label>Type of property
             <select name="hotel_type">
@@ -367,12 +897,12 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         </form>
 
         <div class="card roi-card" id="roi">
-          <p class="eyebrow">Your estimate</p>
+          <p class="form-cap"><span>Your estimate</span><span>Per month</span></p>
           <h3 data-roi-title>What Aria could recover each month</h3>
           <div class="roi-stats">
-            <div><b data-roi="recovered">—</b><span>calls recovered</span></div>
-            <div><b data-roi="revenue">—</b><span>extra booking revenue</span></div>
-            <div><b data-roi="hours">—</b><span>staff hours freed</span></div>
+            <div><span>Calls recovered</span><b data-roi="recovered">—</b></div>
+            <div><span>Extra booking revenue</span><b data-roi="revenue">—</b></div>
+            <div><span>Staff hours freed</span><b data-roi="hours">—</b></div>
           </div>
           <p class="muted tiny" data-roi-note>Add rooms or monthly calls to see your numbers.</p>
         </div>
@@ -380,44 +910,46 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     </section>
 
     <!-- 3. Features -->
-    <section id="features" class="section">
+    <section id="features" class="section" aria-labelledby="features-title">
       <div class="section-head">
-        <p class="eyebrow">Step 3</p>
-        <h2>What Aria does at your front desk</h2>
+        <p class="kicker"><span class="num" aria-hidden="true">03</span><span>Features</span></p>
+        <h2 id="features-title">What Aria does at your front desk</h2>
+        <p class="muted">Six things your night porter, reservations team and concierge will stop worrying about.</p>
       </div>
       <div class="feature-grid">
         <article class="card feature" data-feature="answering">
-          <span class="f-ico">☎</span><h3>24/7 call answering</h3>
+          <svg class="f-ico" aria-hidden="true"><use href="#i-phone" /></svg><h3>24/7 call answering</h3>
           <p>Picks up on the first ring, day or night, holidays included. No hold music, no voicemail.</p>
         </article>
         <article class="card feature" data-feature="bookings">
-          <span class="f-ico">▣</span><h3>Direct bookings</h3>
+          <svg class="f-ico" aria-hidden="true"><use href="#i-key" /></svg><h3>Direct bookings</h3>
           <p>Checks live availability, quotes rates and books rooms straight into your PMS — no OTA commission.</p>
         </article>
         <article class="card feature" data-feature="multilingual">
-          <span class="f-ico">✦</span><h3>30+ languages</h3>
+          <svg class="f-ico" aria-hidden="true"><use href="#i-globe" /></svg><h3>30+ languages</h3>
           <p>Detects the caller's language and switches instantly, with natural, warm voices.</p>
         </article>
         <article class="card feature" data-feature="guest_requests">
-          <span class="f-ico">✓</span><h3>Guest requests</h3>
+          <svg class="f-ico" aria-hidden="true"><use href="#i-bell" /></svg><h3>Guest requests</h3>
           <p>Late checkout, extra towels, taxis, restaurant hours — handled and routed to the right team.</p>
         </article>
         <article class="card feature" data-feature="upsells">
-          <span class="f-ico">↑</span><h3>Smart upsells</h3>
+          <svg class="f-ico" aria-hidden="true"><use href="#i-upgrade" /></svg><h3>Smart upsells</h3>
           <p>Offers room upgrades, breakfast and spa packages at the right moment in the conversation.</p>
         </article>
         <article class="card feature" data-feature="integrations">
-          <span class="f-ico">⇄</span><h3>PMS &amp; tool integrations</h3>
+          <svg class="f-ico" aria-hidden="true"><use href="#i-link" /></svg><h3>PMS &amp; tool integrations</h3>
           <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
         </article>
       </div>
     </section>
 
     <!-- 4. Pricing -->
-    <section id="pricing" class="section">
+    <section id="pricing" class="section" aria-labelledby="pricing-title">
       <div class="section-head">
-        <p class="eyebrow">Step 4</p>
-        <h2>Plans that fit your property</h2>
+        <p class="kicker"><span class="num" aria-hidden="true">04</span><span>Rate card</span></p>
+        <h2 id="pricing-title">Plans that fit your property</h2>
+        <p class="muted">Monthly rates, no setup fee. Aria can recommend one as you talk.</p>
       </div>
       <div class="plan-grid">
         <article class="card plan" data-plan="starter">
@@ -446,44 +978,93 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     </section>
 
     <!-- 5. Book a demo -->
-    <section id="demo" class="section">
+    <section id="demo" class="section" aria-labelledby="demo-title">
       <div class="section-head">
-        <p class="eyebrow">Step 5</p>
-        <h2>Book your live demo</h2>
+        <p class="kicker"><span class="num" aria-hidden="true">05</span><span>Book demo</span></p>
+        <h2 id="demo-title">Book your live demo</h2>
         <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
       </div>
-      <form class="card demo-form" id="demoForm">
-        <div class="row2">
-          <label>Your name<input name="name" required /></label>
-          <label>Hotel<input name="hotel_name" required /></label>
+      <div class="demo-grid">
+        <div class="demo-main">
+          <form class="card demo-form" id="demoForm">
+            <p class="form-cap"><span>Reservation request</span><span>Live demo</span></p>
+            <div class="row2">
+              <label>Your name<input name="name" required /></label>
+              <label>Hotel<input name="hotel_name" required /></label>
+            </div>
+            <div class="row2">
+              <label>Email<input name="email" type="email" required /></label>
+              <label>Phone<input name="phone" type="tel" /></label>
+            </div>
+            <div class="row2">
+              <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
+              <label>Plan of interest
+                <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
+              </label>
+            </div>
+            <label>Notes<textarea name="notes" rows="2"></textarea></label>
+            <button class="btn btn-gold btn-lg" type="submit">Request my demo<svg class="btn-arrow" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+          </form>
+          <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
+            <span class="success-mark" aria-hidden="true"><svg><use href="#i-check" /></svg></span>
+            <p class="form-cap"><span>Confirmation</span><span>Live demo</span></p>
+            <h3>You're booked in</h3>
+            <p data-confirm-text>Our team will be in touch shortly.</p>
+          </div>
         </div>
-        <div class="row2">
-          <label>Email<input name="email" type="email" required /></label>
-          <label>Phone<input name="phone" type="tel" /></label>
-        </div>
-        <div class="row2">
-          <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
-          <label>Plan of interest
-            <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
-          </label>
-        </div>
-        <label>Notes<textarea name="notes" rows="2"></textarea></label>
-        <button class="btn btn-gold btn-lg" type="submit">Request my demo</button>
-      </form>
-      <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
-        <span class="success-mark" aria-hidden="true">✓</span>
-        <h3>You're booked in</h3>
-        <p data-confirm-text>Our team will be in touch shortly.</p>
+        <aside class="card next-steps" aria-labelledby="next-title">
+          <h3 id="next-title">What happens next</h3>
+          <ol>
+            <li><b>We confirm your slot</b><span>A real person replies within one business day.</span></li>
+            <li><b>A 30-minute live call</b><span>Hear Aria answer as your hotel, with your rooms and rates.</span></li>
+            <li><b>Go live in days</b><span>Connect your PMS and phone line. No hardware needed.</span></li>
+          </ol>
+        </aside>
       </div>
     </section>
 
-    <footer class="footer">
-      <p>© <span data-year></span> Aria Hospitality AI · Voice powered by ElevenLabs</p>
-    </footer>
+    <!-- Questions (not part of the guided steps) -->
+    <section id="faq" class="section faq" aria-labelledby="faq-title">
+      <div class="section-head">
+        <p class="kicker"><span class="num" aria-hidden="true">?</span><span>Questions</span></p>
+        <h2 id="faq-title">Questions hoteliers ask about an AI receptionist</h2>
+      </div>
+      <div class="faq-list">
+        <details class="card">
+          <summary><h3>What is an AI receptionist for hotels?</h3></summary>
+          <p>An AI receptionist is a voice assistant that answers your hotel's phone line like a trained front-desk agent. Aria picks up every call, answers questions about rooms, rates and facilities, takes bookings and guest requests, and passes the call to your staff when a person is needed.</p>
+        </details>
+        <details class="card">
+          <summary><h3>Which languages does Aria speak?</h3></summary>
+          <p>Aria speaks 30+ languages on the Professional and Enterprise plans, and 5 on Starter. It detects the caller's language from the first sentence and switches automatically, with natural, warm voices.</p>
+        </details>
+        <details class="card">
+          <summary><h3>Does Aria work with my property management system?</h3></summary>
+          <p>Yes. Aria works with Opera, Mews, Cloudbeds, Apaleo and other common PMS and booking tools, so it can check live availability, quote rates and book rooms directly — without OTA commission.</p>
+        </details>
+        <details class="card">
+          <summary><h3>What happens when a guest needs a real person?</h3></summary>
+          <p>Aria warm-transfers the call to the right member of your team with a short summary, or takes a message and routes it when nobody is available — for example at night.</p>
+        </details>
+        <details class="card">
+          <summary><h3>How long does setup take?</h3></summary>
+          <p>Most hotels go live within days. You connect your PMS and forward your phone line; no hardware is needed. We tune Aria's answers to your property before launch.</p>
+        </details>
+        <details class="card">
+          <summary><h3>How much does Aria cost?</h3></summary>
+          <p>Starter is $299 per month for up to 40 rooms, Professional is $799 per month for up to 150 rooms, and Enterprise is custom-priced for groups and properties with 150+ rooms.</p>
+        </details>
+      </div>
+    </section>
   </main>
 
+  <footer class="footer">
+    <p class="colophon-mark">Aria</p>
+    <p>© <span data-year></span> Aria Hospitality AI · Voice powered by ElevenLabs</p>
+  </footer>
+
   <!-- "Aria moved the page" pill (shown instead of yanking the scroll while the visitor is reading) -->
-  <button class="follow-pill" id="followPill" hidden>Aria is showing <b></b><span aria-hidden="true">↓</span></button>
+  <button class="follow-pill" id="followPill" hidden>Aria is showing <b></b><svg aria-hidden="true"><use href="#i-down" /></svg></button>
 
   <!-- Conversation dock -->
   <aside class="dock" id="dock" data-state="idle" aria-label="Conversation with Aria">
@@ -504,7 +1085,21 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     </div>
     <div class="dock-bar">
       <button class="dock-orb js-talk" aria-label="Start or end conversation">
-        <span class="orb orb-sm" data-orb><span class="orb-core"></span></span>
+        <span class="orb orb-sm" data-orb>
+          <svg class="motif" viewBox="0 0 200 240" aria-hidden="true" focusable="false">
+            <path class="arch" pathLength="100" d="M16 236V100a84 84 0 0 1 168 0v136" />
+            <g class="bell">
+              <circle cx="100" cy="96" r="7" />
+              <path d="M100 103v6M56 150a44 44 0 0 1 88 0M44 152h112M36 164h128" />
+            </g>
+            <g class="bars">
+              <rect x="64" y="184" width="10" height="34" rx="5" style="--k:.55" />
+              <rect x="82" y="184" width="10" height="34" rx="5" style="--k:.9" />
+              <rect x="100" y="184" width="10" height="34" rx="5" style="--k:1" />
+              <rect x="118" y="184" width="10" height="34" rx="5" style="--k:.6" />
+            </g>
+          </svg>
+        </span>
       </button>
       <div class="dock-body">
         <p class="dock-status"><span data-status>Aria is ready to talk</span><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></p>
@@ -526,10 +1121,19 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   </aside>
 
   <!-- Start sheet: sets expectations before the mic prompt -->
-  <dialog id="startSheet" class="sheet">
+  <dialog id="startSheet" class="sheet" aria-labelledby="sheet-title">
     <form method="dialog">
-      <span class="orb orb-xs" aria-hidden="true"><span class="orb-core"></span></span>
-      <h3>Say hello to Aria</h3>
+      <span class="orb orb-xs" aria-hidden="true">
+        <svg class="motif" viewBox="0 0 200 240" focusable="false">
+          <path class="arch" pathLength="100" d="M16 236V100a84 84 0 0 1 168 0v136" />
+          <g class="bell">
+            <circle cx="100" cy="96" r="7" />
+            <path d="M100 103v6M56 150a44 44 0 0 1 88 0M44 152h112M36 164h128" />
+          </g>
+        </svg>
+      </span>
+      <p class="form-cap"><span>Before we begin</span></p>
+      <h2 id="sheet-title">Say hello to Aria</h2>
       <ul class="sheet-list">
         <li><b>A quick chat, about 3 minutes.</b> She'll ask about your hotel and walk you through the site as you talk.</li>
         <li><b>Uses your microphone.</b> Your browser will ask for permission. You can mute or switch to typing any time.</li>
@@ -539,7 +1143,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         <button class="btn btn-gold btn-lg" value="voice" autofocus><span class="mic-ico" aria-hidden="true"></span>Start with voice</button>
         <button class="btn btn-ghost btn-lg" value="text">Type instead</button>
       </div>
-      <button class="sheet-close" value="cancel" aria-label="Close">✕</button>
+      <button class="sheet-close" value="cancel" aria-label="Close"><svg aria-hidden="true"><use href="#i-close" /></svg></button>
     </form>
   </dialog>
 
@@ -564,7 +1168,6 @@ window.SITE_CONFIG = {
     minutesPerCall: 4,        // staff minutes per call handled by the AI
   },
 };
-
 </script>
   <script type="module">
 // Aria — voice-guided website powered by the ElevenLabs Agents SDK.
@@ -1283,7 +1886,6 @@ requestAnimationFrame(animate);
 
 setState("idle");
 renderRoi();
-
 </script>
 </body>
 </html>
