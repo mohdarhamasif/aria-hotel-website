@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aria — AI Receptionist for Hotels</title>
+  <meta name="description" content="A voice-guided website: talk to Aria, the AI front desk that answers every call, books rooms and speaks your guests' language." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Top bar with guided steps -->
+  <header class="topbar">
+    <a class="logo" href="#welcome" data-nav="welcome"><span class="logo-mark">A</span>Aria</a>
+    <nav class="stepper" aria-label="Guided steps">
+      <a href="#welcome" data-nav="welcome" class="step"><i>1</i><span>Welcome</span></a>
+      <a href="#profile" data-nav="profile" class="step"><i>2</i><span>Your hotel</span></a>
+      <a href="#features" data-nav="features" class="step"><i>3</i><span>Features</span></a>
+      <a href="#pricing" data-nav="pricing" class="step"><i>4</i><span>Plans</span></a>
+      <a href="#demo" data-nav="demo" class="step"><i>5</i><span>Book demo</span></a>
+    </nav>
+    <button class="btn btn-gold btn-sm js-talk">Talk to Aria</button>
+  </header>
+
+  <main>
+    <!-- 1. Welcome -->
+    <section id="welcome" class="section hero">
+      <div class="hero-copy">
+        <p class="eyebrow">AI front desk for hotels</p>
+        <h1>Every call answered.<br /><em>Every guest welcomed.</em></h1>
+        <p class="lede">Aria is a voice AI receptionist that picks up 24/7, books rooms, answers guest questions in 30+ languages and hands off to your team when it matters.</p>
+        <p class="lede small">This website talks. Say hello, and Aria will walk you through everything — just answer out loud.</p>
+        <div class="hero-actions">
+          <button class="btn btn-gold btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Start talking</button>
+          <button class="btn btn-ghost btn-lg js-type">Chat by text</button>
+        </div>
+        <p class="hero-note"><span class="dot-live" aria-hidden="true"></span>About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
+      </div>
+      <button class="hero-orb js-talk" aria-label="Start voice conversation">
+        <span class="orb" data-orb><span class="orb-core"></span></span>
+        <span class="hero-orb-label" data-orb-label>Tap to talk</span>
+      </button>
+    </section>
+
+    <!-- 2. Your hotel -->
+    <section id="profile" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step 2</p>
+        <h2>Tell Aria about your hotel</h2>
+        <p class="muted">Aria fills this in as you talk. You can also type — she'll see your changes.</p>
+      </div>
+      <div class="profile-grid">
+        <form class="card profile-card" id="profileForm" autocomplete="off">
+          <label>Hotel name<input name="hotel_name" placeholder="e.g. The Harbour House" /></label>
+          <label>Type of property
+            <select name="hotel_type">
+              <option value="">Select…</option>
+              <option>Boutique hotel</option>
+              <option>City hotel</option>
+              <option>Resort</option>
+              <option>Hotel chain / group</option>
+              <option>B&amp;B / guesthouse</option>
+              <option>Serviced apartments</option>
+            </select>
+          </label>
+          <div class="row2">
+            <label>Rooms<input name="rooms" type="number" min="1" placeholder="80" /></label>
+            <label>Calls per month<input name="monthly_calls" type="number" min="0" placeholder="1200" /></label>
+          </div>
+          <label>Guest languages<input name="languages" placeholder="English, Spanish, Arabic" /></label>
+          <label>Biggest front-desk challenge<textarea name="pain_points" rows="2" placeholder="Missed calls at night, repetitive questions…"></textarea></label>
+        </form>
+
+        <div class="card roi-card" id="roi">
+          <p class="eyebrow">Your estimate</p>
+          <h3 data-roi-title>What Aria could recover each month</h3>
+          <div class="roi-stats">
+            <div><b data-roi="recovered">—</b><span>calls recovered</span></div>
+            <div><b data-roi="revenue">—</b><span>extra booking revenue</span></div>
+            <div><b data-roi="hours">—</b><span>staff hours freed</span></div>
+          </div>
+          <p class="muted tiny" data-roi-note>Add rooms or monthly calls to see your numbers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Features -->
+    <section id="features" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step 3</p>
+        <h2>What Aria does at your front desk</h2>
+      </div>
+      <div class="feature-grid">
+        <article class="card feature" data-feature="answering">
+          <span class="f-ico">☎</span><h3>24/7 call answering</h3>
+          <p>Picks up on the first ring, day or night, holidays included. No hold music, no voicemail.</p>
+        </article>
+        <article class="card feature" data-feature="bookings">
+          <span class="f-ico">▣</span><h3>Direct bookings</h3>
+          <p>Checks live availability, quotes rates and books rooms straight into your PMS — no OTA commission.</p>
+        </article>
+        <article class="card feature" data-feature="multilingual">
+          <span class="f-ico">✦</span><h3>30+ languages</h3>
+          <p>Detects the caller's language and switches instantly, with natural, warm voices.</p>
+        </article>
+        <article class="card feature" data-feature="guest_requests">
+          <span class="f-ico">✓</span><h3>Guest requests</h3>
+          <p>Late checkout, extra towels, taxis, restaurant hours — handled and routed to the right team.</p>
+        </article>
+        <article class="card feature" data-feature="upsells">
+          <span class="f-ico">↑</span><h3>Smart upsells</h3>
+          <p>Offers room upgrades, breakfast and spa packages at the right moment in the conversation.</p>
+        </article>
+        <article class="card feature" data-feature="integrations">
+          <span class="f-ico">⇄</span><h3>PMS &amp; tool integrations</h3>
+          <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4. Pricing -->
+    <section id="pricing" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step 4</p>
+        <h2>Plans that fit your property</h2>
+      </div>
+      <div class="plan-grid">
+        <article class="card plan" data-plan="starter">
+          <span class="plan-badge">Recommended for you</span>
+          <h3>Starter</h3>
+          <p class="price">$299<small>/month</small></p>
+          <p class="muted">Up to 40 rooms</p>
+          <ul><li>24/7 call answering</li><li>FAQ &amp; guest requests</li><li>5 languages</li><li>500 calls / month</li></ul>
+        </article>
+        <article class="card plan" data-plan="professional">
+          <span class="plan-badge">Recommended for you</span>
+          <h3>Professional</h3>
+          <p class="price">$799<small>/month</small></p>
+          <p class="muted">Up to 150 rooms</p>
+          <ul><li>Everything in Starter</li><li>Direct bookings via PMS</li><li>30+ languages</li><li>Upsells &amp; analytics</li><li>2,500 calls / month</li></ul>
+        </article>
+        <article class="card plan" data-plan="enterprise">
+          <span class="plan-badge">Recommended for you</span>
+          <h3>Enterprise</h3>
+          <p class="price">Custom</p>
+          <p class="muted">Groups &amp; 150+ rooms</p>
+          <ul><li>Everything in Professional</li><li>Multi-property setup</li><li>Custom voice &amp; brand persona</li><li>Dedicated success manager</li><li>Unlimited calls</li></ul>
+        </article>
+      </div>
+      <p class="plan-reason" data-plan-reason hidden></p>
+    </section>
+
+    <!-- 5. Book a demo -->
+    <section id="demo" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Step 5</p>
+        <h2>Book your live demo</h2>
+        <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
+      </div>
+      <form class="card demo-form" id="demoForm">
+        <div class="row2">
+          <label>Your name<input name="name" required /></label>
+          <label>Hotel<input name="hotel_name" required /></label>
+        </div>
+        <div class="row2">
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Phone<input name="phone" type="tel" /></label>
+        </div>
+        <div class="row2">
+          <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
+          <label>Plan of interest
+            <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
+          </label>
+        </div>
+        <label>Notes<textarea name="notes" rows="2"></textarea></label>
+        <button class="btn btn-gold btn-lg" type="submit">Request my demo</button>
+      </form>
+      <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
+        <span class="success-mark" aria-hidden="true">✓</span>
+        <h3>You're booked in</h3>
+        <p data-confirm-text>Our team will be in touch shortly.</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© <span data-year></span> Aria Hospitality AI · Voice powered by ElevenLabs</p>
+    </footer>
+  </main>
+
+  <!-- "Aria moved the page" pill (shown instead of yanking the scroll while the visitor is reading) -->
+  <button class="follow-pill" id="followPill" hidden>Aria is showing <b></b><span aria-hidden="true">↓</span></button>
+
+  <!-- Conversation dock -->
+  <aside class="dock" id="dock" data-state="idle" aria-label="Conversation with Aria">
+    <div class="panel" id="panel" hidden>
+      <header class="panel-head">
+        <span>Conversation</span>
+        <button class="icon-btn icon-sm" id="collapseBtn" aria-label="Hide conversation">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </header>
+      <ol class="thread" id="thread" aria-live="polite"></ol>
+      <form class="composer" id="typeForm" autocomplete="off">
+        <input name="msg" placeholder="Type a message…" aria-label="Message Aria" />
+        <button class="icon-btn icon-send" aria-label="Send">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+    </div>
+    <div class="dock-bar">
+      <button class="dock-orb js-talk" aria-label="Start or end conversation">
+        <span class="orb orb-sm" data-orb><span class="orb-core"></span></span>
+      </button>
+      <div class="dock-body">
+        <p class="dock-status"><span data-status>Aria is ready to talk</span><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></p>
+        <p class="dock-caption" data-caption>Press the orb and say hello.</p>
+      </div>
+      <div class="dock-actions" data-live-only hidden>
+        <button class="icon-btn" id="transcriptBtn" aria-label="Show conversation" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+        </button>
+        <button class="icon-btn" id="muteBtn" aria-label="Mute microphone" aria-pressed="false">
+          <svg class="ico-mic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+          <svg class="ico-mic-off" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18"/></svg>
+        </button>
+        <button class="icon-btn icon-end" id="endBtn" aria-label="End conversation">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Start sheet: sets expectations before the mic prompt -->
+  <dialog id="startSheet" class="sheet">
+    <form method="dialog">
+      <span class="orb orb-xs" aria-hidden="true"><span class="orb-core"></span></span>
+      <h3>Say hello to Aria</h3>
+      <ul class="sheet-list">
+        <li><b>A quick chat, about 3 minutes.</b> She'll ask about your hotel and walk you through the site as you talk.</li>
+        <li><b>Uses your microphone.</b> Your browser will ask for permission. You can mute or switch to typing any time.</li>
+        <li><b>Interrupt her whenever you like</b>, just like a normal conversation.</li>
+      </ul>
+      <div class="sheet-actions">
+        <button class="btn btn-gold btn-lg" value="voice" autofocus><span class="mic-ico" aria-hidden="true"></span>Start with voice</button>
+        <button class="btn btn-ghost btn-lg" value="text">Type instead</button>
+      </div>
+      <button class="sheet-close" value="cancel" aria-label="Close">✕</button>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
