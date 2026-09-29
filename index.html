@@ -7,13 +7,15 @@
   <meta name="description" content="A voice-guided website: talk to Aria, the AI front desk that answers every call, books rooms and speaks your guests' language." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="rails" aria-hidden="true"></div>
+
   <!-- Top bar with guided steps -->
   <header class="topbar">
-    <a class="logo" href="#welcome" data-nav="welcome"><span class="logo-mark">A</span>Aria</a>
+    <a class="logo" href="#welcome" data-nav="welcome"><span class="logo-mark" aria-hidden="true"></span>Aria</a>
     <nav class="stepper" aria-label="Guided steps">
       <a href="#welcome" data-nav="welcome" class="step"><i>1</i><span>Welcome</span></a>
       <a href="#profile" data-nav="profile" class="step"><i>2</i><span>Your hotel</span></a>
@@ -21,35 +23,53 @@
       <a href="#pricing" data-nav="pricing" class="step"><i>4</i><span>Plans</span></a>
       <a href="#demo" data-nav="demo" class="step"><i>5</i><span>Book demo</span></a>
     </nav>
-    <button class="btn btn-gold btn-sm js-talk">Talk to Aria</button>
+    <button class="btn btn-dark btn-sm js-talk">Talk to Aria</button>
   </header>
 
   <main>
     <!-- 1. Welcome -->
     <section id="welcome" class="section hero">
       <div class="hero-copy">
-        <p class="eyebrow">AI front desk for hotels</p>
-        <h1>Every call answered.<br /><em>Every guest welcomed.</em></h1>
-        <p class="lede">Aria is a voice AI receptionist that picks up 24/7, books rooms, answers guest questions in 30+ languages and hands off to your team when it matters.</p>
-        <p class="lede small">This website talks. Say hello, and Aria will walk you through everything — just answer out loud.</p>
+        <p class="chip"><span class="dot-live" aria-hidden="true"></span>Live demo — this page talks</p>
+        <h1>A front desk that <em>never</em> misses a call.</h1>
+        <p class="lede">Aria is the AI receptionist for hotels. She picks up 24/7, books rooms straight into your PMS and speaks your guests' language — warmly, like your best night manager.</p>
         <div class="hero-actions">
-          <button class="btn btn-gold btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Start talking</button>
+          <button class="btn btn-dark btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
           <button class="btn btn-ghost btn-lg js-type">Chat by text</button>
         </div>
-        <p class="hero-note"><span class="dot-live" aria-hidden="true"></span>About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
+        <p class="hero-note">About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
       </div>
-      <button class="hero-orb js-talk" aria-label="Start voice conversation">
-        <span class="orb" data-orb><span class="orb-core"></span></span>
-        <span class="hero-orb-label" data-orb-label>Tap to talk</span>
-      </button>
+
+      <div class="stage" aria-label="Talk to Aria">
+        <div class="stage-sky" aria-hidden="true"></div>
+        <div class="bubble bubble-guest" aria-hidden="true">Hi — any rooms free this Friday?</div>
+        <div class="bubble bubble-aria" aria-hidden="true">We do! A sea-view king for $220. Shall I hold it for you?</div>
+        <div class="bubble bubble-guest bubble-late" aria-hidden="true">¿Tienen desayuno incluido?</div>
+        <button class="hero-orb js-talk" aria-label="Start voice conversation">
+          <span class="orb" data-orb><span class="orb-core"></span></span>
+          <span class="hero-orb-label" data-orb-label>Tap to talk</span>
+        </button>
+        <p class="stage-caption"><span class="wave-static" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>2:14 am · answered on the first ring</p>
+      </div>
+
+      <ul class="trust" aria-label="Built for">
+        <li>Built for</li>
+        <li>Boutique hotels</li>
+        <li>Resorts</li>
+        <li>City hotels</li>
+        <li>B&amp;Bs</li>
+        <li>Hotel groups</li>
+      </ul>
     </section>
 
     <!-- 2. Your hotel -->
     <section id="profile" class="section">
       <div class="section-head">
-        <p class="eyebrow">Step 2</p>
-        <h2>Tell Aria about your hotel</h2>
-        <p class="muted">Aria fills this in as you talk. You can also type — she'll see your changes.</p>
+        <div>
+          <p class="eyebrow">02 — Your hotel</p>
+          <h2>Tell Aria about your property</h2>
+        </div>
+        <p class="muted">She fills this in as you talk. You can also type here — she'll notice your changes.</p>
       </div>
       <div class="profile-grid">
         <form class="card profile-card" id="profileForm" autocomplete="off">
@@ -73,48 +93,63 @@
           <label>Biggest front-desk challenge<textarea name="pain_points" rows="2" placeholder="Missed calls at night, repetitive questions…"></textarea></label>
         </form>
 
-        <div class="card roi-card" id="roi">
+        <div class="card card-ink roi-card" id="roi">
           <p class="eyebrow">Your estimate</p>
           <h3 data-roi-title>What Aria could recover each month</h3>
           <div class="roi-stats">
+            <div class="roi-hero"><b data-roi="revenue">—</b><span>extra direct-booking revenue</span></div>
             <div><b data-roi="recovered">—</b><span>calls recovered</span></div>
-            <div><b data-roi="revenue">—</b><span>extra booking revenue</span></div>
             <div><b data-roi="hours">—</b><span>staff hours freed</span></div>
           </div>
-          <p class="muted tiny" data-roi-note>Add rooms or monthly calls to see your numbers.</p>
+          <p class="tiny" data-roi-note>Add rooms or monthly calls to see your numbers.</p>
         </div>
       </div>
     </section>
 
-    <!-- 3. Features -->
+    <!-- 3. Features (bento) -->
     <section id="features" class="section">
       <div class="section-head">
-        <p class="eyebrow">Step 3</p>
-        <h2>What Aria does at your front desk</h2>
+        <div>
+          <p class="eyebrow">03 — What she does</p>
+          <h2>Everything your front desk does on the phone</h2>
+        </div>
+        <p class="muted">Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
       </div>
-      <div class="feature-grid">
-        <article class="card feature" data-feature="answering">
-          <span class="f-ico">☎</span><h3>24/7 call answering</h3>
-          <p>Picks up on the first ring, day or night, holidays included. No hold music, no voicemail.</p>
+      <div class="bento">
+        <article class="card feature feature-lg" data-feature="answering">
+          <div class="feature-visual sky-card" aria-hidden="true">
+            <div class="mini-bubble g">Is the pool open late?</div>
+            <div class="mini-bubble a">Until 11pm tonight — want me to book you a cabana?</div>
+            <div class="mini-bubble g">Perfect, yes please.</div>
+          </div>
+          <div class="feature-copy">
+            <h3>24/7 call answering</h3>
+            <p>Picks up on the first ring, day or night, holidays included. No hold music, no voicemail, no missed bookings.</p>
+          </div>
         </article>
         <article class="card feature" data-feature="bookings">
-          <span class="f-ico">▣</span><h3>Direct bookings</h3>
-          <p>Checks live availability, quotes rates and books rooms straight into your PMS — no OTA commission.</p>
+          <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 15l2.5 2.5L16 13"/></svg></span>
+          <h3>Direct bookings</h3>
+          <p>Checks live availability, quotes rates and books straight into your PMS — no OTA commission.</p>
         </article>
         <article class="card feature" data-feature="multilingual">
-          <span class="f-ico">✦</span><h3>30+ languages</h3>
-          <p>Detects the caller's language and switches instantly, with natural, warm voices.</p>
+          <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg></span>
+          <h3>30+ languages</h3>
+          <p>Detects the caller's language and switches instantly, with a natural, warm voice.</p>
         </article>
         <article class="card feature" data-feature="guest_requests">
-          <span class="f-ico">✓</span><h3>Guest requests</h3>
-          <p>Late checkout, extra towels, taxis, restaurant hours — handled and routed to the right team.</p>
+          <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18h16M6 18a6 6 0 0 1 12 0M12 8V6M10 6h4"/></svg></span>
+          <h3>Guest requests</h3>
+          <p>Late checkout, towels, taxis, restaurant hours — handled and routed to the right team.</p>
         </article>
         <article class="card feature" data-feature="upsells">
-          <span class="f-ico">↑</span><h3>Smart upsells</h3>
-          <p>Offers room upgrades, breakfast and spa packages at the right moment in the conversation.</p>
+          <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-7M14 8h6v6"/></svg></span>
+          <h3>Smart upsells</h3>
+          <p>Offers upgrades, breakfast and spa packages at just the right moment.</p>
         </article>
         <article class="card feature" data-feature="integrations">
-          <span class="f-ico">⇄</span><h3>PMS &amp; tool integrations</h3>
+          <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 7h9l-3-3M16 17H7l3 3"/></svg></span>
+          <h3>PMS &amp; tool integrations</h3>
           <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
         </article>
       </div>
@@ -123,29 +158,32 @@
     <!-- 4. Pricing -->
     <section id="pricing" class="section">
       <div class="section-head">
-        <p class="eyebrow">Step 4</p>
-        <h2>Plans that fit your property</h2>
+        <div>
+          <p class="eyebrow">04 — Plans</p>
+          <h2>Plans that fit your property</h2>
+        </div>
+        <p class="muted">Simple monthly pricing. Aria will point out the one that fits you best.</p>
       </div>
       <div class="plan-grid">
         <article class="card plan" data-plan="starter">
           <span class="plan-badge">Recommended for you</span>
           <h3>Starter</h3>
+          <p class="plan-for">Up to 40 rooms</p>
           <p class="price">$299<small>/month</small></p>
-          <p class="muted">Up to 40 rooms</p>
           <ul><li>24/7 call answering</li><li>FAQ &amp; guest requests</li><li>5 languages</li><li>500 calls / month</li></ul>
         </article>
         <article class="card plan" data-plan="professional">
           <span class="plan-badge">Recommended for you</span>
-          <h3>Professional</h3>
+          <h3>Professional <span class="pop">Most popular</span></h3>
+          <p class="plan-for">Up to 150 rooms</p>
           <p class="price">$799<small>/month</small></p>
-          <p class="muted">Up to 150 rooms</p>
           <ul><li>Everything in Starter</li><li>Direct bookings via PMS</li><li>30+ languages</li><li>Upsells &amp; analytics</li><li>2,500 calls / month</li></ul>
         </article>
         <article class="card plan" data-plan="enterprise">
           <span class="plan-badge">Recommended for you</span>
           <h3>Enterprise</h3>
+          <p class="plan-for">Groups &amp; 150+ rooms</p>
           <p class="price">Custom</p>
-          <p class="muted">Groups &amp; 150+ rooms</p>
           <ul><li>Everything in Professional</li><li>Multi-property setup</li><li>Custom voice &amp; brand persona</li><li>Dedicated success manager</li><li>Unlimited calls</li></ul>
         </article>
       </div>
@@ -154,37 +192,47 @@
 
     <!-- 5. Book a demo -->
     <section id="demo" class="section">
-      <div class="section-head">
-        <p class="eyebrow">Step 5</p>
-        <h2>Book your live demo</h2>
-        <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
-      </div>
-      <form class="card demo-form" id="demoForm">
-        <div class="row2">
-          <label>Your name<input name="name" required /></label>
-          <label>Hotel<input name="hotel_name" required /></label>
+      <div class="demo-grid">
+        <div class="demo-copy">
+          <p class="eyebrow">05 — Book a demo</p>
+          <h2>Hear Aria answer <em>your</em> hotel's phone</h2>
+          <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
+          <ul class="checks">
+            <li>A 20-minute live call with our team</li>
+            <li>Aria set up with your hotel's details</li>
+            <li>No commitment, no credit card</li>
+          </ul>
         </div>
-        <div class="row2">
-          <label>Email<input name="email" type="email" required /></label>
-          <label>Phone<input name="phone" type="tel" /></label>
+        <div>
+          <form class="card demo-form" id="demoForm">
+            <div class="row2">
+              <label>Your name<input name="name" required /></label>
+              <label>Hotel<input name="hotel_name" required /></label>
+            </div>
+            <div class="row2">
+              <label>Email<input name="email" type="email" required /></label>
+              <label>Phone<input name="phone" type="tel" /></label>
+            </div>
+            <div class="row2">
+              <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
+              <label>Plan of interest
+                <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
+              </label>
+            </div>
+            <label>Notes<textarea name="notes" rows="2"></textarea></label>
+            <button class="btn btn-dark btn-lg btn-block" type="submit">Request my demo</button>
+          </form>
+          <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
+            <span class="success-mark" aria-hidden="true">✓</span>
+            <h3>You're booked in</h3>
+            <p data-confirm-text>Our team will be in touch shortly.</p>
+          </div>
         </div>
-        <div class="row2">
-          <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
-          <label>Plan of interest
-            <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
-          </label>
-        </div>
-        <label>Notes<textarea name="notes" rows="2"></textarea></label>
-        <button class="btn btn-gold btn-lg" type="submit">Request my demo</button>
-      </form>
-      <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
-        <span class="success-mark" aria-hidden="true">✓</span>
-        <h3>You're booked in</h3>
-        <p data-confirm-text>Our team will be in touch shortly.</p>
       </div>
     </section>
 
     <footer class="footer">
+      <span class="logo"><span class="logo-mark" aria-hidden="true"></span>Aria</span>
       <p>© <span data-year></span> Aria Hospitality AI · Voice powered by ElevenLabs</p>
     </footer>
   </main>
@@ -243,7 +291,7 @@
         <li><b>Interrupt her whenever you like</b>, just like a normal conversation.</li>
       </ul>
       <div class="sheet-actions">
-        <button class="btn btn-gold btn-lg" value="voice" autofocus><span class="mic-ico" aria-hidden="true"></span>Start with voice</button>
+        <button class="btn btn-dark btn-lg" value="voice" autofocus><span class="mic-ico" aria-hidden="true"></span>Start with voice</button>
         <button class="btn btn-ghost btn-lg" value="text">Type instead</button>
       </div>
       <button class="sheet-close" value="cancel" aria-label="Close">✕</button>
