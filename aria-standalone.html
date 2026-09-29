@@ -33,144 +33,111 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet" /></noscript>
   <style>
-/* Aria — a night opening (particle orb + scroll story) that hands over to the
-   editorial light theme. Day tokens are main's; night tokens follow the orb. */
+/* Aria — one night, top to bottom.
+   A fixed particle field (experience.js) runs behind the whole page and
+   reshapes for each section. Type is Instrument Serif at scale; everything
+   else stays quiet so the particles and the words carry the page. */
+
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 
 :root {
-  /* Day (main's theme) */
-  --bg: #f5f3ee;
-  --bg-2: #eeebe4;
-  --card: #fbfaf7;
-  --line: #e2ded5;
-  --line-strong: #cfc9bd;
-  --ink: #17150f;
-  --ink-2: #2a2720;
-  --text: #1d1b16;
-  --muted: #6d685e;
-  --accent: #a8733f;
-  --teal: #3f9c8f;
+  --bg: #050506;
+  --surface: rgba(12, 12, 15, .74);
+  --line: rgba(255, 255, 255, .1);
+  --line-strong: rgba(255, 255, 255, .2);
+  --text: #f3f1ec;
+  --muted: rgba(243, 241, 236, .64);
+  --faint: rgba(243, 241, 236, .5);
+  --light: #f3f1ec;
+  --ink: #0b0b0d;
+  --orb-blue: #3e7fd8;
+  --orb-mint: #86d6c4;
+  --orb-gold: #edd685;
+  --orb-orange: #e8622a;
+  --orb-warm: #f2a77e;
+  --orb-ring: linear-gradient(170deg, var(--orb-blue), var(--orb-mint) 52%, var(--orb-orange));
   --radius: 22px;
   --serif: "Instrument Serif", Georgia, serif;
   --sans: "Inter", system-ui, -apple-system, sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
-
-  /* Night (the orb) */
-  --night: #050506;
-  --night-2: #0e0e11;
-  --night-text: #f3f1ec;
-  --night-muted: rgba(243, 241, 236, .64);
-  --night-line: rgba(255, 255, 255, .12);
-  --orb-blue: #3e7fd8;
-  --orb-mint: #86d6c4;
-  --orb-orange: #e8622a;
-  --orb-warm: #f2a77e;
-  --orb-ring: linear-gradient(170deg, var(--orb-blue), var(--orb-mint) 52%, var(--orb-orange));
 }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { background: var(--night); scroll-behavior: smooth; scroll-padding-top: 84px; }
-body {
-  margin: 0;
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.55;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-h1, h2, h3 { font-weight: 400; line-height: 1.05; margin: 0 0 .5em; letter-spacing: -.01em; }
+html { background: var(--bg); scroll-behavior: smooth; scroll-padding-top: 84px; color-scheme: dark; }
+body { margin: 0; font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.55; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-weight: 400; line-height: 1.02; margin: 0 0 .5em; letter-spacing: -.02em; }
 h1, h2 { font-family: var(--serif); }
-h1 { font-size: clamp(2.9rem, 6.4vw, 5.4rem); }
-h1 em, h2 em { font-style: italic; color: var(--accent); }
-h2 { font-size: clamp(2.2rem, 4vw, 3.3rem); }
+h1 em, h2 em { font-style: italic; color: var(--orb-warm); }
+h2 { font-size: clamp(2.4rem, 4.8vw, 4.2rem); }
 h3 { font-family: var(--sans); font-size: 1.08rem; font-weight: 600; letter-spacing: -.005em; line-height: 1.3; }
 p { margin: 0 0 1em; }
 a { color: inherit; }
 .muted { color: var(--muted); }
 .tiny { font-size: .8rem; }
-.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 1em; font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); font-weight: 500; margin-bottom: 1.1em; font-variant-numeric: tabular-nums; }
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-/* Without WebGL: a quiet ring in the orb's colours instead of particles */
-.no-webgl .orb-anchor, .no-webgl .orb { background: radial-gradient(circle, var(--night) 60%, transparent 62%), var(--orb-ring); opacity: .9; }
-.no-webgl .fx { display: none; }
 svg use { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.skip-link { position: absolute; left: 16px; top: -60px; z-index: 60; background: var(--ink); color: #fff; padding: 8px 16px; border-radius: 999px; text-decoration: none; transition: top .2s; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.skip-link { position: absolute; left: 16px; top: -60px; z-index: 60; background: var(--light); color: var(--ink); padding: 8px 16px; border-radius: 999px; text-decoration: none; transition: top .2s; }
 .skip-link:focus { top: 12px; }
 
-/* Buttons */
+/* Buttons: a light pill for the main action, an outline for the rest */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .55em; min-height: 44px;
   border: 1px solid transparent; border-radius: 999px; cursor: pointer;
   font: 500 .95rem var(--sans); padding: .72em 1.3em; text-decoration: none;
-  transition: transform .15s, background .2s, box-shadow .2s, border-color .2s, color .2s;
+  transition: transform .25s var(--ease), background-color .2s, border-color .2s, color .2s, box-shadow .3s;
 }
-.btn:active { transform: scale(.98); }
-.btn-dark { background: var(--ink); color: #fff; box-shadow: 0 1px 0 rgba(255, 255, 255, .15) inset, 0 6px 20px rgba(23, 21, 15, .18); }
-.btn-dark:hover { background: #000; }
-.btn-ghost { background: var(--card); color: var(--text); border-color: var(--line-strong); }
-.btn-ghost:hover { border-color: var(--ink); }
-.btn-light { background: var(--night-text); color: var(--ink); }
-.btn-light:hover { background: #fff; }
-.btn-outline { background: transparent; color: var(--night-text); border-color: rgba(255, 255, 255, .3); }
-.btn-outline:hover { border-color: #fff; }
+.btn:active { transform: scale(.97); }
+.btn-dark { background: var(--light); color: var(--ink); }
+.btn-dark:hover { background: #fff; box-shadow: 0 0 0 6px rgba(255, 255, 255, .06); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--line-strong); }
+.btn-ghost:hover { border-color: var(--light); }
 .btn-sm { padding: .5em 1.05em; font-size: .86rem; min-height: 38px; }
 .btn-lg { padding: .9em 1.55em; font-size: 1rem; }
 .btn-block { width: 100%; }
 .mic-ico { width: 9px; height: 14px; border: 1.8px solid currentColor; border-radius: 6px; position: relative; }
 .mic-ico::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 1.8px; height: 3px; background: currentColor; transform: translateX(-50%); }
 
-/* Top bar (fixed; turns light-on-dark over the night) */
+/* The particle field sits behind everything */
+.fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+main { position: relative; z-index: 1; }
+
+/* Top bar: transparent over the hero, a dark glass bar once you scroll */
 .topbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 20;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 12px clamp(16px, 4vw, 40px);
-  background: rgba(245, 243, 238, .82); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
-  border-bottom: 1px solid var(--line);
-  transition: background-color .45s var(--ease), border-color .45s var(--ease), color .45s var(--ease);
+  border-bottom: 1px solid transparent;
+  transition: background-color .45s var(--ease), border-color .45s var(--ease);
 }
-.logo { display: inline-flex; align-items: center; gap: 10px; font: 400 1.6rem var(--serif); text-decoration: none; color: var(--ink); transition: color .45s var(--ease); }
-/* The orb, as a mark: a ring that runs blue to orange */
-.logo-mark { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, var(--night) 55%, transparent 57%), var(--orb-ring); }
-.stepper { display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); transition: background-color .45s var(--ease), border-color .45s var(--ease); }
-.step { display: flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; text-decoration: none; color: var(--muted); font-size: .84rem; transition: all .3s var(--ease); }
+[data-top="0"] .topbar { background: rgba(5, 5, 6, .66); border-color: var(--line); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); }
+.logo { display: inline-flex; align-items: center; gap: 10px; font: 400 1.6rem var(--serif); text-decoration: none; color: var(--text); }
+.logo-mark { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, var(--bg) 55%, transparent 57%), var(--orb-ring); }
+.stepper { display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, .05); border: 1px solid var(--line); }
+.step { display: flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; text-decoration: none; color: rgba(243, 241, 236, .6); font-size: .84rem; transition: all .3s var(--ease); }
+.step:hover { color: var(--text); }
 .step i { font-style: normal; font-size: .72rem; font-variant-numeric: tabular-nums; opacity: .7; display: inline-flex; align-items: center; }
 .step.done { color: var(--text); }
-.step.done i { color: var(--teal); opacity: 1; }
+.step.done i { color: var(--orb-mint); opacity: 1; }
 .step.done i::before { content: ""; width: 7px; height: 3.5px; margin-right: 5px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(-45deg); }
-.step.active { color: var(--ink); background: var(--card); box-shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 0 0 1px var(--line); }
+.step.active { color: var(--ink); background: var(--light); }
 .step.active i { opacity: 1; }
 
-[data-zone="night"] .topbar { background: transparent; border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
-[data-zone="night"] .logo { color: var(--night-text); }
-[data-zone="night"] .stepper { background: rgba(255, 255, 255, .05); border-color: rgba(255, 255, 255, .1); }
-[data-zone="night"] .step { color: rgba(243, 241, 236, .6); }
-[data-zone="night"] .step:hover, [data-zone="night"] .step.done { color: var(--night-text); }
-[data-zone="night"] .step.done i { color: var(--orb-mint); }
-[data-zone="night"] .step.active { color: var(--ink); background: var(--night-text); box-shadow: none; }
-[data-zone="night"] .topbar .btn-dark { background: var(--night-text); color: var(--ink); box-shadow: none; }
-[data-zone="night"] .topbar .btn-dark:hover { background: #fff; }
-
 /* ==========================================================================
-   Night
+   Hero
    ========================================================================== */
-main { position: relative; z-index: 1; }
-.night { position: relative; z-index: 1; background: var(--night); color: var(--night-text); }
-.fx { position: sticky; top: 0; display: block; width: 100%; height: 100vh; height: 100svh; margin-bottom: -100vh; margin-bottom: -100svh; pointer-events: none; }
-
-/* Hero */
-.hero { --orb: min(68svh, 84vw); position: relative; z-index: 1; min-height: max(100svh, 700px); padding: 0; text-align: left; }
+.hero { --orb: min(68svh, 84vw); position: relative; min-height: max(100svh, 700px); padding: 0; }
 .hero-title {
   position: absolute; left: 50%; top: 45%; z-index: 2; transform: translate(-50%, -50%);
   width: calc(var(--orb) * .64); margin: 0; pointer-events: none;
-  font-size: clamp(2.3rem, 4.5vw, 4.7rem); line-height: .98; letter-spacing: -.02em; text-align: center; text-wrap: balance; color: #fff;
+  font-size: clamp(2.3rem, 4.5vw, 4.7rem); line-height: .98; text-align: center; text-wrap: balance; color: #fff;
 }
-.hero-title em, .night h2 em { color: var(--orb-warm); }
 .hero-orb {
   position: absolute; left: 50%; top: 45%; z-index: 1; transform: translate(-50%, -50%);
   width: var(--orb); height: var(--orb); padding: 0; border: 0; border-radius: 50%;
-  background: none; color: var(--night-text); cursor: pointer;
+  background: none; color: var(--text); cursor: pointer;
 }
 .hero-orb:focus-visible { outline: 1px dashed rgba(255, 255, 255, .5); outline-offset: 10px; }
 .orb-anchor { position: absolute; inset: 0; border-radius: 50%; }
@@ -183,17 +150,16 @@ main { position: relative; z-index: 1; }
 .hero-orb:hover .hero-orb-label { border-color: #fff; background: rgba(255, 255, 255, .08); }
 [data-state="listening"] .hero-orb-label { border-color: var(--orb-mint); }
 [data-state="speaking"] .hero-orb-label { border-color: var(--orb-warm); }
-
 .hero-foot {
   position: absolute; left: 0; right: 0; bottom: 34px; z-index: 2;
   display: flex; justify-content: space-between; align-items: flex-end; gap: 32px;
   padding: 0 clamp(20px, 4vw, 48px);
 }
 .hero-intro { max-width: 390px; }
-.hero .lede { margin: 0; font-size: .98rem; line-height: 1.55; color: var(--night-muted); }
+.hero .lede { margin: 0; font-size: .98rem; line-height: 1.55; color: var(--muted); }
 .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-.hero-note { margin: 14px 0 0; font-size: .8rem; color: rgba(243, 241, 236, .5); }
-.hero-note a { color: var(--night-text); }
+.hero-note { margin: 14px 0 0; font-size: .8rem; color: var(--faint); }
+.hero-note a { color: var(--text); }
 .scroll-cue { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; font: italic 400 1.35rem var(--serif); color: rgba(243, 241, 236, .72); text-decoration: none; transition: color .3s; }
 .scroll-cue:hover { color: #fff; }
 .scroll-cue span { position: relative; width: 1px; height: 44px; overflow: hidden; background: rgba(255, 255, 255, .18); }
@@ -202,14 +168,16 @@ main { position: relative; z-index: 1; }
 
 /* Letters that resolve like a live transcript (split by experience.js) */
 .js [data-split] .ch { opacity: 0; }
-.js .hero-title .ch { filter: blur(6px); transition: opacity 1s var(--ease), filter 1s var(--ease); transition-delay: calc(.2s + var(--r) * 1.3s); }
-.js .hero-title.is-in .ch { opacity: 1; filter: none; }
+.js [data-split="in"] .ch { filter: blur(6px); transition: opacity 1s var(--ease), filter 1s var(--ease); transition-delay: calc(.15s + var(--r) * 1.2s); }
+.js [data-split="in"].is-in .ch { opacity: 1; filter: none; }
 
-/* Story (pinned; progress drives --bp on each beat) */
-.story { position: relative; z-index: 1; }
+/* ==========================================================================
+   Story (pinned; progress drives --bp on each beat)
+   ========================================================================== */
+.story { position: relative; }
 .story-pin { position: relative; }
 .beat { position: relative; display: grid; place-items: center; padding: 80px 24px; }
-.beat-line { margin: 0; max-width: 15ch; text-align: center; text-wrap: balance; font-size: clamp(2.2rem, 5.2vw, 5rem); line-height: 1; letter-spacing: -.02em; color: #fff; }
+.beat-line { margin: 0; max-width: 15ch; text-align: center; text-wrap: balance; font-size: clamp(2.2rem, 5.2vw, 5rem); line-height: 1; color: #fff; }
 .beat-time, .greetings, .story-count { display: none; }
 
 .js .story { height: 420svh; }
@@ -224,10 +192,7 @@ main { position: relative; z-index: 1; }
   transform: translateY(-12svh) scale(var(--ts, 1.1)); opacity: calc(var(--to, 0) * .8);
 }
 .js .greetings { display: block; position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
-.js .greetings li {
-  position: absolute; left: 50%; top: 38%; white-space: nowrap;
-  font: 400 clamp(2rem, 5.5vw, 5.6rem)/1 var(--serif); color: #fff; opacity: 0; will-change: transform, opacity;
-}
+.js .greetings li { position: absolute; left: 50%; top: 38%; white-space: nowrap; font: 400 clamp(2rem, 5.5vw, 5.6rem)/1 var(--serif); color: #fff; opacity: 0; will-change: transform, opacity; }
 .js .greetings li:nth-child(odd) { font-style: italic; color: var(--orb-warm); }
 .js .story-count {
   display: flex; align-items: center; gap: 12px; position: absolute; left: clamp(20px, 4vw, 48px); bottom: 34px; margin: 0;
@@ -238,108 +203,149 @@ main { position: relative; z-index: 1; }
 .story-count b { position: absolute; inset: 0; background: #fff; transform-origin: left; transform: scaleX(var(--sp, 0)); }
 
 /* ==========================================================================
-   Day (main's theme)
+   Built for — a slow marquee
    ========================================================================== */
-.day { position: relative; z-index: 2; isolation: isolate; max-width: 1240px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 160px; }
-/* Full-bleed ivory with the hairline page rails at the content edges */
-.day::after { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%);
-  background: linear-gradient(var(--line), var(--line)) calc(50% - 620px) 0 / 1px 100% no-repeat, linear-gradient(var(--line), var(--line)) calc(50% + 619px) 0 / 1px 100% no-repeat, var(--bg); }
-/* The day rises over the night like a sheet */
-.day::before { content: ""; position: absolute; left: 50%; top: -48px; width: 100vw; height: 49px; transform: translateX(-50%); background: var(--bg); border-radius: 48px 48px 0 0; }
-.section { padding: 112px 0 24px; }
-.section + .section { border-top: 1px solid var(--line); margin-top: 72px; }
-.section-head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: end; margin-bottom: 44px; }
-.section-head h2 { margin: 0; max-width: 16ch; }
-.section-head > .muted { margin: 0 0 .4em; max-width: 44ch; font-size: 1.02rem; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; transition: border-color .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease), background .35s var(--ease), color .35s var(--ease); }
-.card-ink { background: var(--ink); color: #f3efe6; border-color: var(--ink); }
+.marquee { position: relative; padding: 36px 0 44px; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(5, 5, 6, .55); }
+.marquee-label { margin: 0 0 18px; text-align: center; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.marquee-track { display: flex; align-items: center; gap: 44px; width: max-content; animation: marquee 48s linear infinite; }
+.marquee::before, .marquee::after { content: ""; position: absolute; top: 0; bottom: 0; width: 14%; z-index: 1; pointer-events: none; }
+.marquee::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+.marquee::after { right: 0; background: linear-gradient(-90deg, var(--bg), transparent); }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-track span { font: italic 400 clamp(2rem, 4.2vw, 3.6rem)/1 var(--serif); white-space: nowrap; }
+.marquee-track i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--orb-ring); }
+@keyframes marquee { to { transform: translateX(-50%); } }
 
-.trust { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 34px; margin: 0; padding: 40px 0 0; color: var(--muted); font-family: var(--serif); font-size: 1.35rem; }
-.trust li:first-child { font: 500 .74rem var(--sans); letter-spacing: .08em; text-transform: uppercase; align-self: center; }
+/* ==========================================================================
+   Sections
+   ========================================================================== */
+.content { max-width: 1240px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
+.section { padding: 140px 0 24px; }
+.content .section + .section { border-top: 1px solid var(--line); margin-top: 96px; }
+.section-head { position: relative; isolation: isolate; display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: end; margin-bottom: 52px; }
+.section-head h2 { margin: 0; max-width: 14ch; }
+.section-head > .muted { margin: 0 0 .5em; max-width: 44ch; font-size: 1.02rem; }
+/* Giant outlined numerals drift behind each heading (parallax from experience.js) */
+.section-num {
+  position: absolute; left: -.04em; top: -.62em; z-index: -1; pointer-events: none;
+  font: 400 clamp(8rem, 19vw, 17rem)/1 var(--serif); letter-spacing: -.05em;
+  color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .12);
+  transform: translate3d(0, var(--py, 0px), 0);
+}
+.card {
+  --mx: 50%; --my: 50%;
+  position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px;
+  transition: border-color .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease), background-color .35s var(--ease), color .35s var(--ease);
+}
+/* A soft light that follows the cursor (experience.js sets --mx/--my) */
+.card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; background: radial-gradient(360px circle at var(--mx) var(--my), rgba(255, 255, 255, .06), transparent 45%); transition: opacity .4s; }
+.card:hover::after { opacity: 1; }
 
 /* Profile + ROI */
 .profile-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px; }
 label { display: grid; gap: 7px; font-size: .8rem; color: var(--muted); font-weight: 500; margin-bottom: 16px; }
 input, select, textarea {
   font: .98rem var(--sans); color: var(--text); min-height: 44px;
-  background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: .75em .9em;
-  transition: border-color .25s, box-shadow .25s, background .6s;
+  background: rgba(255, 255, 255, .04); border: 1px solid var(--line); border-radius: 12px; padding: .75em .9em;
+  transition: border-color .25s, box-shadow .25s, background-color .6s;
 }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(23, 21, 15, .06); }
+input:hover, select:hover, textarea:hover { border-color: var(--line-strong); }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--light); box-shadow: 0 0 0 4px rgba(255, 255, 255, .06); }
+select option { background: #111114; color: var(--text); }
 textarea { resize: vertical; }
+::placeholder { color: rgba(243, 241, 236, .35); }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.flash { border-color: var(--accent) !important; background: #fdf4ea !important; }
-.filling { border-color: var(--accent) !important; box-shadow: 0 0 0 4px rgba(168, 115, 63, .12) !important; }
-.roi-card { position: relative; overflow: hidden; display: flex; flex-direction: column; }
-/* An arc of the orb, top right */
-.roi-card::before { content: ""; position: absolute; width: 360px; height: 360px; right: -150px; top: -170px; border-radius: 50%; border: 1px solid transparent; background: linear-gradient(var(--ink), var(--ink)) padding-box, var(--orb-ring) border-box; opacity: .7; }
+.flash { border-color: var(--orb-warm) !important; background: rgba(242, 167, 126, .1) !important; }
+.filling { border-color: var(--orb-warm) !important; box-shadow: 0 0 0 4px rgba(242, 167, 126, .14) !important; }
+.roi-card { position: relative; overflow: hidden; display: flex; flex-direction: column; border: 1px solid transparent; background: linear-gradient(#0b0b0e, #0b0b0e) padding-box, linear-gradient(170deg, rgba(62, 127, 216, .7), rgba(134, 214, 196, .3) 50%, rgba(232, 98, 42, .7)) border-box; }
 .roi-card > * { position: relative; }
-.roi-card .eyebrow { color: #b9b2a5; }
-.roi-card h3 { font: 400 1.7rem/1.15 var(--serif); letter-spacing: 0; max-width: 20ch; }
+.roi-card > .roi-orb { position: absolute; right: -46px; top: -46px; width: 200px; height: 200px; opacity: .9; }
+.roi-card h3 { font: 400 1.9rem/1.12 var(--serif); letter-spacing: 0; max-width: 16ch; }
 .roi-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 18px; margin: 18px 0 22px; }
-.roi-stats b { display: block; font: 400 2.3rem/1 var(--serif); color: #fff; font-variant-numeric: tabular-nums; }
-.roi-stats span { color: #b9b2a5; font-size: .84rem; }
-.roi-hero { grid-column: 1 / -1; padding-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, .12); }
-.roi-hero b { font-size: 3.6rem; }
-.roi-card .tiny { color: #9d978b; margin-top: auto; }
-.roi-card.flash { background: var(--ink) !important; box-shadow: 0 0 0 3px var(--accent); }
+.roi-stats b { display: block; font: 400 2.4rem/1 var(--serif); color: #fff; font-variant-numeric: tabular-nums; }
+.roi-stats span { color: var(--muted); font-size: .84rem; }
+.roi-hero { grid-column: 1 / -1; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.roi-hero b { font-size: 4rem; }
+.roi-card .tiny { color: var(--faint); margin-top: auto; }
+.roi-card.flash { background: linear-gradient(#0b0b0e, #0b0b0e) padding-box, var(--orb-ring) border-box !important; box-shadow: 0 0 60px rgba(242, 167, 126, .18); }
 
 /* Features — bento */
 .bento { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(220px, auto); gap: 16px; }
 .feature { display: flex; flex-direction: column; }
 .feature p { color: var(--muted); margin: 0; font-size: .95rem; }
+.feature:hover { transform: translateY(-3px); border-color: var(--line-strong); }
 .feature-lg { grid-column: span 2; grid-row: span 2; padding: 0; overflow: hidden; }
 .feature-copy { padding: 26px 28px 28px; }
 .feature-visual { flex: 1; min-height: 260px; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 32px; }
-/* A piece of the night: a quiet field of orb-coloured points */
 .night-card {
   background:
     radial-gradient(circle, rgba(62, 127, 216, .6) 0 1px, transparent 1.6px) 0 0 / 53px 47px,
     radial-gradient(circle, rgba(232, 98, 42, .55) 0 1px, transparent 1.6px) 19px 31px / 71px 61px,
     radial-gradient(circle, rgba(134, 214, 196, .5) 0 1px, transparent 1.6px) 37px 11px / 83px 97px,
     radial-gradient(circle, rgba(237, 214, 133, .45) 0 .8px, transparent 1.4px) 7px 43px / 109px 89px,
-    var(--night);
+    #08080a;
+  border-bottom: 1px solid var(--line);
 }
-.mini-bubble { max-width: 70%; padding: 10px 14px; border-radius: 16px; font-size: .9rem; }
-.mini-bubble.g { align-self: flex-start; background: rgba(255, 255, 255, .08); color: var(--night-text); border: 1px solid rgba(255, 255, 255, .12); border-bottom-left-radius: 5px; }
-.mini-bubble.a { align-self: flex-end; background: var(--night-text); color: var(--ink); border-bottom-right-radius: 5px; }
-.f-ico { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); margin-bottom: auto; }
-.f-ico svg { width: 20px; height: 20px; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.mini-bubble { max-width: 70%; padding: 10px 14px; border-radius: 16px; font-size: .9rem; transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.mini-bubble.g { align-self: flex-start; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); border-bottom-left-radius: 5px; }
+.mini-bubble.a { align-self: flex-end; background: var(--light); color: var(--ink); border-bottom-right-radius: 5px; }
+/* The sample call plays out when the card appears (app.js adds .reveal/.in) */
+.feature.reveal .mini-bubble { opacity: 0; transform: translateY(10px); }
+.feature.reveal.in .mini-bubble { opacity: 1; transform: none; }
+.feature.reveal.in .mini-bubble:nth-child(1) { transition-delay: .4s; }
+.feature.reveal.in .mini-bubble:nth-child(2) { transition-delay: 1.2s; }
+.feature.reveal.in .mini-bubble:nth-child(3) { transition-delay: 2s; }
+.f-ico { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: rgba(255, 255, 255, .05); border: 1px solid var(--line); margin-bottom: auto; transition: transform .4s var(--ease), border-color .4s; }
+.f-ico svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.feature:hover .f-ico { transform: rotate(-6deg) scale(1.06); border-color: var(--line-strong); }
 .feature:not(.feature-lg) h3 { margin-top: 28px; }
-.card.spotlight, .card.spotlight.reveal.in { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink), 0 24px 50px rgba(23, 21, 15, .12); transform: translateY(-4px); }
+/* When Aria points at a feature or plan: a slow ring in the orb's colours */
+.card.spotlight, .card.spotlight.reveal.in { transform: translateY(-4px); border-color: transparent; box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
+.card.spotlight::before, .plan.recommended::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: conic-gradient(from var(--spin), var(--orb-blue), var(--orb-mint), var(--orb-gold), var(--orb-orange), var(--orb-blue));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: spin 6s linear infinite;
+}
+@keyframes spin { to { --spin: 360deg; } }
+/* The large feature card clips its overflow, so its ring sits just inside */
+.feature-lg.spotlight::before { inset: 0; }
 
-/* Pricing */
+/* Pricing — the recommended plan turns to light */
 .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
-.plan { position: relative; background: var(--bg-2); border-color: transparent; }
-.plan h3 { display: flex; align-items: center; gap: 10px; font: 400 2rem var(--serif); letter-spacing: 0; margin-bottom: .1em; }
-.pop { position: absolute; top: 18px; right: 18px; font: 500 .72rem var(--sans); padding: 4px 10px; border-radius: 999px; background: #e3ecf9; color: #2d4f86; }
+.plan { position: relative; }
+.plan h3 { font: 400 2.1rem var(--serif); letter-spacing: 0; margin-bottom: .1em; }
+.pop { position: absolute; top: 18px; right: 18px; font: 500 .72rem var(--sans); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text); }
 .plan-for { color: var(--muted); font-size: .9rem; margin-bottom: 22px; }
-.price { font: 400 3.4rem/1 var(--serif); margin: 0 0 24px; font-variant-numeric: tabular-nums; }
+.price { font: 400 3.6rem/1 var(--serif); margin: 0 0 24px; font-variant-numeric: tabular-nums; }
 .price small { font: 400 .95rem var(--sans); color: var(--muted); margin-left: 4px; }
-.plan ul { list-style: none; padding: 20px 0 0; margin: 0; display: grid; gap: 10px; border-top: 1px solid var(--line-strong); font-size: .94rem; }
+.plan ul { list-style: none; padding: 20px 0 0; margin: 0; display: grid; gap: 10px; border-top: 1px solid var(--line); font-size: .94rem; }
 .plan li { display: flex; gap: 10px; }
-.plan li::before { content: ""; flex: none; width: 16px; height: 16px; margin-top: 3px; border-radius: 50%; background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
-.plan-badge { position: absolute; top: 18px; right: 18px; font-size: .72rem; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: var(--night-text); color: var(--ink); opacity: 0; transform: translateY(-4px); transition: all .35s var(--ease); }
-.card.plan.recommended, .card.plan.recommended.reveal.in { background: var(--ink); color: #f3efe6; border-color: var(--ink); transform: translateY(-6px); box-shadow: 0 30px 60px rgba(23, 21, 15, .22); }
-.plan.recommended .plan-for, .plan.recommended .price small { color: #b9b2a5; }
-.plan.recommended ul { border-color: rgba(255, 255, 255, .15); }
-.plan.recommended li::before { background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%2317150f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
+.plan li::before { content: ""; flex: none; width: 16px; height: 16px; margin-top: 3px; border-radius: 50%; background: var(--light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%230b0b0d' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
+.plan-badge { position: absolute; top: 18px; right: 18px; font-size: .72rem; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: var(--ink); color: var(--light); opacity: 0; transform: translateY(-4px); transition: all .35s var(--ease); }
+.card.plan.recommended, .card.plan.recommended.reveal.in { background: var(--light); color: var(--ink); border-color: transparent; transform: translateY(-8px); box-shadow: 0 40px 90px rgba(0, 0, 0, .55); }
+.plan.recommended::before { inset: -6px; border-radius: calc(var(--radius) + 6px); }
+.plan.recommended .plan-for, .plan.recommended .price small { color: rgba(11, 11, 13, .6); }
+.plan.recommended ul { border-color: rgba(11, 11, 13, .15); }
+.plan.recommended li::before { background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
 .plan.recommended .plan-badge { opacity: 1; transform: none; }
 .plan.recommended .pop { display: none; }
-.plan-reason { margin: 22px auto 0; max-width: 760px; text-align: center; padding: 14px 20px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: .95rem; animation: pop .5s var(--ease); }
+.plan-reason { margin: 26px auto 0; max-width: 760px; text-align: center; padding: 14px 22px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: .95rem; animation: pop .5s var(--ease); }
 
 /* Demo */
 .demo-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 56px; align-items: start; }
-.demo-copy h2 { max-width: 13ch; }
+.demo-copy.section-head { display: block; margin: 0; }
+.demo-copy h2 { max-width: 12ch; margin-bottom: .4em; }
 .checks { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 12px; }
 .checks li { display: flex; gap: 12px; align-items: center; }
-.checks li::before { content: ""; flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); background: var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 12.5l3.2 3.2L17 9' fill='none' stroke='%2317150f' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
+.checks li::before { content: ""; flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line-strong); background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 12.5l3.2 3.2L17 9' fill='none' stroke='%23f3f1ec' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
 .demo-form { padding: 30px; }
 .demo-success { text-align: center; padding: 48px 28px; animation: pop .5s var(--ease); }
-.success-mark { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--night); color: #fff; margin-bottom: 14px; box-shadow: 0 0 0 1px transparent, 0 0 0 5px var(--bg-2); }
+.success-mark { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--light); color: var(--ink); margin-bottom: 14px; box-shadow: 0 0 0 6px rgba(255, 255, 255, .06); }
 .success-mark svg { width: 24px; height: 24px; }
 .success-mark svg use { stroke-width: 2.2; }
-.demo-success h3 { font: 400 2rem var(--serif); }
+.demo-success h3 { font: 400 2.2rem var(--serif); }
 @keyframes pop { from { opacity: 0; transform: scale(.97) translateY(8px); } }
 
 /* FAQ */
@@ -348,43 +354,54 @@ textarea { resize: vertical; }
 .faq-list summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 64px; padding: 18px 24px; cursor: pointer; list-style: none; }
 .faq-list summary::-webkit-details-marker { display: none; }
 .faq-list summary h3 { margin: 0; }
-.faq-ico { flex: none; width: 18px; height: 18px; color: var(--ink); transition: transform .35s var(--ease); }
-.faq-list details[open] .faq-ico { transform: rotate(45deg); }
-.faq-list details p { margin: 0; padding: 0 24px 22px; max-width: 70ch; color: var(--muted); }
+.faq-ico { flex: none; width: 18px; height: 18px; color: var(--text); transition: transform .45s var(--ease); }
+.faq-list details[open] { border-color: var(--line-strong); }
+.faq-list details[open] .faq-ico { transform: rotate(135deg); }
+.faq-list details p { margin: 0; padding: 0 24px 22px; max-width: 70ch; color: var(--muted); animation: rise .5s var(--ease); }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
 
-.footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: .85rem; padding: 64px 0 0; margin-top: 96px; border-top: 1px solid var(--line); }
-.footer p { margin: 0; }
+/* Footer: the orb returns above a closing line and the wordmark */
+.footer { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 clamp(16px, 4vw, 48px) 120px; margin-top: 140px; overflow: hidden; }
+.footer-cta { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px; }
+.footer-cta h2 { margin: 0; font-size: clamp(2.6rem, 6vw, 5.6rem); max-width: 14ch; }
+.wordmark { margin: 56px 0 0; text-align: center; font: 400 clamp(8rem, 34vw, 30rem)/.78 var(--serif); letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .18); transform: translate3d(0, var(--py, 0px), 0); }
+.footer-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 28px; margin-top: 28px; border-top: 1px solid var(--line); color: var(--faint); font-size: .85rem; max-width: 1240px; width: 100%; margin-inline: auto; }
+.footer-meta p { margin: 0; }
+.footer-meta .logo { font-size: 1.3rem; color: var(--muted); }
 
 /* ==========================================================================
-   The orb in the dock and the start sheet (particles drawn by experience.js)
+   Orbs in the ROI card, dock and start sheet (particles drawn by experience.js)
    ========================================================================== */
-.orb { --level: 0; position: relative; display: block; border-radius: 50%; overflow: hidden; background: var(--night); transition: transform .08s linear, filter .8s ease; }
+.orb { --level: 0; position: relative; display: block; border-radius: 50%; overflow: hidden; background: var(--bg); transition: transform .08s linear, filter .8s ease; }
 .orb canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.orb-sm { width: 44px; height: 44px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .06), 0 6px 18px rgba(0, 0, 0, .22); transform: scale(calc(1 + var(--level) * .08)); }
-.orb-xs { width: 64px; height: 64px; }
+.roi-card > .orb.roi-orb { background: transparent; }
+.orb-sm { width: 44px; height: 44px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); transform: scale(calc(1 + var(--level) * .08)); }
+.orb-xs { width: 64px; height: 64px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08); }
 [data-tone="bright"][data-state="speaking"] .orb { filter: saturate(1.3) brightness(1.1); }
 [data-tone="soft"][data-state="speaking"] .orb { filter: saturate(.75) brightness(.92); }
 [data-tone="calm"][data-state="speaking"] .orb { filter: hue-rotate(-14deg) saturate(.9); }
+/* Without WebGL: a quiet ring in the orb's colours instead of particles */
+.no-webgl .orb-anchor, .no-webgl .orb { background: radial-gradient(circle, var(--bg) 60%, transparent 62%), var(--orb-ring); opacity: .9; }
+.no-webgl .fx { display: none; }
 
 /* Dock */
 .dock {
   position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 30;
   width: min(540px, calc(100% - 32px));
-  background: rgba(251, 250, 247, .88); backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid var(--line); border-radius: 26px;
-  box-shadow: 0 20px 60px rgba(23, 21, 15, .14), 0 2px 6px rgba(23, 21, 15, .05);
-  transition: width .45s var(--ease), border-color .4s, background-color .45s var(--ease), box-shadow .45s var(--ease);
+  background: rgba(14, 14, 17, .74); backdrop-filter: blur(20px) saturate(1.3); -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid var(--line); border-radius: 26px; box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+  transition: width .45s var(--ease), border-color .4s;
 }
-.dock[data-state="speaking"] { border-color: #e9c2ae; }
-.dock[data-state="listening"] { border-color: #a9d8cf; }
+.dock[data-state="speaking"] { border-color: rgba(242, 167, 126, .5); }
+.dock[data-state="listening"] { border-color: rgba(134, 214, 196, .5); }
 .dock-bar { display: flex; align-items: center; gap: 12px; padding: 9px 10px 9px 11px; }
 .dock-orb { background: none; border: 0; padding: 0; cursor: pointer; flex: none; border-radius: 50%; }
 .dock-body { flex: 1; min-width: 0; }
-.dock-status { margin: 0; display: flex; align-items: center; gap: 10px; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-[data-state="listening"] .dock-status { color: var(--teal); }
-[data-state="speaking"] .dock-status { color: #b0552a; }
-.dock-caption { margin: 1px 0 0; font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); transition: opacity .25s, color .45s; }
-.dock-caption.user { color: var(--teal); }
+.dock-status { margin: 0; display: flex; align-items: center; gap: 10px; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: rgba(243, 241, 236, .6); font-weight: 600; }
+[data-state="listening"] .dock-status { color: var(--orb-mint); }
+[data-state="speaking"] .dock-status { color: var(--orb-warm); }
+.dock-caption { margin: 1px 0 0; font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); transition: opacity .25s; }
+.dock-caption.user { color: var(--orb-mint); }
 .dock-caption.swap { opacity: 0; }
 .dock-actions { display: flex; gap: 6px; }
 .wave { display: none; align-items: center; gap: 3px; height: 14px; }
@@ -395,28 +412,28 @@ textarea { resize: vertical; }
 [data-state="thinking"] .dock-status::after { content: ""; width: 18px; height: 6px; background: radial-gradient(circle, currentColor 2px, transparent 2.5px) 0 0 / 6px 6px repeat-x; animation: dots 1s steps(4) infinite; }
 @keyframes dots { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -10% 0 0); } }
 
-.icon-btn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; transition: background .2s, border-color .2s, transform .15s, color .2s; }
-.icon-btn:hover { border-color: var(--line-strong); background: var(--bg); }
+.icon-btn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .06); color: var(--text); cursor: pointer; transition: background-color .2s, border-color .2s, transform .15s, color .2s; }
+.icon-btn:hover { background: rgba(255, 255, 255, .12); }
 .icon-btn:active { transform: scale(.94); }
 .icon-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .icon-btn .ico-mic-off, .icon-btn[aria-pressed="true"] .ico-mic { display: none; }
 .icon-btn[aria-pressed="true"] .ico-mic-off { display: block; }
-.icon-btn[aria-pressed="true"] { background: #fbe9e7; border-color: #e8b4ad; color: #a3372a; }
-.icon-btn[aria-expanded="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
-.icon-end:hover { background: #fbe9e7; border-color: #e8b4ad; color: #a3372a; }
+.icon-btn[aria-pressed="true"] { background: rgba(214, 90, 70, .18); border-color: rgba(214, 90, 70, .6); color: #ffb4a6; }
+.icon-btn[aria-expanded="true"], .icon-send { background: var(--light); border-color: var(--light); color: var(--ink); }
+.icon-end:hover { background: rgba(214, 90, 70, .18); border-color: rgba(214, 90, 70, .6); color: #ffb4a6; }
 .icon-sm { width: 30px; height: 30px; }
-.icon-send { width: 38px; height: 38px; background: var(--ink); border-color: var(--ink); color: #fff; flex: none; }
-.icon-send:hover { background: #000; }
+.icon-send { width: 38px; height: 38px; flex: none; }
+.icon-send:hover { background: #fff; }
 
 .panel { border-bottom: 1px solid var(--line); animation: panelIn .4s var(--ease); }
 @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } }
-.panel-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 12px 4px 18px; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 12px 4px 18px; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: rgba(243, 241, 236, .55); font-weight: 600; }
 .thread { list-style: none; margin: 0; padding: 8px 14px 12px; max-height: min(46vh, 380px); overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; overscroll-behavior: contain; }
 .msg { max-width: 85%; padding: 9px 13px; border-radius: 16px; font-size: .92rem; line-height: 1.45; animation: msgIn .35s var(--ease); }
 @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } }
-.msg.ai { align-self: flex-start; background: var(--bg-2); color: var(--ink); border-bottom-left-radius: 5px; }
-.msg.user { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 5px; }
-.msg.activity { align-self: center; max-width: none; background: none; padding: 2px 8px; font-size: .75rem; color: var(--accent); display: flex; align-items: center; gap: 7px; }
+.msg.ai { align-self: flex-start; background: rgba(255, 255, 255, .08); border-bottom-left-radius: 5px; }
+.msg.user { align-self: flex-end; background: var(--light); color: var(--ink); border-bottom-right-radius: 5px; }
+.msg.activity { align-self: center; max-width: none; background: none; padding: 2px 8px; font-size: .75rem; color: var(--orb-warm); display: flex; align-items: center; gap: 7px; }
 .msg.activity::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .msg.typing { display: inline-flex; gap: 4px; padding: 12px 14px; }
 .msg.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
@@ -425,63 +442,40 @@ textarea { resize: vertical; }
 .composer { display: flex; gap: 8px; padding: 0 10px 10px; }
 .composer input { flex: 1; border-radius: 999px; padding: .6em 1em; font-size: .92rem; }
 
-/* Dock and panel over the night */
-[data-zone="night"] .dock { background: rgba(14, 14, 17, .74); border-color: rgba(255, 255, 255, .1); box-shadow: 0 20px 60px rgba(0, 0, 0, .5); }
-[data-zone="night"] .dock[data-state="speaking"] { border-color: rgba(242, 167, 126, .5); }
-[data-zone="night"] .dock[data-state="listening"] { border-color: rgba(134, 214, 196, .5); }
-[data-zone="night"] .dock-status { color: rgba(243, 241, 236, .6); }
-[data-zone="night"] [data-state="listening"] .dock-status { color: var(--orb-mint); }
-[data-zone="night"] [data-state="speaking"] .dock-status { color: var(--orb-warm); }
-[data-zone="night"] .dock-caption { color: var(--night-text); }
-[data-zone="night"] .dock-caption.user { color: var(--orb-mint); }
-[data-zone="night"] .icon-btn { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .12); color: var(--night-text); }
-[data-zone="night"] .icon-btn:hover { background: rgba(255, 255, 255, .12); }
-[data-zone="night"] .icon-btn[aria-expanded="true"], [data-zone="night"] .icon-send { background: var(--night-text); border-color: var(--night-text); color: var(--ink); }
-[data-zone="night"] .panel { border-color: rgba(255, 255, 255, .1); }
-[data-zone="night"] .panel-head { color: rgba(243, 241, 236, .55); }
-[data-zone="night"] .msg.ai { background: rgba(255, 255, 255, .08); color: var(--night-text); }
-[data-zone="night"] .msg.user { background: var(--night-text); color: var(--ink); }
-[data-zone="night"] .msg.activity { color: var(--orb-warm); }
-[data-zone="night"] .composer input { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .14); color: var(--night-text); }
-
-.follow-pill { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 29; display: flex; gap: 8px; align-items: center; min-height: 44px; padding: 9px 16px; border-radius: 999px; border: 0; background: var(--ink); color: #fff; font: 500 .88rem var(--sans); cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, .2); animation: pillIn .35s var(--ease); }
+.follow-pill { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 29; display: flex; gap: 8px; align-items: center; min-height: 44px; padding: 9px 16px; border-radius: 999px; border: 0; background: var(--light); color: var(--ink); font: 500 .88rem var(--sans); cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); animation: pillIn .35s var(--ease); }
 .follow-pill b { font-weight: 600; }
 .follow-pill svg { width: 15px; height: 15px; }
 @keyframes pillIn { from { opacity: 0; transform: translate(-50%, 10px); } }
 
 /* Start sheet */
-.sheet { color: var(--text); background: var(--card); border: 1px solid var(--line); border-radius: 26px; padding: 34px 30px 28px; width: min(460px, calc(100% - 32px)); box-shadow: 0 40px 100px rgba(23, 21, 15, .25); }
-.sheet[open] { animation: sheetIn .4s var(--ease); }
+.sheet { color: var(--text); background: #0e0e12; border: 1px solid var(--line); border-radius: 26px; padding: 34px 30px 28px; width: min(460px, calc(100% - 32px)); box-shadow: 0 40px 100px rgba(0, 0, 0, .7); }
+.sheet[open] { animation: sheetIn .45s var(--ease); }
 @keyframes sheetIn { from { opacity: 0; transform: translateY(16px) scale(.98); } }
-.sheet::backdrop { background: rgba(5, 5, 6, .55); backdrop-filter: blur(6px); }
-.sheet h3 { font: 400 2.1rem var(--serif); margin: 16px 0 14px; }
+.sheet::backdrop { background: rgba(0, 0, 0, .6); backdrop-filter: blur(6px); }
+.sheet h3 { font: 400 2.2rem var(--serif); margin: 16px 0 14px; }
 .sheet-list { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 12px; color: var(--muted); font-size: .94rem; }
-.sheet-list b { color: var(--ink); font-weight: 600; }
+.sheet-list b { color: var(--text); font-weight: 600; }
 .sheet-actions { display: grid; gap: 10px; }
-.sheet-close { position: absolute; top: 12px; right: 12px; display: grid; place-items: center; background: none; border: 0; color: var(--muted); cursor: pointer; width: 44px; height: 44px; border-radius: 50%; }
+.sheet-close { position: absolute; top: 12px; right: 12px; display: grid; place-items: center; background: none; border: 0; color: var(--muted); cursor: pointer; width: 44px; height: 44px; border-radius: 50%; transition: background-color .2s, color .2s, transform .3s var(--ease); }
 .sheet-close svg { width: 18px; height: 18px; }
-.sheet-close:hover { background: var(--bg-2); color: var(--ink); }
+.sheet-close:hover { background: rgba(255, 255, 255, .06); color: var(--text); transform: rotate(90deg); }
 
-.toast { position: fixed; top: 80px; left: 50%; transform: translate(-50%, -20px); opacity: 0; pointer-events: none; z-index: 40; background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 999px; font-size: .9rem; transition: all .3s; }
+.toast { position: fixed; top: 80px; left: 50%; transform: translate(-50%, -20px); opacity: 0; pointer-events: none; z-index: 40; background: var(--light); color: var(--ink); padding: 10px 18px; border-radius: 999px; font-size: .9rem; transition: all .3s; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* Scroll reveal (classes applied by app.js) */
-.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease), border-color .35s, box-shadow .35s, background .35s, color .35s; transition-delay: var(--d, 0s); }
-.reveal.in { opacity: 1; transform: none; }
+/* Scroll reveal (classes applied by app.js): rise out of a slight blur */
+.reveal { opacity: 0; transform: translateY(28px); filter: blur(8px); transition: opacity .9s var(--ease), transform .9s var(--ease), filter .9s var(--ease), border-color .35s, box-shadow .35s, background-color .35s, color .35s; transition-delay: var(--d, 0s); }
+.reveal.in { opacity: 1; transform: none; filter: none; }
 
-:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-.night :focus-visible { outline-color: #fff; }
+:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
-::placeholder { color: #a39d91; }
 
-/* Expanded conversation docks to the side on wide screens so the page stays visible */
 @media (min-width: 900px) {
   .dock.expanded { left: auto; right: 24px; transform: none; width: 400px; }
 }
 
 /* Responsive */
 @media (max-width: 1100px) {
-  /* Hero stacks: orb, then the intro underneath */
   .hero { --orb: min(62vw, 520px); display: flex; flex-direction: column; align-items: center; min-height: 0; padding: 112px 20px 64px; }
   .hero-orb { position: relative; left: auto; top: auto; transform: none; flex: none; }
   .hero-title { top: calc(112px + var(--orb) / 2); }
@@ -498,7 +492,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
 }
 @media (max-width: 600px) {
   .topbar .btn { display: none; }
-  .day::after { background: var(--bg); }
   .hero { --orb: min(86vw, 360px); padding-top: 96px; }
   .hero-title { top: calc(96px + var(--orb) / 2); font-size: clamp(1.9rem, 8.4vw, 2.4rem); width: calc(var(--orb) * .7); }
   .hero-foot { margin-top: 84px; }
@@ -506,20 +499,19 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   .js .story { height: 340svh; }
   .js .beat { padding-bottom: 20svh; }
   .row2, .bento { grid-template-columns: 1fr; }
-  .section { padding-top: 80px; }
-  .trust { font-size: 1.1rem; gap: 6px 18px; }
-  .day::before { top: -28px; height: 29px; border-radius: 28px 28px 0 0; }
+  .section { padding-top: 96px; }
   .dock { width: calc(100% - 16px); bottom: calc(8px + env(safe-area-inset-bottom)); border-radius: 22px; }
   .thread { max-height: 42vh; }
-  .roi-hero b { font-size: 3rem; }
+  .roi-hero b { font-size: 3.2rem; }
+  .roi-card > .roi-orb { width: 150px; height: 150px; right: -40px; top: -40px; }
+  .footer { padding-bottom: 110px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
+  .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .feature.reveal .mini-bubble { opacity: 1; transform: none; transition: none; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
-  /* The story reads as plain stacked lines; no pinning or scroll effects */
-  .fx { position: absolute; top: 0; left: 0; margin-bottom: 0; }
-  .js [data-split] .ch, .js .beat .ch { opacity: 1; filter: none; transition: none; }
+  .marquee-track { animation: none; }
   .js .story { height: auto; }
   .js .story-pin { position: relative; height: auto; overflow: visible; }
   .js .beat { position: relative; inset: auto; opacity: 1; place-items: center; padding: 80px 24px; }
@@ -577,7 +569,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   }
   </script>
 </head>
-<body data-zone="night">
+<body data-top="1">
   <a class="skip-link" href="#profile">Skip to content</a>
 
   <svg class="sprite" aria-hidden="true" focusable="false">
@@ -586,6 +578,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   </svg>
+
+  <!-- One particle field behind the whole page; it reshapes for each section -->
+  <canvas class="fx" aria-hidden="true"></canvas>
 
   <!-- Top bar with guided steps -->
   <header class="topbar">
@@ -601,69 +596,66 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   </header>
 
   <main>
-    <!-- Night: the particle orb, then a short story told as you scroll -->
-    <div class="night" id="night">
-      <canvas class="fx" aria-hidden="true"></canvas>
+    <!-- 1. Welcome -->
+    <section id="welcome" class="section hero" aria-labelledby="hero-title">
+      <h1 id="hero-title" class="hero-title" data-split="in">A front desk that <em>never</em> misses a call.</h1>
 
-      <!-- 1. Welcome -->
-      <section id="welcome" class="section hero" aria-labelledby="hero-title">
-        <h1 id="hero-title" class="hero-title" data-split>A front desk that <em>never</em> misses a call.</h1>
+      <button class="hero-orb js-talk">
+        <span class="orb-anchor" data-orb></span>
+        <span class="hero-orb-label" data-orb-label>Tap to talk</span>
+      </button>
 
-        <button class="hero-orb js-talk">
-          <span class="orb-anchor" data-orb></span>
-          <span class="hero-orb-label" data-orb-label>Tap to talk</span>
-        </button>
-
-        <div class="hero-foot">
-          <div class="hero-intro">
-            <p class="lede">Aria is the AI receptionist for hotels. She picks up 24/7, books rooms straight into your PMS and speaks your guests' language — warmly, like your best night manager.</p>
-            <div class="hero-actions">
-              <button class="btn btn-light btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
-              <button class="btn btn-outline btn-lg js-type">Chat by text</button>
-            </div>
-            <p class="hero-note">About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
+      <div class="hero-foot">
+        <div class="hero-intro">
+          <p class="lede">Aria is the AI receptionist for hotels. She picks up 24/7, books rooms straight into your PMS and speaks your guests' language — warmly, like your best night manager.</p>
+          <div class="hero-actions">
+            <button class="btn btn-dark btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
+            <button class="btn btn-ghost btn-lg js-type">Chat by text</button>
           </div>
-          <a class="scroll-cue" href="#story">Scroll to explore<span aria-hidden="true"></span></a>
+          <p class="hero-note">About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
         </div>
-      </section>
+        <a class="scroll-cue" href="#story">Scroll to explore<span aria-hidden="true"></span></a>
+      </div>
+    </section>
 
-      <section class="story" id="story" aria-label="A night at the front desk">
-        <div class="story-pin">
-          <div class="beat" data-beat="0">
-            <p class="beat-time" aria-hidden="true">2:14</p>
-            <h2 class="beat-line" data-split>2:14 am. A guest calls about <em>a late check-in.</em></h2>
-          </div>
-          <div class="beat" data-beat="1">
-            <ul class="greetings" aria-hidden="true">
-              <li>Hola</li><li>Bonjour</li><li>مرحبا</li><li>Ciao</li><li>こんにちは</li><li>Olá</li><li>Hallo</li><li>Merhaba</li>
-            </ul>
-            <h2 class="beat-line" data-split>Aria answers on the first ring, <em>in their language.</em></h2>
-          </div>
-          <div class="beat" data-beat="2">
-            <h2 class="beat-line" data-split>The booking lands in your PMS. <em>Your night team sleeps.</em></h2>
-          </div>
-          <p class="story-count" aria-hidden="true"><span data-count>01</span> / 03<i><b></b></i></p>
+    <!-- A short story, told as you scroll -->
+    <section class="story" id="story" aria-label="A night at the front desk">
+      <div class="story-pin">
+        <div class="beat" data-beat="0">
+          <p class="beat-time" aria-hidden="true">2:14</p>
+          <h2 class="beat-line" data-split="scrub">2:14 am. A guest calls about <em>a late check-in.</em></h2>
         </div>
-      </section>
+        <div class="beat" data-beat="1">
+          <ul class="greetings" aria-hidden="true">
+            <li>Hola</li><li>Bonjour</li><li>مرحبا</li><li>Ciao</li><li>こんにちは</li><li>Olá</li><li>Hallo</li><li>Merhaba</li>
+          </ul>
+          <h2 class="beat-line" data-split="scrub">Aria answers on the first ring, <em>in their language.</em></h2>
+        </div>
+        <div class="beat" data-beat="2">
+          <h2 class="beat-line" data-split="scrub">The booking lands in your PMS. <em>Your night team sleeps.</em></h2>
+        </div>
+        <p class="story-count" aria-hidden="true"><span data-count>01</span> / 03<i><b></b></i></p>
+      </div>
+    </section>
+
+    <!-- Built for -->
+    <div class="marquee">
+      <p class="sr-only">Built for boutique hotels, resorts, city hotels, B&amp;Bs, hotel groups and serviced apartments.</p>
+      <p class="marquee-label" aria-hidden="true">Built for</p>
+      <div class="marquee-track" aria-hidden="true">
+        <span>Boutique hotels</span><i></i><span>Resorts</span><i></i><span>City hotels</span><i></i><span>B&amp;Bs</span><i></i><span>Hotel groups</span><i></i><span>Serviced apartments</span><i></i>
+        <span>Boutique hotels</span><i></i><span>Resorts</span><i></i><span>City hotels</span><i></i><span>B&amp;Bs</span><i></i><span>Hotel groups</span><i></i><span>Serviced apartments</span><i></i>
+      </div>
     </div>
 
-    <!-- Day: the working part of the site -->
-    <div class="day">
-      <ul class="trust" aria-label="Built for">
-        <li>Built for</li>
-        <li>Boutique hotels</li>
-        <li>Resorts</li>
-        <li>City hotels</li>
-        <li>B&amp;Bs</li>
-        <li>Hotel groups</li>
-      </ul>
-
+    <div class="content">
       <!-- 2. Your hotel -->
       <section id="profile" class="section">
         <div class="section-head">
+          <span class="section-num" aria-hidden="true">02</span>
           <div>
             <p class="eyebrow">02 — Your hotel</p>
-            <h2>Tell Aria about your property</h2>
+            <h2 data-split="in">Tell Aria about <em>your property</em></h2>
           </div>
           <p class="muted">She fills this in as you talk. You can also type here — she'll notice your changes.</p>
         </div>
@@ -689,7 +681,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
             <label>Biggest front-desk challenge<textarea name="pain_points" rows="2" placeholder="Missed calls at night, repetitive questions…"></textarea></label>
           </form>
 
-          <div class="card card-ink roi-card" id="roi">
+          <div class="card roi-card" id="roi">
+            <span class="orb roi-orb" aria-hidden="true"></span>
             <p class="eyebrow">Your estimate</p>
             <h3 data-roi-title>What Aria could recover each month</h3>
             <div class="roi-stats">
@@ -705,9 +698,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
       <!-- 3. Features (bento) -->
       <section id="features" class="section">
         <div class="section-head">
+          <span class="section-num" aria-hidden="true">03</span>
           <div>
             <p class="eyebrow">03 — What she does</p>
-            <h2>Everything your front desk does on the phone</h2>
+            <h2 data-split="in">Everything your front desk <em>does on the phone</em></h2>
           </div>
           <p class="muted">Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
         </div>
@@ -754,9 +748,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
       <!-- 4. Pricing -->
       <section id="pricing" class="section">
         <div class="section-head">
+          <span class="section-num" aria-hidden="true">04</span>
           <div>
             <p class="eyebrow">04 — Plans</p>
-            <h2>Plans that fit your property</h2>
+            <h2 data-split="in">Plans that fit <em>your property</em></h2>
           </div>
           <p class="muted">Simple monthly pricing. Aria will point out the one that fits you best.</p>
         </div>
@@ -790,15 +785,18 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
       <!-- 5. Book a demo -->
       <section id="demo" class="section">
         <div class="demo-grid">
-          <div class="demo-copy">
-            <p class="eyebrow">05 — Book a demo</p>
-            <h2>Hear Aria answer <em>your</em> hotel's phone</h2>
-            <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
-            <ul class="checks">
-              <li>A 20-minute live call with our team</li>
-              <li>Aria set up with your hotel's details</li>
-              <li>No commitment, no credit card</li>
-            </ul>
+          <div class="demo-copy section-head">
+            <span class="section-num" aria-hidden="true">05</span>
+            <div>
+              <p class="eyebrow">05 — Book a demo</p>
+              <h2 data-split="in">Hear Aria answer <em>your</em> hotel's phone</h2>
+              <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
+              <ul class="checks">
+                <li>A 20-minute live call with our team</li>
+                <li>Aria set up with your hotel's details</li>
+                <li>No commitment, no credit card</li>
+              </ul>
+            </div>
           </div>
           <div>
             <form class="card demo-form" id="demoForm">
@@ -833,7 +831,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         <div class="section-head">
           <div>
             <p class="eyebrow">Questions</p>
-            <h2>What hoteliers ask us</h2>
+            <h2 data-split="in">What hoteliers <em>ask us</em></h2>
           </div>
           <p class="muted">The short answers. Aria can go into detail if you ask her.</p>
         </div>
@@ -860,12 +858,19 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
           </details>
         </div>
       </section>
+    </div>
 
-      <footer class="footer">
+    <footer class="footer">
+      <div class="footer-cta">
+        <h2 data-split="in">Your front desk, <em>never off duty.</em></h2>
+        <button class="btn btn-dark btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
+      </div>
+      <p class="wordmark" aria-hidden="true">Aria</p>
+      <div class="footer-meta">
         <span class="logo"><span class="logo-mark" aria-hidden="true"></span>Aria</span>
         <p>© <span data-year></span> Aria Hospitality AI · Voice powered by ElevenLabs</p>
-      </footer>
-    </div>
+      </div>
+    </footer>
   </main>
 
   <!-- "Aria moved the page" pill (shown instead of yanking the scroll while the visitor is reading) -->
@@ -1673,13 +1678,17 @@ setState("idle");
 renderRoi();
 </script>
   <script type="module">
-// Aria — the night experience.
-// A WebGL particle orb that breathes with the voice and morphs as you scroll
-// (sphere → voice waveform → field of points), a short story told by scroll,
-// text that resolves like a live transcript, and small orbs for the dock and
-// start sheet. Decorative only: it reads the hooks app.js sets
-// (body[data-state], body[data-tone], --level on [data-orb]) and never
-// changes conversation state, forms or navigation.
+// Aria — the night experience, top to bottom.
+// One WebGL particle field sits behind the whole page and reshapes for each
+// section: the orb in the hero, a voice waveform and a field of points in the
+// story, the orb again beside your estimate, an orbit ring around the
+// features, a quiet field behind the plans, and the orb returning at the end.
+// Also: text that resolves like a live transcript, outlined numerals that
+// drift behind headings, a light that follows the cursor on cards, and small
+// particle orbs in the ROI card, dock and start sheet.
+// Decorative only: it reads the hooks app.js sets (body[data-state],
+// body[data-tone], --level on [data-orb]) and never changes conversation
+// state, forms or navigation.
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const root = document.documentElement;
@@ -1725,13 +1734,24 @@ function splitText(el) {
   el.append(sr, visual);
 }
 
-if (!reducedMotion) $$("[data-split]").forEach(splitText);
+if (!reducedMotion) {
+  $$("[data-split]").forEach(splitText);
 
-const heroTitle = $(".hero-title");
-if (heroTitle && !reducedMotion) {
-  const show = () => heroTitle.classList.add("is-in");
+  // The hero headline resolves on load; the rest as they scroll into view.
+  const heroTitle = $(".hero-title");
+  const show = () => heroTitle?.classList.add("is-in");
   (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(show, 120));
-  setTimeout(show, 1500); // never wait on fonts for too long
+  setTimeout(show, 1500);
+
+  const io = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("is-in");
+      io.unobserve(e.target);
+    }),
+    { rootMargin: "0px 0px -18% 0px" }
+  );
+  $$('[data-split="in"]').filter((el) => el !== heroTitle).forEach((el) => io.observe(el));
 }
 
 /* ---------- Particle sphere (WebGL) ---------- */
@@ -1742,7 +1762,7 @@ attribute vec3 aPos;
 attribute vec3 aColor;
 attribute vec4 aAlt;   // wave x, wave band, field x, field y
 attribute vec2 aMisc;  // seed, field z
-uniform float uTime, uRot, uTilt, uPoint, uLevel, uWave, uField, uWaveSpan;
+uniform float uTime, uRot, uTilt, uPoint, uLevel, uWave, uField, uRing, uWaveSpan;
 uniform float uConnect, uThink, uListen, uSpeak, uAlpha, uBright;
 uniform vec2 uCenter, uScale, uFieldSpan;
 varying vec3 vColor;
@@ -1772,11 +1792,17 @@ void main() {
   float wy = sin(wx * 7. - uTime * 2.3) * amp + sin(wx * 19. + uTime * 3.7) * .05 * env;
   vec3 wave = vec3(wx * uWaveSpan, wy * (aAlt.y * 2. - 1.), (aAlt.y - .5) * .4);
 
+  // A tilted orbit ring.
+  float ang = atan(p.z, p.x) + uTime * .06;
+  float rr = 1.55 + (seed - .5) * .34 + sin(ang * 3. + uTime * .5) * .03;
+  vec3 ring = rotX(vec3(cos(ang) * rr, (aAlt.y - .5) * .05, sin(ang) * rr), 1.2 + uTilt * .4);
+
   // A calm field of points filling the screen.
   vec3 field = vec3(aAlt.z * uFieldSpan.x, aAlt.w * uFieldSpan.y, aMisc.y);
   field.xy += vec2(sin(uTime * .15 + seed * 30.), cos(uTime * .12 + seed * 20.)) * .06;
 
   vec3 pos = mix(sphere, wave, uWave);
+  pos = mix(pos, ring, uRing);
   pos = mix(pos, field, uField);
 
   float persp = 1. / (1. - pos.z * .22);
@@ -1784,8 +1810,9 @@ void main() {
   float front = clamp(pos.z * .5 + .5, 0., 1.);
   // Brighter at the rim, as in a real point-cloud sphere seen edge-on.
   float edge = 1. - abs(sphere.z);
-  float rim = mix(1., mix(.55, 1.45, edge * edge), (1. - uWave) * (1. - uField));
-  vColor = aColor * uBright * (.9 + uLevel * .45) * mix(1., 1.15, edge);
+  float shaped = (1. - uWave) * (1. - uField) * (1. - uRing);
+  float rim = mix(1., mix(.55, 1.45, edge * edge), shaped);
+  vColor = aColor * uBright * (.9 + uLevel * .45) * mix(1., 1.15, edge * shaped);
   vAlpha = uAlpha * rim * mix(.2, 1., front) * mix(1., .75 + .25 * sin(uTime * 2. + seed * 50.), uField);
   gl_PointSize = max(1.2, uPoint * persp * (1. + uLevel * .35));
 }`;
@@ -1839,6 +1866,9 @@ function buildPoints(count) {
   return data;
 }
 
+const UNIFORMS = ["uTime", "uRot", "uTilt", "uPoint", "uLevel", "uWave", "uField", "uRing", "uWaveSpan", "uConnect",
+  "uThink", "uListen", "uSpeak", "uAlpha", "uBright", "uCenter", "uScale", "uFieldSpan"];
+
 class ParticleOrb {
   constructor(canvas, count) {
     const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: true, powerPreference: "high-performance" });
@@ -1870,14 +1900,11 @@ class ParticleOrb {
     attr("aMisc", 2, 10);
 
     this.u = {};
-    ["uTime", "uRot", "uTilt", "uPoint", "uLevel", "uWave", "uField", "uWaveSpan", "uConnect", "uThink",
-      "uListen", "uSpeak", "uAlpha", "uBright", "uCenter", "uScale", "uFieldSpan"]
-      .forEach((n) => (this.u[n] = gl.getUniformLocation(prog, n)));
-
+    UNIFORMS.forEach((n) => (this.u[n] = gl.getUniformLocation(prog, n)));
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.clearColor(0, 0, 0, 0);
-    Object.assign(this, { gl, canvas, count, dpr: 1, w: 1, h: 1 });
+    Object.assign(this, { gl, canvas, count, dpr: 1 });
     this.resize();
   }
 
@@ -1889,7 +1916,7 @@ class ParticleOrb {
       this.canvas.width = w;
       this.canvas.height = h;
     }
-    Object.assign(this, { dpr, w, h });
+    this.dpr = dpr;
     this.gl.viewport(0, 0, w, h);
   }
 
@@ -1903,6 +1930,7 @@ class ParticleOrb {
     gl.uniform1f(u.uLevel, p.level);
     gl.uniform1f(u.uWave, p.wave || 0);
     gl.uniform1f(u.uField, p.field || 0);
+    gl.uniform1f(u.uRing, p.ring || 0);
     gl.uniform1f(u.uWaveSpan, p.waveSpan || 1);
     gl.uniform2f(u.uFieldSpan, p.fieldSpan?.[0] || 1, p.fieldSpan?.[1] || 1);
     gl.uniform1f(u.uConnect, p.states.connecting);
@@ -1920,7 +1948,8 @@ class ParticleOrb {
 /* ---------- Shared state read from app.js hooks ---------- */
 
 const STATE_KEYS = ["connecting", "listening", "thinking", "speaking"];
-const states = { connecting: 0, listening: 0, thinking: 0, speaking: 0 };
+const QUIET = { connecting: 0, listening: 0, thinking: 0, speaking: 0 };
+const states = { ...QUIET };
 const TONE_BRIGHT = { bright: 1.15, soft: 0.85, calm: 0.95 };
 let bright = 1;
 const readLevel = (el) => parseFloat(el?.style.getPropertyValue("--level")) || 0;
@@ -1929,7 +1958,7 @@ function updateStates(dt) {
   const s = body.dataset.state || "idle";
   const k = Math.min(1, dt * 4);
   STATE_KEYS.forEach((key) => (states[key] += ((s === key ? 1 : 0) - states[key]) * k));
-  const tone = body.dataset.state === "speaking" ? TONE_BRIGHT[body.dataset.tone] || 1 : 1;
+  const tone = s === "speaking" ? TONE_BRIGHT[body.dataset.tone] || 1 : 1;
   bright += (tone - bright) * k;
 }
 
@@ -1939,9 +1968,8 @@ addEventListener("pointermove", (e) => {
   pointer.y = e.clientY / innerHeight - 0.5;
 }, { passive: true });
 
-/* ---------- The hero orb and the story ---------- */
+/* ---------- Scenes: what the particle field becomes in each section ---------- */
 
-const night = $("#night");
 const fxCanvas = $(".fx");
 const heroOrb = $(".hero-orb");
 const heroAnchor = $(".hero-orb [data-orb]");
@@ -1954,25 +1982,22 @@ const storyCount = $(".story-count");
 const countEl = $("[data-count]");
 const WINDOWS = [[0, 0.3], [0.3, 0.64], [0.64, 1.01]];
 
-let heroOrbGL = null;
-function createHeroOrb() {
-  try {
-    if (fxCanvas) heroOrbGL = new ParticleOrb(fxCanvas, innerWidth < 700 ? 11000 : 26000);
-  } catch (err) {
-    console.warn("Aria: particle orb disabled —", err.message);
-    root.classList.add("no-webgl");
-  }
-}
+// Each scene is centred on an anchor element (or the screen), with its radius
+// as a share of the screen's shorter side.
+const SCENES = [
+  { el: $("#profile"), anchor: $("#roi"), r: 0.34, alpha: 0.5 },
+  { el: $("#features"), anchor: $("#features .bento"), r: 0.3, ring: 1, alpha: 0.55 },
+  { el: $("#pricing"), r: 0.32, field: 1, alpha: 0.45 },
+  { el: $("#demo"), anchor: $(".demo-copy"), r: 0.3, alpha: 0.6 },
+  { el: $("#faq"), r: 0.3, field: 1, alpha: 0.4 },
+  { el: $(".footer"), anchor: $(".wordmark"), r: 0.21, alpha: 1 },
+].filter((s) => s.el);
 
-let nightVisible = true;
-if (night) {
-  new IntersectionObserver(([e]) => (nightVisible = e.isIntersecting)).observe(night);
-}
-
+const view = { cx: innerWidth / 2, cy: innerHeight * 0.45, radius: 300, wave: 0, ring: 0, field: 0, alpha: 0 };
 let storyP = 0;
 let rot = 0;
-let alpha = 0;
 let lastCount = "";
+let sceneTarget = null;
 
 function storyProgress() {
   if (!story) return 0;
@@ -1984,7 +2009,8 @@ function storyProgress() {
 function updateStory(p) {
   beats.forEach((beat, i) => {
     const [a, b] = WINDOWS[i];
-    const vis = smooth(a - (i ? 0.03 : 0.08), a + 0.05, p) * (i < beats.length - 1 ? 1 - smooth(b - 0.06, b + 0.01, p) : 1);
+    const out = i < beats.length - 1 ? 1 - smooth(b - 0.06, b + 0.01, p) : 1 - smooth(0.96, 1, p);
+    const vis = smooth(a - (i ? 0.03 : 0.08), a + 0.05, p) * out;
     beat.style.setProperty("--vis", vis.toFixed(3));
     beat.style.setProperty("--bp", clamp((p - a) / ((b - a) * 0.6)).toFixed(3));
   });
@@ -1992,7 +2018,7 @@ function updateStory(p) {
     beatTime.style.setProperty("--to", (1 - smooth(0.2, 0.3, p)).toFixed(3));
     beatTime.style.setProperty("--ts", (1.14 - 0.14 * smooth(0, 0.26, p)).toFixed(4));
   }
-  // Greetings in many languages fly past, as if spoken into the room.
+  // Greetings in many languages rise past, as if spoken into the room.
   const g = clamp((p - 0.3) / 0.34);
   const reach = Math.max(innerWidth, innerHeight) * 0.55;
   greetings.forEach((li, i) => {
@@ -2005,94 +2031,180 @@ function updateStory(p) {
   });
   if (storyCount) {
     storyCount.style.setProperty("--sp", p.toFixed(3));
-    const idx = p < WINDOWS[1][0] ? 1 : p < WINDOWS[2][0] ? 2 : 3;
-    const label = `0${idx}`;
+    storyCount.style.opacity = (1 - smooth(0.95, 1, p)).toFixed(3);
+    const label = `0${p < WINDOWS[1][0] ? 1 : p < WINDOWS[2][0] ? 2 : 3}`;
     if (label !== lastCount && countEl) countEl.textContent = lastCount = label;
   }
 }
 
-function drawHero(time, dt) {
+// Which scene owns the middle of the screen right now?
+function currentScene() {
+  const mid = innerHeight * 0.5;
+  const storyRect = story?.getBoundingClientRect();
+  if (!storyRect || storyRect.bottom > mid) return "opening"; // hero + story are scroll-driven
+  for (const s of SCENES) {
+    const r = s.el.getBoundingClientRect();
+    if (r.top <= mid && r.bottom >= mid) return s;
+  }
+  return sceneTarget; // between sections: hold the last shape
+}
+
+function drawField(time, dt) {
   const vw = innerWidth;
   const vh = innerHeight;
-  const cr = fxCanvas.getBoundingClientRect();
-  const or = heroOrb.getBoundingClientRect();
+  const minSide = Math.min(vw, vh);
+  const scene = currentScene();
+  let target;
+  let k;
 
-  // The orb glides from its place in the hero to the centre of the screen.
-  const hand = smooth(0, hero.offsetHeight * 0.7, scrollY);
-  const rectR = or.width / 2;
-  const storyR = Math.min(vw, vh) * 0.24;
-  const cx = lerp(or.left + rectR, vw / 2, hand);
-  const cy = lerp(or.top + or.height / 2, vh * 0.38, hand);
-  const radius = lerp(rectR, storyR, hand);
+  // The story keeps its own progress whenever it is on screen, even when
+  // Aria jumps the page past it.
+  const sr = story?.getBoundingClientRect();
+  if (sr && sr.bottom > 0 && sr.top < vh) {
+    const goal = reducedMotion ? 0 : storyProgress();
+    storyP += (goal - storyP) * Math.min(1, dt * 7);
+    if (Math.abs(goal - storyP) > 0.35) storyP = goal;
+    if (!reducedMotion) updateStory(storyP);
+  }
 
-  const target = reducedMotion ? 0 : storyProgress();
-  storyP += (target - storyP) * Math.min(1, dt * 7);
-  if (!reducedMotion) updateStory(storyP);
+  if (scene === "opening" || !scene) {
+    // The orb glides from its place in the hero to the story's centre.
+    const or = heroOrb.getBoundingClientRect();
+    const hand = smooth(0, hero.offsetHeight * 0.7, scrollY);
+    const rectR = or.width / 2;
+    target = {
+      cx: lerp(or.left + rectR, vw / 2, hand),
+      cy: lerp(or.top + or.height / 2, vh * 0.38, hand),
+      radius: lerp(rectR, minSide * 0.24, hand),
+      wave: smooth(0.3, 0.42, storyP) * (1 - smooth(0.62, 0.72, storyP)),
+      field: smooth(0.64, 0.8, storyP),
+      ring: 0,
+      alpha: 1,
+    };
+    k = Math.min(1, dt * 12);
+  } else {
+    sceneTarget = scene;
+    const a = scene.anchor?.getBoundingClientRect();
+    target = {
+      cx: a ? a.left + a.width / 2 : vw / 2,
+      cy: a ? a.top + a.height / 2 : vh / 2,
+      radius: minSide * scene.r * (vw < 760 ? 1.15 : 1),
+      wave: 0,
+      field: scene.field || 0,
+      ring: scene.ring || 0,
+      alpha: scene.alpha * (vw < 760 ? 0.8 : 1),
+    };
+    k = Math.min(1, dt * 2.2);
+  }
 
-  const wave = smooth(0.3, 0.42, storyP) * (1 - smooth(0.62, 0.72, storyP));
-  const field = smooth(0.64, 0.8, storyP);
+  // Position follows quickly; shape and brightness ease more slowly.
+  const kPos = scene === "opening" || !scene ? k : Math.min(1, dt * 5);
+  if (reducedMotion) Object.assign(view, target);
+  else for (const key in target) {
+    const kk = key === "cx" || key === "cy" || key === "radius" ? kPos : key === "alpha" ? Math.min(k, dt * 1.6) : k;
+    view[key] += (target[key] - view[key]) * kk;
+  }
+
   const level = readLevel(heroAnchor);
-
   pointer.sx += (pointer.x - pointer.sx) * Math.min(1, dt * 2.5);
   pointer.sy += (pointer.y - pointer.sy) * Math.min(1, dt * 2.5);
   rot += dt * (0.09 + level * 0.6 + states.thinking * 0.5 + states.connecting * 0.8);
-  alpha = Math.min(1, alpha + dt * 0.7);
 
-  heroOrbGL.resize();
-  heroOrbGL.draw({
+  const cr = fxCanvas.getBoundingClientRect();
+  const radius = Math.max(40, view.radius);
+  fieldGL.resize();
+  fieldGL.draw({
     time, level, states, bright,
     rot: rot + pointer.sx * 0.35,
     tilt: 0.28 + pointer.sy * 0.14,
     point: 1.4 * clamp(radius / 380, 0.8, 1.15),
-    wave, field,
+    wave: view.wave, field: view.field, ring: view.ring,
     waveSpan: (vw / 2 / radius) * 0.94,
     fieldSpan: [vw / 2 / radius, vh / 2 / radius],
-    alpha: reducedMotion ? 1 : alpha,
-    center: [((cx - cr.left) / cr.width) * 2 - 1, 1 - ((cy - cr.top) / cr.height) * 2],
+    alpha: view.alpha,
+    center: [((view.cx - cr.left) / cr.width) * 2 - 1, 1 - ((view.cy - cr.top) / cr.height) * 2],
     scale: [(radius / cr.width) * 2, (radius / cr.height) * 2],
   });
 }
 
-/* ---------- Small orbs in the dock and the start sheet ---------- */
+/* ---------- Outlined numerals and the wordmark drift as you scroll ---------- */
 
+const drifters = $$(".section-num, .wordmark");
+function updateDrift() {
+  const vh = innerHeight;
+  drifters.forEach((el) => {
+    const r = el.parentElement.getBoundingClientRect();
+    if (r.bottom < -200 || r.top > vh + 200) return;
+    const p = (vh - r.top) / (vh + r.height); // 0 entering, 1 leaving
+    el.style.setProperty("--py", `${((0.5 - p) * (el.classList.contains("wordmark") ? 90 : 140)).toFixed(1)}px`);
+  });
+}
+
+/* ---------- Top bar: transparent at the top, glass once you scroll ---------- */
+
+function updateTop() {
+  const top = scrollY < 40 ? "1" : "0";
+  if (body.dataset.top !== top) body.dataset.top = top;
+}
+addEventListener("scroll", updateTop, { passive: true });
+updateTop();
+
+/* ---------- A light that follows the cursor on cards ---------- */
+
+if (matchMedia("(hover: hover)").matches) {
+  document.addEventListener("pointermove", (e) => {
+    const card = e.target.closest?.(".card");
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    card.style.setProperty("--my", `${e.clientY - r.top}px`);
+  }, { passive: true });
+}
+
+/* ---------- Small orbs: ROI card, dock and start sheet ---------- */
+
+let fieldGL = null;
 const minis = [];
-const createMinis = () => [[".dock .orb-sm", 1400], [".sheet .orb-xs", 2400]].forEach(([sel, count]) => {
-  const host = $(sel);
-  if (!host || root.classList.contains("no-webgl")) return;
-  const canvas = document.createElement("canvas");
-  canvas.setAttribute("aria-hidden", "true");
-  host.append(canvas);
+
+function createGL() {
   try {
-    minis.push({ host, gl: new ParticleOrb(canvas, count), rot: Math.random() * 6 });
-  } catch {
-    canvas.remove();
+    if (fxCanvas) fieldGL = new ParticleOrb(fxCanvas, innerWidth < 700 ? 11000 : 26000);
+  } catch (err) {
+    console.warn("Aria: particle field disabled —", err.message);
+    root.classList.add("no-webgl");
+    return;
   }
-});
+  // [selector, points, is decorative (ignores the voice)]
+  [[".roi-orb", 2200, true], [".dock .orb-sm", 1400, false], [".sheet .orb-xs", 2400, false]].forEach(([sel, count, still]) => {
+    const host = $(sel);
+    if (!host) return;
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("aria-hidden", "true");
+    host.append(canvas);
+    try {
+      minis.push({ host, still, gl: new ParticleOrb(canvas, count), rot: Math.random() * 6 });
+    } catch {
+      canvas.remove();
+    }
+  });
+}
 
 function drawMini(m, time, dt) {
   if (!m.host.getClientRects().length) return; // closed dialog
-  const level = readLevel(m.host);
-  m.rot += dt * (0.25 + level * 0.8 + states.thinking * 0.6);
+  const r = m.host.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > innerHeight) return; // off screen
+  const level = m.still ? 0 : readLevel(m.host);
+  m.rot += dt * (0.25 + level * 0.8 + (m.still ? 0 : states.thinking * 0.6));
   m.gl.resize();
   m.gl.draw({
-    time, level, states, bright,
+    time, level, bright,
+    states: m.still ? QUIET : states,
     rot: m.rot, tilt: 0.3, point: 1.15,
     alpha: 1,
     center: [0, 0],
     scale: [0.8, 0.8],
   });
 }
-
-/* ---------- Zone: is the top bar over the night or the day? ---------- */
-
-const topbar = $(".topbar");
-function updateZone() {
-  if (!night) return;
-  const zone = night.getBoundingClientRect().bottom > (topbar?.offsetHeight || 60) * 0.6 ? "night" : "day";
-  if (body.dataset.zone !== zone) body.dataset.zone = zone;
-}
-addEventListener("scroll", updateZone, { passive: true });
-updateZone();
 
 /* ---------- Loop ---------- */
 
@@ -2103,28 +2215,29 @@ function frame(now) {
   last = now;
   time += dt;
   updateStates(dt);
-  if (heroOrbGL && nightVisible) drawHero(time, dt);
+  if (fieldGL) drawField(time, dt);
+  updateDrift();
   minis.forEach((m) => drawMini(m, time, dt));
   requestAnimationFrame(frame);
 }
 
-function boot() {
-  createHeroOrb();
-  createMinis();
-  if (reducedMotion) stillFrames();
-  else requestAnimationFrame((now) => { last = now; frame(now); });
-}
-
 function stillFrames() {
-  // One still frame, redrawn only when the layout changes.
+  // Reduced motion: still frames, redrawn only when something changes.
   const still = () => {
-    if (heroOrbGL) drawHero(2, 0);
+    if (fieldGL) drawField(2, 0.016);
     minis.forEach((m) => drawMini(m, 2, 0));
   };
   still();
   addEventListener("resize", still);
+  addEventListener("scroll", still, { passive: true });
   const sheet = $("#startSheet");
   if (sheet) new MutationObserver(still).observe(sheet, { attributes: true, attributeFilter: ["open"] });
+}
+
+function boot() {
+  createGL();
+  if (reducedMotion) stillFrames();
+  else requestAnimationFrame((now) => { last = now; frame(now); });
 }
 
 // Start the particles after the page has painted, so they never delay the first view.

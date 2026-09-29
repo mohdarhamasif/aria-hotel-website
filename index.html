@@ -84,7 +84,7 @@
   }
   </script>
 </head>
-<body data-zone="night">
+<body data-top="1">
   <a class="skip-link" href="#profile">Skip to content</a>
 
   <svg class="sprite" aria-hidden="true" focusable="false">
@@ -93,6 +93,9 @@
     <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   </svg>
+
+  <!-- One particle field behind the whole page; it reshapes for each section -->
+  <canvas class="fx" aria-hidden="true"></canvas>
 
   <!-- Top bar with guided steps -->
   <header class="topbar">
@@ -108,69 +111,66 @@
   </header>
 
   <main>
-    <!-- Night: the particle orb, then a short story told as you scroll -->
-    <div class="night" id="night">
-      <canvas class="fx" aria-hidden="true"></canvas>
+    <!-- 1. Welcome -->
+    <section id="welcome" class="section hero" aria-labelledby="hero-title">
+      <h1 id="hero-title" class="hero-title" data-split="in">A front desk that <em>never</em> misses a call.</h1>
 
-      <!-- 1. Welcome -->
-      <section id="welcome" class="section hero" aria-labelledby="hero-title">
-        <h1 id="hero-title" class="hero-title" data-split>A front desk that <em>never</em> misses a call.</h1>
+      <button class="hero-orb js-talk">
+        <span class="orb-anchor" data-orb></span>
+        <span class="hero-orb-label" data-orb-label>Tap to talk</span>
+      </button>
 
-        <button class="hero-orb js-talk">
-          <span class="orb-anchor" data-orb></span>
-          <span class="hero-orb-label" data-orb-label>Tap to talk</span>
-        </button>
-
-        <div class="hero-foot">
-          <div class="hero-intro">
-            <p class="lede">Aria is the AI receptionist for hotels. She picks up 24/7, books rooms straight into your PMS and speaks your guests' language — warmly, like your best night manager.</p>
-            <div class="hero-actions">
-              <button class="btn btn-light btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
-              <button class="btn btn-outline btn-lg js-type">Chat by text</button>
-            </div>
-            <p class="hero-note">About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
+      <div class="hero-foot">
+        <div class="hero-intro">
+          <p class="lede">Aria is the AI receptionist for hotels. She picks up 24/7, books rooms straight into your PMS and speaks your guests' language — warmly, like your best night manager.</p>
+          <div class="hero-actions">
+            <button class="btn btn-dark btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
+            <button class="btn btn-ghost btn-lg js-type">Chat by text</button>
           </div>
-          <a class="scroll-cue" href="#story">Scroll to explore<span aria-hidden="true"></span></a>
+          <p class="hero-note">About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
         </div>
-      </section>
+        <a class="scroll-cue" href="#story">Scroll to explore<span aria-hidden="true"></span></a>
+      </div>
+    </section>
 
-      <section class="story" id="story" aria-label="A night at the front desk">
-        <div class="story-pin">
-          <div class="beat" data-beat="0">
-            <p class="beat-time" aria-hidden="true">2:14</p>
-            <h2 class="beat-line" data-split>2:14 am. A guest calls about <em>a late check-in.</em></h2>
-          </div>
-          <div class="beat" data-beat="1">
-            <ul class="greetings" aria-hidden="true">
-              <li>Hola</li><li>Bonjour</li><li>مرحبا</li><li>Ciao</li><li>こんにちは</li><li>Olá</li><li>Hallo</li><li>Merhaba</li>
-            </ul>
-            <h2 class="beat-line" data-split>Aria answers on the first ring, <em>in their language.</em></h2>
-          </div>
-          <div class="beat" data-beat="2">
-            <h2 class="beat-line" data-split>The booking lands in your PMS. <em>Your night team sleeps.</em></h2>
-          </div>
-          <p class="story-count" aria-hidden="true"><span data-count>01</span> / 03<i><b></b></i></p>
+    <!-- A short story, told as you scroll -->
+    <section class="story" id="story" aria-label="A night at the front desk">
+      <div class="story-pin">
+        <div class="beat" data-beat="0">
+          <p class="beat-time" aria-hidden="true">2:14</p>
+          <h2 class="beat-line" data-split="scrub">2:14 am. A guest calls about <em>a late check-in.</em></h2>
         </div>
-      </section>
+        <div class="beat" data-beat="1">
+          <ul class="greetings" aria-hidden="true">
+            <li>Hola</li><li>Bonjour</li><li>مرحبا</li><li>Ciao</li><li>こんにちは</li><li>Olá</li><li>Hallo</li><li>Merhaba</li>
+          </ul>
+          <h2 class="beat-line" data-split="scrub">Aria answers on the first ring, <em>in their language.</em></h2>
+        </div>
+        <div class="beat" data-beat="2">
+          <h2 class="beat-line" data-split="scrub">The booking lands in your PMS. <em>Your night team sleeps.</em></h2>
+        </div>
+        <p class="story-count" aria-hidden="true"><span data-count>01</span> / 03<i><b></b></i></p>
+      </div>
+    </section>
+
+    <!-- Built for -->
+    <div class="marquee">
+      <p class="sr-only">Built for boutique hotels, resorts, city hotels, B&amp;Bs, hotel groups and serviced apartments.</p>
+      <p class="marquee-label" aria-hidden="true">Built for</p>
+      <div class="marquee-track" aria-hidden="true">
+        <span>Boutique hotels</span><i></i><span>Resorts</span><i></i><span>City hotels</span><i></i><span>B&amp;Bs</span><i></i><span>Hotel groups</span><i></i><span>Serviced apartments</span><i></i>
+        <span>Boutique hotels</span><i></i><span>Resorts</span><i></i><span>City hotels</span><i></i><span>B&amp;Bs</span><i></i><span>Hotel groups</span><i></i><span>Serviced apartments</span><i></i>
+      </div>
     </div>
 
-    <!-- Day: the working part of the site -->
-    <div class="day">
-      <ul class="trust" aria-label="Built for">
-        <li>Built for</li>
-        <li>Boutique hotels</li>
-        <li>Resorts</li>
-        <li>City hotels</li>
-        <li>B&amp;Bs</li>
-        <li>Hotel groups</li>
-      </ul>
-
+    <div class="content">
       <!-- 2. Your hotel -->
       <section id="profile" class="section">
         <div class="section-head">
+          <span class="section-num" aria-hidden="true">02</span>
           <div>
             <p class="eyebrow">02 — Your hotel</p>
-            <h2>Tell Aria about your property</h2>
+            <h2 data-split="in">Tell Aria about <em>your property</em></h2>
           </div>
           <p class="muted">She fills this in as you talk. You can also type here — she'll notice your changes.</p>
         </div>
@@ -196,7 +196,8 @@
             <label>Biggest front-desk challenge<textarea name="pain_points" rows="2" placeholder="Missed calls at night, repetitive questions…"></textarea></label>
           </form>
 
-          <div class="card card-ink roi-card" id="roi">
+          <div class="card roi-card" id="roi">
+            <span class="orb roi-orb" aria-hidden="true"></span>
             <p class="eyebrow">Your estimate</p>
             <h3 data-roi-title>What Aria could recover each month</h3>
             <div class="roi-stats">
@@ -212,9 +213,10 @@
       <!-- 3. Features (bento) -->
       <section id="features" class="section">
         <div class="section-head">
+          <span class="section-num" aria-hidden="true">03</span>
           <div>
             <p class="eyebrow">03 — What she does</p>
-            <h2>Everything your front desk does on the phone</h2>
+            <h2 data-split="in">Everything your front desk <em>does on the phone</em></h2>
           </div>
           <p class="muted">Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
         </div>
@@ -261,9 +263,10 @@
       <!-- 4. Pricing -->
       <section id="pricing" class="section">
         <div class="section-head">
+          <span class="section-num" aria-hidden="true">04</span>
           <div>
             <p class="eyebrow">04 — Plans</p>
-            <h2>Plans that fit your property</h2>
+            <h2 data-split="in">Plans that fit <em>your property</em></h2>
           </div>
           <p class="muted">Simple monthly pricing. Aria will point out the one that fits you best.</p>
         </div>
@@ -297,15 +300,18 @@
       <!-- 5. Book a demo -->
       <section id="demo" class="section">
         <div class="demo-grid">
-          <div class="demo-copy">
-            <p class="eyebrow">05 — Book a demo</p>
-            <h2>Hear Aria answer <em>your</em> hotel's phone</h2>
-            <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
-            <ul class="checks">
-              <li>A 20-minute live call with our team</li>
-              <li>Aria set up with your hotel's details</li>
-              <li>No commitment, no credit card</li>
-            </ul>
+          <div class="demo-copy section-head">
+            <span class="section-num" aria-hidden="true">05</span>
+            <div>
+              <p class="eyebrow">05 — Book a demo</p>
+              <h2 data-split="in">Hear Aria answer <em>your</em> hotel's phone</h2>
+              <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
+              <ul class="checks">
+                <li>A 20-minute live call with our team</li>
+                <li>Aria set up with your hotel's details</li>
+                <li>No commitment, no credit card</li>
+              </ul>
+            </div>
           </div>
           <div>
             <form class="card demo-form" id="demoForm">
@@ -340,7 +346,7 @@
         <div class="section-head">
           <div>
             <p class="eyebrow">Questions</p>
-            <h2>What hoteliers ask us</h2>
+            <h2 data-split="in">What hoteliers <em>ask us</em></h2>
           </div>
           <p class="muted">The short answers. Aria can go into detail if you ask her.</p>
         </div>
@@ -367,12 +373,19 @@
           </details>
         </div>
       </section>
+    </div>
 
-      <footer class="footer">
+    <footer class="footer">
+      <div class="footer-cta">
+        <h2 data-split="in">Your front desk, <em>never off duty.</em></h2>
+        <button class="btn btn-dark btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
+      </div>
+      <p class="wordmark" aria-hidden="true">Aria</p>
+      <div class="footer-meta">
         <span class="logo"><span class="logo-mark" aria-hidden="true"></span>Aria</span>
         <p>© <span data-year></span> Aria Hospitality AI · Voice powered by ElevenLabs</p>
-      </footer>
-    </div>
+      </div>
+    </footer>
   </main>
 
   <!-- "Aria moved the page" pill (shown instead of yanking the scroll while the visitor is reading) -->
