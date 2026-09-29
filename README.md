@@ -1,5 +1,7 @@
 # Aria — voice-guided website for an AI hotel receptionist
 
+**Live:** https://mohdarhamasif.github.io/aria-hotel-website/
+
 A talking sales website. Visitors press the orb and talk (or type) with **Aria**, an ElevenLabs voice agent. Aria guides them through the page as they talk: she scrolls to the right section, fills in their hotel details, shows an ROI estimate, highlights features, recommends a plan and books a demo.
 
 ## Run it locally
@@ -32,6 +34,6 @@ Edit `config.js`:
 
 ## Before going live
 
-- Add your production domain to the agent's allowlist in ElevenLabs (currently only `localhost`).
+- Add any new domain to the agent's allowlist in ElevenLabs (currently `localhost` and `mohdarhamasif.github.io`).
 - Set `FORM_WEBHOOK_URL` so you actually receive demo requests.
 - Replace the placeholder brand, prices and integrations with your real ones, in both `index.html` and the agent prompt.
