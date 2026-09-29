@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page not found — Aria</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#0e1116" />
+  <link rel="icon" href="/aria-hotel-website/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&amp;family=Inter:wght@500;600&amp;display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #0e1116; --text: #f3efe6; --muted: #a3a9b6; --gold: #d6b370; --gold-2: #f0d9a4; --rule: rgba(214, 179, 112, .38); }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 16px; background: var(--bg); color: var(--text); font: 400 1rem/1.6 "Inter", system-ui, sans-serif; }
+    main { max-width: 560px; }
+    .cap { font: 600 .72rem/1.2 "Inter", sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
+    .num { font: italic 400 clamp(5rem, 18vw, 8rem)/.9 "Fraunces", Georgia, serif; color: var(--gold); margin: 0; }
+    h1 { font: 400 clamp(2rem, 6vw, 3rem)/1.1 "Fraunces", Georgia, serif; margin: .2em 0 .4em; padding-bottom: .5em; border-bottom: 1px solid var(--rule); }
+    p { color: var(--muted); }
+    a { display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.6em; margin-top: 8px; background: var(--gold); color: #1b1408; text-decoration: none; font: 600 .8rem/1 "Inter", sans-serif; letter-spacing: .14em; text-transform: uppercase; border-radius: 2px; }
+    a:hover { background: var(--gold-2); }
+    a:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="cap">Room not found</p>
+    <p class="num" aria-hidden="true">404</p>
+    <h1>This door doesn't lead anywhere.</h1>
+    <p>The page you were looking for has checked out. The front desk is right this way.</p>
+    <a href="/aria-hotel-website/">Back to the front desk</a>
+  </main>
+</body>
+</html>

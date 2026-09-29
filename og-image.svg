@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0e1116"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d6b370" stroke-opacity=".38"/>
+  <text x="96" y="130" font-family="Inter, Arial, sans-serif" font-weight="600" font-size="20" letter-spacing="3.5" fill="#d6b370">NO. 01  ·  THE AI FRONT DESK FOR HOTELS</text>
+  <text x="92" y="275" font-family="Fraunces, Georgia, serif" font-size="96" fill="#f3efe6">Every call answered.</text>
+  <text x="92" y="385" font-family="Fraunces, Georgia, serif" font-style="italic" font-size="96" fill="#d6b370">Every guest welcomed.</text>
+  <line x1="96" y1="450" x2="316" y2="450" stroke="#d6b370"/><line x1="96" y1="454" x2="316" y2="454" stroke="#d6b370" stroke-opacity=".38"/>
+  <text x="96" y="520" font-family="Fraunces, Georgia, serif" font-style="italic" font-size="48" fill="#f0d9a4">Aria</text>
+  <text x="206" y="518" font-family="Inter, Arial, sans-serif" font-size="22" fill="#a3a9b6">Voice AI receptionist · 24/7 · 30+ languages</text>
+  <g fill="none" stroke="#d6b370" stroke-width="2" stroke-linecap="round" transform="translate(930 150) scale(1.1)">
+    <path d="M16 330V100a84 84 0 0 1 168 0v230" transform="translate(0 -110)"/>
+    <circle cx="100" cy="96" r="5"/><path d="M100 101v6M56 150a44 44 0 0 1 88 0M48 150h104M40 160h120"/>
+  </g>
+</svg>

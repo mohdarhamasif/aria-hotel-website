@@ -1,0 +1,15 @@
+# Aria — AI receptionist for hotels
+User-agent: *
+Allow: /
+
+# AI search crawlers (citation in AI answers)
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://mohdarhamasif.github.io/aria-hotel-website/sitemap.xml
