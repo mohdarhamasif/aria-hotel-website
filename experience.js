@@ -353,8 +353,10 @@ function updateStory(p) {
 // second: it emerges from the centre, fades in as it drifts out past the edge,
 // then fades away as the next one arrives. Each release gives the orb a pulse.
 
-const GREET_ANGLES = [-90, -24, -156, -60, -120, 6, 174, -78].map((d) => (d * Math.PI) / 180);
-const greetState = greetings.map(() => ({ t: -1, a: 0, w: 0 }));
+// Where each greeting settles, in orb radii from the centre. Consecutive
+// greetings always land on opposite sides, so two never overlap.
+const GREET_SLOTS = [[1.75, -0.3], [-1.25, -1.1], [1.25, -1.1], [-1.75, -0.3]];
+const greetState = greetings.map(() => ({ t: -1, sx: 0, sy: 0, w: 0 }));
 let greetNext = 0;
 let greetIdx = 0;
 let emit = 0;
@@ -363,7 +365,8 @@ function updateGreetings(dt, active) {
   const vw = innerWidth;
   if (active && time >= greetNext) {
     const i = greetIdx % greetings.length;
-    Object.assign(greetState[i], { t: 0, a: GREET_ANGLES[greetIdx % GREET_ANGLES.length], w: greetings[i].offsetWidth });
+    const [sx, sy] = GREET_SLOTS[greetIdx % GREET_SLOTS.length];
+    Object.assign(greetState[i], { t: 0, sx, sy, w: greetings[i].offsetWidth });
     greetIdx++;
     greetNext = time + 1.05;
     emit = 1;
@@ -383,11 +386,12 @@ function updateGreetings(dt, active) {
       return;
     }
     const t = g.t;
+    // Emerge from the centre, travel out to the slot, then drift a little further
     const out = 1 - Math.pow(1 - clamp(t / 0.5), 3);
-    const dist = R * (0.08 + 1.22 * out + 0.28 * clamp((t - 0.5) / 0.5));
+    const reach = R * (0.06 + 0.94 * out + 0.16 * clamp((t - 0.5) / 0.5));
     const half = g.w / 2 + 16;
-    const x = clamp(Math.cos(g.a) * dist * 1.2, -vw / 2 + half, vw / 2 - half);
-    const y = Math.sin(g.a) * dist * 0.92;
+    const x = clamp(g.sx * reach, -vw / 2 + half, vw / 2 - half);
+    const y = g.sy * reach;
     const blur = (1 - smooth(0, 0.35, t)) * 10 + smooth(0.72, 1, t) * 4;
     li.style.opacity = (smooth(0, 0.3, t) * (1 - smooth(0.64, 1, t))).toFixed(3);
     li.style.filter = blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : "none";
