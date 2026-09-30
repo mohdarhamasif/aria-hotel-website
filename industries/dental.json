@@ -1,0 +1,127 @@
+{
+  "seo": {
+    "title": "{brand} — AI Receptionist for Dental Practices",
+    "description": "{brand} answers every call for your dental practice: books check-ups and urgent appointments, moves bookings, speaks 30+ languages and warm-transfers to your team.",
+    "og_description": "A front desk that never misses a patient. Talk to {brand}, the AI receptionist for dental practices.",
+    "twitter_description": "A front desk that never misses a patient. Talk to {brand}, the AI receptionist for dental practices.",
+    "image_alt": "{brand} — the AI receptionist for dental practices.",
+    "website_name": "{brand} — AI Receptionist for Dental Practices",
+    "app_subcategory": "AI receptionist for dental practices",
+    "app_description": "Voice AI receptionist for dental practices that answers calls 24/7, books check-ups and urgent appointments, reschedules, speaks 30+ languages and warm-transfers to the practice team.",
+    "feature_list": ["24/7 call answering", "Appointment booking", "30+ languages", "Urgent-call handling", "Recalls and rebooking", "Warm transfer to staff"],
+    "service_type": "AI receptionist for dental practices",
+    "service_name": "{brand} AI front desk for dental practices",
+    "audience": "General, cosmetic and specialist dental practices, orthodontists and dental groups"
+  },
+  "hero": {
+    "title": "A front desk that <em>never</em> misses a patient.",
+    "lede": "{brand} is the AI receptionist for dental practices. She answers every call, books check-ups and urgent visits, moves appointments and speaks your patients' language — so your team can stay with the patient in the chair."
+  },
+  "story": {
+    "label": "A night at the practice's front desk",
+    "beat0": ". A patient calls with <em>a toothache.</em>",
+    "beat1": "{brand} answers on the first ring, <em>in their language.</em>",
+    "beat2": "The first free slot is booked.",
+    "beat2_night": "Your team sleeps.",
+    "beat2_day": "Your team stays with the patient in the chair."
+  },
+  "marquee": {
+    "sr": "Built for general dentists, cosmetic dentistry, orthodontists, pediatric dentists, dental groups and specialist practices.",
+    "items": ["General dentists", "Cosmetic dentistry", "Orthodontists", "Pediatric dentists", "Dental groups", "Specialist practices"]
+  },
+  "profile": {
+    "eyebrow": "02 — Your practice",
+    "title": "Tell {brand} about <em>your practice</em>",
+    "name_label": "Practice name",
+    "name_placeholder": "e.g. Bright Smile Dental",
+    "type_label": "Type of practice",
+    "type_options": ["General dentistry", "Cosmetic dentistry", "Orthodontics", "Pediatric dentistry", "Specialist practice", "Dental group"],
+    "units_label": "Dental chairs",
+    "units_placeholder": "5",
+    "calls_placeholder": "900",
+    "languages_label": "Patient languages",
+    "languages_placeholder": "English, Spanish, Urdu",
+    "challenge_label": "Biggest front-desk challenge",
+    "challenge_placeholder": "Missed calls at lunch, new-patient enquiries, rescheduling…"
+  },
+  "roi": {
+    "revenue_label": "extra appointment revenue",
+    "note": "Add dental chairs or monthly calls to see your numbers."
+  },
+  "features": {
+    "title": "Everything your front desk <em>does on the phone</em>",
+    "lede": "{brand} handles the calls, the questions and the bookings, and hands off to your team the moment a person is needed.",
+    "pills": [
+      { "key": "bookings", "icon": "i-calendar", "title": "Appointment booking", "desc": "Books check-ups, cleanings and new-patient visits straight into your schedule." },
+      { "key": "multilingual", "icon": "i-translate", "title": "30+ languages", "desc": "Detects the caller's language and switches instantly, so every patient feels at home." },
+      { "key": "guest_requests", "icon": "i-reserve", "title": "Urgent calls", "desc": "Recognises urgent calls — severe pain, swelling, a knocked-out tooth — and gets them seen or passed to your team fast." },
+      { "key": "upsells", "icon": "i-trend", "title": "Recalls &amp; rebooking", "desc": "Fills gaps in your schedule by rebooking overdue patients and offering cancelled slots." },
+      { "key": "integrations", "icon": "i-link", "title": "Practice software", "desc": "We connect her to your practice management system during setup. Warm-transfers to your team when needed." }
+    ],
+    "card_title": "24/7 call answering",
+    "card_desc": "Picks up on the first ring — at lunch, after hours and while your team is with patients. No voicemail, no missed appointments."
+  },
+  "calls": [
+    { "meta": "New patient · 7:45 am", "done": "Urgent visit booked · 3:40 pm", "lines": [
+      ["g", "I've got a bad toothache — can I be seen today?"],
+      ["a", "I'm sorry to hear that. We have an urgent slot at 3:40 pm — shall I book it?"],
+      ["g", "Yes, please."]
+    ] },
+    { "meta": "Existing patient · 12:20 pm", "done": "Cleaning moved to Tue 10 am", "lines": [
+      ["g", "Can I move my cleaning to next week?"],
+      ["a", "Of course — Tuesday at 10 am is free. I've moved it for you."],
+      ["g", "Great, thanks."]
+    ] },
+    { "meta": "New caller · 6:30 pm", "done": "Cita confirmada · lunes 9:00", "lines": [
+      ["g", "¿Aceptan pacientes nuevos?"],
+      ["a", "¡Sí! Tenemos una cita el lunes a las 9. ¿Se la reservo?"],
+      ["g", "Sí, por favor."]
+    ] }
+  ],
+  "pricing": {
+    "title": "Plans that fit <em>your practice</em>",
+    "plans": {
+      "starter": { "for": "One practice", "price": "$299", "offer": "One practice, 500 calls per month", "items": ["24/7 call answering", "Booking &amp; FAQs", "5 languages", "500 calls / month"] },
+      "professional": { "for": "Up to 3 practices", "price": "$799", "offer": "Up to 3 practices, 2,500 calls per month", "items": ["Everything in Starter", "Books into your practice software", "30+ languages", "Recalls &amp; analytics", "2,500 calls / month"] },
+      "enterprise": { "for": "Dental groups", "price": "Custom", "items": ["Everything in Professional", "Multi-practice setup", "Custom voice &amp; brand persona", "Dedicated success manager", "Unlimited calls"] }
+    }
+  },
+  "demo": {
+    "title": "Hear {brand} answer <em>your</em> practice's phone",
+    "check2": "{brand} set up with your practice's details",
+    "business_label": "Practice"
+  },
+  "faq": {
+    "title": "What dental practices <em>ask us</em>",
+    "items": [
+      { "q": "What is an AI receptionist for dental practices?", "a": "She answers your practice's phone line like a trained front-desk team member. {brand} picks up every call, books and moves appointments, answers questions about opening hours, prices and directions, and passes the call to your team when a person is needed." },
+      { "q": "How does {brand} handle urgent calls?", "a": "{brand} recognises urgent calls — severe pain, swelling or a knocked-out tooth — and offers the earliest urgent slot or puts the caller straight through to your team. She never gives clinical advice." },
+      { "q": "Can she book new and existing patients?", "a": "Yes. She books new-patient visits and takes their details, and lets existing patients move or cancel their appointments without waiting on hold." },
+      { "q": "Which languages does {brand} speak?", "a": "{brand} speaks 30+ languages on the Professional and Enterprise plans, and 5 on Starter. She detects the caller's language from the first sentence and switches automatically." },
+      { "q": "Does {brand} work with my practice software?", "a": "We connect {brand} to your practice management system during setup, so she can see free slots and book directly. Tell us which system you use on your demo call." }
+    ]
+  },
+  "footer": { "title": "Your front desk, <em>never off duty.</em>" },
+  "sheet": { "ask": "She'll ask about your practice and walk you through the site as you talk." },
+  "page": {
+    "sectionLabel": "your practice",
+    "businessNoun": "practice",
+    "nameLabel": "practice name",
+    "unitsPlural": "dental chairs",
+    "unitEstimate": "estimated from the number of chairs",
+    "roi": { "missedCallRate": 0.25, "bookingConversion": 0.3, "avgBookingValue": 200, "minutesPerCall": 4, "callsPerUnit": 180 },
+    "greetings": {
+      "evening": "Good evening... [warmly] thanks for stopping by this late. I'm {brand} — an AI receptionist for dental practices — and I'll show you around. So, what's your practice called?",
+      "returning": [
+        "Oh — welcome back! [warmly] It's {brand}, your AI guide, again. So... remind me, what's the name of your practice?",
+        "Hey, you're back! [laughs softly] {brand} here, the AI receptionist. Okay, let's pick up where we left off — what's your practice called?"
+      ],
+      "fresh": [
+        "Good {part}! [warmly] I'm {brand}... I'm an AI receptionist for dental practices, and I'll be showing you around today. So, first things first — what's your practice called?",
+        "Hi! Oh, lovely to meet you. [warmly] I'm {brand} — I'm an AI receptionist, and I answer the phones for dental practices. What's the name of your practice?",
+        "Hello, and good {part}! I'm {brand}, an AI receptionist for dental practices. [curious] I'd love to hear a bit about your practice before I show you anything... what's it called?"
+      ]
+    },
+    "agentContext": "Your name is {brand}. Always introduce and refer to yourself as {brand}, never by any other name. The visitor is on the page for dental practices, so talk about practices, appointments and patients instead of hotels, rooms and guests. On this page the profile fields mean: hotel_name = practice name, hotel_type = type of practice, rooms = number of dental chairs, monthly_calls = calls per month, languages = patient languages, pain_points = biggest front-desk challenge. Feature keys here: bookings = appointment booking, multilingual = 30+ languages, guest_requests = urgent calls, upsells = recalls and rebooking, integrations = practice software, answering = 24/7 call answering. Plans here: starter = one practice, professional = up to 3 practices, enterprise = dental groups. Never give clinical or medical advice; urgent dental problems go to the practice team."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "brand": "Amariya",
+  "company": "Amariya AI",
+  "site_url": "https://aria-hotel-website.vercel.app/",
+  "version": "10",
+  "pages": [
+    { "key": "home", "path": "" },
+    { "key": "hotels", "path": "hotels/", "label": "Hotels" },
+    { "key": "aesthetics", "path": "aesthetics/", "label": "Aesthetics clinics" },
+    { "key": "dental", "path": "dental/", "label": "Dental clinics" }
+  ]
+}

@@ -1,4 +1,4 @@
-// Aria — the night experience, top to bottom.
+// The night experience, top to bottom.
 // One WebGL particle field sits behind the whole page and reshapes for each
 // section: the orb in the hero, a voice waveform and a field of points in the
 // story, the orb again beside your estimate, an orbit ring around the
@@ -72,8 +72,10 @@ function tickClock() {
   tickClock();
   const daypart = $("[data-daypart]");
   if (!t.night) {
-    if (daypart) daypart.textContent = "Your team stays with the guest in front of them.";
-    $("#story")?.setAttribute("aria-label", "A day at the front desk");
+    // Each page gives its own daytime line; the hotel line is the fallback
+    if (daypart) daypart.textContent = daypart.dataset.day || "Your team stays with the guest in front of them.";
+    const story = $("#story");
+    story?.setAttribute("aria-label", (story.getAttribute("aria-label") || "A night at the front desk").replace(/night/, "day"));
   }
   const next = () => setTimeout(() => { tickClock(); next(); }, 60000 - (Date.now() % 60000) + 50);
   next();
@@ -478,7 +480,7 @@ function drawField(time, dt) {
   let k;
 
   // The story keeps its own progress whenever it is on screen, even when
-  // Aria jumps the page past it.
+  // the guide jumps the page past it.
   const sr = story?.getBoundingClientRect();
   if (sr && sr.bottom > 0 && sr.top < vh) {
     const goal = reducedMotion ? 0 : storyProgress();
@@ -577,7 +579,7 @@ async function startSmoothScroll() {
     const { default: Lenis } = await import("https://cdn.jsdelivr.net/npm/lenis@1.3.26/+esm");
     lenis = new Lenis({ lerp: 0.09, smoothWheel: true, autoRaf: false });
   } catch (err) {
-    console.warn("Aria: smooth scrolling unavailable —", err.message);
+    console.warn("Smooth scrolling unavailable —", err.message);
   }
 }
 $(".scroll-cue")?.addEventListener("click", (e) => {
@@ -797,10 +799,13 @@ function updateDemoLights() {
 
 /* ---------- The live call in the features card ---------- */
 // Three short calls play in turn. Each line arrives after a typing pause,
-// Aria's replies stream in word by word, and every line sends a ripple
+// the guide's replies stream in word by word, and every line sends a ripple
 // through the dot field from the side of whoever is speaking.
 
-const CALLS = [
+const pageCalls = (() => {
+  try { return JSON.parse($("#callScripts")?.textContent || "null"); } catch { return null; }
+})();
+const CALLS = pageCalls || [
   { meta: "Room 214 · 11:48 pm", done: "Cabana booked for 9 pm", lines: [
     ["g", "Is the pool open late?"],
     ["a", "Until 11pm tonight — want me to book you a cabana?"],
@@ -888,6 +893,7 @@ async function whenVisible() {
 function node(cls, text) {
   const d = document.createElement("div");
   d.className = cls;
+  d.dir = "auto";
   if (text) d.textContent = text;
   return d;
 }
@@ -907,7 +913,7 @@ async function playCall(call) {
     typing.replaceWith(bubble);
     ripple(bubble, who);
     if (who === "a") {
-      // Aria's reply streams in, word by word
+      // The reply streams in, word by word
       const words = text.split(" ").map((w) => {
         const s = document.createElement("span");
         s.className = "w";
@@ -924,7 +930,7 @@ async function playCall(call) {
   }
   const done = node("call-done enter");
   done.innerHTML = '<svg aria-hidden="true"><use href="#i-tick" /></svg>';
-  done.append(Object.assign(document.createElement("span"), { textContent: call.done }));
+  done.append(Object.assign(document.createElement("span"), { textContent: call.done, dir: "auto" }));
   callThread.append(done);
   ripple(done, "done");
   await wait(3000);
@@ -976,7 +982,7 @@ function createGL() {
   try {
     if (fxCanvas) fieldGL = new ParticleOrb(fxCanvas, innerWidth < 700 ? 11000 : 26000);
   } catch (err) {
-    console.warn("Aria: particle field disabled —", err.message);
+    console.warn("Particle field disabled —", err.message);
     root.classList.add("no-webgl");
     return;
   }

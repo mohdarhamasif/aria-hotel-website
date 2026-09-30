@@ -1,9 +1,12 @@
-// Aria — voice-guided website powered by the ElevenLabs Agents SDK.
+// Voice-guided website powered by the ElevenLabs Agents SDK.
 // The agent drives the page through "client tools" (see AGENT_SETUP.md).
 
 const CONFIG = window.SITE_CONFIG || {};
+// Each industry page sets window.PAGE: its words, ROI assumptions, greetings and agent context.
+const PAGE = window.PAGE || {};
+const BRAND = CONFIG.BRAND || "Amariya";
 const SECTIONS = ["welcome", "profile", "features", "pricing", "demo"];
-const SECTION_LABELS = { welcome: "the intro", profile: "your hotel", features: "features", pricing: "plans", demo: "demo booking" };
+const SECTION_LABELS = { welcome: "the intro", profile: PAGE.sectionLabel || "your hotel", features: "features", pricing: "plans", demo: "demo booking" };
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -30,11 +33,11 @@ $("[data-year]").textContent = new Date().getFullYear();
 /* ---------- Small UI helpers ---------- */
 
 const STATUS = {
-  idle: "Aria is ready to talk",
+  idle: `${BRAND} is ready to talk`,
   connecting: "Connecting",
   listening: "Listening",
   thinking: "Thinking",
-  speaking: "Aria is speaking",
+  speaking: `${BRAND} is speaking`,
 };
 
 function setState(state) {
@@ -48,7 +51,7 @@ function setState(state) {
   $("#muteBtn").hidden = mode === "text";
 }
 
-/** Tint the orb with the emotion of Aria's current line, e.g. [excited] or [softly]. */
+/** Tint the orb with the emotion of the guide's current line, e.g. [excited] or [softly]. */
 const TONES = {
   excited: "bright", playfully: "bright", "laughs softly": "bright",
   softly: "soft", sighs: "soft", thoughtful: "soft",
@@ -111,7 +114,7 @@ function showTyping() {
   if ($(".msg.typing", thread)) return;
   const li = document.createElement("li");
   li.className = "msg ai typing";
-  li.setAttribute("aria-label", "Aria is thinking");
+  li.setAttribute("aria-label", `${BRAND} is thinking`);
   li.innerHTML = "<i></i><i></i><i></i>";
   thread.append(li);
   thread.scrollTop = thread.scrollHeight;
@@ -131,7 +134,7 @@ function activity(text) {
 
 let cancelScroll = null;
 
-// Track real visitor input so Aria doesn't yank the page while they're reading.
+// Track real visitor input so the guide doesn't yank the page while they're reading.
 ["wheel", "touchmove", "keydown", "pointerdown"].forEach((ev) =>
   addEventListener(ev, (e) => {
     if (e.target.closest?.("#dock, .sheet, .follow-pill")) return;
@@ -249,11 +252,13 @@ function contextUpdate(text) {
 const fmtMoney = (n) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 const readProfile = () => Object.fromEntries(new FormData(profileForm));
 
+const roiConfig = () => ({ ...(CONFIG.ROI || {}), ...(PAGE.roi || {}) });
+
 function computeRoi(p = readProfile()) {
-  const r = CONFIG.ROI || {};
+  const r = roiConfig();
   let calls = Number(p.monthly_calls) || 0;
-  // Rough fallback: ~12 calls per room per month.
-  if (!calls && Number(p.rooms)) calls = Math.round(Number(p.rooms) * 12);
+  // Rough fallback from the page's unit ("rooms" field): ~12 calls per hotel room a month by default.
+  if (!calls && Number(p.rooms)) calls = Math.round(Number(p.rooms) * (r.callsPerUnit ?? 12));
   if (!calls) return null;
   const recovered = Math.round(calls * (r.missedCallRate ?? 0.25));
   const revenue = Math.round(recovered * (r.bookingConversion ?? 0.3) * (r.avgBookingValue ?? 220));
@@ -277,26 +282,26 @@ function countUp(el, to, fmt = (n) => n.toLocaleString()) {
 function renderRoi() {
   const roi = computeRoi();
   const name = readProfile().hotel_name;
-  $("[data-roi-title]").textContent = name ? `What Aria could recover for ${name} each month` : "What Aria could recover each month";
+  $("[data-roi-title]").textContent = name ? `What ${BRAND} could recover for ${name} each month` : `What ${BRAND} could recover each month`;
   if (!roi) return;
   countUp($('[data-roi="recovered"]'), roi.recovered);
   countUp($('[data-roi="revenue"]'), roi.revenue, fmtMoney);
   countUp($('[data-roi="hours"]'), roi.hours);
   $("[data-roi-note]").textContent =
-    `Based on ${roi.calls.toLocaleString()} calls/month${roi.estimatedCalls ? " (estimated from room count)" : ""}, ` +
-    `${Math.round((CONFIG.ROI?.missedCallRate ?? 0.25) * 100)}% currently missed and an average booking of ${fmtMoney(CONFIG.ROI?.avgBookingValue ?? 220)}.`;
+    `Based on ${roi.calls.toLocaleString()} calls/month${roi.estimatedCalls ? ` (${PAGE.unitEstimate || "estimated from room count"})` : ""}, ` +
+    `${Math.round((roiConfig().missedCallRate ?? 0.25) * 100)}% currently missed and an average booking of ${fmtMoney(roiConfig().avgBookingValue ?? 220)}.`;
 }
 
 function roiSummary(p) {
   const roi = computeRoi(p);
-  if (!roi) return "Not enough data for an ROI estimate yet — ask for the number of rooms or monthly calls.";
+  if (!roi) return `Not enough data for an ROI estimate yet — ask for the number of ${PAGE.unitsPlural || "rooms"} or monthly calls.`;
   // Pre-rounded spoken form so the agent doesn't round the exact figure itself (and get it wrong).
   const k = Math.round(roi.revenue / 500) / 2;
   const spoken = k >= 1 ? `about ${k.toLocaleString("en-US")} thousand dollars` : `about ${Math.round(roi.revenue / 50) * 50} dollars`;
   return `Estimated monthly impact: ${roi.recovered} missed calls recovered, ${fmtMoney(roi.revenue)} in extra direct bookings (say it as "${spoken} a month"), and ${roi.hours} staff hours freed. Use these exact figures; do not recalculate.`;
 }
 
-/** Type text into a field like a person would, so visitors see Aria "writing". */
+/** Type text into a field like a person would, so visitors see the guide "writing". */
 async function typeInto(el, text) {
   el.classList.add("filling");
   if (reducedMotion || text.length > 60) {
@@ -343,7 +348,7 @@ profileForm.addEventListener("input", (e) => {
   renderRoi();
   clearTimeout(profileDebounce);
   profileDebounce = setTimeout(
-    () => contextUpdate(`The visitor edited their hotel profile by hand: ${JSON.stringify(readProfile())}. ${roiSummary()}`),
+    () => contextUpdate(`The visitor edited their ${PAGE.businessNoun || "hotel"} profile by hand: ${JSON.stringify(readProfile())}. ${roiSummary()}`),
     1200
   );
 });
@@ -378,7 +383,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function missingDemoFields(d = Object.fromEntries(new FormData(demoForm))) {
   const missing = [];
   if (!d.name) missing.push("name");
-  if (!d.hotel_name) missing.push("hotel name");
+  if (!d.hotel_name) missing.push(PAGE.nameLabel || "hotel name");
   if (!d.email) missing.push("email");
   else if (!EMAIL_RE.test(d.email)) missing.push("a valid email address");
   return missing;
@@ -388,6 +393,7 @@ async function submitDemo() {
   const data = {
     ...Object.fromEntries(new FormData(demoForm)),
     hotel_profile: readProfile(),
+    industry: PAGE.industry || "hotels",
     submitted_at: new Date().toISOString(),
     conversation_id: conversation?.getId?.() ?? null,
   };
@@ -437,7 +443,7 @@ const clientTools = {
     const { names, done } = fillForm(profileForm, ["hotel_name", "hotel_type", "rooms", "monthly_calls", "languages", "pain_points"], params);
     if (params.hotel_name) fillForm(demoForm, ["hotel_name"], params);
     pendingTyping = done.then(renderRoi);
-    if (names.length) activity("Updated your hotel profile");
+    if (names.length) activity(`Updated your ${PAGE.businessNoun || "hotel"} profile`);
     // Answer immediately from the final values; the page catches up as it types.
     return `Updated: ${names.join(", ") || "nothing"}. ${roiSummary({ ...readProfile(), ...params })}`;
   },
@@ -483,11 +489,13 @@ const clientTools = {
     return `Demo request submitted for ${data.name} (${data.email}).`;
   },
 };
+// Agents set up for other industries can use the neutral name; the hotel name keeps working.
+clientTools.update_business_profile = clientTools.update_hotel_profile;
 
 // Exposed for testing tools from the browser console.
 window.ariaTools = clientTools;
 
-/* ---------- Visit context: shapes Aria's tone, pace and greeting ---------- */
+/* ---------- Visit context: shapes the guide's tone, pace and greeting ---------- */
 
 function visitContext() {
   let returning = false;
@@ -512,8 +520,13 @@ function visitContext() {
 /* ---------- Varied, human greetings ---------- */
 
 function pickGreeting({ part, returning }) {
+  const g = PAGE.greetings;
+  if (g) {
+    const line = part === "evening" && !returning && Math.random() < 0.5 ? g.evening : pick(returning ? g.returning : g.fresh);
+    return line.replaceAll("{part}", part);
+  }
   if (part === "evening" && !returning && Math.random() < 0.5) {
-    return "Good evening... [warmly] thanks for stopping by this late. I'm Aria — I look after hotel front desks, and I'll show you around. So, what's your hotel called?";
+    return `Good evening... [warmly] thanks for stopping by this late. I'm ${BRAND} — I look after hotel front desks, and I'll show you around. So, what's your hotel called?`;
   }
   if (returning) {
     return pick([
@@ -522,10 +535,10 @@ function pickGreeting({ part, returning }) {
     ]);
   }
   return pick([
-    `Good ${part}! [warmly] I'm Aria... I'm an AI receptionist for hotels, and I'll be showing you around today. So, first things first — what's your hotel called?`,
-    "Hey there... welcome! [warmly] I'm Aria — I'm an AI receptionist for hotels, and, um, I'll be your guide around here today. So, tell me — what's the name of your hotel?",
-    "Hi! Oh, lovely to meet you. [warmly] I'm Aria — I basically run the front desk for hotels, and I'll walk you through how. What's the name of your place?",
-    `Hello, and good ${part}! I'm Aria. [curious] I'd love to hear a bit about your hotel before I show you anything... what's it called?`,
+    `Good ${part}! [warmly] I'm ${BRAND}... I'm an AI receptionist for hotels, and I'll be showing you around today. So, first things first — what's your hotel called?`,
+    `Hey there... welcome! [warmly] I'm ${BRAND} — I'm an AI receptionist for hotels, and, um, I'll be your guide around here today. So, tell me — what's the name of your hotel?`,
+    `Hi! Oh, lovely to meet you. [warmly] I'm ${BRAND} — I basically run the front desk for hotels, and I'll walk you through how. What's the name of your place?`,
+    `Hello, and good ${part}! I'm ${BRAND}. [curious] I'd love to hear a bit about your hotel before I show you anything... what's it called?`,
   ]);
 }
 
@@ -539,7 +552,7 @@ async function loadSdk() {
 // Warm up the SDK so starting feels instant.
 addEventListener("load", () => setTimeout(() => loadSdk().catch(() => {}), 800));
 
-/** Soft two-note chime when Aria joins. */
+/** Soft two-note chime when the guide joins. */
 function chime() {
   try {
     const ctx = new AudioContext();
@@ -581,13 +594,13 @@ async function start(chosen) {
   mode = chosen;
   thread.innerHTML = "";
   setState("connecting");
-  caption(mode === "voice" ? "Allow microphone access to talk with Aria…" : "Opening the chat…");
+  caption(mode === "voice" ? `Allow microphone access to talk with ${BRAND}…` : "Opening the chat…");
   try {
     if (mode === "voice") await navigator.mediaDevices.getUserMedia({ audio: true });
     const SDK = await loadSdk();
     const ctx = visitContext();
     conversation = await SDK.startSession({
-      agentId: CONFIG.AGENT_ID,
+      agentId: PAGE.agentId || CONFIG.AGENT_ID,
       ...(mode === "voice" ? { connectionType: "webrtc" } : { textOnly: true }),
       dynamicVariables: ctx.dynamicVariables,
       overrides: { agent: { firstMessage: pickGreeting(ctx) }, tts: ctx.tts },
@@ -595,7 +608,7 @@ async function start(chosen) {
       onConnect: () => {
         chime();
         setState("thinking");
-        caption("Aria is joining…");
+        caption(`${BRAND} is joining…`);
         showTyping();
         if (mode === "text") {
           openPanel(true);
@@ -631,6 +644,8 @@ async function start(chosen) {
         }
       },
     });
+    // Until each industry has its own agent, the page tells the shared agent its name and industry.
+    if (PAGE.agentContext) contextUpdate(PAGE.agentContext);
   } catch (err) {
     console.error(err);
     stopUi();

@@ -1,5 +1,53 @@
 # Setting up the ElevenLabs voice agent
 
+## To do now: the rename to Amariya and the new industry pages (Oct 2026)
+
+The website now calls the product **Amariya** and has four pages: `/` (hotels and clinics), `/hotels/`, `/aesthetics/` and `/dental/`. All four still use the one existing agent. The site bridges the gap in two ways:
+
+- **The first message is sent from the page.** It is picked from the page's `greetings` in `industries/<page>.json`, so every call opens with "I'm Amariya, an AI receptionist for …" in that page's industry. First-message overrides are already enabled on the agent.
+- **A context note is sent as soon as the call starts** (`sendContextualUpdate`). It is the page's `agentContext`, which covers:
+  - her name
+  - which industry the visitor is looking at
+  - what each profile field, feature key and plan means on that page
+  - on the clinic pages, that she must never give medical advice or promote treatments
+
+This is a stopgap. The agent's own prompt still says "Aria" and "hotels", and a context note is weaker than the prompt. You do these steps in the ElevenLabs dashboard (there is no ElevenLabs access from this repo):
+
+1. **Rename the agent** to "Amariya – Sales Guide". In its system prompt, replace every "Aria" with "Amariya" and add the rules below.
+2. **Add the live domains to the allowlist** (Security tab): `aria-hotel-website.vercel.app`, and later `amariya.ai` and `heyamariya.com`. Without this, text chat on the live site is refused ("Host … is not allowed to connect to this agent").
+3. **Recommended: one agent per industry.** Duplicate the agent twice ("Amariya – Aesthetics Sales Guide", "Amariya – Dental Sales Guide"), swap the prompt's hotel wording for the industry (the addenda below), then put each new agent's ID in that page's content file (`industries/aesthetics.json` → `page.agentId`) and rebuild. Once a page has its own agent you can delete its `agentContext`.
+4. **Optional:** add a client tool `update_business_profile` with the same parameters as `update_hotel_profile`. The site already answers to both names.
+
+**Rules to add to every prompt:**
+
+```
+# Identity and disclosure
+Your name is Amariya. You are an AI assistant, and you say so at the start of every conversation and whenever someone asks. Never claim to be human.
+
+# Safety (clinic pages)
+Never give medical, dental or clinical advice, and never recommend, promote or name prescription-only treatments. Questions about suitability, medication, side effects or symptoms are for the clinic's clinicians. If a caller describes an emergency or a worrying reaction after a treatment, tell them to contact their clinic's on-call clinician or emergency services straight away.
+```
+
+**Aesthetics addendum** (replace the hotel-specific parts of the prompt):
+
+```
+The visitor runs an aesthetics clinic, med spa, laser or skin clinic, cosmetic surgery or hair transplant clinic. Talk about clients, consultations, treatments, deposits and rebooking — not rooms and guests.
+Profile tool mapping: hotel_name = clinic name, hotel_type = type of clinic, rooms = number of practitioners, monthly_calls = calls per month, languages = patient languages, pain_points = biggest front-desk challenge.
+Features: bookings = consultation booking (with deposit links by text), multilingual = 30+ languages, guest_requests = patient questions, upsells = rebooking and packages, integrations = clinic software, answering = 24/7 call answering.
+Plans: starter = one clinic ($299), professional = up to 3 locations ($799), enterprise = clinic groups (custom).
+```
+
+**Dental addendum:**
+
+```
+The visitor runs a dental practice or group. Talk about patients, appointments, urgent visits, recalls and rescheduling — not rooms and guests.
+Profile tool mapping: hotel_name = practice name, hotel_type = type of practice, rooms = number of dental chairs, monthly_calls = calls per month, languages = patient languages, pain_points = biggest front-desk challenge.
+Features: bookings = appointment booking, multilingual = 30+ languages, guest_requests = urgent calls, upsells = recalls and rebooking, integrations = practice software, answering = 24/7 call answering.
+Plans: starter = one practice ($299), professional = up to 3 practices ($799), enterprise = dental groups (custom).
+```
+
+The sections below describe the original hotel agent and are kept for reference.
+
 > **Already done:** the agent **"Aria – Hotel Sales Guide"** (`agent_9101m3n1hwxffey830jzf43chj6x`) was created through the ElevenLabs MCP connection with everything below: prompt, first message, voice "Bella", the 7 client tools and end_call. Its ID is already in `config.js`. The allowlist currently contains `localhost` and `mohdarhamasif.github.io`. Add any other domain (a custom domain or a preview deploy) before using it. The steps below are for recreating the agent by hand.
 >
 > **Human-sounding voice (updated):** the live agent uses the expressive `eleven_v3_conversational` voice model (stability 0.4, LLM temperature 0.7), a prompt section that asks for natural pauses, filler words, varied reactions and occasional audio tags like `[warmly]`, AI-generated "hmm, one sec…" fillers when it needs a moment, and stricter tool rules. The website picks one of several greetings per visit, including a "welcome back" for returning visitors, so first-message overrides are enabled. The ElevenLabs dashboard has the current prompt; the prompt below is the original version.

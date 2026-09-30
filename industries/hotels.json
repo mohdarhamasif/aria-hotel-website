@@ -1,0 +1,128 @@
+{
+  "seo": {
+    "title": "{brand} — AI Receptionist & Voice Concierge for Hotels",
+    "description": "{brand} is a voice AI receptionist for hotels: it answers every call 24/7, books rooms into your PMS, handles guest requests in 30+ languages and hands off to staff.",
+    "og_description": "A front desk that never misses a call. Talk to {brand}, the AI receptionist that books rooms and speaks your guests' language.",
+    "twitter_description": "A front desk that never misses a call. Talk to {brand}, the AI receptionist for hotels.",
+    "image_alt": "{brand} — the AI receptionist for hotels.",
+    "website_name": "{brand} — AI Receptionist for Hotels",
+    "app_subcategory": "AI receptionist for hotels",
+    "app_description": "Voice AI receptionist for hotels that answers calls 24/7, books rooms directly into the PMS, handles guest requests in 30+ languages and warm-transfers to staff.",
+    "feature_list": ["24/7 call answering", "Direct bookings via PMS", "30+ languages", "Guest requests", "Smart upsells", "PMS integrations: Opera, Mews, Cloudbeds, Apaleo"],
+    "service_type": "AI hotel receptionist",
+    "service_name": "{brand} AI front desk",
+    "audience": "Hotels, resorts, B&Bs and serviced apartments"
+  },
+  "hero": {
+    "title": "A front desk that <em>never</em> misses a call.",
+    "lede": "{brand} is the AI receptionist for hotels. She picks up 24/7, books rooms straight into your PMS and speaks your guests' language — warmly, like your best night manager."
+  },
+  "story": {
+    "label": "A night at the front desk",
+    "beat0": ". A guest calls about <em>a late check-in.</em>",
+    "beat1": "{brand} answers on the first ring, <em>in their language.</em>",
+    "beat2": "The booking lands in your PMS.",
+    "beat2_night": "Your night team sleeps.",
+    "beat2_day": "Your team stays with the guest in front of them."
+  },
+  "marquee": {
+    "sr": "Built for boutique hotels, resorts, city hotels, B&amp;Bs, hotel groups and serviced apartments.",
+    "items": ["Boutique hotels", "Resorts", "City hotels", "B&amp;Bs", "Hotel groups", "Serviced apartments"]
+  },
+  "profile": {
+    "eyebrow": "02 — Your hotel",
+    "title": "Tell {brand} about <em>your property</em>",
+    "name_label": "Hotel name",
+    "name_placeholder": "e.g. The Harbour House",
+    "type_label": "Type of property",
+    "type_options": ["Boutique hotel", "City hotel", "Resort", "Hotel chain / group", "B&amp;B / guesthouse", "Serviced apartments"],
+    "units_label": "Rooms",
+    "units_placeholder": "80",
+    "calls_placeholder": "1200",
+    "languages_label": "Guest languages",
+    "languages_placeholder": "English, Spanish, Arabic",
+    "challenge_label": "Biggest front-desk challenge",
+    "challenge_placeholder": "Missed calls at night, repetitive questions…"
+  },
+  "roi": {
+    "revenue_label": "extra direct-booking revenue",
+    "note": "Add rooms or monthly calls to see your numbers."
+  },
+  "features": {
+    "title": "Everything your front desk <em>does on the phone</em>",
+    "lede": "{brand} handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.",
+    "pills": [
+      { "key": "bookings", "icon": "i-calendar", "title": "Direct bookings", "desc": "Checks live availability, quotes rates and books straight into your PMS — no OTA commission." },
+      { "key": "multilingual", "icon": "i-translate", "title": "30+ languages", "desc": "Detects the caller's language and switches instantly, with a natural, warm voice." },
+      { "key": "guest_requests", "icon": "i-reserve", "title": "Guest requests", "desc": "Late checkout, towels, taxis, restaurant hours — handled and routed to the right team." },
+      { "key": "upsells", "icon": "i-trend", "title": "Smart upsells", "desc": "Offers upgrades, breakfast and spa packages at just the right moment." },
+      { "key": "integrations", "icon": "i-link", "title": "PMS &amp; tool integrations", "desc": "Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed." }
+    ],
+    "card_title": "24/7 call answering",
+    "card_desc": "Picks up on the first ring, day or night, holidays included. No hold music, no voicemail, no missed bookings."
+  },
+  "calls": [
+    { "meta": "Room 214 · 11:48 pm", "done": "Cabana booked for 9 pm", "lines": [
+      ["g", "Is the pool open late?"],
+      ["a", "Until 11pm tonight — want me to book you a cabana?"],
+      ["g", "Perfect, yes please."]
+    ] },
+    { "meta": "Room 507 · 7:02 am", "done": "Late checkout added", "lines": [
+      ["g", "Could we check out at 2pm tomorrow?"],
+      ["a", "Of course — I've added a 2pm late checkout for room 507."],
+      ["g", "Wonderful, thank you."]
+    ] },
+    { "meta": "New caller · 9:15 pm", "done": "Reserva confirmada · 1 noche", "lines": [
+      ["g", "¿Tienen una habitación para el viernes?"],
+      ["a", "¡Sí! Una doble con vista al mar por 189 €. ¿Se la reservo?"],
+      ["g", "Sí, por favor."]
+    ] }
+  ],
+  "pricing": {
+    "title": "Plans that fit <em>your property</em>",
+    "plans": {
+      "starter": { "for": "Up to 40 rooms", "price": "$299", "offer": "Up to 40 rooms, 500 calls per month", "items": ["24/7 call answering", "FAQ &amp; guest requests", "5 languages", "500 calls / month"] },
+      "professional": { "for": "Up to 150 rooms", "price": "$799", "offer": "Up to 150 rooms, 2,500 calls per month", "items": ["Everything in Starter", "Direct bookings via PMS", "30+ languages", "Upsells &amp; analytics", "2,500 calls / month"] },
+      "enterprise": { "for": "Groups &amp; 150+ rooms", "price": "Custom", "items": ["Everything in Professional", "Multi-property setup", "Custom voice &amp; brand persona", "Dedicated success manager", "Unlimited calls"] }
+    }
+  },
+  "demo": {
+    "title": "Hear {brand} answer <em>your</em> hotel's phone",
+    "check2": "{brand} set up with your hotel's details",
+    "business_label": "Hotel"
+  },
+  "faq": {
+    "title": "What hoteliers <em>ask us</em>",
+    "items": [
+      { "q": "What is an AI receptionist for hotels?", "a": "An AI receptionist answers your hotel's phone line like a trained front-desk agent. {brand} picks up every call, answers questions about rooms, rates and facilities, takes bookings and guest requests, and passes the call to your staff when a person is needed." },
+      { "q": "Which languages does {brand} speak?", "a": "{brand} speaks 30+ languages on the Professional and Enterprise plans, and 5 on Starter. She detects the caller's language from the first sentence and switches automatically." },
+      { "q": "Does {brand} work with my property management system?", "a": "Yes. {brand} works with Opera, Mews, Cloudbeds, Apaleo and other common PMS and booking tools, so she can check live availability, quote rates and book rooms directly — without OTA commission." },
+      { "q": "What happens when a guest needs a real person?", "a": "{brand} warm-transfers the call to the right member of your team with a short summary, or takes a message and routes it when nobody is available — for example at night." },
+      { "q": "How long does setup take?", "a": "Most hotels go live within days. You connect your PMS and forward your phone line; no hardware is needed. We tune {brand}'s answers to your property before launch." }
+    ]
+  },
+  "footer": { "title": "Your front desk, <em>never off duty.</em>" },
+  "sheet": { "ask": "She'll ask about your hotel and walk you through the site as you talk." },
+  "page": {
+    "sectionLabel": "your hotel",
+    "businessNoun": "hotel",
+    "nameLabel": "hotel name",
+    "unitsPlural": "rooms",
+    "unitEstimate": "estimated from room count",
+    "roi": { "missedCallRate": 0.25, "bookingConversion": 0.3, "avgBookingValue": 220, "minutesPerCall": 4, "callsPerUnit": 12 },
+    "greetings": {
+      "evening": "Good evening... [warmly] thanks for stopping by this late. I'm {brand} — an AI receptionist for hotels — and I'll show you around. So, what's your hotel called?",
+      "returning": [
+        "Oh — welcome back! [warmly] It's {brand}, your AI guide, again. So... remind me, what's the name of your hotel?",
+        "Hey, you're back! [laughs softly] {brand} here, the AI receptionist. Okay, let's pick up where we left off — what's your hotel called?"
+      ],
+      "fresh": [
+        "Good {part}! [warmly] I'm {brand}... I'm an AI receptionist for hotels, and I'll be showing you around today. So, first things first — what's your hotel called?",
+        "Hey there... welcome! [warmly] I'm {brand} — I'm an AI receptionist for hotels, and, um, I'll be your guide around here today. So, tell me — what's the name of your hotel?",
+        "Hi! Oh, lovely to meet you. [warmly] I'm {brand}, an AI receptionist — I basically run the front desk for hotels, and I'll walk you through how. What's the name of your place?",
+        "Hello, and good {part}! I'm {brand}, an AI receptionist for hotels. [curious] I'd love to hear a bit about your hotel before I show you anything... what's it called?"
+      ]
+    },
+    "agentContext": "Your name is {brand}. Always introduce and refer to yourself as {brand}, never by any other name. The visitor is on the page for hotels."
+  }
+}

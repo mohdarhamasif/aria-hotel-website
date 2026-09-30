@@ -1,0 +1,127 @@
+{
+  "seo": {
+    "title": "{brand} — AI Receptionist for Hotels & Clinics",
+    "description": "{brand} is a voice AI receptionist for hotels, aesthetics clinics and dental practices: it answers every call 24/7, books rooms and appointments, speaks 30+ languages and hands off to your team.",
+    "og_description": "A front desk that never misses a call. Talk to {brand}, the AI receptionist for hotels and clinics.",
+    "twitter_description": "A front desk that never misses a call. Talk to {brand}, the AI receptionist for hotels and clinics.",
+    "image_alt": "{brand} — the AI receptionist for hotels and clinics.",
+    "website_name": "{brand} — AI Receptionist for Hotels & Clinics",
+    "app_subcategory": "AI receptionist for hotels and clinics",
+    "app_description": "Voice AI receptionist for hotels, aesthetics clinics and dental practices that answers calls 24/7, books rooms and appointments, speaks 30+ languages and warm-transfers to staff.",
+    "feature_list": ["24/7 call answering", "Bookings and appointments", "30+ languages", "Caller questions", "Smart upsells", "Warm transfer to staff"],
+    "service_type": "AI receptionist",
+    "service_name": "{brand} AI front desk",
+    "audience": "Hotels, aesthetics clinics, med spas and dental practices"
+  },
+  "hero": {
+    "title": "A front desk that <em>never</em> misses a call.",
+    "lede": "{brand} is the AI receptionist for hotels and clinics. She picks up 24/7, books straight into your system and speaks your callers' language — warmly, like your best front-desk person."
+  },
+  "story": {
+    "label": "A night at the front desk",
+    "beat0": ". Someone calls <em>to book.</em>",
+    "beat1": "{brand} answers on the first ring, <em>in their language.</em>",
+    "beat2": "The booking lands in your system.",
+    "beat2_night": "Your team sleeps.",
+    "beat2_day": "Your team stays with the people in front of them."
+  },
+  "marquee": {
+    "sr": "Built for boutique hotels, resorts, aesthetics clinics, med spas, dental practices and clinic groups.",
+    "items": ["Boutique hotels", "Resorts", "Aesthetics clinics", "Med spas", "Dental practices", "Clinic groups"]
+  },
+  "profile": {
+    "eyebrow": "02 — Your business",
+    "title": "Tell {brand} about <em>your business</em>",
+    "name_label": "Business name",
+    "name_placeholder": "e.g. The Harbour House",
+    "type_label": "Type of business",
+    "type_options": ["Hotel / resort", "Aesthetics clinic / med spa", "Dental practice", "Other clinic", "Other business"],
+    "units_label": "Locations",
+    "units_placeholder": "1",
+    "calls_placeholder": "1000",
+    "languages_label": "Caller languages",
+    "languages_placeholder": "English, Spanish, Arabic",
+    "challenge_label": "Biggest front-desk challenge",
+    "challenge_placeholder": "Missed calls after hours, repetitive questions…"
+  },
+  "roi": {
+    "revenue_label": "extra booking revenue",
+    "note": "Add locations or monthly calls to see your numbers."
+  },
+  "features": {
+    "title": "Everything your front desk <em>does on the phone</em>",
+    "lede": "{brand} handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.",
+    "pills": [
+      { "key": "bookings", "icon": "i-calendar", "title": "Direct bookings", "desc": "Books rooms, consultations and appointments straight into your system." },
+      { "key": "multilingual", "icon": "i-translate", "title": "30+ languages", "desc": "Detects the caller's language and switches instantly, with a natural, warm voice." },
+      { "key": "guest_requests", "icon": "i-reserve", "title": "Caller questions", "desc": "Prices, opening hours, directions and requests — handled and routed to the right person." },
+      { "key": "upsells", "icon": "i-trend", "title": "Smart upsells", "desc": "Offers upgrades, packages and add-ons at just the right moment." },
+      { "key": "integrations", "icon": "i-link", "title": "Your tools", "desc": "Connects to your booking or practice software. Warm-transfers to staff when needed." }
+    ],
+    "card_title": "24/7 call answering",
+    "card_desc": "Picks up on the first ring, day or night, holidays included. No hold music, no voicemail, no missed bookings."
+  },
+  "calls": [
+    { "meta": "Room 214 · 11:48 pm", "done": "Cabana booked for 9 pm", "lines": [
+      ["g", "Is the pool open late?"],
+      ["a", "Until 11pm tonight — want me to book you a cabana?"],
+      ["g", "Perfect, yes please."]
+    ] },
+    { "meta": "New client · 8:40 pm", "done": "Consultation booked · Sat 11 am", "lines": [
+      ["g", "Do you have a laser consultation this weekend?"],
+      ["a", "Yes — Saturday at 11 is free. Shall I book it and text you the deposit link?"],
+      ["g", "Perfect, please do."]
+    ] },
+    { "meta": "New caller · 6:30 pm", "done": "Cita confirmada · lunes 9:00", "lines": [
+      ["g", "¿Aceptan pacientes nuevos?"],
+      ["a", "¡Sí! Tenemos una cita el lunes a las 9. ¿Se la reservo?"],
+      ["g", "Sí, por favor."]
+    ] }
+  ],
+  "pricing": {
+    "title": "Plans that fit <em>your business</em>",
+    "plans": {
+      "starter": { "for": "One location", "price": "$299", "offer": "One location, 500 calls per month", "items": ["24/7 call answering", "Bookings &amp; FAQs", "5 languages", "500 calls / month"] },
+      "professional": { "for": "Up to 3 locations", "price": "$799", "offer": "Up to 3 locations, 2,500 calls per month", "items": ["Everything in Starter", "Books into your software", "30+ languages", "Upsells &amp; analytics", "2,500 calls / month"] },
+      "enterprise": { "for": "Groups &amp; chains", "price": "Custom", "items": ["Everything in Professional", "Multi-location setup", "Custom voice &amp; brand persona", "Dedicated success manager", "Unlimited calls"] }
+    }
+  },
+  "demo": {
+    "title": "Hear {brand} answer <em>your</em> phone",
+    "check2": "{brand} set up with your business's details",
+    "business_label": "Business"
+  },
+  "faq": {
+    "title": "What people <em>ask us</em>",
+    "items": [
+      { "q": "What is an AI receptionist?", "a": "An AI receptionist answers your phone line like a trained front-desk person. {brand} picks up every call, answers questions, takes bookings and appointments, and passes the call to your team when a person is needed." },
+      { "q": "Who is {brand} for?", "a": "Hotels, aesthetics clinics and dental practices today. Each has its own page — <a href=\"{base}hotels/\">hotels</a>, <a href=\"{base}aesthetics/\">aesthetics clinics</a> and <a href=\"{base}dental/\">dental practices</a> — and {brand} is set up for the calls your business actually gets." },
+      { "q": "Which languages does {brand} speak?", "a": "{brand} speaks 30+ languages on the Professional and Enterprise plans, and 5 on Starter. She detects the caller's language from the first sentence and switches automatically." },
+      { "q": "What happens when a caller needs a real person?", "a": "{brand} warm-transfers the call to the right member of your team with a short summary, or takes a message and routes it when nobody is available — for example at night." },
+      { "q": "How long does setup take?", "a": "Most businesses go live within days. We connect your booking software and you forward your phone line; no hardware is needed. We tune {brand}'s answers to your business before launch." }
+    ]
+  },
+  "footer": { "title": "Your front desk, <em>never off duty.</em>" },
+  "sheet": { "ask": "She'll ask about your business and walk you through the site as you talk." },
+  "page": {
+    "sectionLabel": "your business",
+    "businessNoun": "business",
+    "nameLabel": "business name",
+    "unitsPlural": "locations",
+    "unitEstimate": "estimated from the number of locations",
+    "roi": { "missedCallRate": 0.25, "bookingConversion": 0.3, "avgBookingValue": 250, "minutesPerCall": 4, "callsPerUnit": 800 },
+    "greetings": {
+      "evening": "Good evening... [warmly] thanks for stopping by this late. I'm {brand} — an AI receptionist for hotels and clinics — and I'll show you around. So, what's your business called?",
+      "returning": [
+        "Oh — welcome back! [warmly] It's {brand}, your AI guide, again. So... remind me, what's the name of your business?",
+        "Hey, you're back! [laughs softly] {brand} here, the AI receptionist. Okay, let's pick up where we left off — what's your business called?"
+      ],
+      "fresh": [
+        "Good {part}! [warmly] I'm {brand}... I'm an AI receptionist for hotels and clinics, and I'll be showing you around today. So, first things first — what's your business called?",
+        "Hi! Oh, lovely to meet you. [warmly] I'm {brand} — I'm an AI receptionist, and I run the front desk for hotels and clinics. What's the name of your place?",
+        "Hello, and good {part}! I'm {brand}, an AI receptionist. [curious] I'd love to hear a bit about your business before I show you anything... what's it called?"
+      ]
+    },
+    "agentContext": "Your name is {brand}. Always introduce and refer to yourself as {brand}, never by any other name. The visitor is on the main page, which covers hotels, aesthetics clinics and dental practices. Find out what kind of business they run and talk about it in their terms (guests and rooms for hotels; clients, consultations and treatments for aesthetics clinics; patients and appointments for dental practices). On this page the profile fields mean: hotel_name = business name, hotel_type = type of business, rooms = number of locations, monthly_calls = calls per month, languages = caller languages, pain_points = biggest front-desk challenge. Plans here: starter = one location, professional = up to 3 locations, enterprise = groups and chains. Never give medical or clinical advice."
+  }
+}

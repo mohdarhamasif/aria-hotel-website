@@ -1,0 +1,127 @@
+{
+  "seo": {
+    "title": "{brand} — AI Receptionist for Aesthetics Clinics & Med Spas",
+    "description": "{brand} answers every call for your aesthetics clinic or med spa: books consultations, takes deposits by payment link, speaks 30+ languages and passes clinical questions to your team.",
+    "og_description": "A front desk that never misses a consultation. Talk to {brand}, the AI receptionist for aesthetics clinics.",
+    "twitter_description": "A front desk that never misses a consultation. Talk to {brand}, the AI receptionist for aesthetics clinics.",
+    "image_alt": "{brand} — the AI receptionist for aesthetics clinics.",
+    "website_name": "{brand} — AI Receptionist for Aesthetics Clinics",
+    "app_subcategory": "AI receptionist for aesthetics clinics and med spas",
+    "app_description": "Voice AI receptionist for aesthetics clinics and med spas that answers calls 24/7, books consultations, sends deposit links, speaks 30+ languages and passes clinical questions to the clinic's team.",
+    "feature_list": ["24/7 call answering", "Consultation booking", "30+ languages", "Deposits by payment link", "Rebooking and packages", "Warm transfer to clinicians"],
+    "service_type": "AI receptionist for aesthetics clinics",
+    "service_name": "{brand} AI front desk for clinics",
+    "audience": "Aesthetics clinics, med spas, laser and skin clinics, cosmetic surgery and hair transplant clinics"
+  },
+  "hero": {
+    "title": "A front desk that <em>never</em> misses a consultation.",
+    "lede": "{brand} is the AI receptionist for aesthetics clinics. She answers every call, books consultations, sends deposit links and speaks your patients' language — warmly, and always leaving clinical questions to your team."
+  },
+  "story": {
+    "label": "A night at the clinic's front desk",
+    "beat0": ". A client asks about <em>a consultation.</em>",
+    "beat1": "{brand} answers on the first ring, <em>in their language.</em>",
+    "beat2": "The consultation lands in your calendar.",
+    "beat2_night": "Your team sleeps.",
+    "beat2_day": "Your team stays with the client in the chair."
+  },
+  "marquee": {
+    "sr": "Built for med spas, aesthetics clinics, laser and skin clinics, cosmetic surgery practices, hair transplant clinics and clinic groups.",
+    "items": ["Med spas", "Aesthetics clinics", "Laser &amp; skin clinics", "Cosmetic surgery", "Hair transplant clinics", "Clinic groups"]
+  },
+  "profile": {
+    "eyebrow": "02 — Your clinic",
+    "title": "Tell {brand} about <em>your clinic</em>",
+    "name_label": "Clinic name",
+    "name_placeholder": "e.g. The Skin Studio",
+    "type_label": "Type of clinic",
+    "type_options": ["Med spa / aesthetics clinic", "Laser &amp; skin clinic", "Cosmetic surgery clinic", "Dermatology clinic", "Hair transplant clinic", "Clinic group"],
+    "units_label": "Practitioners",
+    "units_placeholder": "4",
+    "calls_placeholder": "600",
+    "languages_label": "Patient languages",
+    "languages_placeholder": "English, Arabic, Russian",
+    "challenge_label": "Biggest front-desk challenge",
+    "challenge_placeholder": "Missed enquiries, no-shows, calls during treatments…"
+  },
+  "roi": {
+    "revenue_label": "extra consultation revenue",
+    "note": "Add practitioners or monthly calls to see your numbers."
+  },
+  "features": {
+    "title": "Everything your front desk <em>does on the phone</em>",
+    "lede": "{brand} handles the calls, the questions and the bookings, and hands off to your team the moment a clinician is needed.",
+    "pills": [
+      { "key": "bookings", "icon": "i-calendar", "title": "Consultation booking", "desc": "Books consultations and treatments into your calendar, and sends a secure deposit link by text." },
+      { "key": "multilingual", "icon": "i-translate", "title": "30+ languages", "desc": "Speaks with international patients in their own language — Arabic, Russian, German and more." },
+      { "key": "guest_requests", "icon": "i-reserve", "title": "Patient questions", "desc": "Prices, treatment options, opening hours and directions — answered, with clinical questions passed to your team." },
+      { "key": "upsells", "icon": "i-trend", "title": "Rebooking &amp; packages", "desc": "Reminds clients about their next session and offers packages and memberships at the right moment." },
+      { "key": "integrations", "icon": "i-link", "title": "Clinic software", "desc": "We connect her to your booking system during setup. Urgent concerns go straight to your on-call clinician." }
+    ],
+    "card_title": "24/7 call answering",
+    "card_desc": "Picks up on the first ring — after hours, at lunch, or while your team is mid-treatment. No voicemail, no missed consultations."
+  },
+  "calls": [
+    { "meta": "New client · 8:40 pm", "done": "Consultation booked · Sat 11 am", "lines": [
+      ["g", "Do you have a laser consultation this weekend?"],
+      ["a", "Yes — Saturday at 11 is free. Shall I book it and text you the deposit link?"],
+      ["g", "Perfect, please do."]
+    ] },
+    { "meta": "Returning client · 1:15 pm", "done": "Moved to Thu 5 pm", "lines": [
+      ["g", "Could I move my skin session to Thursday?"],
+      ["a", "Of course — Thursday at 5 pm works. I've moved it for you."],
+      ["g", "Lovely, thank you."]
+    ] },
+    { "meta": "New caller · 10:05 pm", "done": "تم حجز الاستشارة · الخميس ٤ م", "lines": [
+      ["g", "هل يمكنني حجز استشارة يوم الخميس؟"],
+      ["a", "بالتأكيد! لدينا موعد الساعة الرابعة مساءً. هل أحجزه لك؟"],
+      ["g", "نعم، من فضلك."]
+    ] }
+  ],
+  "pricing": {
+    "title": "Plans that fit <em>your clinic</em>",
+    "plans": {
+      "starter": { "for": "One clinic", "price": "$299", "offer": "One clinic, 500 calls per month", "items": ["24/7 call answering", "Consultation booking &amp; FAQs", "5 languages", "500 calls / month"] },
+      "professional": { "for": "Up to 3 locations", "price": "$799", "offer": "Up to 3 locations, 2,500 calls per month", "items": ["Everything in Starter", "Books into your clinic software", "30+ languages", "Deposit links &amp; rebooking", "2,500 calls / month"] },
+      "enterprise": { "for": "Clinic groups", "price": "Custom", "items": ["Everything in Professional", "Multi-location setup", "Custom voice &amp; brand persona", "Dedicated success manager", "Unlimited calls"] }
+    }
+  },
+  "demo": {
+    "title": "Hear {brand} answer <em>your</em> clinic's phone",
+    "check2": "{brand} set up with your clinic's details",
+    "business_label": "Clinic"
+  },
+  "faq": {
+    "title": "What clinics <em>ask us</em>",
+    "items": [
+      { "q": "What does an AI receptionist do for an aesthetics clinic?", "a": "She answers your clinic's phone line like a trained coordinator. {brand} picks up every call, books consultations and treatments, answers questions about prices, opening hours and directions, sends deposit links, and passes the call to your team when a person is needed." },
+      { "q": "Will {brand} give medical advice?", "a": "No. {brand} never gives medical advice. Questions about suitability, medication or side effects go to your clinicians, and anyone worried after a treatment is put through to your on-call team straight away." },
+      { "q": "Which languages does {brand} speak?", "a": "{brand} speaks 30+ languages on the Professional and Enterprise plans, and 5 on Starter — ideal for clinics that treat international patients. She detects the caller's language from the first sentence and switches automatically." },
+      { "q": "Does {brand} work with my booking software?", "a": "We connect {brand} to your booking system during setup, so she can check availability and book consultations directly. Tell us which system you use on your demo call." },
+      { "q": "How do deposits work?", "a": "{brand} sends the caller a secure payment link by text. She never takes card numbers over the phone." }
+    ]
+  },
+  "footer": { "title": "Your front desk, <em>never off duty.</em>" },
+  "sheet": { "ask": "She'll ask about your clinic and walk you through the site as you talk." },
+  "page": {
+    "sectionLabel": "your clinic",
+    "businessNoun": "clinic",
+    "nameLabel": "clinic name",
+    "unitsPlural": "practitioners",
+    "unitEstimate": "estimated from the number of practitioners",
+    "roi": { "missedCallRate": 0.25, "bookingConversion": 0.25, "avgBookingValue": 435, "minutesPerCall": 5, "callsPerUnit": 150 },
+    "greetings": {
+      "evening": "Good evening... [warmly] thanks for stopping by this late. I'm {brand} — an AI receptionist for aesthetics clinics — and I'll show you around. So, what's your clinic called?",
+      "returning": [
+        "Oh — welcome back! [warmly] It's {brand}, your AI guide, again. So... remind me, what's the name of your clinic?",
+        "Hey, you're back! [laughs softly] {brand} here, the AI receptionist. Okay, let's pick up where we left off — what's your clinic called?"
+      ],
+      "fresh": [
+        "Good {part}! [warmly] I'm {brand}... I'm an AI receptionist for aesthetics clinics, and I'll be showing you around today. So, first things first — what's your clinic called?",
+        "Hi! Oh, lovely to meet you. [warmly] I'm {brand} — I'm an AI receptionist, and I answer the phones for aesthetics clinics. What's the name of your clinic?",
+        "Hello, and good {part}! I'm {brand}, an AI receptionist for clinics. [curious] I'd love to hear a bit about your clinic before I show you anything... what's it called?"
+      ]
+    },
+    "agentContext": "Your name is {brand}. Always introduce and refer to yourself as {brand}, never by any other name. The visitor is on the page for aesthetics and cosmetic clinics, so talk about clinics, consultations, treatments and patients instead of hotels, rooms and guests. On this page the profile fields mean: hotel_name = clinic name, hotel_type = type of clinic, rooms = number of practitioners, monthly_calls = calls per month, languages = patient languages, pain_points = biggest front-desk challenge. Feature keys here: bookings = consultation booking, multilingual = 30+ languages, guest_requests = patient questions, upsells = rebooking and packages, integrations = clinic software, answering = 24/7 call answering. Plans here: starter = one clinic, professional = up to 3 locations, enterprise = clinic groups. Never give medical advice, never recommend or promote any treatment or prescription-only product, and say clinical questions are for the clinic's clinicians."
+  }
+}

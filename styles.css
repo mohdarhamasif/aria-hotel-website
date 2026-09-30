@@ -1,4 +1,4 @@
-/* Aria — one night, top to bottom.
+/* One night, top to bottom.
    A fixed particle field (experience.js) runs behind the whole page and
    reshapes for each section. Two fonts only: Ranade for every heading and display line, Supreme for everything else; everything
    else stays quiet so the particles and the words carry the page. */
@@ -81,6 +81,16 @@ html.lenis { scroll-behavior: auto; }
 
 /* The wordmark sits in the hero corner and scrolls away with it */
 .brand { position: absolute; top: 26px; left: clamp(20px, 4vw, 48px); z-index: 3; margin: 0; display: inline-flex; align-items: center; gap: 10px; font: 400 1.6rem/1 var(--serif); letter-spacing: -.02em; }
+a.brand { color: inherit; text-decoration: none; }
+/* Industry switcher: a small glass bar of links, opposite the brand */
+.industry-nav {
+  position: absolute; top: 18px; right: clamp(20px, 4vw, 48px); z-index: 3; display: flex; gap: 2px; padding: 4px; border-radius: 999px;
+  background: rgba(255, 255, 255, .045); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.industry-nav a { padding: 7px 14px; border-radius: 999px; font-size: .82rem; line-height: 1.2; color: var(--muted); text-decoration: none; white-space: nowrap; transition: color .25s, background-color .25s; }
+.industry-nav a:hover { color: var(--text); }
+.industry-nav a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.industry-nav a[aria-current="page"] { color: var(--text); background: rgba(255, 255, 255, .1); }
 .logo { display: inline-flex; align-items: center; gap: 10px; font: 400 1.6rem var(--serif); text-decoration: none; color: var(--text); }
 .logo-mark { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, var(--bg) 55%, transparent 57%), var(--orb-ring); }
 
@@ -308,7 +318,7 @@ textarea { resize: vertical; }
 .feature.pill p { grid-column: 1 / -1; margin: 10px 0 0; max-width: 300px; font-size: .9rem; line-height: 1.5; color: var(--muted); }
 .pill.spotlight .pill-ico, .pill:hover .pill-ico { color: var(--orb-warm); }
 
-.features.orbit-live { padding-top: 0; } /* the pinned screen is its own spacing, and Aria's jump lands on it */
+.features.orbit-live { padding-top: 0; } /* the pinned screen is its own spacing, and the guide's jump lands on it */
 .orbit-live .feature-stage { height: 260vh; height: 260svh; }
 .orbit-live .feature-pin { position: sticky; top: 0; display: block; height: 100vh; height: 100svh; padding: 0; }
 .orbit-live .fh-a { position: absolute; left: 50%; top: 50%; z-index: 2; width: min(1000px, 92%); transform: translate(-50%, -50%); pointer-events: none; will-change: transform, opacity, filter; }
@@ -317,7 +327,7 @@ textarea { resize: vertical; }
 .orbit-live .feature-lede { position: absolute; right: 0; top: 12%; max-width: 380px; text-align: left; opacity: 0; }
 .orbit-live .orbit { position: absolute; inset: 0; display: block; max-width: none; margin: 0; pointer-events: none; }
 .orbit-live .orbit-slot { position: absolute; left: 0; top: 0; pointer-events: auto; will-change: transform; }
-/* In orbit the features are slim tags; hover, focus or Aria's spotlight opens one */
+/* In orbit the features are slim tags; hover, focus or the guide's spotlight opens one */
 .orbit-live .feature.pill { column-gap: 9px; padding: 9px 16px 9px 13px; border-radius: 20px; }
 .orbit-live .feature.pill h3 { font-size: .98rem; }
 .orbit-live .pill-ico svg { width: 16px; height: 16px; }
@@ -368,7 +378,7 @@ textarea { resize: vertical; }
 .feature:hover .f-ico { transform: rotate(-6deg) scale(1.06); border-color: var(--line-strong); }
 .feature h3 { margin-bottom: .35em; }
 .card.spotlight .f-ico { color: var(--orb-warm); border-color: rgba(242, 167, 126, .45); }
-/* When Aria points at a feature or plan: a slow ring in the orb's colours */
+/* When the guide points at a feature or plan: a slow ring in the orb's colours */
 .card.spotlight, .card.spotlight.reveal.in { transform: translateY(-4px); border-color: transparent; box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
 .card.spotlight::before, .plan.recommended::before {
   content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
@@ -401,7 +411,7 @@ textarea { resize: vertical; }
 .planet::before { inset: 0; padding: 1.5px; opacity: calc(.55 + .45 * var(--glow)); }
 /* Its atmosphere: the same colours, blurred into a soft halo */
 .planet::after { inset: -46px; padding: 46px; filter: blur(30px); opacity: calc(.55 * var(--glow)); }
-/* A warm light on the rim that slides behind the plan Aria recommends */
+/* A warm light on the rim that slides behind the plan the guide recommends */
 .rim-light { position: absolute; top: -110px; left: var(--hx); width: 560px; height: 240px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 176, 104, .55), rgba(255, 140, 70, .18) 55%, transparent); filter: blur(18px); opacity: var(--hl); transition: left .9s var(--ease), opacity .6s var(--ease); }
 .plan { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
@@ -600,8 +610,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   .plan-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
-  .hero { --orb: min(86vw, 360px); --pt: 88px; }
+  .hero { --orb: min(86vw, 360px); --pt: 118px; }
   .brand { top: 22px; font-size: 1.4rem; }
+  .industry-nav { top: 62px; left: 50%; right: auto; transform: translateX(-50%); }
+  .industry-nav a { padding: 6px 10px; font-size: .74rem; }
   .call-thread { height: 300px; }
   .hero-title { top: calc(var(--pt) + var(--orb) / 2); font-size: clamp(1.6rem, 7vw, 2.1rem); width: calc(var(--orb) * .8); }
   .hero-foot { margin-top: 84px; }
