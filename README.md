@@ -21,7 +21,7 @@ Then open http://localhost:8080.
 | `index.html` | Page structure: hero, hotel profile + ROI, features, plans, demo form, FAQ, conversation dock. Also the SEO head (meta, Open Graph, JSON-LD) |
 | `styles.css` | The night theme for the whole site: hero, scroll story, sections, dock; responsive and reduced-motion rules |
 | `app.js` | ElevenLabs conversation, client tools the agent calls, transcript, smooth scrolling |
-| `experience.js` | Decorative layer: the WebGL particle field behind the whole page (it reshapes per section), small orbs in the ROI card, dock and start sheet, the scroll story, letter-by-letter headings and drifting numerals. Reads `data-state` and `--level` from `app.js`; changes nothing in it |
+| `experience.js` | Decorative layer: the WebGL particle field behind the whole page (it reshapes per section), small orbs in the ROI card, dock and start sheet, the scroll story (greetings leave the orb one at a time), the live call card, paragraphs that light up word by word, content that rises into place, and smooth desktop scrolling via [Lenis](https://github.com/darkroomengineering/lenis) (MIT, loaded from jsDelivr; touch devices and reduced motion keep native scrolling). Reads `data-state` and `--level` from `app.js`; changes nothing in it |
 | `config.js` | Agent ID, optional webhook for demo requests, ROI assumptions |
 | `aria-standalone.html` | The whole site in one file. Generated, don't edit by hand |
 | `tools/build_standalone.py` | Rebuilds `aria-standalone.html` from the five source files |

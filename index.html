@@ -169,12 +169,11 @@
       <!-- 2. Your hotel -->
       <section id="profile" class="section">
         <div class="section-head">
-          <span class="section-num" aria-hidden="true">02</span>
           <div>
             <p class="eyebrow">02 — Your hotel</p>
             <h2 data-split="in">Tell Aria about <em>your property</em></h2>
           </div>
-          <p class="muted">She fills this in as you talk. You can also type here — she'll notice your changes.</p>
+          <p class="muted" data-scrub>She fills this in as you talk. You can also type here — she'll notice your changes.</p>
         </div>
         <div class="profile-grid">
           <form class="card profile-card" id="profileForm" autocomplete="off">
@@ -215,12 +214,11 @@
       <!-- 3. Features (bento) -->
       <section id="features" class="section">
         <div class="section-head">
-          <span class="section-num" aria-hidden="true">03</span>
           <div>
             <p class="eyebrow">03 — What she does</p>
             <h2 data-split="in">Everything your front desk <em>does on the phone</em></h2>
           </div>
-          <p class="muted">Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
+          <p class="muted" data-scrub>Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
         </div>
         <div class="bento">
           <article class="card feature feature-lg" data-feature="answering">
@@ -271,12 +269,11 @@
       <!-- 4. Pricing -->
       <section id="pricing" class="section">
         <div class="section-head">
-          <span class="section-num" aria-hidden="true">04</span>
           <div>
             <p class="eyebrow">04 — Plans</p>
             <h2 data-split="in">Plans that fit <em>your property</em></h2>
           </div>
-          <p class="muted">Simple monthly pricing. Aria will point out the one that fits you best.</p>
+          <p class="muted" data-scrub>Simple monthly pricing. Aria will point out the one that fits you best.</p>
         </div>
         <div class="plan-grid">
           <article class="card plan" data-plan="starter">
@@ -309,11 +306,10 @@
       <section id="demo" class="section">
         <div class="demo-grid">
           <div class="demo-copy section-head">
-            <span class="section-num" aria-hidden="true">05</span>
             <div>
               <p class="eyebrow">05 — Book a demo</p>
               <h2 data-split="in">Hear Aria answer <em>your</em> hotel's phone</h2>
-              <p class="muted">Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
+              <p class="muted" data-scrub>Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
               <ul class="checks">
                 <li>A 20-minute live call with our team</li>
                 <li>Aria set up with your hotel's details</li>
@@ -356,7 +352,7 @@
             <p class="eyebrow">Questions</p>
             <h2 data-split="in">What hoteliers <em>ask us</em></h2>
           </div>
-          <p class="muted">The short answers. Aria can go into detail if you ask her.</p>
+          <p class="muted" data-scrub>The short answers. Aria can go into detail if you ask her.</p>
         </div>
         <div class="faq-list">
           <details class="card">
@@ -408,7 +404,7 @@
           <svg aria-hidden="true"><use href="#i-chevron" /></svg>
         </button>
       </header>
-      <ol class="thread" id="thread" aria-live="polite"></ol>
+      <ol class="thread" id="thread" aria-live="polite" data-lenis-prevent></ol>
       <form class="composer" id="typeForm" autocomplete="off">
         <input name="msg" placeholder="Type a message…" aria-label="Message Aria" />
         <button class="icon-btn icon-send" aria-label="Send">

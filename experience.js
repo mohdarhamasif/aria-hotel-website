@@ -300,7 +300,8 @@ const beatTime = $(".beat-time");
 const greetings = $$(".greetings li");
 const storyCount = $(".story-count");
 const countEl = $("[data-count]");
-const WINDOWS = [[0, 0.3], [0.3, 0.64], [0.64, 1.01]];
+const WINDOWS = [[0, 0.28], [0.28, 0.68], [0.68, 1.01]];
+const beatVis = [0, 0, 0];
 
 // Each scene is centred on an anchor element (or the screen), with its radius
 // as a share of the screen's shorter side.
@@ -331,6 +332,7 @@ function updateStory(p) {
     const [a, b] = WINDOWS[i];
     const out = i < beats.length - 1 ? 1 - smooth(b - 0.06, b + 0.01, p) : 1 - smooth(0.96, 1, p);
     const vis = smooth(a - (i ? 0.03 : 0.08), a + 0.05, p) * out;
+    beatVis[i] = vis;
     beat.style.setProperty("--vis", vis.toFixed(3));
     beat.style.setProperty("--bp", clamp((p - a) / ((b - a) * 0.6)).toFixed(3));
   });
@@ -338,23 +340,59 @@ function updateStory(p) {
     beatTime.style.setProperty("--to", (1 - smooth(0.2, 0.3, p)).toFixed(3));
     beatTime.style.setProperty("--ts", (1.14 - 0.14 * smooth(0, 0.26, p)).toFixed(4));
   }
-  // Greetings in many languages rise past, as if spoken into the room.
-  const g = clamp((p - 0.3) / 0.34);
-  const reach = Math.max(innerWidth, innerHeight) * 0.55;
-  greetings.forEach((li, i) => {
-    const t = clamp((g - i * 0.07) / 0.45);
-    if (t <= 0 || t >= 1) { li.style.opacity = "0"; return; }
-    const a = -Math.PI * (0.1 + 0.8 * (i / (greetings.length - 1)));
-    const d = Math.pow(t, 1.3) * reach;
-    li.style.opacity = (Math.sin(t * Math.PI) * 0.55).toFixed(3);
-    li.style.transform = `translate(-50%, -50%) translate3d(${(Math.cos(a) * d * 1.1).toFixed(1)}px, ${(Math.sin(a) * d * 0.5).toFixed(1)}px, 0) scale(${(0.4 + t * 1.5).toFixed(3)})`;
-  });
   if (storyCount) {
     storyCount.style.setProperty("--sp", p.toFixed(3));
     storyCount.style.opacity = (1 - smooth(0.95, 1, p)).toFixed(3);
     const label = `0${p < WINDOWS[1][0] ? 1 : p < WINDOWS[2][0] ? 2 : 3}`;
     if (label !== lastCount && countEl) countEl.textContent = lastCount = label;
   }
+}
+
+/* ---------- Languages leave the orb, one at a time ---------- */
+// While the second beat is on screen, the orb releases a greeting about once a
+// second: it emerges from the centre, fades in as it drifts out past the edge,
+// then fades away as the next one arrives. Each release gives the orb a pulse.
+
+const GREET_ANGLES = [-90, -24, -156, -60, -120, 6, 174, -78].map((d) => (d * Math.PI) / 180);
+const greetState = greetings.map(() => ({ t: -1, a: 0, w: 0 }));
+let greetNext = 0;
+let greetIdx = 0;
+let emit = 0;
+
+function updateGreetings(dt, active) {
+  const vw = innerWidth;
+  if (active && time >= greetNext) {
+    const i = greetIdx % greetings.length;
+    Object.assign(greetState[i], { t: 0, a: GREET_ANGLES[greetIdx % GREET_ANGLES.length], w: greetings[i].offsetWidth });
+    greetIdx++;
+    greetNext = time + 1.05;
+    emit = 1;
+  }
+  if (!active) greetNext = Math.min(greetNext, time + 0.3);
+  const R = Math.max(60, view.radius);
+  greetings.forEach((li, i) => {
+    const g = greetState[i];
+    if (g.t < 0) {
+      if (li.style.opacity !== "0") li.style.opacity = "0";
+      return;
+    }
+    g.t += dt / (active ? 2.1 : 0.5); // leave quickly once the beat is over
+    if (g.t >= 1) {
+      g.t = -1;
+      li.style.opacity = "0";
+      return;
+    }
+    const t = g.t;
+    const out = 1 - Math.pow(1 - clamp(t / 0.5), 3);
+    const dist = R * (0.08 + 1.22 * out + 0.28 * clamp((t - 0.5) / 0.5));
+    const half = g.w / 2 + 16;
+    const x = clamp(Math.cos(g.a) * dist * 1.2, -vw / 2 + half, vw / 2 - half);
+    const y = Math.sin(g.a) * dist * 0.92;
+    const blur = (1 - smooth(0, 0.35, t)) * 10 + smooth(0.72, 1, t) * 4;
+    li.style.opacity = (smooth(0, 0.3, t) * (1 - smooth(0.64, 1, t))).toFixed(3);
+    li.style.filter = blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : "none";
+    li.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${(0.5 + 0.5 * out).toFixed(3)})`;
+  });
 }
 
 // Which scene owns the middle of the screen right now?
@@ -384,7 +422,10 @@ function drawField(time, dt) {
     const goal = reducedMotion ? 0 : storyProgress();
     storyP += (goal - storyP) * Math.min(1, dt * 7);
     if (Math.abs(goal - storyP) > 0.35) storyP = goal;
-    if (!reducedMotion) updateStory(storyP);
+    if (!reducedMotion) {
+      updateStory(storyP);
+      updateGreetings(dt, beatVis[1] > 0.55);
+    }
   }
 
   if (scene === "opening" || !scene) {
@@ -396,8 +437,8 @@ function drawField(time, dt) {
       cx: lerp(or.left + rectR, vw / 2, hand),
       cy: lerp(or.top + or.height / 2, vh * 0.38, hand),
       radius: lerp(rectR, minSide * 0.24, hand),
-      wave: smooth(0.3, 0.42, storyP) * (1 - smooth(0.62, 0.72, storyP)),
-      field: smooth(0.64, 0.8, storyP),
+      wave: smooth(0.06, 0.15, storyP) * (1 - smooth(0.2, 0.28, storyP)),
+      field: smooth(0.68, 0.82, storyP),
       ring: 0,
       alpha: 1,
     };
@@ -425,7 +466,8 @@ function drawField(time, dt) {
     view[key] += (target[key] - view[key]) * kk;
   }
 
-  const level = readLevel(heroAnchor);
+  emit = Math.max(0, emit - dt * 1.6);
+  const level = readLevel(heroAnchor) + emit * emit * 0.45;
   pointer.sx += (pointer.x - pointer.sx) * Math.min(1, dt * 2.5);
   pointer.sy += (pointer.y - pointer.sy) * Math.min(1, dt * 2.5);
   rot += dt * (0.09 + level * 0.6 + states.thinking * 0.5 + states.connecting * 0.8);
@@ -447,17 +489,70 @@ function drawField(time, dt) {
   });
 }
 
-/* ---------- Outlined numerals and the wordmark drift as you scroll ---------- */
+/* ---------- The footer wordmark drifts as you scroll ---------- */
 
-const drifters = $$(".section-num, .wordmark");
+const drifters = $$(".wordmark");
 function updateDrift() {
   const vh = innerHeight;
   drifters.forEach((el) => {
     const r = el.parentElement.getBoundingClientRect();
     if (r.bottom < -200 || r.top > vh + 200) return;
     const p = (vh - r.top) / (vh + r.height); // 0 entering, 1 leaving
-    el.style.setProperty("--py", `${((0.5 - p) * (el.classList.contains("wordmark") ? 90 : 140)).toFixed(1)}px`);
+    el.style.setProperty("--py", `${((0.5 - p) * 90).toFixed(1)}px`);
   });
+}
+
+/* ---------- Scroll transitions ---------- */
+// Smooth, weighted scrolling on desktop; paragraphs that light up word by word;
+// each section's content rising into place as it arrives; and the soft glows
+// drifting a little slower than the page.
+
+let lenis = null;
+async function startSmoothScroll() {
+  if (reducedMotion || matchMedia("(pointer: coarse)").matches) return; // touch keeps native scrolling
+  try {
+    const { default: Lenis } = await import("https://cdn.jsdelivr.net/npm/lenis@1.3.26/+esm");
+    lenis = new Lenis({ lerp: 0.09, smoothWheel: true, autoRaf: false });
+  } catch (err) {
+    console.warn("Aria: smooth scrolling unavailable —", err.message);
+  }
+}
+$(".scroll-cue")?.addEventListener("click", (e) => {
+  if (!lenis) return;
+  e.preventDefault();
+  lenis.scrollTo("#story", { duration: 1.6 });
+});
+
+const scrubs = reducedMotion ? [] : $$("[data-scrub]").map((el) => {
+  const words = el.textContent.trim().split(/\s+/).map((w) => Object.assign(document.createElement("span"), { className: "w", textContent: w }));
+  el.replaceChildren(...words.flatMap((w, i) => (i ? [" ", w] : [w])));
+  return { el, words, lit: -1 };
+});
+const risers = reducedMotion ? [] : $$(".profile-grid, .bento, .plan-grid, .demo-grid, .faq-list, .footer-cta");
+const glows = reducedMotion ? [] : $$(".hero, .content .section, .footer");
+
+function updateScrollFx() {
+  const vh = innerHeight;
+  for (const s of scrubs) {
+    const r = s.el.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > vh) continue;
+    const lit = Math.round(clamp((vh * 0.92 - r.top) / (vh * 0.5)) * s.words.length);
+    if (lit === s.lit) continue;
+    s.words.forEach((w, i) => w.classList.toggle("on", i < lit));
+    s.lit = lit;
+  }
+  for (const el of risers) {
+    const r = el.getBoundingClientRect();
+    if (r.bottom < -vh * 0.2 || r.top > vh * 1.2) continue;
+    const e = 1 - Math.pow(1 - clamp((vh - r.top) / (vh * 0.75)), 3);
+    el.style.transform = e > 0.999 ? "" : `translate3d(0, ${((1 - e) * 110).toFixed(1)}px, 0) scale(${(0.94 + 0.06 * e).toFixed(4)})`;
+  }
+  for (const el of glows) {
+    const r = el.getBoundingClientRect();
+    if (r.bottom < -200 || r.top > vh + 200) continue;
+    const p = (vh - r.top) / (vh + r.height);
+    el.style.setProperty("--gy", `${((0.5 - p) * 120).toFixed(1)}px`);
+  }
 }
 
 /* ---------- The live call in the features card ---------- */
@@ -685,7 +780,9 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
   time += dt;
+  lenis?.raf(now);
   updateStates(dt);
+  updateScrollFx();
   if (fieldGL) drawField(time, dt);
   updateDrift();
   minis.forEach((m) => drawMini(m, time, dt));
@@ -715,6 +812,7 @@ function stillFrames() {
 
 function boot() {
   createGL();
+  startSmoothScroll();
   if (reducedMotion) stillFrames();
   else requestAnimationFrame((now) => { last = now; frame(now); });
 }
