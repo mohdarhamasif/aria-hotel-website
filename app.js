@@ -142,7 +142,7 @@ let cancelScroll = null;
 
 function smoothScrollTo(el) {
   cancelScroll?.();
-  const offset = $(".topbar").offsetHeight + 12;
+  const offset = ($(".topbar")?.offsetHeight || 0) + 12;
   const target = Math.max(0, el.getBoundingClientRect().top + scrollY - offset);
   if (reducedMotion) return scrollTo({ top: target, behavior: "instant" });
   const start = scrollY;

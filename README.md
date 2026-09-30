@@ -44,6 +44,11 @@ python tools/build_standalone.py
 - **SEO:** [claude-seo](https://github.com/AgriciDaniel/claude-seo) installs globally (`install.ps1` / `install.sh`) and needs **Python 3.10+**. After installing, run `/seo audit <url>`.
 - The redesign must keep every ID, `data-*` attribute and form field name that `app.js` uses. The agent's client tools depend on them.
 
+## Type and icons
+
+- **Fonts:** [Ranade](https://www.fontshare.com/fonts/ranade) for every heading and display line, [Supreme](https://www.fontshare.com/fonts/supreme) for all other text. Both load from Fontshare (free for commercial use under the Fontshare/ITF free font licence).
+- **Icons:** [Iconsax](https://iconsax.io), *Linear* style, as inline SVG `<symbol>`s at the top of `index.html`. The paths come from the MIT-licensed [iconsax-react](https://github.com/rendinjast/iconsax-react) package. To add one, copy its Linear paths into a new `<symbol id="i-…">` and use it with `<svg><use href="#i-…" /></svg>`.
+
 ## Configuration
 
 Edit `config.js`:

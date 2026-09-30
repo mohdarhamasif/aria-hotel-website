@@ -35,7 +35,7 @@
   <style>
 /* Aria — one night, top to bottom.
    A fixed particle field (experience.js) runs behind the whole page and
-   reshapes for each section. Type: Ranade for display, Supreme for text; everything
+   reshapes for each section. Two fonts only: Ranade for every heading and display line, Supreme for everything else; everything
    else stays quiet so the particles and the words carry the page. */
 
 @property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
@@ -64,20 +64,23 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { background: var(--bg); scroll-behavior: smooth; scroll-padding-top: 84px; color-scheme: dark; }
+html { background: var(--bg); scroll-behavior: smooth; scroll-padding-top: 24px; color-scheme: dark; }
 body { margin: 0; font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.55; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font-family: inherit; }
 h1, h2, h3 { font-weight: 400; line-height: 1.04; margin: 0 0 .5em; letter-spacing: -.03em; }
 h1, h2 { font-family: var(--serif); }
 h1 em, h2 em { font-style: italic; color: var(--orb-warm); }
 h2 { font-size: clamp(2.1rem, 4.1vw, 3.6rem); }
-h3 { font-family: var(--sans); font-size: 1.08rem; font-weight: 600; letter-spacing: -.005em; line-height: 1.3; }
+h1, h2, h3 { font-family: var(--serif); }
+h3 { font-size: 1.5rem; font-weight: 500; letter-spacing: -.02em; line-height: 1.15; }
 p { margin: 0 0 1em; }
 a { color: inherit; }
 .muted { color: var(--muted); }
 .tiny { font-size: .8rem; }
 .eyebrow { font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); font-weight: 500; margin-bottom: 1.1em; font-variant-numeric: tabular-nums; }
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
-svg use { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Iconsax Linear icons carry their own 1.5px strokes and follow the text colour */
+svg:has(> use) { fill: none; flex: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .skip-link { position: absolute; left: 16px; top: -60px; z-index: 60; background: var(--light); color: var(--ink); padding: 8px 16px; border-radius: 999px; text-decoration: none; transition: top .2s; }
 .skip-link:focus { top: 12px; }
@@ -97,33 +100,18 @@ svg use { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: r
 .btn-sm { padding: .5em 1.05em; font-size: .86rem; min-height: 38px; }
 .btn-lg { padding: .9em 1.55em; font-size: 1rem; }
 .btn-block { width: 100%; }
-.mic-ico { width: 9px; height: 14px; border: 1.8px solid currentColor; border-radius: 6px; position: relative; }
-.mic-ico::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 1.8px; height: 3px; background: currentColor; transform: translateX(-50%); }
+.btn-ico { width: 20px; height: 20px; margin: -2px 0; }
+.btn-arrow { transition: transform .35s var(--ease); }
+.btn:hover .btn-arrow { transform: translateX(4px); }
 
 /* The particle field sits behind everything */
 .fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 main { position: relative; z-index: 1; }
 
-/* Top bar: transparent over the hero, a dark glass bar once you scroll */
-.topbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 12px clamp(16px, 4vw, 40px);
-  border-bottom: 1px solid transparent;
-  transition: background-color .45s var(--ease), border-color .45s var(--ease);
-}
-[data-top="0"] .topbar { background: rgba(5, 5, 6, .66); border-color: var(--line); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); }
+/* The wordmark sits in the hero corner and scrolls away with it */
+.brand { position: absolute; top: 26px; left: clamp(20px, 4vw, 48px); z-index: 3; margin: 0; display: inline-flex; align-items: center; gap: 10px; font: 400 1.6rem/1 var(--serif); letter-spacing: -.02em; }
 .logo { display: inline-flex; align-items: center; gap: 10px; font: 400 1.6rem var(--serif); text-decoration: none; color: var(--text); }
 .logo-mark { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, var(--bg) 55%, transparent 57%), var(--orb-ring); }
-.stepper { display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, .05); border: 1px solid var(--line); }
-.step { display: flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; text-decoration: none; color: rgba(243, 241, 236, .6); font-size: .84rem; transition: all .3s var(--ease); }
-.step:hover { color: var(--text); }
-.step i { font-style: normal; font-size: .72rem; font-variant-numeric: tabular-nums; opacity: .7; display: inline-flex; align-items: center; }
-.step.done { color: var(--text); }
-.step.done i { color: var(--orb-mint); opacity: 1; }
-.step.done i::before { content: ""; width: 7px; height: 3.5px; margin-right: 5px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(-45deg); }
-.step.active { color: var(--ink); background: var(--light); }
-.step.active i { opacity: 1; }
 
 /* ==========================================================================
    Hero
@@ -143,7 +131,7 @@ main { position: relative; z-index: 1; }
 .orb-anchor { position: absolute; inset: 0; border-radius: 50%; }
 .hero-orb-label {
   position: absolute; left: 50%; top: calc(100% + 16px); transform: translateX(-50%); white-space: nowrap;
-  font: italic 400 1.2rem/1 var(--serif); padding: .6em 1.25em; border-radius: 999px;
+  font: 500 .95rem/1 var(--sans); padding: .75em 1.35em; border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, .32); background: rgba(5, 5, 6, .45);
   transition: border-color .3s, background-color .3s;
 }
@@ -160,7 +148,7 @@ main { position: relative; z-index: 1; }
 .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
 .hero-note { margin: 14px 0 0; font-size: .8rem; color: var(--faint); }
 .hero-note a { color: var(--text); }
-.scroll-cue { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; font: italic 400 1.35rem var(--serif); color: rgba(243, 241, 236, .72); text-decoration: none; transition: color .3s; }
+.scroll-cue { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; font: 500 .92rem var(--sans); letter-spacing: .02em; color: rgba(243, 241, 236, .72); text-decoration: none; transition: color .3s; }
 .scroll-cue:hover { color: #fff; }
 .scroll-cue span { position: relative; width: 1px; height: 44px; overflow: hidden; background: rgba(255, 255, 255, .18); }
 .scroll-cue span::after { content: ""; position: absolute; left: 0; top: -50%; width: 1px; height: 50%; background: #fff; animation: cue 2.4s var(--ease) infinite; }
@@ -277,28 +265,38 @@ textarea { resize: vertical; }
 .feature-lg { grid-column: span 2; grid-row: span 2; padding: 0; overflow: hidden; }
 .feature-copy { padding: 26px 28px 28px; }
 .feature-visual { flex: 1; min-height: 260px; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 32px; }
-.night-card {
-  background:
-    radial-gradient(circle, rgba(62, 127, 216, .6) 0 1px, transparent 1.6px) 0 0 / 53px 47px,
-    radial-gradient(circle, rgba(232, 98, 42, .55) 0 1px, transparent 1.6px) 19px 31px / 71px 61px,
-    radial-gradient(circle, rgba(134, 214, 196, .5) 0 1px, transparent 1.6px) 37px 11px / 83px 97px,
-    radial-gradient(circle, rgba(237, 214, 133, .45) 0 .8px, transparent 1.4px) 7px 43px / 109px 89px,
-    #08080a;
-  border-bottom: 1px solid var(--line);
-}
 .mini-bubble { max-width: 70%; padding: 10px 14px; border-radius: 16px; font-size: .9rem; transition: opacity .6s var(--ease), transform .6s var(--ease); }
 .mini-bubble.g { align-self: flex-start; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); border-bottom-left-radius: 5px; }
 .mini-bubble.a { align-self: flex-end; background: var(--light); color: var(--ink); border-bottom-right-radius: 5px; }
-/* The sample call plays out when the card appears (app.js adds .reveal/.in) */
-.feature.reveal .mini-bubble { opacity: 0; transform: translateY(10px); }
-.feature.reveal.in .mini-bubble { opacity: 1; transform: none; }
-.feature.reveal.in .mini-bubble:nth-child(1) { transition-delay: .4s; }
-.feature.reveal.in .mini-bubble:nth-child(2) { transition-delay: 1.2s; }
-.feature.reveal.in .mini-bubble:nth-child(3) { transition-delay: 2s; }
-.f-ico { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: rgba(255, 255, 255, .05); border: 1px solid var(--line); margin-bottom: auto; transition: transform .4s var(--ease), border-color .4s; }
-.f-ico svg { width: 20px; height: 20px; fill: none; stroke: var(--text); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+/* The large card is a live call: bubbles and the dot field are driven by experience.js */
+.call-demo { position: relative; isolation: isolate; overflow: hidden; justify-content: flex-start; gap: 18px; background: #08080a; border-bottom: 1px solid var(--line); }
+.call-field { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; }
+.call-head { display: flex; align-items: center; gap: 12px; font-size: .8rem; color: var(--faint); }
+.call-live { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; border: 1px solid rgba(134, 214, 196, .35); background: rgba(5, 5, 6, .7); color: var(--orb-mint); font-weight: 500; }
+.call-live i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: blink 1.6s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.call-meta { transition: opacity .4s; }
+.call-timer { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--muted); }
+.call-thread { display: flex; flex-direction: column; gap: 10px; height: 262px; overflow: hidden; }
+.call-thread.out > * { opacity: 0; transform: translateY(-10px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+.call-thread .enter { animation: bubbleIn .55s var(--ease) both; }
+.mini-bubble.g { transform-origin: bottom left; }
+.mini-bubble.a { transform-origin: bottom right; }
+@keyframes bubbleIn { from { opacity: 0; transform: translateY(12px) scale(.94); } }
+.mini-bubble.typing { display: inline-flex; gap: 4px; padding: 14px 15px; }
+.mini-bubble.typing i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .45; animation: bounce 1.2s infinite; }
+.mini-bubble.typing i:nth-child(2) { animation-delay: .15s; } .mini-bubble.typing i:nth-child(3) { animation-delay: .3s; }
+.mini-bubble .w { opacity: 0; transition: opacity .25s; }
+.mini-bubble .w.on { opacity: 1; }
+.call-done { align-self: center; display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; padding: 7px 14px; border-radius: 999px; font-size: .84rem; color: var(--orb-mint); background: rgba(134, 214, 196, .08); border: 1px solid rgba(134, 214, 196, .3); }
+.call-done svg { width: 16px; height: 16px; }
+.f-ico { display: inline-grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: rgba(255, 255, 255, .05); border: 1px solid var(--line); color: var(--text); margin-bottom: auto; transition: transform .4s var(--ease), border-color .4s, color .4s; }
+.f-ico svg { width: 22px; height: 22px; }
+.feature-copy .f-ico { float: right; margin: 0 0 12px 16px; }
 .feature:hover .f-ico { transform: rotate(-6deg) scale(1.06); border-color: var(--line-strong); }
 .feature:not(.feature-lg) h3 { margin-top: 28px; }
+.feature h3 { margin-bottom: .35em; }
+.card.spotlight .f-ico { color: var(--orb-warm); border-color: rgba(242, 167, 126, .45); }
 /* When Aria points at a feature or plan: a slow ring in the orb's colours */
 .card.spotlight, .card.spotlight.reveal.in { transform: translateY(-4px); border-color: transparent; box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
 .card.spotlight::before, .plan.recommended::before {
@@ -314,7 +312,8 @@ textarea { resize: vertical; }
 
 /* Pricing — the recommended plan turns to light */
 .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
-.plan { position: relative; }
+/* Badges sit in a strip above the plan name, so they never overlap it */
+.plan { position: relative; padding-top: 62px; }
 .plan h3 { font: 400 2.1rem var(--serif); letter-spacing: 0; margin-bottom: .1em; }
 .pop { position: absolute; top: 18px; right: 18px; font: 500 .72rem var(--sans); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text); }
 .plan-for { color: var(--muted); font-size: .9rem; margin-bottom: 22px; }
@@ -322,13 +321,13 @@ textarea { resize: vertical; }
 .price small { font: 400 .95rem var(--sans); color: var(--muted); margin-left: 4px; }
 .plan ul { list-style: none; padding: 20px 0 0; margin: 0; display: grid; gap: 10px; border-top: 1px solid var(--line); font-size: .94rem; }
 .plan li { display: flex; gap: 10px; }
-.plan li::before { content: ""; flex: none; width: 16px; height: 16px; margin-top: 3px; border-radius: 50%; background: var(--light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%230b0b0d' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
+.plan li::before { content: ""; flex: none; width: 18px; height: 18px; margin-top: 2px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10Z' stroke='%23f3f1ec' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='m7.75 12 2.83 2.83 5.67-5.66' stroke='%23f3f1ec' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3C/svg%3E") center / 100% no-repeat; }
 .plan-badge { position: absolute; top: 18px; right: 18px; font-size: .72rem; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: var(--ink); color: var(--light); opacity: 0; transform: translateY(-4px); transition: all .35s var(--ease); }
 .card.plan.recommended, .card.plan.recommended.reveal.in { background: var(--light); color: var(--ink); border-color: transparent; transform: translateY(-8px); box-shadow: 0 40px 90px rgba(0, 0, 0, .55); }
 .plan.recommended::before { inset: -6px; border-radius: calc(var(--radius) + 6px); }
 .plan.recommended .plan-for, .plan.recommended .price small { color: rgba(11, 11, 13, .6); }
 .plan.recommended ul { border-color: rgba(11, 11, 13, .15); }
-.plan.recommended li::before { background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
+.plan.recommended li::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10Z' stroke='%230b0b0d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='m7.75 12 2.83 2.83 5.67-5.66' stroke='%230b0b0d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3C/svg%3E"); }
 .plan.recommended .plan-badge { opacity: 1; transform: none; }
 .plan.recommended .pop { display: none; }
 .plan-reason { margin: 26px auto 0; max-width: 760px; text-align: center; padding: 14px 22px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: .95rem; animation: pop .5s var(--ease); }
@@ -339,12 +338,11 @@ textarea { resize: vertical; }
 .demo-copy h2 { max-width: 12ch; margin-bottom: .4em; }
 .checks { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 12px; }
 .checks li { display: flex; gap: 12px; align-items: center; }
-.checks li::before { content: ""; flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line-strong); background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 12.5l3.2 3.2L17 9' fill='none' stroke='%23f3f1ec' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
+.checks li::before { content: ""; flex: none; width: 22px; height: 22px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10Z' stroke='%23f3f1ec' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='m7.75 12 2.83 2.83 5.67-5.66' stroke='%23f3f1ec' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3C/svg%3E") center / 100% no-repeat; }
 .demo-form { padding: 30px; }
 .demo-success { text-align: center; padding: 48px 28px; animation: pop .5s var(--ease); }
-.success-mark { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--light); color: var(--ink); margin-bottom: 14px; box-shadow: 0 0 0 6px rgba(255, 255, 255, .06); }
-.success-mark svg { width: 24px; height: 24px; }
-.success-mark svg use { stroke-width: 2.2; }
+.success-mark { display: inline-grid; place-items: center; color: var(--orb-mint); margin-bottom: 14px; }
+.success-mark svg { width: 64px; height: 64px; }
 .demo-success h3 { font: 400 2.2rem var(--serif); }
 @keyframes pop { from { opacity: 0; transform: scale(.97) translateY(8px); } }
 
@@ -353,8 +351,8 @@ textarea { resize: vertical; }
 .faq-list details { padding: 0; }
 .faq-list summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 64px; padding: 18px 24px; cursor: pointer; list-style: none; }
 .faq-list summary::-webkit-details-marker { display: none; }
-.faq-list summary h3 { margin: 0; }
-.faq-ico { flex: none; width: 18px; height: 18px; color: var(--text); transition: transform .45s var(--ease); }
+.faq-list summary h3 { margin: 0; font-size: 1.3rem; }
+.faq-ico { flex: none; width: 22px; height: 22px; color: var(--text); transition: transform .45s var(--ease); }
 .faq-list details[open] { border-color: var(--line-strong); }
 .faq-list details[open] .faq-ico { transform: rotate(135deg); }
 .faq-list details p { margin: 0; padding: 0 24px 22px; max-width: 70ch; color: var(--muted); animation: rise .5s var(--ease); }
@@ -362,9 +360,10 @@ textarea { resize: vertical; }
 
 /* Footer: the orb returns above a closing line and the wordmark */
 .footer { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 clamp(16px, 4vw, 48px) 120px; margin-top: 140px; overflow: hidden; }
-.footer-cta { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px; }
+.footer-cta { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px; }
 .footer-cta h2 { margin: 0; font-size: clamp(2.4rem, 5vw, 4.8rem); max-width: 15ch; }
-.wordmark { margin: 56px 0 0; text-align: center; font: 400 clamp(8rem, 34vw, 30rem)/.78 var(--serif); letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .18); transform: translate3d(0, var(--py, 0px), 0); }
+/* Decorative: clicks pass straight through to the button above it */
+.wordmark { pointer-events: none; margin: 56px 0 0; text-align: center; font: 400 clamp(8rem, 34vw, 30rem)/.78 var(--serif); letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .18); transform: translate3d(0, var(--py, 0px), 0); }
 .footer-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 28px; margin-top: 28px; border-top: 1px solid var(--line); color: var(--faint); font-size: .85rem; max-width: 1240px; width: 100%; margin-inline: auto; }
 .footer-meta p { margin: 0; }
 .footer-meta .logo { font-size: 1.3rem; color: var(--muted); }
@@ -415,13 +414,14 @@ textarea { resize: vertical; }
 .icon-btn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .06); color: var(--text); cursor: pointer; transition: background-color .2s, border-color .2s, transform .15s, color .2s; }
 .icon-btn:hover { background: rgba(255, 255, 255, .12); }
 .icon-btn:active { transform: scale(.94); }
-.icon-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon-btn svg { width: 19px; height: 19px; }
 .icon-btn .ico-mic-off, .icon-btn[aria-pressed="true"] .ico-mic { display: none; }
 .icon-btn[aria-pressed="true"] .ico-mic-off { display: block; }
 .icon-btn[aria-pressed="true"] { background: rgba(214, 90, 70, .18); border-color: rgba(214, 90, 70, .6); color: #ffb4a6; }
 .icon-btn[aria-expanded="true"], .icon-send { background: var(--light); border-color: var(--light); color: var(--ink); }
 .icon-end:hover { background: rgba(214, 90, 70, .18); border-color: rgba(214, 90, 70, .6); color: #ffb4a6; }
-.icon-sm { width: 30px; height: 30px; }
+.icon-sm { width: 32px; height: 32px; }
+.icon-sm svg { width: 17px; height: 17px; }
 .icon-send { width: 38px; height: 38px; flex: none; }
 .icon-send:hover { background: #fff; }
 
@@ -444,7 +444,7 @@ textarea { resize: vertical; }
 
 .follow-pill { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 29; display: flex; gap: 8px; align-items: center; min-height: 44px; padding: 9px 16px; border-radius: 999px; border: 0; background: var(--light); color: var(--ink); font: 500 .88rem var(--sans); cursor: pointer; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); animation: pillIn .35s var(--ease); }
 .follow-pill b { font-weight: 600; }
-.follow-pill svg { width: 15px; height: 15px; }
+.follow-pill svg { width: 17px; height: 17px; }
 @keyframes pillIn { from { opacity: 0; transform: translate(-50%, 10px); } }
 
 /* Start sheet */
@@ -460,7 +460,7 @@ textarea { resize: vertical; }
 .sheet-close svg { width: 18px; height: 18px; }
 .sheet-close:hover { background: rgba(255, 255, 255, .06); color: var(--text); transform: rotate(90deg); }
 
-.toast { position: fixed; top: 80px; left: 50%; transform: translate(-50%, -20px); opacity: 0; pointer-events: none; z-index: 40; background: var(--light); color: var(--ink); padding: 10px 18px; border-radius: 999px; font-size: .9rem; transition: all .3s; }
+.toast { position: fixed; top: 24px; left: 50%; transform: translate(-50%, -20px); opacity: 0; pointer-events: none; z-index: 40; background: var(--light); color: var(--ink); padding: 10px 18px; border-radius: 999px; font-size: .9rem; transition: all .3s; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 /* Scroll reveal (classes applied by app.js): rise out of a slight blur */
@@ -476,14 +476,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
 
 /* Responsive */
 @media (max-width: 1100px) {
-  .hero { --orb: min(62vw, 520px); display: flex; flex-direction: column; align-items: center; min-height: 0; padding: 112px 20px 64px; }
+  .hero { --orb: min(62vw, 520px); --pt: 104px; display: flex; flex-direction: column; align-items: center; min-height: 0; padding: var(--pt) 20px 64px; }
   .hero-orb { position: relative; left: auto; top: auto; transform: none; flex: none; }
-  .hero-title { top: calc(112px + var(--orb) / 2); }
+  .hero-title { top: calc(var(--pt) + var(--orb) / 2); }
   .hero-foot { position: relative; bottom: auto; margin-top: 88px; padding: 0; width: 100%; max-width: 560px; flex-direction: column; align-items: flex-start; gap: 28px; }
   .hero-intro { max-width: none; }
 }
 @media (max-width: 960px) {
-  .stepper span { display: none; }
   .section-head, .profile-grid, .demo-grid { grid-template-columns: 1fr; }
   .section-head { gap: 12px; }
   .bento { grid-template-columns: 1fr 1fr; }
@@ -491,9 +490,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   .plan-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
-  .topbar .btn { display: none; }
-  .hero { --orb: min(86vw, 360px); padding-top: 96px; }
-  .hero-title { top: calc(96px + var(--orb) / 2); font-size: clamp(1.6rem, 7vw, 2.1rem); width: calc(var(--orb) * .8); }
+  .hero { --orb: min(86vw, 360px); --pt: 88px; }
+  .brand { top: 22px; font-size: 1.4rem; }
+  .call-thread { height: 300px; }
+  .hero-title { top: calc(var(--pt) + var(--orb) / 2); font-size: clamp(1.6rem, 7vw, 2.1rem); width: calc(var(--orb) * .8); }
   .hero-foot { margin-top: 84px; }
   .scroll-cue { display: none; }
   .js .story { height: 340svh; }
@@ -509,7 +509,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; filter: none; transition: none; }
-  .feature.reveal .mini-bubble { opacity: 1; transform: none; transition: none; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   .marquee-track { animation: none; }
   .js .story { height: auto; }
@@ -569,35 +568,37 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   }
   </script>
 </head>
-<body data-top="1">
+<body>
   <a class="skip-link" href="#profile">Skip to content</a>
 
+  <!-- Icons: Iconsax, Linear style (MIT, via iconsax-react) -->
   <svg class="sprite" aria-hidden="true" focusable="false">
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
-    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-call" viewBox="0 0 24 24" fill="none"><path d="M21.97 18.33c0 .36-.08.73-.25 1.09-.17.36-.39.7-.68 1.02-.49.54-1.03.93-1.64 1.18-.6.25-1.25.38-1.95.38-1.02 0-2.11-.24-3.26-.73s-2.3-1.15-3.44-1.98a28.75 28.75 0 0 1-3.28-2.8 28.414 28.414 0 0 1-2.79-3.27c-.82-1.14-1.48-2.28-1.96-3.41C2.24 8.67 2 7.58 2 6.54c0-.68.12-1.33.36-1.93.24-.61.62-1.17 1.15-1.67C4.15 2.31 4.85 2 5.59 2c.28 0 .56.06.81.18.26.12.49.3.67.56l2.32 3.27c.18.25.31.48.4.7.09.21.14.42.14.61 0 .24-.07.48-.21.71-.13.23-.32.47-.56.71l-.76.79c-.11.11-.16.24-.16.4 0 .08.01.15.03.23.03.08.06.14.08.2.18.33.49.76.93 1.28.45.52.93 1.05 1.45 1.58.54.53 1.06 1.02 1.59 1.47.52.44.95.74 1.29.92.05.02.11.05.18.08.08.03.16.04.25.04.17 0 .3-.06.41-.17l.76-.75c.25-.25.49-.44.72-.56.23-.14.46-.21.71-.21.19 0 .39.04.61.13.22.09.45.22.7.39l3.31 2.35c.26.18.44.39.55.64.1.25.16.5.16.78Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10"></path><path d="M18.5 9c0-.6-.47-1.52-1.17-2.27-.64-.69-1.49-1.23-2.33-1.23M22 9c0-3.87-3.13-7-7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none"><path d="M8 2v3M16 2v3M3.5 9.09h17M22 19c0 .75-.21 1.46-.58 2.06A3.97 3.97 0 0 1 18 23c-1.01 0-1.93-.37-2.63-1-.31-.26-.58-.58-.79-.94A3.92 3.92 0 0 1 14 19c0-2.21 1.79-4 4-4 1.2 0 2.27.53 3 1.36A4 4 0 0 1 22 19Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path><path d="m16.44 19 .99.99 2.13-1.97" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 8.5v7.86c-.73-.83-1.8-1.36-3-1.36-2.21 0-4 1.79-4 4 0 .75.21 1.46.58 2.06.21.36.48.68.79.94H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path><path d="M11.995 13.7h.01M8.294 13.7h.01M8.294 16.7h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-translate" viewBox="0 0 24 24" fill="none"><path d="m19.06 18.67-2.14-4.27-2.14 4.27M15.17 17.91h3.52" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M16.92 22a5.08 5.08 0 1 1 .002-10.162A5.08 5.08 0 0 1 16.92 22ZM5.02 2h3.92c2.07 0 3.07 1 3.02 3.02v3.92c.05 2.07-.95 3.07-3.02 3.02H5.02C3 12 2 11 2 8.93V5.01C2 3 3 2 5.02 2ZM9.01 5.85H4.95M6.97 5.17v.68" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M7.99 5.84c0 1.75-1.37 3.17-3.05 3.17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.01 9.01c-.73 0-1.39-.39-1.85-1.01M2 15c0 3.87 3.13 7 7 7l-1.05-1.75M22 9c0-3.87-3.13-7-7-7l1.05 1.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-reserve" viewBox="0 0 24 24" fill="none"><path d="M18.97 22h-14c-3 0-3-1.35-3-3v-1c0-.55.45-1 1-1h18c.55 0 1 .45 1 1v1c0 1.65 0 3-3 3ZM20.72 13v4H3.27v-4a8.001 8.001 0 0 1 8-8h1.45c.58 0 1.15.06 1.69.18 3.61.78 6.31 3.98 6.31 7.82Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M14.5 4.5c0 .24-.03.46-.09.68-.54-.12-1.11-.18-1.69-.18h-1.45c-.58 0-1.14.06-1.68.18-.06-.22-.09-.44-.09-.68a2.5 2.5 0 0 1 5 0ZM15 11H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24" fill="none"><path d="m16.5 9.5-4.2 4.2-1.6-2.4-3.2 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M14.5 9.5h2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none"><path d="M13.06 10.94a5.74 5.74 0 0 1 0 8.13c-2.25 2.24-5.89 2.25-8.13 0-2.24-2.25-2.25-5.89 0-8.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.59 13.41c-2.34-2.34-2.34-6.14 0-8.49 2.34-2.35 6.14-2.34 8.49 0 2.35 2.34 2.34 6.14 0 8.49" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-tick" viewBox="0 0 24 24" fill="none"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="m7.75 12 2.83 2.83 5.67-5.66" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M18.07 14.43L12 20.5l-6.07-6.07M12 3.5v16.83"></path></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M19.92 8.95l-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"></path></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none"><path d="M6 12h12M12 18V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24" fill="none"><path d="M12 15.5c2.21 0 4-1.79 4-4V6c0-2.21-1.79-4-4-4S8 3.79 8 6v5.5c0 2.21 1.79 4 4 4Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4.35 9.65v1.7C4.35 15.57 7.78 19 12 19c4.22 0 7.65-3.43 7.65-7.65v-1.7M10.61 6.43c.9-.33 1.88-.33 2.78 0M11.2 8.55c.53-.14 1.08-.14 1.61 0M12 19v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-mic-off" viewBox="0 0 24 24" fill="none"><path d="M16 6.3V6c0-2.21-1.79-4-4-4S8 3.79 8 6v5M9.04 14.19c.73.81 1.79 1.31 2.96 1.31 2.21 0 4-1.79 4-4V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M6.78 16.95a7.656 7.656 0 0 0 12.87-5.6v-1.7M4.35 9.65v1.7c0 1.06.21 2.06.6 2.98M20.07 2.84 3.93 18.99M11 3v3M12 19v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24" fill="none"><path d="M16 2H8C4 2 2 4 2 8v13c0 .55.45 1 1 1h13c4 0 6-2 6-6V8c0-4-2-6-6-6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M7 9.5h10M7 14.5h7" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none"><path d="m7.4 6.32 8.49-2.83c3.81-1.27 5.88.81 4.62 4.62l-2.83 8.49c-1.9 5.71-5.02 5.71-6.92 0l-.84-2.52-2.52-.84c-5.71-1.9-5.71-5.01 0-6.92ZM10.11 13.65l3.58-3.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-end" viewBox="0 0 24 24" fill="none"><path d="M10.32 18.97c.14.11.28.21.43.32 1.14.83 2.29 1.49 3.44 1.98s2.24.73 3.26.73c.7 0 1.35-.13 1.95-.38.61-.25 1.15-.64 1.64-1.18.29-.32.51-.66.68-1.02.17-.36.25-.73.25-1.09 0-.28-.06-.53-.16-.78-.11-.25-.29-.46-.55-.64l-3.31-2.35c-.25-.17-.48-.3-.7-.39-.22-.09-.42-.13-.61-.13-.25 0-.48.07-.71.21-.23.12-.47.31-.72.56l-.76.75a.55.55 0 0 1-.41.17.69.69 0 0 1-.25-.04c-.07-.03-.13-.06-.18-.08-.19-.1-.41-.24-.65-.42M10.73 13.22c-.52-.53-1-1.06-1.45-1.58-.44-.52-.75-.95-.93-1.28-.02-.06-.05-.12-.08-.2a.908.908 0 0 1-.03-.23c0-.16.05-.29.16-.4l.76-.79c.24-.24.43-.48.56-.71.14-.23.21-.47.21-.71 0-.19-.05-.4-.14-.61-.09-.22-.22-.45-.4-.7L7.07 2.74a1.63 1.63 0 0 0-.67-.56A1.88 1.88 0 0 0 5.59 2c-.74 0-1.44.31-2.08.94-.53.5-.91 1.06-1.15 1.67-.24.6-.36 1.25-.36 1.93 0 1.04.24 2.13.72 3.27.48 1.13 1.14 2.27 1.96 3.41.83 1.14 1.76 2.23 2.79 3.27" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path><path d="M22 2 2 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M14.43 5.93L20.5 12l-6.07 6.07M3.5 12h16.83"></path></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none"><g transform="rotate(45 12 12)"><path d="M6 12h12M12 18V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></g></symbol>
   </svg>
 
   <!-- One particle field behind the whole page; it reshapes for each section -->
   <canvas class="fx" aria-hidden="true"></canvas>
 
-  <!-- Top bar with guided steps -->
-  <header class="topbar">
-    <a class="logo" href="#welcome" data-nav="welcome"><span class="logo-mark" aria-hidden="true"></span>Aria</a>
-    <nav class="stepper" aria-label="Guided steps">
-      <a href="#welcome" data-nav="welcome" class="step"><i>1</i><span>Welcome</span></a>
-      <a href="#profile" data-nav="profile" class="step"><i>2</i><span>Your hotel</span></a>
-      <a href="#features" data-nav="features" class="step"><i>3</i><span>Features</span></a>
-      <a href="#pricing" data-nav="pricing" class="step"><i>4</i><span>Plans</span></a>
-      <a href="#demo" data-nav="demo" class="step"><i>5</i><span>Book demo</span></a>
-    </nav>
-    <button class="btn btn-dark btn-sm js-talk">Talk to Aria</button>
-  </header>
-
   <main>
     <!-- 1. Welcome -->
     <section id="welcome" class="section hero" aria-labelledby="hero-title">
+      <p class="brand"><span class="logo-mark" aria-hidden="true"></span>Aria</p>
       <h1 id="hero-title" class="hero-title" data-split="in">A front desk that <em>never</em> misses a call.</h1>
 
       <button class="hero-orb js-talk">
@@ -609,7 +610,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         <div class="hero-intro">
           <p class="lede">Aria is the AI receptionist for hotels. She picks up 24/7, books rooms straight into your PMS and speaks your guests' language — warmly, like your best night manager.</p>
           <div class="hero-actions">
-            <button class="btn btn-dark btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
+            <button class="btn btn-dark btn-lg js-talk"><svg class="btn-ico" aria-hidden="true"><use href="#i-mic" /></svg>Talk to Aria</button>
             <button class="btn btn-ghost btn-lg js-type">Chat by text</button>
           </div>
           <p class="hero-note">About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
@@ -707,38 +708,44 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         </div>
         <div class="bento">
           <article class="card feature feature-lg" data-feature="answering">
-            <div class="feature-visual night-card" aria-hidden="true">
-              <div class="mini-bubble g">Is the pool open late?</div>
-              <div class="mini-bubble a">Until 11pm tonight — want me to book you a cabana?</div>
-              <div class="mini-bubble g">Perfect, yes please.</div>
+            <div class="feature-visual call-demo" aria-hidden="true">
+              <canvas class="call-field"></canvas>
+              <div class="call-head"><span class="call-live"><i></i>Live call</span><span class="call-meta" data-call-meta>Room 214 · 11:48 pm</span><span class="call-timer" data-call-timer>00:42</span></div>
+              <div class="call-thread" data-call-thread>
+                <div class="mini-bubble g">Is the pool open late?</div>
+                <div class="mini-bubble a">Until 11pm tonight — want me to book you a cabana?</div>
+                <div class="mini-bubble g">Perfect, yes please.</div>
+                <div class="call-done"><svg><use href="#i-tick" /></svg><span>Cabana booked for 9 pm</span></div>
+              </div>
             </div>
-            <div class="feature-copy">
+          <div class="feature-copy">
+              <span class="f-ico" aria-hidden="true"><svg><use href="#i-call" /></svg></span>
               <h3>24/7 call answering</h3>
               <p>Picks up on the first ring, day or night, holidays included. No hold music, no voicemail, no missed bookings.</p>
             </div>
           </article>
           <article class="card feature" data-feature="bookings">
-            <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 15l2.5 2.5L16 13"/></svg></span>
+            <span class="f-ico" aria-hidden="true"><svg><use href="#i-calendar" /></svg></span>
             <h3>Direct bookings</h3>
             <p>Checks live availability, quotes rates and books straight into your PMS — no OTA commission.</p>
           </article>
           <article class="card feature" data-feature="multilingual">
-            <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg></span>
+            <span class="f-ico" aria-hidden="true"><svg><use href="#i-translate" /></svg></span>
             <h3>30+ languages</h3>
             <p>Detects the caller's language and switches instantly, with a natural, warm voice.</p>
           </article>
           <article class="card feature" data-feature="guest_requests">
-            <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18h16M6 18a6 6 0 0 1 12 0M12 8V6M10 6h4"/></svg></span>
+            <span class="f-ico" aria-hidden="true"><svg><use href="#i-reserve" /></svg></span>
             <h3>Guest requests</h3>
             <p>Late checkout, towels, taxis, restaurant hours — handled and routed to the right team.</p>
           </article>
           <article class="card feature" data-feature="upsells">
-            <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-7M14 8h6v6"/></svg></span>
+            <span class="f-ico" aria-hidden="true"><svg><use href="#i-trend" /></svg></span>
             <h3>Smart upsells</h3>
             <p>Offers upgrades, breakfast and spa packages at just the right moment.</p>
           </article>
           <article class="card feature" data-feature="integrations">
-            <span class="f-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 7h9l-3-3M16 17H7l3 3"/></svg></span>
+            <span class="f-ico" aria-hidden="true"><svg><use href="#i-link" /></svg></span>
             <h3>PMS &amp; tool integrations</h3>
             <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
           </article>
@@ -815,7 +822,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
                 </label>
               </div>
               <label>Notes<textarea name="notes" rows="2"></textarea></label>
-              <button class="btn btn-dark btn-lg btn-block" type="submit">Request my demo</button>
+              <button class="btn btn-dark btn-lg btn-block" type="submit">Request my demo<svg class="btn-ico btn-arrow" aria-hidden="true"><use href="#i-arrow" /></svg></button>
             </form>
             <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
               <span class="success-mark" aria-hidden="true"><svg><use href="#i-check" /></svg></span>
@@ -863,7 +870,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     <footer class="footer">
       <div class="footer-cta">
         <h2 data-split="in">Your front desk, <em>never off duty.</em></h2>
-        <button class="btn btn-dark btn-lg js-talk"><span class="mic-ico" aria-hidden="true"></span>Talk to Aria</button>
+        <button class="btn btn-dark btn-lg js-talk"><svg class="btn-ico" aria-hidden="true"><use href="#i-mic" /></svg>Talk to Aria</button>
       </div>
       <p class="wordmark" aria-hidden="true">Aria</p>
       <div class="footer-meta">
@@ -882,14 +889,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
       <header class="panel-head">
         <span>Conversation</span>
         <button class="icon-btn icon-sm" id="collapseBtn" aria-label="Hide conversation">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          <svg aria-hidden="true"><use href="#i-chevron" /></svg>
         </button>
       </header>
       <ol class="thread" id="thread" aria-live="polite"></ol>
       <form class="composer" id="typeForm" autocomplete="off">
         <input name="msg" placeholder="Type a message…" aria-label="Message Aria" />
         <button class="icon-btn icon-send" aria-label="Send">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <svg aria-hidden="true"><use href="#i-send" /></svg>
         </button>
       </form>
     </div>
@@ -903,14 +910,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
       </div>
       <div class="dock-actions" data-live-only hidden>
         <button class="icon-btn" id="transcriptBtn" aria-label="Show conversation" aria-expanded="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+          <svg aria-hidden="true"><use href="#i-message" /></svg>
         </button>
         <button class="icon-btn" id="muteBtn" aria-label="Mute microphone" aria-pressed="false">
-          <svg class="ico-mic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-          <svg class="ico-mic-off" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18"/></svg>
+          <svg class="ico-mic" aria-hidden="true"><use href="#i-mic" /></svg>
+          <svg class="ico-mic-off" aria-hidden="true"><use href="#i-mic-off" /></svg>
         </button>
         <button class="icon-btn icon-end" id="endBtn" aria-label="End conversation">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          <svg aria-hidden="true"><use href="#i-end" /></svg>
         </button>
       </div>
     </div>
@@ -927,7 +934,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         <li><b>Interrupt her whenever you like</b>, just like a normal conversation.</li>
       </ul>
       <div class="sheet-actions">
-        <button class="btn btn-dark btn-lg" value="voice" autofocus><span class="mic-ico" aria-hidden="true"></span>Start with voice</button>
+        <button class="btn btn-dark btn-lg" value="voice" autofocus><svg class="btn-ico" aria-hidden="true"><use href="#i-mic" /></svg>Start with voice</button>
         <button class="btn btn-ghost btn-lg" value="text">Type instead</button>
       </div>
       <button class="sheet-close" value="cancel" aria-label="Close"><svg aria-hidden="true"><use href="#i-close" /></svg></button>
@@ -1101,7 +1108,7 @@ let cancelScroll = null;
 
 function smoothScrollTo(el) {
   cancelScroll?.();
-  const offset = $(".topbar").offsetHeight + 12;
+  const offset = ($(".topbar")?.offsetHeight || 0) + 12;
   const target = Math.max(0, el.getBoundingClientRect().top + scrollY - offset);
   if (reducedMotion) return scrollTo({ top: target, behavior: "instant" });
   const start = scrollY;
@@ -2140,14 +2147,165 @@ function updateDrift() {
   });
 }
 
-/* ---------- Top bar: transparent at the top, glass once you scroll ---------- */
+/* ---------- The live call in the features card ---------- */
+// Three short calls play in turn. Each line arrives after a typing pause,
+// Aria's replies stream in word by word, and every line sends a ripple
+// through the dot field from the side of whoever is speaking.
 
-function updateTop() {
-  const top = scrollY < 40 ? "1" : "0";
-  if (body.dataset.top !== top) body.dataset.top = top;
+const CALLS = [
+  { meta: "Room 214 · 11:48 pm", done: "Cabana booked for 9 pm", lines: [
+    ["g", "Is the pool open late?"],
+    ["a", "Until 11pm tonight — want me to book you a cabana?"],
+    ["g", "Perfect, yes please."],
+  ] },
+  { meta: "Room 507 · 7:02 am", done: "Late checkout added", lines: [
+    ["g", "Could we check out at 2pm tomorrow?"],
+    ["a", "Of course — I've added a 2pm late checkout for room 507."],
+    ["g", "Wonderful, thank you."],
+  ] },
+  { meta: "New caller · 9:15 pm", done: "Reserva confirmada · 1 noche", lines: [
+    ["g", "¿Tienen una habitación para el viernes?"],
+    ["a", "¡Sí! Una doble con vista al mar por 189 €. ¿Se la reservo?"],
+    ["g", "Sí, por favor."],
+  ] },
+];
+
+const callCard = $(".call-demo");
+const callThread = $("[data-call-thread]");
+const callMeta = $("[data-call-meta]");
+const callTimer = $("[data-call-timer]");
+const callCanvas = $(".call-field");
+const callCtx = callCanvas?.getContext("2d");
+const ripples = [];
+let callVisible = false;
+let callStart = performance.now();
+let dots = [];
+let fieldSize = { w: 0, h: 0, dpr: 1 };
+
+function layoutDots() {
+  if (!callCanvas) return;
+  const r = callCanvas.getBoundingClientRect();
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  if (!r.width || (r.width === fieldSize.w && r.height === fieldSize.h && dpr === fieldSize.dpr)) return;
+  fieldSize = { w: r.width, h: r.height, dpr };
+  callCanvas.width = Math.round(r.width * dpr);
+  callCanvas.height = Math.round(r.height * dpr);
+  dots = [];
+  const gap = 22;
+  for (let y = gap / 2; y < r.height; y += gap) {
+    for (let x = gap / 2; x < r.width; x += gap) {
+      const c = colorFor(1 - (y / r.height) * 2).map((v) => Math.min(255, Math.round(v * 255)));
+      dots.push({ x: x + (Math.random() - 0.5) * 5, y: y + (Math.random() - 0.5) * 5, c: c.join(","), a: 0.16 + Math.random() * 0.26, ph: Math.random() * 6.28 });
+    }
+  }
 }
-addEventListener("scroll", updateTop, { passive: true });
-updateTop();
+
+function drawDots(t) {
+  const { w, h, dpr } = fieldSize;
+  if (!callCtx || !w) return;
+  callCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  callCtx.clearRect(0, 0, w, h);
+  while (ripples.length && t - ripples[0].t0 > 2.6) ripples.shift();
+  for (const d of dots) {
+    let dx = 0, dy = 0, glow = 0;
+    for (const rp of ripples) {
+      const age = t - rp.t0;
+      const vx = d.x - rp.x, vy = d.y - rp.y;
+      const dist = Math.hypot(vx, vy) || 1;
+      const band = Math.exp(-((dist - age * 280) ** 2) / 1100) * (1 - age / 2.6);
+      dx += (vx / dist) * band * 6;
+      dy += (vy / dist) * band * 6;
+      glow += band;
+    }
+    const twinkle = 0.7 + 0.3 * Math.sin(t * 1.3 + d.ph);
+    const a = Math.min(1, d.a * twinkle + glow * 0.85);
+    const size = 1.6 + glow * 1.8;
+    callCtx.fillStyle = `rgba(${d.c},${a.toFixed(3)})`;
+    callCtx.fillRect(d.x + dx - size / 2, d.y + dy - size / 2, size, size);
+  }
+}
+
+function ripple(el, who) {
+  if (!callCanvas) return;
+  const c = callCanvas.getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  const x = who === "g" ? r.left - c.left + 24 : who === "a" ? r.right - c.left - 24 : r.left - c.left + r.width / 2;
+  ripples.push({ x, y: r.top - c.top + r.height / 2, t0: time });
+}
+
+const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+async function whenVisible() {
+  while (!callVisible || document.hidden) await wait(250);
+}
+function node(cls, text) {
+  const d = document.createElement("div");
+  d.className = cls;
+  if (text) d.textContent = text;
+  return d;
+}
+
+async function playCall(call) {
+  callThread.classList.remove("out");
+  callThread.replaceChildren();
+  callMeta.textContent = call.meta;
+  callStart = performance.now();
+  for (const [who, text] of call.lines) {
+    await whenVisible();
+    const typing = node(`mini-bubble ${who} typing enter`);
+    typing.append(document.createElement("i"), document.createElement("i"), document.createElement("i"));
+    callThread.append(typing);
+    await wait(who === "a" ? 1200 : 800);
+    const bubble = node(`mini-bubble ${who} enter`, who === "a" ? "" : text);
+    typing.replaceWith(bubble);
+    ripple(bubble, who);
+    if (who === "a") {
+      // Aria's reply streams in, word by word
+      const words = text.split(" ").map((w) => {
+        const s = document.createElement("span");
+        s.className = "w";
+        s.textContent = w;
+        return s;
+      });
+      words.forEach((s, i) => bubble.append(s, i < words.length - 1 ? " " : ""));
+      for (const s of words) {
+        s.classList.add("on");
+        await wait(75);
+      }
+    }
+    await wait(900 + text.length * 22);
+  }
+  const done = node("call-done enter");
+  done.innerHTML = '<svg aria-hidden="true"><use href="#i-tick" /></svg>';
+  done.append(Object.assign(document.createElement("span"), { textContent: call.done }));
+  callThread.append(done);
+  ripple(done, "done");
+  await wait(3000);
+  callThread.classList.add("out");
+  await wait(650);
+}
+
+async function runCalls() {
+  for (let i = 0; ; i++) {
+    await whenVisible();
+    await playCall(CALLS[i % CALLS.length]);
+  }
+}
+
+function updateCallTimer() {
+  if (!callTimer) return;
+  const s = Math.floor((performance.now() - callStart) / 1000);
+  const label = `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  if (callTimer.textContent !== label) callTimer.textContent = label;
+}
+
+if (callCard && callThread) {
+  new IntersectionObserver(([e]) => {
+    callVisible = e.isIntersecting;
+    if (callVisible) layoutDots();
+  }, { threshold: 0.2 }).observe(callCard);
+  addEventListener("resize", layoutDots, { passive: true });
+  if (!reducedMotion) runCalls();
+}
 
 /* ---------- A light that follows the cursor on cards ---------- */
 
@@ -2218,6 +2376,10 @@ function frame(now) {
   if (fieldGL) drawField(time, dt);
   updateDrift();
   minis.forEach((m) => drawMini(m, time, dt));
+  if (callVisible) {
+    drawDots(time);
+    updateCallTimer();
+  }
   requestAnimationFrame(frame);
 }
 
@@ -2226,6 +2388,10 @@ function stillFrames() {
   const still = () => {
     if (fieldGL) drawField(2, 0.016);
     minis.forEach((m) => drawMini(m, 2, 0));
+    if (callVisible) {
+      layoutDots();
+      drawDots(2);
+    }
   };
   still();
   addEventListener("resize", still);

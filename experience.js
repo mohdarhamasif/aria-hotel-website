@@ -460,14 +460,165 @@ function updateDrift() {
   });
 }
 
-/* ---------- Top bar: transparent at the top, glass once you scroll ---------- */
+/* ---------- The live call in the features card ---------- */
+// Three short calls play in turn. Each line arrives after a typing pause,
+// Aria's replies stream in word by word, and every line sends a ripple
+// through the dot field from the side of whoever is speaking.
 
-function updateTop() {
-  const top = scrollY < 40 ? "1" : "0";
-  if (body.dataset.top !== top) body.dataset.top = top;
+const CALLS = [
+  { meta: "Room 214 · 11:48 pm", done: "Cabana booked for 9 pm", lines: [
+    ["g", "Is the pool open late?"],
+    ["a", "Until 11pm tonight — want me to book you a cabana?"],
+    ["g", "Perfect, yes please."],
+  ] },
+  { meta: "Room 507 · 7:02 am", done: "Late checkout added", lines: [
+    ["g", "Could we check out at 2pm tomorrow?"],
+    ["a", "Of course — I've added a 2pm late checkout for room 507."],
+    ["g", "Wonderful, thank you."],
+  ] },
+  { meta: "New caller · 9:15 pm", done: "Reserva confirmada · 1 noche", lines: [
+    ["g", "¿Tienen una habitación para el viernes?"],
+    ["a", "¡Sí! Una doble con vista al mar por 189 €. ¿Se la reservo?"],
+    ["g", "Sí, por favor."],
+  ] },
+];
+
+const callCard = $(".call-demo");
+const callThread = $("[data-call-thread]");
+const callMeta = $("[data-call-meta]");
+const callTimer = $("[data-call-timer]");
+const callCanvas = $(".call-field");
+const callCtx = callCanvas?.getContext("2d");
+const ripples = [];
+let callVisible = false;
+let callStart = performance.now();
+let dots = [];
+let fieldSize = { w: 0, h: 0, dpr: 1 };
+
+function layoutDots() {
+  if (!callCanvas) return;
+  const r = callCanvas.getBoundingClientRect();
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  if (!r.width || (r.width === fieldSize.w && r.height === fieldSize.h && dpr === fieldSize.dpr)) return;
+  fieldSize = { w: r.width, h: r.height, dpr };
+  callCanvas.width = Math.round(r.width * dpr);
+  callCanvas.height = Math.round(r.height * dpr);
+  dots = [];
+  const gap = 22;
+  for (let y = gap / 2; y < r.height; y += gap) {
+    for (let x = gap / 2; x < r.width; x += gap) {
+      const c = colorFor(1 - (y / r.height) * 2).map((v) => Math.min(255, Math.round(v * 255)));
+      dots.push({ x: x + (Math.random() - 0.5) * 5, y: y + (Math.random() - 0.5) * 5, c: c.join(","), a: 0.16 + Math.random() * 0.26, ph: Math.random() * 6.28 });
+    }
+  }
 }
-addEventListener("scroll", updateTop, { passive: true });
-updateTop();
+
+function drawDots(t) {
+  const { w, h, dpr } = fieldSize;
+  if (!callCtx || !w) return;
+  callCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  callCtx.clearRect(0, 0, w, h);
+  while (ripples.length && t - ripples[0].t0 > 2.6) ripples.shift();
+  for (const d of dots) {
+    let dx = 0, dy = 0, glow = 0;
+    for (const rp of ripples) {
+      const age = t - rp.t0;
+      const vx = d.x - rp.x, vy = d.y - rp.y;
+      const dist = Math.hypot(vx, vy) || 1;
+      const band = Math.exp(-((dist - age * 280) ** 2) / 1100) * (1 - age / 2.6);
+      dx += (vx / dist) * band * 6;
+      dy += (vy / dist) * band * 6;
+      glow += band;
+    }
+    const twinkle = 0.7 + 0.3 * Math.sin(t * 1.3 + d.ph);
+    const a = Math.min(1, d.a * twinkle + glow * 0.85);
+    const size = 1.6 + glow * 1.8;
+    callCtx.fillStyle = `rgba(${d.c},${a.toFixed(3)})`;
+    callCtx.fillRect(d.x + dx - size / 2, d.y + dy - size / 2, size, size);
+  }
+}
+
+function ripple(el, who) {
+  if (!callCanvas) return;
+  const c = callCanvas.getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  const x = who === "g" ? r.left - c.left + 24 : who === "a" ? r.right - c.left - 24 : r.left - c.left + r.width / 2;
+  ripples.push({ x, y: r.top - c.top + r.height / 2, t0: time });
+}
+
+const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+async function whenVisible() {
+  while (!callVisible || document.hidden) await wait(250);
+}
+function node(cls, text) {
+  const d = document.createElement("div");
+  d.className = cls;
+  if (text) d.textContent = text;
+  return d;
+}
+
+async function playCall(call) {
+  callThread.classList.remove("out");
+  callThread.replaceChildren();
+  callMeta.textContent = call.meta;
+  callStart = performance.now();
+  for (const [who, text] of call.lines) {
+    await whenVisible();
+    const typing = node(`mini-bubble ${who} typing enter`);
+    typing.append(document.createElement("i"), document.createElement("i"), document.createElement("i"));
+    callThread.append(typing);
+    await wait(who === "a" ? 1200 : 800);
+    const bubble = node(`mini-bubble ${who} enter`, who === "a" ? "" : text);
+    typing.replaceWith(bubble);
+    ripple(bubble, who);
+    if (who === "a") {
+      // Aria's reply streams in, word by word
+      const words = text.split(" ").map((w) => {
+        const s = document.createElement("span");
+        s.className = "w";
+        s.textContent = w;
+        return s;
+      });
+      words.forEach((s, i) => bubble.append(s, i < words.length - 1 ? " " : ""));
+      for (const s of words) {
+        s.classList.add("on");
+        await wait(75);
+      }
+    }
+    await wait(900 + text.length * 22);
+  }
+  const done = node("call-done enter");
+  done.innerHTML = '<svg aria-hidden="true"><use href="#i-tick" /></svg>';
+  done.append(Object.assign(document.createElement("span"), { textContent: call.done }));
+  callThread.append(done);
+  ripple(done, "done");
+  await wait(3000);
+  callThread.classList.add("out");
+  await wait(650);
+}
+
+async function runCalls() {
+  for (let i = 0; ; i++) {
+    await whenVisible();
+    await playCall(CALLS[i % CALLS.length]);
+  }
+}
+
+function updateCallTimer() {
+  if (!callTimer) return;
+  const s = Math.floor((performance.now() - callStart) / 1000);
+  const label = `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  if (callTimer.textContent !== label) callTimer.textContent = label;
+}
+
+if (callCard && callThread) {
+  new IntersectionObserver(([e]) => {
+    callVisible = e.isIntersecting;
+    if (callVisible) layoutDots();
+  }, { threshold: 0.2 }).observe(callCard);
+  addEventListener("resize", layoutDots, { passive: true });
+  if (!reducedMotion) runCalls();
+}
 
 /* ---------- A light that follows the cursor on cards ---------- */
 
@@ -538,6 +689,10 @@ function frame(now) {
   if (fieldGL) drawField(time, dt);
   updateDrift();
   minis.forEach((m) => drawMini(m, time, dt));
+  if (callVisible) {
+    drawDots(time);
+    updateCallTimer();
+  }
   requestAnimationFrame(frame);
 }
 
@@ -546,6 +701,10 @@ function stillFrames() {
   const still = () => {
     if (fieldGL) drawField(2, 0.016);
     minis.forEach((m) => drawMini(m, 2, 0));
+    if (callVisible) {
+      layoutDots();
+      drawDots(2);
+    }
   };
   still();
   addEventListener("resize", still);
