@@ -228,21 +228,32 @@ html.lenis { scroll-behavior: auto; }
   content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: 140vw; height: 100%; pointer-events: none;
   transform: translate3d(-50%, var(--gy, 0px), 0); background: var(--glow, none);
 }
-#profile, #features, #pricing, #faq { --glow: radial-gradient(40% 30% at 50% 12%, rgba(242, 140, 80, .08), transparent 70%); }
+#profile, #features, #pricing, #faq { --glow: radial-gradient(46% 34% at 50% 14%, rgba(242, 140, 80, .11), transparent 72%); }
 #demo { --glow: radial-gradient(30% 40% at 24% 40%, rgba(250, 128, 58, .16), transparent 70%), radial-gradient(40% 40% at 70% 70%, rgba(242, 167, 126, .06), transparent 70%); }
 .footer { --glow: radial-gradient(22% 22% at 50% 40%, rgba(255, 150, 70, .3), transparent 70%), radial-gradient(46% 40% at 50% 46%, rgba(242, 140, 80, .12), transparent 70%); }
 .section-head { position: relative; isolation: isolate; display: grid; justify-items: center; text-align: center; gap: 22px; max-width: 1000px; margin: 0 auto 72px; padding-top: 56px; }
 .section-head > div { display: grid; justify-items: center; }
 .section-head h2 { margin: 0; max-width: 16ch; font-size: clamp(2.6rem, 6vw, 5.4rem); line-height: 1; }
 .section-head > .muted { margin: 0; max-width: 46ch; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.5; }
-/* A thin arc above each heading, with a soft light resting on it */
-.section-head::before { content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: min(1100px, 130vw); aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; border: 1px solid rgba(255, 214, 180, .16); pointer-events: none;
-  -webkit-mask-image: linear-gradient(#000, #000 12%, transparent 32%); mask-image: linear-gradient(#000, #000 12%, transparent 32%); }
-.section-head::after { content: ""; position: absolute; z-index: -2; left: 50%; top: -260px; width: min(1500px, 170vw); height: 1100px; transform: translateX(-50%); pointer-events: none;
+/* Above each heading: a blurred warm blob, and in front of it a half globe of
+   frosted glass (after mdx.so). The glass diffuses the blob and the particles
+   behind it, catches a bright rim along its top and fades out downward. */
+.section-head::after {
+  content: ""; position: absolute; z-index: -2; left: 50%; top: -210px; width: min(600px, 118vw); height: 440px; transform: translateX(-50%); pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 160, 72, .95), rgba(255, 130, 52, .58) 40%, rgba(250, 112, 44, .18) 70%, rgba(250, 112, 44, 0));
+  filter: blur(24px);
+}
+.section-head::before {
+  content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: min(1100px, 130vw); aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; pointer-events: none;
   background:
-    radial-gradient(220px 170px at 50% 250px, rgba(255, 156, 72, .76), rgba(255, 132, 60, .4) 45%, rgba(255, 120, 50, 0) 100%),
-    radial-gradient(520px 380px at 50% 300px, rgba(250, 128, 58, .22), rgba(250, 128, 58, 0) 100%),
-    radial-gradient(760px 520px at 50% 420px, rgba(242, 167, 126, .1), rgba(242, 167, 126, 0) 100%); }
+    radial-gradient(62% 40% at 50% 0%, rgba(255, 196, 150, .3), rgba(255, 196, 150, .1) 45%, rgba(255, 196, 150, 0) 75%),
+    radial-gradient(90% 55% at 50% 12%, rgba(255, 232, 214, .07), rgba(255, 232, 214, 0) 70%),
+    linear-gradient(180deg, rgba(255, 244, 234, .14), rgba(255, 244, 234, .06) 22%, rgba(255, 244, 234, .02) 38%, rgba(255, 244, 234, 0) 50%);
+  border: 1px solid rgba(255, 236, 220, .22);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .6), inset 0 30px 70px -34px rgba(255, 214, 180, .5);
+  -webkit-backdrop-filter: blur(26px) saturate(1.35); backdrop-filter: blur(26px) saturate(1.35);
+  -webkit-mask-image: linear-gradient(180deg, #000, #000 16%, transparent 44%); mask-image: linear-gradient(180deg, #000, #000 16%, transparent 44%);
+}
 .section-head .eyebrow { color: rgba(255, 238, 224, .82); }
 .card {
   --mx: 50%; --my: 50%;
