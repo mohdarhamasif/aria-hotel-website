@@ -28,14 +28,14 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="manifest" href="site.webmanifest" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet" /></noscript>
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+  <link rel="preload" as="style" href="https://api.fontshare.com/v2/css?f[]=ranade@1,2&amp;f[]=supreme@1&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link href="https://api.fontshare.com/v2/css?f[]=ranade@1,2&amp;f[]=supreme@1&amp;display=swap" rel="stylesheet" /></noscript>
   <style>
 /* Aria — one night, top to bottom.
    A fixed particle field (experience.js) runs behind the whole page and
-   reshapes for each section. Type is Instrument Serif at scale; everything
+   reshapes for each section. Type: Ranade for display, Supreme for text; everything
    else stays quiet so the particles and the words carry the page. */
 
 @property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
@@ -57,8 +57,8 @@
   --orb-warm: #f2a77e;
   --orb-ring: linear-gradient(170deg, var(--orb-blue), var(--orb-mint) 52%, var(--orb-orange));
   --radius: 22px;
-  --serif: "Instrument Serif", Georgia, serif;
-  --sans: "Inter", system-ui, -apple-system, sans-serif;
+  --serif: "Ranade", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --sans: "Supreme", "Segoe UI", system-ui, -apple-system, sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
 }
 
@@ -66,10 +66,10 @@
 [hidden] { display: none !important; }
 html { background: var(--bg); scroll-behavior: smooth; scroll-padding-top: 84px; color-scheme: dark; }
 body { margin: 0; font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.55; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-h1, h2, h3 { font-weight: 400; line-height: 1.02; margin: 0 0 .5em; letter-spacing: -.02em; }
+h1, h2, h3 { font-weight: 400; line-height: 1.04; margin: 0 0 .5em; letter-spacing: -.03em; }
 h1, h2 { font-family: var(--serif); }
 h1 em, h2 em { font-style: italic; color: var(--orb-warm); }
-h2 { font-size: clamp(2.4rem, 4.8vw, 4.2rem); }
+h2 { font-size: clamp(2.1rem, 4.1vw, 3.6rem); }
 h3 { font-family: var(--sans); font-size: 1.08rem; font-weight: 600; letter-spacing: -.005em; line-height: 1.3; }
 p { margin: 0 0 1em; }
 a { color: inherit; }
@@ -131,8 +131,8 @@ main { position: relative; z-index: 1; }
 .hero { --orb: min(68svh, 84vw); position: relative; min-height: max(100svh, 700px); padding: 0; }
 .hero-title {
   position: absolute; left: 50%; top: 45%; z-index: 2; transform: translate(-50%, -50%);
-  width: calc(var(--orb) * .64); margin: 0; pointer-events: none;
-  font-size: clamp(2.3rem, 4.5vw, 4.7rem); line-height: .98; text-align: center; text-wrap: balance; color: #fff;
+  width: calc(var(--orb) * .8); margin: 0; pointer-events: none;
+  font-size: clamp(2rem, 3.9vw, 3.7rem); line-height: 1.02; text-align: center; text-wrap: balance; color: #fff;
 }
 .hero-orb {
   position: absolute; left: 50%; top: 45%; z-index: 1; transform: translate(-50%, -50%);
@@ -177,7 +177,7 @@ main { position: relative; z-index: 1; }
 .story { position: relative; }
 .story-pin { position: relative; }
 .beat { position: relative; display: grid; place-items: center; padding: 80px 24px; }
-.beat-line { margin: 0; max-width: 15ch; text-align: center; text-wrap: balance; font-size: clamp(2.2rem, 5.2vw, 5rem); line-height: 1; color: #fff; }
+.beat-line { margin: 0; max-width: 17ch; text-align: center; text-wrap: balance; font-size: clamp(2rem, 4.4vw, 4.2rem); line-height: 1.04; color: #fff; }
 .beat-time, .greetings, .story-count { display: none; }
 
 .js .story { height: 420svh; }
@@ -192,7 +192,7 @@ main { position: relative; z-index: 1; }
   transform: translateY(-12svh) scale(var(--ts, 1.1)); opacity: calc(var(--to, 0) * .8);
 }
 .js .greetings { display: block; position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
-.js .greetings li { position: absolute; left: 50%; top: 38%; white-space: nowrap; font: 400 clamp(2rem, 5.5vw, 5.6rem)/1 var(--serif); color: #fff; opacity: 0; will-change: transform, opacity; }
+.js .greetings li { position: absolute; left: 50%; top: 38%; white-space: nowrap; font: 400 clamp(1.8rem, 4.6vw, 4.6rem)/1 var(--serif); color: #fff; opacity: 0; will-change: transform, opacity; }
 .js .greetings li:nth-child(odd) { font-style: italic; color: var(--orb-warm); }
 .js .story-count {
   display: flex; align-items: center; gap: 12px; position: absolute; left: clamp(20px, 4vw, 48px); bottom: 34px; margin: 0;
@@ -212,7 +212,7 @@ main { position: relative; z-index: 1; }
 .marquee::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
 .marquee::after { right: 0; background: linear-gradient(-90deg, var(--bg), transparent); }
 .marquee:hover .marquee-track { animation-play-state: paused; }
-.marquee-track span { font: italic 400 clamp(2rem, 4.2vw, 3.6rem)/1 var(--serif); white-space: nowrap; }
+.marquee-track span { font: italic 300 clamp(1.8rem, 3.6vw, 3.1rem)/1 var(--serif); letter-spacing: -.02em; white-space: nowrap; }
 .marquee-track i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--orb-ring); }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
@@ -223,7 +223,7 @@ main { position: relative; z-index: 1; }
 .section { padding: 140px 0 24px; }
 .content .section + .section { border-top: 1px solid var(--line); margin-top: 96px; }
 .section-head { position: relative; isolation: isolate; display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: end; margin-bottom: 52px; }
-.section-head h2 { margin: 0; max-width: 14ch; }
+.section-head h2 { margin: 0; max-width: 15ch; }
 .section-head > .muted { margin: 0 0 .5em; max-width: 44ch; font-size: 1.02rem; }
 /* Giant outlined numerals drift behind each heading (parallax from experience.js) */
 .section-num {
@@ -363,7 +363,7 @@ textarea { resize: vertical; }
 /* Footer: the orb returns above a closing line and the wordmark */
 .footer { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 clamp(16px, 4vw, 48px) 120px; margin-top: 140px; overflow: hidden; }
 .footer-cta { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px; }
-.footer-cta h2 { margin: 0; font-size: clamp(2.6rem, 6vw, 5.6rem); max-width: 14ch; }
+.footer-cta h2 { margin: 0; font-size: clamp(2.4rem, 5vw, 4.8rem); max-width: 15ch; }
 .wordmark { margin: 56px 0 0; text-align: center; font: 400 clamp(8rem, 34vw, 30rem)/.78 var(--serif); letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .18); transform: translate3d(0, var(--py, 0px), 0); }
 .footer-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 28px; margin-top: 28px; border-top: 1px solid var(--line); color: var(--faint); font-size: .85rem; max-width: 1240px; width: 100%; margin-inline: auto; }
 .footer-meta p { margin: 0; }
@@ -493,7 +493,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
 @media (max-width: 600px) {
   .topbar .btn { display: none; }
   .hero { --orb: min(86vw, 360px); padding-top: 96px; }
-  .hero-title { top: calc(96px + var(--orb) / 2); font-size: clamp(1.9rem, 8.4vw, 2.4rem); width: calc(var(--orb) * .7); }
+  .hero-title { top: calc(96px + var(--orb) / 2); font-size: clamp(1.6rem, 7vw, 2.1rem); width: calc(var(--orb) * .8); }
   .hero-foot { margin-top: 84px; }
   .scroll-cue { display: none; }
   .js .story { height: 340svh; }
