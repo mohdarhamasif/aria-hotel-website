@@ -211,15 +211,50 @@
         </div>
       </section>
 
-      <!-- 3. Features (bento) -->
-      <section id="features" class="section">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">03 — What she does</p>
-            <h2 data-split="in">Everything your front desk <em>does on the phone</em></h2>
+      <!-- 3. Features: one pinned scroll transition — pills spread around the
+           sphere (A), then gather close to it as the heading moves to the corner (B) -->
+      <section id="features" class="section features">
+        <div class="feature-stage">
+          <div class="feature-pin">
+            <div class="fh-a">
+              <p class="eyebrow">03 — What she does</p>
+              <h2 data-split="in">Everything your front desk <em>does on the phone</em></h2>
+            </div>
+            <div class="fh-b" aria-hidden="true">
+              <p class="eyebrow">03 — What she does</p>
+              <p class="fh-b-title">Everything your front desk <em>does on the phone</em></p>
+            </div>
+            <p class="feature-lede muted">Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
+            <div class="orbit">
+              <div class="orbit-slot"><article class="card feature pill" data-feature="bookings" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-calendar" /></svg></span>
+                <h3>Direct bookings</h3>
+                <p>Checks live availability, quotes rates and books straight into your PMS — no OTA commission.</p>
+              </article></div>
+              <div class="orbit-slot"><article class="card feature pill" data-feature="multilingual" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-translate" /></svg></span>
+                <h3>30+ languages</h3>
+                <p>Detects the caller's language and switches instantly, with a natural, warm voice.</p>
+              </article></div>
+              <div class="orbit-slot"><article class="card feature pill" data-feature="guest_requests" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-reserve" /></svg></span>
+                <h3>Guest requests</h3>
+                <p>Late checkout, towels, taxis, restaurant hours — handled and routed to the right team.</p>
+              </article></div>
+              <div class="orbit-slot"><article class="card feature pill" data-feature="upsells" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-trend" /></svg></span>
+                <h3>Smart upsells</h3>
+                <p>Offers upgrades, breakfast and spa packages at just the right moment.</p>
+              </article></div>
+              <div class="orbit-slot"><article class="card feature pill" data-feature="integrations" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-link" /></svg></span>
+                <h3>PMS &amp; tool integrations</h3>
+                <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
+              </article></div>
+            </div>
           </div>
-          <p class="muted" data-scrub>Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
         </div>
+
         <div class="bento">
           <article class="card feature feature-lg" data-feature="answering">
             <div class="feature-visual call-demo" aria-hidden="true">
@@ -232,41 +267,16 @@
                 <div class="call-done"><svg><use href="#i-tick" /></svg><span>Cabana booked for 9 pm</span></div>
               </div>
             </div>
-          <div class="feature-copy">
+            <div class="feature-copy">
               <span class="f-ico" aria-hidden="true"><svg><use href="#i-call" /></svg></span>
               <h3>24/7 call answering</h3>
               <p>Picks up on the first ring, day or night, holidays included. No hold music, no voicemail, no missed bookings.</p>
             </div>
           </article>
-          <article class="card feature" data-feature="bookings">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-calendar" /></svg></span>
-            <h3>Direct bookings</h3>
-            <p>Checks live availability, quotes rates and books straight into your PMS — no OTA commission.</p>
-          </article>
-          <article class="card feature" data-feature="multilingual">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-translate" /></svg></span>
-            <h3>30+ languages</h3>
-            <p>Detects the caller's language and switches instantly, with a natural, warm voice.</p>
-          </article>
-          <article class="card feature" data-feature="guest_requests">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-reserve" /></svg></span>
-            <h3>Guest requests</h3>
-            <p>Late checkout, towels, taxis, restaurant hours — handled and routed to the right team.</p>
-          </article>
-          <article class="card feature" data-feature="upsells">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-trend" /></svg></span>
-            <h3>Smart upsells</h3>
-            <p>Offers upgrades, breakfast and spa packages at just the right moment.</p>
-          </article>
-          <article class="card feature" data-feature="integrations">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-link" /></svg></span>
-            <h3>PMS &amp; tool integrations</h3>
-            <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
-          </article>
         </div>
       </section>
 
-      <!-- 4. Pricing -->
+      <!-- 4. Pricing: the plans sit above a planet's horizon -->
       <section id="pricing" class="section">
         <div class="section-head">
           <div>
@@ -275,72 +285,74 @@
           </div>
           <p class="muted" data-scrub>Simple monthly pricing. Aria will point out the one that fits you best.</p>
         </div>
-        <div class="plan-grid">
-          <article class="card plan" data-plan="starter">
-            <span class="plan-badge">Recommended for you</span>
-            <h3>Starter</h3>
-            <p class="plan-for">Up to 40 rooms</p>
-            <p class="price">$299<small>/month</small></p>
-            <ul><li>24/7 call answering</li><li>FAQ &amp; guest requests</li><li>5 languages</li><li>500 calls / month</li></ul>
-          </article>
-          <article class="card plan" data-plan="professional">
-            <span class="plan-badge">Recommended for you</span>
-            <span class="pop">Most popular</span>
-            <h3>Professional</h3>
-            <p class="plan-for">Up to 150 rooms</p>
-            <p class="price">$799<small>/month</small></p>
-            <ul><li>Everything in Starter</li><li>Direct bookings via PMS</li><li>30+ languages</li><li>Upsells &amp; analytics</li><li>2,500 calls / month</li></ul>
-          </article>
-          <article class="card plan" data-plan="enterprise">
-            <span class="plan-badge">Recommended for you</span>
-            <h3>Enterprise</h3>
-            <p class="plan-for">Groups &amp; 150+ rooms</p>
-            <p class="price">Custom</p>
-            <ul><li>Everything in Professional</li><li>Multi-property setup</li><li>Custom voice &amp; brand persona</li><li>Dedicated success manager</li><li>Unlimited calls</li></ul>
-          </article>
+        <div class="plan-stage">
+          <div class="eclipse" aria-hidden="true"><div class="planet"><i class="rim-light"></i></div></div>
+          <div class="plan-grid">
+            <article class="card plan" data-plan="starter">
+              <span class="plan-badge">Recommended for you</span>
+              <h3>Starter</h3>
+              <p class="plan-for">Up to 40 rooms</p>
+              <p class="price">$299<small>/month</small></p>
+              <ul><li>24/7 call answering</li><li>FAQ &amp; guest requests</li><li>5 languages</li><li>500 calls / month</li></ul>
+            </article>
+            <article class="card plan" data-plan="professional">
+              <span class="plan-badge">Recommended for you</span>
+              <span class="pop">Most popular</span>
+              <h3>Professional</h3>
+              <p class="plan-for">Up to 150 rooms</p>
+              <p class="price">$799<small>/month</small></p>
+              <ul><li>Everything in Starter</li><li>Direct bookings via PMS</li><li>30+ languages</li><li>Upsells &amp; analytics</li><li>2,500 calls / month</li></ul>
+            </article>
+            <article class="card plan" data-plan="enterprise">
+              <span class="plan-badge">Recommended for you</span>
+              <h3>Enterprise</h3>
+              <p class="plan-for">Groups &amp; 150+ rooms</p>
+              <p class="price">Custom</p>
+              <ul><li>Everything in Professional</li><li>Multi-property setup</li><li>Custom voice &amp; brand persona</li><li>Dedicated success manager</li><li>Unlimited calls</li></ul>
+            </article>
+          </div>
+          <p class="plan-reason" data-plan-reason hidden></p>
         </div>
-        <p class="plan-reason" data-plan-reason hidden></p>
       </section>
 
-      <!-- 5. Book a demo -->
-      <section id="demo" class="section">
-        <div class="demo-grid">
-          <div class="demo-copy section-head">
-            <div>
-              <p class="eyebrow">05 — Book a demo</p>
-              <h2 data-split="in">Hear Aria answer <em>your</em> hotel's phone</h2>
-              <p class="muted" data-scrub>Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
-              <ul class="checks">
-                <li>A 20-minute live call with our team</li>
-                <li>Aria set up with your hotel's details</li>
-                <li>No commitment, no credit card</li>
-              </ul>
-            </div>
-          </div>
+      <!-- 5. Book a demo: inside a large glass globe with two soft lights -->
+      <section id="demo" class="section demo">
+        <div class="demo-backdrop" aria-hidden="true"><div class="demo-globe"><i class="blob blob-blue"></i><i class="blob blob-mint"></i></div></div>
+        <div class="section-head demo-head">
           <div>
-            <form class="card demo-form" id="demoForm">
-              <div class="row2">
-                <label>Your name<input name="name" required /></label>
-                <label>Hotel<input name="hotel_name" required /></label>
-              </div>
-              <div class="row2">
-                <label>Email<input name="email" type="email" required /></label>
-                <label>Phone<input name="phone" type="tel" /></label>
-              </div>
-              <div class="row2">
-                <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
-                <label>Plan of interest
-                  <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
-                </label>
-              </div>
-              <label>Notes<textarea name="notes" rows="2"></textarea></label>
-              <button class="btn btn-dark btn-lg btn-block" type="submit">Request my demo<svg class="btn-ico btn-arrow" aria-hidden="true"><use href="#i-arrow" /></svg></button>
-            </form>
-            <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
-              <span class="success-mark" aria-hidden="true"><svg><use href="#i-check" /></svg></span>
-              <h3>You're booked in</h3>
-              <p data-confirm-text>Our team will be in touch shortly.</p>
+            <p class="eyebrow">05 — Book a demo</p>
+            <h2 data-split="in">Hear Aria answer <em>your</em> hotel's phone</h2>
+          </div>
+          <p class="muted" data-scrub>Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
+          <ul class="checks">
+            <li>A 20-minute live call with our team</li>
+            <li>Aria set up with your hotel's details</li>
+            <li>No commitment, no credit card</li>
+          </ul>
+        </div>
+        <div class="demo-main">
+          <form class="card demo-form" id="demoForm">
+            <div class="row2">
+              <label>Your name<input name="name" required /></label>
+              <label>Hotel<input name="hotel_name" required /></label>
             </div>
+            <div class="row2">
+              <label>Email<input name="email" type="email" required /></label>
+              <label>Phone<input name="phone" type="tel" /></label>
+            </div>
+            <div class="row2">
+              <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
+              <label>Plan of interest
+                <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
+              </label>
+            </div>
+            <label>Notes<textarea name="notes" rows="2"></textarea></label>
+            <button class="btn btn-dark btn-lg btn-block" type="submit">Request my demo<svg class="btn-ico btn-arrow" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+          </form>
+          <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
+            <span class="success-mark" aria-hidden="true"><svg><use href="#i-tick" /></svg></span>
+            <h3>You're booked in</h3>
+            <p data-confirm-text>Our team will be in touch shortly.</p>
           </div>
         </div>
       </section>

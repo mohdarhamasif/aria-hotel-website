@@ -307,9 +307,9 @@ const beatVis = [0, 0, 0];
 // as a share of the screen's shorter side.
 const SCENES = [
   { el: $("#profile"), anchor: $("#roi"), r: 0.34, alpha: 0.5 },
-  { el: $("#features"), anchor: $("#features .bento"), r: 0.3, ring: 1, alpha: 0.55 },
-  { el: $("#pricing"), r: 0.32, field: 1, alpha: 0.45 },
-  { el: $("#demo"), anchor: $(".demo-copy"), r: 0.3, alpha: 0.6 },
+  { el: $("#features"), custom: () => featureSphere() },
+  { el: $("#pricing"), r: 0.32, field: 1, alpha: 0.35 },
+  { el: $("#demo"), r: 0.3, field: 1, alpha: 0.14 },
   { el: $("#faq"), r: 0.3, field: 1, alpha: 0.4 },
   { el: $(".footer"), anchor: $(".wordmark"), r: 0.21, alpha: 1 },
 ].filter((s) => s.el);
@@ -450,7 +450,8 @@ function drawField(time, dt) {
   } else {
     sceneTarget = scene;
     const a = scene.anchor?.getBoundingClientRect();
-    target = {
+    const c = scene.custom?.();
+    target = c ? { ...c, wave: 0, field: 0, ring: 0 } : {
       cx: a ? a.left + a.width / 2 : vw / 2,
       cy: a ? a.top + a.height / 2 : vh / 2,
       radius: minSide * scene.r * (vw < 760 ? 1.15 : 1),
@@ -532,7 +533,7 @@ const scrubs = reducedMotion ? [] : $$("[data-scrub]").map((el) => {
   el.replaceChildren(...words.flatMap((w, i) => (i ? [" ", w] : [w])));
   return { el, words, lit: -1 };
 });
-const risers = reducedMotion ? [] : $$(".profile-grid, .bento, .plan-grid, .demo-grid, .faq-list, .footer-cta");
+const risers = reducedMotion ? [] : $$(".profile-grid, .bento, .plan-grid, .demo-main, .faq-list, .footer-cta");
 const glows = reducedMotion ? [] : $$(".hero, .content .section, .footer");
 
 function updateScrollFx() {
@@ -557,6 +558,127 @@ function updateScrollFx() {
     const p = (vh - r.top) / (vh + r.height);
     el.style.setProperty("--gy", `${((0.5 - p) * 120).toFixed(1)}px`);
   }
+}
+
+/* ---------- Section 3: the sphere with feature pills ---------- */
+// One pinned scroll transition (after mdx.so): at first the heading sits on the
+// sphere and the pills are spread wide (A); then the heading moves to the
+// corner, the paragraph appears, and the pills gather close around the
+// sphere (B). Phones and reduced motion get a static grid instead.
+
+const featuresEl = $("#features");
+const stage = $(".feature-stage");
+const pin = $(".feature-pin");
+const fhA = $(".fh-a");
+const fhB = $(".fh-b");
+const lede = $(".feature-lede");
+const orbitEl = $(".orbit");
+const slots = $$(".orbit-slot");
+const PILL_A = [[0.14, 0.15], [0.86, 0.2], [0.08, 0.72], [0.93, 0.66], [0.27, 0.86]]; // share of the whole screen
+const PILL_B = [[-1.4, -0.5], [1.4, -0.5], [-1.55, 0.35], [1.55, 0.45], [-0.8, 1.08]]; // sphere radii from its centre
+const wideScreen = matchMedia("(min-width: 761px)");
+let stageLive = false;
+let stageE = 0;
+
+function setStageLive() {
+  stageLive = !reducedMotion && wideScreen.matches && !!stage;
+  featuresEl?.classList.toggle("orbit-live", stageLive);
+  if (!stageLive) [fhA, fhB, lede, ...slots].forEach((el) => el && ["transform", "opacity", "filter"].forEach((k) => (el.style[k] = "")));
+}
+setStageLive();
+wideScreen.addEventListener?.("change", setStageLive);
+
+function stageGeometry() {
+  const r = pin.getBoundingClientRect();
+  const minSide = Math.min(innerWidth, innerHeight);
+  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.6, stageE) * r.height, R: lerp(0.3, 0.24, stageE) * minSide };
+}
+
+// Where the page's particle sphere sits while section 3 owns the screen
+function featureSphere() {
+  const minSide = Math.min(innerWidth, innerHeight);
+  if (stageLive) {
+    const g = stageGeometry();
+    return { cx: g.r.left + g.cx, cy: g.r.top + g.cy, radius: g.R, alpha: 1 };
+  }
+  const o = orbitEl.getBoundingClientRect();
+  return { cx: o.left + o.width / 2, cy: o.top + o.height / 2, radius: minSide * 0.34, alpha: 0.45 };
+}
+
+function updateFeatureStage() {
+  if (!stageLive) return;
+  const vh = innerHeight;
+  const sr = stage.getBoundingClientRect();
+  if (sr.bottom < -80 || sr.top > vh + 80) return;
+  const t = clamp((clamp(-sr.top / (sr.height - vh)) - 0.15) / 0.5);
+  stageE = t * t * (3 - 2 * t);
+  const e = stageE;
+  const g = stageGeometry();
+  // The centred heading clears first, the pills settle by the sphere, then the
+  // corner heading and paragraph arrive, so nothing crosses on the way
+  const aOut = clamp(e * 2.2);
+  fhA.style.transform = `translate(-50%, -50%) translate3d(0, ${(-e * 60).toFixed(1)}px, 0) scale(${(1 - 0.12 * e).toFixed(4)})`;
+  fhA.style.opacity = (1 - aOut).toFixed(3);
+  fhA.style.filter = aOut > 0.02 ? `blur(${(aOut * 8).toFixed(1)}px)` : "";
+  const bIn = clamp((e - 0.5) / 0.45);
+  fhB.style.opacity = bIn.toFixed(3);
+  fhB.style.transform = `translate3d(0, ${((1 - bIn) * 16).toFixed(1)}px, 0)`;
+  const lIn = clamp((e - 0.55) / 0.4);
+  lede.style.opacity = lIn.toFixed(3);
+  lede.style.transform = `translate3d(0, ${((1 - lIn) * 24).toFixed(1)}px, 0)`;
+  const m = 1 - (1 - clamp(e / 0.85)) ** 3;
+  const vw = document.documentElement.clientWidth;
+  slots.forEach((slot, i) => {
+    const w = slot.offsetWidth;
+    const h = slot.offsetHeight;
+    const [ax, ay] = PILL_A[i % PILL_A.length];
+    const [bx, by] = PILL_B[i % PILL_B.length];
+    // Spread across the whole screen in A, around the sphere in B (screen coordinates)
+    const x = clamp(lerp(ax * vw, g.r.left + g.cx + bx * g.R, m), w / 2 + 16, vw - w / 2 - 16) - g.r.left;
+    const y = clamp(lerp(ay * g.H, g.cy + by * g.R, m), h / 2 + 16, g.H - h / 2 - 100) + Math.sin(time * 0.9 + i * 1.7) * 6; // clear of the dock
+    slot.style.transform = `translate3d(${(x - w / 2).toFixed(1)}px, ${(y - h / 2).toFixed(1)}px, 0)`;
+  });
+}
+
+/* ---------- Section 4: the planet rises; its rim lights up behind the chosen plan ---------- */
+
+const planStage = $(".plan-stage");
+const planet = $(".planet");
+const planGridEl = $(".plan-grid");
+
+function placeRimLight() {
+  if (!planet) return;
+  const rec = $(".plan.recommended");
+  planet.style.setProperty("--hl", rec ? "1" : "0");
+  if (!rec) return;
+  const c = rec.getBoundingClientRect();
+  const pr = planet.getBoundingClientRect();
+  planet.style.setProperty("--hx", `${Math.round(c.left + c.width / 2 - pr.left)}px`);
+}
+if (planGridEl) new MutationObserver(placeRimLight).observe(planGridEl, { attributes: true, subtree: true, attributeFilter: ["class"] });
+addEventListener("resize", placeRimLight, { passive: true });
+
+function updateEclipse() {
+  if (!planStage || !planet) return;
+  const vh = innerHeight;
+  const r = planStage.getBoundingClientRect();
+  if (r.bottom < -200 || r.top > vh + 200) return;
+  const e = 1 - Math.pow(1 - clamp((vh - r.top) / (vh * 0.9)), 3);
+  planet.style.setProperty("--rise", `${((1 - e) * 180).toFixed(1)}px`);
+  planet.style.setProperty("--glow", e.toFixed(3));
+}
+
+/* ---------- Section 5: the two lights drift with the scroll ---------- */
+
+const demoBackdrop = $(".demo-backdrop");
+const blobs = $$(".blob");
+function updateDemoLights() {
+  if (!demoBackdrop) return;
+  const vh = innerHeight;
+  const r = demoBackdrop.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > vh) return;
+  const p = (vh - r.top) / (vh + r.height) - 0.5;
+  blobs.forEach((b, i) => (b.style.translate = `0 ${((i ? -1 : 1) * p * 180).toFixed(1)}px`));
 }
 
 /* ---------- The live call in the features card ---------- */
@@ -787,6 +909,9 @@ function frame(now) {
   lenis?.raf(now);
   updateStates(dt);
   updateScrollFx();
+  updateFeatureStage();
+  updateEclipse();
+  updateDemoLights();
   if (fieldGL) drawField(time, dt);
   updateDrift();
   minis.forEach((m) => drawMini(m, time, dt));

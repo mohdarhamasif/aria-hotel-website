@@ -21,7 +21,7 @@ Then open http://localhost:8080.
 | `index.html` | Page structure: hero, hotel profile + ROI, features, plans, demo form, FAQ, conversation dock. Also the SEO head (meta, Open Graph, JSON-LD) |
 | `styles.css` | The night theme for the whole site: hero, scroll story, sections, dock; responsive and reduced-motion rules |
 | `app.js` | ElevenLabs conversation, client tools the agent calls, transcript, smooth scrolling |
-| `experience.js` | Decorative layer: the WebGL particle field behind the whole page (it reshapes per section), small orbs in the ROI card, dock and start sheet, the scroll story (greetings leave the orb one at a time), the live call card, paragraphs that light up word by word, content that rises into place, and smooth desktop scrolling via [Lenis](https://github.com/darkroomengineering/lenis) (MIT, loaded from jsDelivr; touch devices and reduced motion keep native scrolling). Reads `data-state` and `--level` from `app.js`; changes nothing in it |
+| `experience.js` | Decorative layer: the WebGL particle field behind the whole page (it reshapes per section), small orbs in the ROI card, dock and start sheet, the scroll story (greetings leave the orb one at a time), the live call card, the pinned features transition, the plans eclipse, the demo lights, paragraphs that light up word by word, content that rises into place, and smooth desktop scrolling via [Lenis](https://github.com/darkroomengineering/lenis) (MIT, loaded from jsDelivr; touch devices and reduced motion keep native scrolling). Reads `data-state` and `--level` from `app.js`; changes nothing in it |
 | `config.js` | Agent ID, optional webhook for demo requests, ROI assumptions |
 | `aria-standalone.html` | The whole site in one file. Generated, don't edit by hand |
 | `tools/build_standalone.py` | Rebuilds `aria-standalone.html` from the five source files |
@@ -48,6 +48,17 @@ python tools/build_standalone.py
 
 - **Fonts:** [Ranade](https://www.fontshare.com/fonts/ranade) for every heading and display line, [Supreme](https://www.fontshare.com/fonts/supreme) for all other text. Both load from Fontshare (free for commercial use under the Fontshare/ITF free font licence).
 - **Icons:** [Iconsax](https://iconsax.io), *Linear* style, as inline SVG `<symbol>`s at the top of `index.html`. The paths come from the MIT-licensed [iconsax-react](https://github.com/rendinjast/iconsax-react) package. To add one, copy its Linear paths into a new `<symbol id="i-…">` and use it with `<svg><use href="#i-…" /></svg>`.
+
+## Section backdrops
+
+Each section after the hero has its own treatment:
+
+- **Your hotel:** a warm blurred blob behind a frosted-glass half globe.
+- **Features:** one pinned scroll transition. The heading starts in the centre with five feature pills spread across the screen. As you scroll, the heading moves to the top left, and the pills gather around the particle sphere. The live call card sits below as a full card. Hover, focus or Aria's `highlight_feature` opens a pill to show its description.
+  - The pin only runs on screens wider than 760px with motion allowed. Otherwise the pills are a plain grid (`.orbit-live` in `experience.js` switches between the two).
+- **Plans:** an eclipse. A dark planet rises behind the cards with a blue-to-orange rim, and a warm light on the rim slides behind the plan Aria recommends.
+- **Book a demo:** a large glass circle with slow blue and mint lights inside it.
+- **FAQ:** plain, with no backdrop.
 
 ## Configuration
 

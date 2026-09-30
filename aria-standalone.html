@@ -228,22 +228,21 @@ html.lenis { scroll-behavior: auto; }
   content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: 140vw; height: 100%; pointer-events: none;
   transform: translate3d(-50%, var(--gy, 0px), 0); background: var(--glow, none);
 }
-#profile, #features, #pricing, #faq { --glow: radial-gradient(46% 34% at 50% 14%, rgba(242, 140, 80, .11), transparent 72%); }
-#demo { --glow: radial-gradient(30% 40% at 24% 40%, rgba(250, 128, 58, .16), transparent 70%), radial-gradient(40% 40% at 70% 70%, rgba(242, 167, 126, .06), transparent 70%); }
+#profile { --glow: radial-gradient(46% 34% at 50% 14%, rgba(242, 140, 80, .11), transparent 72%); }
 .footer { --glow: radial-gradient(22% 22% at 50% 40%, rgba(255, 150, 70, .3), transparent 70%), radial-gradient(46% 40% at 50% 46%, rgba(242, 140, 80, .12), transparent 70%); }
 .section-head { position: relative; isolation: isolate; display: grid; justify-items: center; text-align: center; gap: 22px; max-width: 1000px; margin: 0 auto 72px; padding-top: 56px; }
 .section-head > div { display: grid; justify-items: center; }
 .section-head h2 { margin: 0; max-width: 16ch; font-size: clamp(2.6rem, 6vw, 5.4rem); line-height: 1; }
 .section-head > .muted { margin: 0; max-width: 46ch; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.5; }
-/* Above each heading: a blurred warm blob, and in front of it a half globe of
+/* Section 2 only: a blurred warm blob, and in front of it a half globe of
    frosted glass (after mdx.so). The glass diffuses the blob and the particles
    behind it, catches a bright rim along its top and fades out downward. */
-.section-head::after {
+#profile .section-head::after {
   content: ""; position: absolute; z-index: -2; left: 50%; top: -210px; width: min(600px, 118vw); height: 440px; transform: translateX(-50%); pointer-events: none;
   background: radial-gradient(closest-side, rgba(255, 160, 72, .95), rgba(255, 130, 52, .58) 40%, rgba(250, 112, 44, .18) 70%, rgba(250, 112, 44, 0));
   filter: blur(24px);
 }
-.section-head::before {
+#profile .section-head::before {
   content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: min(1100px, 130vw); aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; pointer-events: none;
   background:
     radial-gradient(62% 40% at 50% 0%, rgba(255, 196, 150, .3), rgba(255, 196, 150, .1) 45%, rgba(255, 196, 150, 0) 75%),
@@ -254,7 +253,7 @@ html.lenis { scroll-behavior: auto; }
   -webkit-backdrop-filter: blur(26px) saturate(1.35); backdrop-filter: blur(26px) saturate(1.35);
   -webkit-mask-image: linear-gradient(180deg, #000, #000 16%, transparent 44%); mask-image: linear-gradient(180deg, #000, #000 16%, transparent 44%);
 }
-.section-head .eyebrow { color: rgba(255, 238, 224, .82); }
+#profile .section-head .eyebrow { color: rgba(255, 238, 224, .82); }
 .card {
   --mx: 50%; --my: 50%;
   position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px;
@@ -292,12 +291,59 @@ textarea { resize: vertical; }
 .roi-card .tiny { color: var(--faint); margin-top: auto; }
 .roi-card.flash { background: linear-gradient(#0b0b0e, #0b0b0e) padding-box, var(--orb-ring) border-box !important; box-shadow: 0 0 60px rgba(242, 167, 126, .18); }
 
-/* Features — bento */
-.bento { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(220px, auto); gap: 16px; }
+/* ==========================================================================
+   Section 3 — the sphere with feature pills. Without motion (phones, reduced
+   motion, no JS) the pills are a simple grid of small cards; experience.js adds
+   .orbit-live to pin the stage and move the pills from wide (A) to close (B).
+   ========================================================================== */
+.feature-stage { position: relative; }
+.feature-pin { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 22px; padding-top: 40px; }
+.fh-a { display: grid; justify-items: center; }
+.fh-a h2 { margin: 0; max-width: 16ch; font-size: clamp(2.6rem, 5.2vw, 4.8rem); line-height: 1; }
+.fh-b { display: none; }
+.fh-b-title { margin: 0; max-width: 12ch; font: 400 clamp(2rem, 3.4vw, 3.2rem)/1.04 var(--serif); letter-spacing: -.03em; color: var(--text); }
+.fh-b-title em { font-style: normal; color: var(--accent-text); }
+.feature-lede { margin: 0; max-width: 46ch; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.5; }
+.orbit { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; width: 100%; max-width: 1000px; margin: 30px auto 0; text-align: left; }
+.feature.pill {
+  display: grid; grid-template-columns: auto 1fr; align-items: start; column-gap: 14px; padding: 14px 20px 16px 14px;
+  border-radius: 22px; border: 1px solid rgba(255, 206, 170, .24);
+  background: rgba(14, 14, 18, .62); -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08);
+  transition: border-radius .5s var(--ease), border-color .3s, box-shadow .3s;
+}
+.pill:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.pill-ico { grid-row: span 2; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: rgba(255, 255, 255, .06); border: 1px solid var(--line); color: var(--text); transition: color .3s, border-color .3s; }
+.pill-ico svg { width: 20px; height: 20px; }
+.feature.pill h3 { margin: 0; font-size: 1.3rem; line-height: 1.2; white-space: nowrap; align-self: center; }
+.feature.pill p { grid-column: 2; margin: 6px 0 0; max-width: 270px; font-size: .92rem; color: var(--muted); transition: max-height .5s var(--ease), opacity .4s, margin .4s; }
+.pill.spotlight .pill-ico, .pill:hover .pill-ico { color: var(--orb-warm); border-color: rgba(242, 167, 126, .45); }
+
+.features.orbit-live { padding-top: 0; } /* the pinned screen is its own spacing, and Aria's jump lands on it */
+.orbit-live .feature-stage { height: 260vh; height: 260svh; }
+.orbit-live .feature-pin { position: sticky; top: 0; display: block; height: 100vh; height: 100svh; padding: 0; }
+.orbit-live .fh-a { position: absolute; left: 50%; top: 50%; z-index: 2; width: min(1000px, 92%); transform: translate(-50%, -50%); pointer-events: none; will-change: transform, opacity, filter; }
+.orbit-live .fh-b { display: block; position: absolute; left: 0; top: 11%; text-align: left; opacity: 0; }
+.orbit-live .fh-b .eyebrow { margin-bottom: .9em; }
+.orbit-live .feature-lede { position: absolute; right: 0; top: 12%; max-width: 380px; text-align: left; opacity: 0; }
+.orbit-live .orbit { position: absolute; inset: 0; display: block; max-width: none; margin: 0; pointer-events: none; }
+.orbit-live .orbit-slot { position: absolute; left: 0; top: 0; pointer-events: auto; will-change: transform; }
+/* In orbit the features are pills; hover, focus or Aria's spotlight opens one */
+.orbit-live .pill { align-items: center; padding: 10px 22px 10px 10px; border-radius: 34px; }
+.orbit-live .feature.pill p { max-width: 0; max-height: 0; opacity: 0; margin: 0; overflow: hidden; transition: max-width .5s var(--ease), max-height .5s var(--ease), opacity .3s, margin .4s; }
+.orbit-live .pill:is(:hover, :focus, .spotlight) { border-radius: 22px; border-color: rgba(255, 206, 170, .5); box-shadow: 0 18px 50px rgba(0, 0, 0, .55), 0 0 40px rgba(242, 140, 80, .12), inset 0 1px 0 rgba(255, 255, 255, .1); }
+.orbit-live .feature.pill:is(:hover, :focus, .spotlight) p { width: 250px; max-width: 250px; max-height: 8em; opacity: 1; margin-top: 6px; transition: max-width .5s var(--ease), max-height .5s var(--ease), opacity .4s .15s, margin .4s; }
+.orbit-live .pill:hover, .orbit-live .pill.spotlight { transform: none; }
+
+/* The live call card: wide, with the call beside its description */
+.bento { display: block; margin-top: 72px; }
+.feature-lg { display: grid !important; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); padding: 0; overflow: hidden; }
+.feature-lg .call-demo { border-bottom: 0; border-right: 1px solid var(--line); }
+.feature-lg .feature-copy { align-self: center; padding: 40px; }
+.feature-lg .feature-copy h3 { font-size: 2rem; }
 .feature { display: flex; flex-direction: column; }
 .feature p { color: var(--muted); margin: 0; font-size: .95rem; }
 .feature:hover { transform: translateY(-3px); border-color: var(--line-strong); }
-.feature-lg { grid-column: span 2; grid-row: span 2; padding: 0; overflow: hidden; }
 .feature-copy { padding: 26px 28px 28px; }
 .feature-visual { flex: 1; min-height: 260px; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 32px; }
 .mini-bubble { max-width: 70%; padding: 10px 14px; border-radius: 16px; font-size: .9rem; transition: opacity .6s var(--ease), transform .6s var(--ease); }
@@ -329,7 +375,6 @@ textarea { resize: vertical; }
 .f-ico svg { width: 22px; height: 22px; }
 .feature-copy .f-ico { float: right; margin: 0 0 12px 16px; }
 .feature:hover .f-ico { transform: rotate(-6deg) scale(1.06); border-color: var(--line-strong); }
-.feature:not(.feature-lg) h3 { margin-top: 28px; }
 .feature h3 { margin-bottom: .35em; }
 .card.spotlight .f-ico { color: var(--orb-warm); border-color: rgba(242, 167, 126, .45); }
 /* When Aria points at a feature or plan: a slow ring in the orb's colours */
@@ -345,7 +390,29 @@ textarea { resize: vertical; }
 /* The large feature card clips its overflow, so its ring sits just inside */
 .feature-lg.spotlight::before { inset: 0; }
 
-/* Pricing — the recommended plan turns to light */
+/* Pricing — the plans sit above a planet's horizon; the recommended plan turns to light */
+.plan-stage { position: relative; isolation: isolate; }
+.eclipse { position: absolute; z-index: -1; left: 50%; top: calc(34% - 150px); bottom: -240px; width: 100vw; transform: translateX(-50%); overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent); mask-image: linear-gradient(180deg, #000 72%, transparent); }
+.planet {
+  --rise: 0px; --glow: 1; --hl: 0; --hx: 50%;
+  position: absolute; left: 50%; top: 150px; width: max(2400px, 210vw); aspect-ratio: 1; border-radius: 50%;
+  transform: translate3d(-50%, var(--rise), 0);
+  background: radial-gradient(closest-side, #050506 96.8%, #0c0c11 99.3%, #16161d 100%);
+}
+/* The thin rim of light along the horizon, blue through mint and gold to orange */
+.planet::before, .planet::after {
+  content: ""; position: absolute; border-radius: 50%;
+  background: linear-gradient(90deg, transparent 29%, var(--orb-blue) 39%, var(--orb-mint) 46%, var(--orb-gold) 53%, var(--orb-orange) 61%, transparent 71%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.planet::before { inset: 0; padding: 1.5px; opacity: calc(.55 + .45 * var(--glow)); }
+/* Its atmosphere: the same colours, blurred into a soft halo */
+.planet::after { inset: -46px; padding: 46px; filter: blur(30px); opacity: calc(.55 * var(--glow)); }
+/* A warm light on the rim that slides behind the plan Aria recommends */
+.rim-light { position: absolute; top: -110px; left: var(--hx); width: 560px; height: 240px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 176, 104, .55), rgba(255, 140, 70, .18) 55%, transparent); filter: blur(18px); opacity: var(--hl); transition: left .9s var(--ease), opacity .6s var(--ease); }
+.plan { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
 /* Badges sit in a strip above the plan name, so they never overlap it */
 .plan { position: relative; padding-top: 62px; }
@@ -368,11 +435,26 @@ textarea { resize: vertical; }
 .plan-reason { margin: 26px auto 0; max-width: 760px; text-align: center; padding: 14px 22px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: .95rem; animation: pop .5s var(--ease); }
 
 /* Demo */
-.demo-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 56px; align-items: start; }
-.demo-copy.section-head { display: block; margin: 0; padding-top: 0; max-width: none; text-align: left; }
-.demo-copy.section-head::before, .demo-copy.section-head::after { display: none; }
-.demo-copy.section-head > div { display: block; }
-.demo-copy h2 { max-width: 12ch; margin-bottom: .4em; }
+/* Section 5 — centred, inside a large glass globe with two soft lights (after mdx.so) */
+.demo { position: relative; isolation: isolate; padding-bottom: 120px; }
+.demo-backdrop { position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent); }
+.demo-globe {
+  position: absolute; left: 50%; top: 50%; width: min(1680px, 150vw); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, .045), rgba(255, 255, 255, .012) 58%, rgba(255, 255, 255, .03) 69%, transparent 71%);
+  border: 1px solid rgba(255, 255, 255, .1);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .16), inset 0 0 160px rgba(143, 180, 255, .07);
+}
+.blob { position: absolute; border-radius: 50%; filter: blur(80px); will-change: transform; }
+.blob-blue { left: 5%; top: 22%; width: 34%; height: 46%; background: radial-gradient(closest-side, rgba(62, 127, 216, .95), rgba(62, 127, 216, .35) 60%, transparent); animation: drift-a 22s ease-in-out infinite alternate; }
+.blob-mint { right: 7%; bottom: 20%; width: 30%; height: 40%; background: radial-gradient(closest-side, rgba(134, 214, 196, .78), rgba(134, 214, 196, .28) 60%, transparent); animation: drift-b 26s ease-in-out infinite alternate; }
+@keyframes drift-a { from { transform: rotate(-24deg) scale(1); } to { transform: rotate(-4deg) scale(1.12) translate(40px, 30px); } }
+@keyframes drift-b { from { transform: rotate(18deg) scale(1.05); } to { transform: rotate(-6deg) scale(.95) translate(-50px, -30px); } }
+.demo-head { margin-bottom: 48px; }
+.demo-head h2 { max-width: 13ch; }
+.demo-head .checks { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; margin: 4px 0 0; }
+.demo-main { max-width: 780px; margin: 0 auto; }
+.demo-form, .demo-success { background: rgba(12, 12, 16, .55); -webkit-backdrop-filter: blur(20px) saturate(1.2); backdrop-filter: blur(20px) saturate(1.2); }
 .checks { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 12px; }
 .checks li { display: flex; gap: 12px; align-items: center; }
 .checks li::before { content: ""; flex: none; width: 22px; height: 22px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10Z' stroke='%23f3f1ec' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='m7.75 12 2.83 2.83 5.67-5.66' stroke='%23f3f1ec' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3C/svg%3E") center / 100% no-repeat; }
@@ -520,10 +602,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   .hero-intro { max-width: none; }
 }
 @media (max-width: 960px) {
-  .section-head, .profile-grid, .demo-grid { grid-template-columns: 1fr; }
+  .profile-grid { grid-template-columns: 1fr; }
   .section-head { gap: 12px; }
-  .bento { grid-template-columns: 1fr 1fr; }
-  .feature-lg { grid-column: 1 / -1; grid-row: auto; }
+  .feature-lg { grid-template-columns: 1fr; }
+  .feature-lg .call-demo { border-right: 0; border-bottom: 1px solid var(--line); }
   .plan-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
@@ -535,7 +617,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   .scroll-cue { display: none; }
   .js .story { height: 340svh; }
   .js .beat { padding-bottom: 20svh; }
-  .row2, .bento { grid-template-columns: 1fr; }
+  .row2 { grid-template-columns: 1fr; }
+  .demo-head .checks { flex-direction: column; align-items: center; }
   .section { padding-top: 96px; }
   .dock { width: calc(100% - 16px); bottom: calc(8px + env(safe-area-inset-bottom)); border-radius: 22px; }
   .thread { max-height: 42vh; }
@@ -732,15 +815,50 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         </div>
       </section>
 
-      <!-- 3. Features (bento) -->
-      <section id="features" class="section">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">03 — What she does</p>
-            <h2 data-split="in">Everything your front desk <em>does on the phone</em></h2>
+      <!-- 3. Features: one pinned scroll transition — pills spread around the
+           sphere (A), then gather close to it as the heading moves to the corner (B) -->
+      <section id="features" class="section features">
+        <div class="feature-stage">
+          <div class="feature-pin">
+            <div class="fh-a">
+              <p class="eyebrow">03 — What she does</p>
+              <h2 data-split="in">Everything your front desk <em>does on the phone</em></h2>
+            </div>
+            <div class="fh-b" aria-hidden="true">
+              <p class="eyebrow">03 — What she does</p>
+              <p class="fh-b-title">Everything your front desk <em>does on the phone</em></p>
+            </div>
+            <p class="feature-lede muted">Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
+            <div class="orbit">
+              <div class="orbit-slot"><article class="card feature pill" data-feature="bookings" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-calendar" /></svg></span>
+                <h3>Direct bookings</h3>
+                <p>Checks live availability, quotes rates and books straight into your PMS — no OTA commission.</p>
+              </article></div>
+              <div class="orbit-slot"><article class="card feature pill" data-feature="multilingual" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-translate" /></svg></span>
+                <h3>30+ languages</h3>
+                <p>Detects the caller's language and switches instantly, with a natural, warm voice.</p>
+              </article></div>
+              <div class="orbit-slot"><article class="card feature pill" data-feature="guest_requests" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-reserve" /></svg></span>
+                <h3>Guest requests</h3>
+                <p>Late checkout, towels, taxis, restaurant hours — handled and routed to the right team.</p>
+              </article></div>
+              <div class="orbit-slot"><article class="card feature pill" data-feature="upsells" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-trend" /></svg></span>
+                <h3>Smart upsells</h3>
+                <p>Offers upgrades, breakfast and spa packages at just the right moment.</p>
+              </article></div>
+              <div class="orbit-slot"><article class="card feature pill" data-feature="integrations" tabindex="0">
+                <span class="pill-ico" aria-hidden="true"><svg><use href="#i-link" /></svg></span>
+                <h3>PMS &amp; tool integrations</h3>
+                <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
+              </article></div>
+            </div>
           </div>
-          <p class="muted" data-scrub>Aria handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.</p>
         </div>
+
         <div class="bento">
           <article class="card feature feature-lg" data-feature="answering">
             <div class="feature-visual call-demo" aria-hidden="true">
@@ -753,41 +871,16 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
                 <div class="call-done"><svg><use href="#i-tick" /></svg><span>Cabana booked for 9 pm</span></div>
               </div>
             </div>
-          <div class="feature-copy">
+            <div class="feature-copy">
               <span class="f-ico" aria-hidden="true"><svg><use href="#i-call" /></svg></span>
               <h3>24/7 call answering</h3>
               <p>Picks up on the first ring, day or night, holidays included. No hold music, no voicemail, no missed bookings.</p>
             </div>
           </article>
-          <article class="card feature" data-feature="bookings">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-calendar" /></svg></span>
-            <h3>Direct bookings</h3>
-            <p>Checks live availability, quotes rates and books straight into your PMS — no OTA commission.</p>
-          </article>
-          <article class="card feature" data-feature="multilingual">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-translate" /></svg></span>
-            <h3>30+ languages</h3>
-            <p>Detects the caller's language and switches instantly, with a natural, warm voice.</p>
-          </article>
-          <article class="card feature" data-feature="guest_requests">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-reserve" /></svg></span>
-            <h3>Guest requests</h3>
-            <p>Late checkout, towels, taxis, restaurant hours — handled and routed to the right team.</p>
-          </article>
-          <article class="card feature" data-feature="upsells">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-trend" /></svg></span>
-            <h3>Smart upsells</h3>
-            <p>Offers upgrades, breakfast and spa packages at just the right moment.</p>
-          </article>
-          <article class="card feature" data-feature="integrations">
-            <span class="f-ico" aria-hidden="true"><svg><use href="#i-link" /></svg></span>
-            <h3>PMS &amp; tool integrations</h3>
-            <p>Works with Opera, Mews, Cloudbeds, Apaleo and more. Warm-transfers to staff when needed.</p>
-          </article>
         </div>
       </section>
 
-      <!-- 4. Pricing -->
+      <!-- 4. Pricing: the plans sit above a planet's horizon -->
       <section id="pricing" class="section">
         <div class="section-head">
           <div>
@@ -796,72 +889,74 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
           </div>
           <p class="muted" data-scrub>Simple monthly pricing. Aria will point out the one that fits you best.</p>
         </div>
-        <div class="plan-grid">
-          <article class="card plan" data-plan="starter">
-            <span class="plan-badge">Recommended for you</span>
-            <h3>Starter</h3>
-            <p class="plan-for">Up to 40 rooms</p>
-            <p class="price">$299<small>/month</small></p>
-            <ul><li>24/7 call answering</li><li>FAQ &amp; guest requests</li><li>5 languages</li><li>500 calls / month</li></ul>
-          </article>
-          <article class="card plan" data-plan="professional">
-            <span class="plan-badge">Recommended for you</span>
-            <span class="pop">Most popular</span>
-            <h3>Professional</h3>
-            <p class="plan-for">Up to 150 rooms</p>
-            <p class="price">$799<small>/month</small></p>
-            <ul><li>Everything in Starter</li><li>Direct bookings via PMS</li><li>30+ languages</li><li>Upsells &amp; analytics</li><li>2,500 calls / month</li></ul>
-          </article>
-          <article class="card plan" data-plan="enterprise">
-            <span class="plan-badge">Recommended for you</span>
-            <h3>Enterprise</h3>
-            <p class="plan-for">Groups &amp; 150+ rooms</p>
-            <p class="price">Custom</p>
-            <ul><li>Everything in Professional</li><li>Multi-property setup</li><li>Custom voice &amp; brand persona</li><li>Dedicated success manager</li><li>Unlimited calls</li></ul>
-          </article>
+        <div class="plan-stage">
+          <div class="eclipse" aria-hidden="true"><div class="planet"><i class="rim-light"></i></div></div>
+          <div class="plan-grid">
+            <article class="card plan" data-plan="starter">
+              <span class="plan-badge">Recommended for you</span>
+              <h3>Starter</h3>
+              <p class="plan-for">Up to 40 rooms</p>
+              <p class="price">$299<small>/month</small></p>
+              <ul><li>24/7 call answering</li><li>FAQ &amp; guest requests</li><li>5 languages</li><li>500 calls / month</li></ul>
+            </article>
+            <article class="card plan" data-plan="professional">
+              <span class="plan-badge">Recommended for you</span>
+              <span class="pop">Most popular</span>
+              <h3>Professional</h3>
+              <p class="plan-for">Up to 150 rooms</p>
+              <p class="price">$799<small>/month</small></p>
+              <ul><li>Everything in Starter</li><li>Direct bookings via PMS</li><li>30+ languages</li><li>Upsells &amp; analytics</li><li>2,500 calls / month</li></ul>
+            </article>
+            <article class="card plan" data-plan="enterprise">
+              <span class="plan-badge">Recommended for you</span>
+              <h3>Enterprise</h3>
+              <p class="plan-for">Groups &amp; 150+ rooms</p>
+              <p class="price">Custom</p>
+              <ul><li>Everything in Professional</li><li>Multi-property setup</li><li>Custom voice &amp; brand persona</li><li>Dedicated success manager</li><li>Unlimited calls</li></ul>
+            </article>
+          </div>
+          <p class="plan-reason" data-plan-reason hidden></p>
         </div>
-        <p class="plan-reason" data-plan-reason hidden></p>
       </section>
 
-      <!-- 5. Book a demo -->
-      <section id="demo" class="section">
-        <div class="demo-grid">
-          <div class="demo-copy section-head">
-            <div>
-              <p class="eyebrow">05 — Book a demo</p>
-              <h2 data-split="in">Hear Aria answer <em>your</em> hotel's phone</h2>
-              <p class="muted" data-scrub>Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
-              <ul class="checks">
-                <li>A 20-minute live call with our team</li>
-                <li>Aria set up with your hotel's details</li>
-                <li>No commitment, no credit card</li>
-              </ul>
-            </div>
-          </div>
+      <!-- 5. Book a demo: inside a large glass globe with two soft lights -->
+      <section id="demo" class="section demo">
+        <div class="demo-backdrop" aria-hidden="true"><div class="demo-globe"><i class="blob blob-blue"></i><i class="blob blob-mint"></i></div></div>
+        <div class="section-head demo-head">
           <div>
-            <form class="card demo-form" id="demoForm">
-              <div class="row2">
-                <label>Your name<input name="name" required /></label>
-                <label>Hotel<input name="hotel_name" required /></label>
-              </div>
-              <div class="row2">
-                <label>Email<input name="email" type="email" required /></label>
-                <label>Phone<input name="phone" type="tel" /></label>
-              </div>
-              <div class="row2">
-                <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
-                <label>Plan of interest
-                  <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
-                </label>
-              </div>
-              <label>Notes<textarea name="notes" rows="2"></textarea></label>
-              <button class="btn btn-dark btn-lg btn-block" type="submit">Request my demo<svg class="btn-ico btn-arrow" aria-hidden="true"><use href="#i-arrow" /></svg></button>
-            </form>
-            <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
-              <span class="success-mark" aria-hidden="true"><svg><use href="#i-check" /></svg></span>
-              <h3>You're booked in</h3>
-              <p data-confirm-text>Our team will be in touch shortly.</p>
+            <p class="eyebrow">05 — Book a demo</p>
+            <h2 data-split="in">Hear Aria answer <em>your</em> hotel's phone</h2>
+          </div>
+          <p class="muted" data-scrub>Tell Aria your details, or fill them in here. She'll read them back before sending.</p>
+          <ul class="checks">
+            <li>A 20-minute live call with our team</li>
+            <li>Aria set up with your hotel's details</li>
+            <li>No commitment, no credit card</li>
+          </ul>
+        </div>
+        <div class="demo-main">
+          <form class="card demo-form" id="demoForm">
+            <div class="row2">
+              <label>Your name<input name="name" required /></label>
+              <label>Hotel<input name="hotel_name" required /></label>
             </div>
+            <div class="row2">
+              <label>Email<input name="email" type="email" required /></label>
+              <label>Phone<input name="phone" type="tel" /></label>
+            </div>
+            <div class="row2">
+              <label>Preferred date / time<input name="preferred_time" placeholder="e.g. Thursday afternoon" /></label>
+              <label>Plan of interest
+                <select name="plan"><option value="">Not sure yet</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select>
+              </label>
+            </div>
+            <label>Notes<textarea name="notes" rows="2"></textarea></label>
+            <button class="btn btn-dark btn-lg btn-block" type="submit">Request my demo<svg class="btn-ico btn-arrow" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+          </form>
+          <div class="card demo-success" id="demoSuccess" hidden tabindex="-1">
+            <span class="success-mark" aria-hidden="true"><svg><use href="#i-tick" /></svg></span>
+            <h3>You're booked in</h3>
+            <p data-confirm-text>Our team will be in touch shortly.</p>
           </div>
         </div>
       </section>
@@ -2027,9 +2122,9 @@ const beatVis = [0, 0, 0];
 // as a share of the screen's shorter side.
 const SCENES = [
   { el: $("#profile"), anchor: $("#roi"), r: 0.34, alpha: 0.5 },
-  { el: $("#features"), anchor: $("#features .bento"), r: 0.3, ring: 1, alpha: 0.55 },
-  { el: $("#pricing"), r: 0.32, field: 1, alpha: 0.45 },
-  { el: $("#demo"), anchor: $(".demo-copy"), r: 0.3, alpha: 0.6 },
+  { el: $("#features"), custom: () => featureSphere() },
+  { el: $("#pricing"), r: 0.32, field: 1, alpha: 0.35 },
+  { el: $("#demo"), r: 0.3, field: 1, alpha: 0.14 },
   { el: $("#faq"), r: 0.3, field: 1, alpha: 0.4 },
   { el: $(".footer"), anchor: $(".wordmark"), r: 0.21, alpha: 1 },
 ].filter((s) => s.el);
@@ -2170,7 +2265,8 @@ function drawField(time, dt) {
   } else {
     sceneTarget = scene;
     const a = scene.anchor?.getBoundingClientRect();
-    target = {
+    const c = scene.custom?.();
+    target = c ? { ...c, wave: 0, field: 0, ring: 0 } : {
       cx: a ? a.left + a.width / 2 : vw / 2,
       cy: a ? a.top + a.height / 2 : vh / 2,
       radius: minSide * scene.r * (vw < 760 ? 1.15 : 1),
@@ -2252,7 +2348,7 @@ const scrubs = reducedMotion ? [] : $$("[data-scrub]").map((el) => {
   el.replaceChildren(...words.flatMap((w, i) => (i ? [" ", w] : [w])));
   return { el, words, lit: -1 };
 });
-const risers = reducedMotion ? [] : $$(".profile-grid, .bento, .plan-grid, .demo-grid, .faq-list, .footer-cta");
+const risers = reducedMotion ? [] : $$(".profile-grid, .bento, .plan-grid, .demo-main, .faq-list, .footer-cta");
 const glows = reducedMotion ? [] : $$(".hero, .content .section, .footer");
 
 function updateScrollFx() {
@@ -2277,6 +2373,127 @@ function updateScrollFx() {
     const p = (vh - r.top) / (vh + r.height);
     el.style.setProperty("--gy", `${((0.5 - p) * 120).toFixed(1)}px`);
   }
+}
+
+/* ---------- Section 3: the sphere with feature pills ---------- */
+// One pinned scroll transition (after mdx.so): at first the heading sits on the
+// sphere and the pills are spread wide (A); then the heading moves to the
+// corner, the paragraph appears, and the pills gather close around the
+// sphere (B). Phones and reduced motion get a static grid instead.
+
+const featuresEl = $("#features");
+const stage = $(".feature-stage");
+const pin = $(".feature-pin");
+const fhA = $(".fh-a");
+const fhB = $(".fh-b");
+const lede = $(".feature-lede");
+const orbitEl = $(".orbit");
+const slots = $$(".orbit-slot");
+const PILL_A = [[0.14, 0.15], [0.86, 0.2], [0.08, 0.72], [0.93, 0.66], [0.27, 0.86]]; // share of the whole screen
+const PILL_B = [[-1.4, -0.5], [1.4, -0.5], [-1.55, 0.35], [1.55, 0.45], [-0.8, 1.08]]; // sphere radii from its centre
+const wideScreen = matchMedia("(min-width: 761px)");
+let stageLive = false;
+let stageE = 0;
+
+function setStageLive() {
+  stageLive = !reducedMotion && wideScreen.matches && !!stage;
+  featuresEl?.classList.toggle("orbit-live", stageLive);
+  if (!stageLive) [fhA, fhB, lede, ...slots].forEach((el) => el && ["transform", "opacity", "filter"].forEach((k) => (el.style[k] = "")));
+}
+setStageLive();
+wideScreen.addEventListener?.("change", setStageLive);
+
+function stageGeometry() {
+  const r = pin.getBoundingClientRect();
+  const minSide = Math.min(innerWidth, innerHeight);
+  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.6, stageE) * r.height, R: lerp(0.3, 0.24, stageE) * minSide };
+}
+
+// Where the page's particle sphere sits while section 3 owns the screen
+function featureSphere() {
+  const minSide = Math.min(innerWidth, innerHeight);
+  if (stageLive) {
+    const g = stageGeometry();
+    return { cx: g.r.left + g.cx, cy: g.r.top + g.cy, radius: g.R, alpha: 1 };
+  }
+  const o = orbitEl.getBoundingClientRect();
+  return { cx: o.left + o.width / 2, cy: o.top + o.height / 2, radius: minSide * 0.34, alpha: 0.45 };
+}
+
+function updateFeatureStage() {
+  if (!stageLive) return;
+  const vh = innerHeight;
+  const sr = stage.getBoundingClientRect();
+  if (sr.bottom < -80 || sr.top > vh + 80) return;
+  const t = clamp((clamp(-sr.top / (sr.height - vh)) - 0.15) / 0.5);
+  stageE = t * t * (3 - 2 * t);
+  const e = stageE;
+  const g = stageGeometry();
+  // The centred heading clears first, the pills settle by the sphere, then the
+  // corner heading and paragraph arrive, so nothing crosses on the way
+  const aOut = clamp(e * 2.2);
+  fhA.style.transform = `translate(-50%, -50%) translate3d(0, ${(-e * 60).toFixed(1)}px, 0) scale(${(1 - 0.12 * e).toFixed(4)})`;
+  fhA.style.opacity = (1 - aOut).toFixed(3);
+  fhA.style.filter = aOut > 0.02 ? `blur(${(aOut * 8).toFixed(1)}px)` : "";
+  const bIn = clamp((e - 0.5) / 0.45);
+  fhB.style.opacity = bIn.toFixed(3);
+  fhB.style.transform = `translate3d(0, ${((1 - bIn) * 16).toFixed(1)}px, 0)`;
+  const lIn = clamp((e - 0.55) / 0.4);
+  lede.style.opacity = lIn.toFixed(3);
+  lede.style.transform = `translate3d(0, ${((1 - lIn) * 24).toFixed(1)}px, 0)`;
+  const m = 1 - (1 - clamp(e / 0.85)) ** 3;
+  const vw = document.documentElement.clientWidth;
+  slots.forEach((slot, i) => {
+    const w = slot.offsetWidth;
+    const h = slot.offsetHeight;
+    const [ax, ay] = PILL_A[i % PILL_A.length];
+    const [bx, by] = PILL_B[i % PILL_B.length];
+    // Spread across the whole screen in A, around the sphere in B (screen coordinates)
+    const x = clamp(lerp(ax * vw, g.r.left + g.cx + bx * g.R, m), w / 2 + 16, vw - w / 2 - 16) - g.r.left;
+    const y = clamp(lerp(ay * g.H, g.cy + by * g.R, m), h / 2 + 16, g.H - h / 2 - 100) + Math.sin(time * 0.9 + i * 1.7) * 6; // clear of the dock
+    slot.style.transform = `translate3d(${(x - w / 2).toFixed(1)}px, ${(y - h / 2).toFixed(1)}px, 0)`;
+  });
+}
+
+/* ---------- Section 4: the planet rises; its rim lights up behind the chosen plan ---------- */
+
+const planStage = $(".plan-stage");
+const planet = $(".planet");
+const planGridEl = $(".plan-grid");
+
+function placeRimLight() {
+  if (!planet) return;
+  const rec = $(".plan.recommended");
+  planet.style.setProperty("--hl", rec ? "1" : "0");
+  if (!rec) return;
+  const c = rec.getBoundingClientRect();
+  const pr = planet.getBoundingClientRect();
+  planet.style.setProperty("--hx", `${Math.round(c.left + c.width / 2 - pr.left)}px`);
+}
+if (planGridEl) new MutationObserver(placeRimLight).observe(planGridEl, { attributes: true, subtree: true, attributeFilter: ["class"] });
+addEventListener("resize", placeRimLight, { passive: true });
+
+function updateEclipse() {
+  if (!planStage || !planet) return;
+  const vh = innerHeight;
+  const r = planStage.getBoundingClientRect();
+  if (r.bottom < -200 || r.top > vh + 200) return;
+  const e = 1 - Math.pow(1 - clamp((vh - r.top) / (vh * 0.9)), 3);
+  planet.style.setProperty("--rise", `${((1 - e) * 180).toFixed(1)}px`);
+  planet.style.setProperty("--glow", e.toFixed(3));
+}
+
+/* ---------- Section 5: the two lights drift with the scroll ---------- */
+
+const demoBackdrop = $(".demo-backdrop");
+const blobs = $$(".blob");
+function updateDemoLights() {
+  if (!demoBackdrop) return;
+  const vh = innerHeight;
+  const r = demoBackdrop.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > vh) return;
+  const p = (vh - r.top) / (vh + r.height) - 0.5;
+  blobs.forEach((b, i) => (b.style.translate = `0 ${((i ? -1 : 1) * p * 180).toFixed(1)}px`));
 }
 
 /* ---------- The live call in the features card ---------- */
@@ -2507,6 +2724,9 @@ function frame(now) {
   lenis?.raf(now);
   updateStates(dt);
   updateScrollFx();
+  updateFeatureStage();
+  updateEclipse();
+  updateDemoLights();
   if (fieldGL) drawField(time, dt);
   updateDrift();
   minis.forEach((m) => drawMini(m, time, dt));
