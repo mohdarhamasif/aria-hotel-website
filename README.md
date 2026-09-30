@@ -38,6 +38,8 @@ After changing `index.html`, `styles.css`, `app.js`, `experience.js` or `config.
 python tools/build_standalone.py
 ```
 
+`index.html` loads the CSS and JS with a version tag (`styles.css?v=7`). Bump the number when you change those files, so browsers fetch the new copy instead of a cached one.
+
 ## Design and SEO tooling
 
 - **UI/UX:** the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) skill is in `.claude/skills/ui-ux-pro-max/`, so Claude Code picks it up automatically. It needs Python 3 and nothing else. Example search: `python .claude/skills/ui-ux-pro-max/scripts/search.py "form labels inline errors" --domain ux`.
@@ -53,8 +55,8 @@ python tools/build_standalone.py
 
 Each section after the hero has its own treatment:
 
-- **Your hotel:** a warm blurred blob behind a frosted-glass half globe.
-- **Features:** one pinned scroll transition. The heading starts in the centre with five feature pills spread across the screen. As you scroll, the heading moves to the top left, and the pills gather around the particle sphere. The live call card sits below as a full card. Hover, focus or Aria's `highlight_feature` opens a pill to show its description.
+- **Your hotel:** a warm blurred blob behind a frosted-glass half globe. The blob sits in a layer clipped to the section, so it never lights the band above. As you scroll through the section it spreads into a soft wash over the whole section.
+- **Features:** one pinned scroll transition. The heading starts in the centre with five slim feature tags spread across the screen. As you scroll, the heading moves to the top left, and the tags settle on a ring around the particle sphere. The live call card sits below as a full card. Hover, focus or Aria's `highlight_feature` opens a pill to show its description.
   - The pin only runs on screens wider than 760px with motion allowed. Otherwise the pills are a plain grid (`.orbit-live` in `experience.js` switches between the two).
 - **Plans:** an eclipse. A dark planet rises behind the cards with a blue-to-orange rim, and a warm light on the rim slides behind the plan Aria recommends.
 - **Book a demo:** a large glass circle with slow blue and mint lights inside it.

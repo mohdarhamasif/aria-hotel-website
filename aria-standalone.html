@@ -228,7 +228,6 @@ html.lenis { scroll-behavior: auto; }
   content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: 140vw; height: 100%; pointer-events: none;
   transform: translate3d(-50%, var(--gy, 0px), 0); background: var(--glow, none);
 }
-#profile { --glow: radial-gradient(46% 34% at 50% 14%, rgba(242, 140, 80, .11), transparent 72%); }
 .footer { --glow: radial-gradient(22% 22% at 50% 40%, rgba(255, 150, 70, .3), transparent 70%), radial-gradient(46% 40% at 50% 46%, rgba(242, 140, 80, .12), transparent 70%); }
 .section-head { position: relative; isolation: isolate; display: grid; justify-items: center; text-align: center; gap: 22px; max-width: 1000px; margin: 0 auto 72px; padding-top: 56px; }
 .section-head > div { display: grid; justify-items: center; }
@@ -236,11 +235,19 @@ html.lenis { scroll-behavior: auto; }
 .section-head > .muted { margin: 0; max-width: 46ch; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.5; }
 /* Section 2 only: a blurred warm blob, and in front of it a half globe of
    frosted glass (after mdx.so). The glass diffuses the blob and the particles
-   behind it, catches a bright rim along its top and fades out downward. */
-#profile .section-head::after {
-  content: ""; position: absolute; z-index: -2; left: 50%; top: -210px; width: min(600px, 118vw); height: 440px; transform: translateX(-50%); pointer-events: none;
+   behind it, catches a bright rim along its top and fades out downward.
+   The blob lives in a full-width layer clipped to the section, so it never
+   lights the band above; experience.js spreads it down the section with the
+   scroll (--spread 0 to 1). */
+.profile-glow {
+  position: absolute; z-index: -2; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 120px, #000 calc(100% - 220px), transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 120px, #000 calc(100% - 220px), transparent);
+}
+.profile-glow i {
+  position: absolute; left: 50%; top: 150px; width: min(600px, 118vw); height: 440px; border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 160, 72, .95), rgba(255, 130, 52, .58) 40%, rgba(250, 112, 44, .18) 70%, rgba(250, 112, 44, 0));
-  filter: blur(24px);
+  filter: blur(24px); transform: translate(-50%, -50%); will-change: transform, opacity;
 }
 #profile .section-head::before {
   content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: min(1100px, 130vw); aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; pointer-events: none;
@@ -306,18 +313,19 @@ textarea { resize: vertical; }
 .feature-lede { margin: 0; max-width: 46ch; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.5; }
 .orbit { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; width: 100%; max-width: 1000px; margin: 30px auto 0; text-align: left; }
 .feature.pill {
-  display: grid; grid-template-columns: auto 1fr; align-items: start; column-gap: 14px; padding: 14px 20px 16px 14px;
-  border-radius: 22px; border: 1px solid rgba(255, 206, 170, .24);
-  background: rgba(14, 14, 18, .62); -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08);
-  transition: border-radius .5s var(--ease), border-color .3s, box-shadow .3s;
+  display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; padding: 16px 18px;
+  border-radius: 16px; border: 1px solid rgba(255, 255, 255, .09);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .012)), rgba(12, 12, 16, .5);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3); backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 10px 30px rgba(0, 0, 0, .28);
+  transition: border-radius .5s var(--ease), border-color .3s, box-shadow .3s, background-color .3s;
 }
 .pill:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-.pill-ico { grid-row: span 2; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: rgba(255, 255, 255, .06); border: 1px solid var(--line); color: var(--text); transition: color .3s, border-color .3s; }
-.pill-ico svg { width: 20px; height: 20px; }
-.feature.pill h3 { margin: 0; font-size: 1.3rem; line-height: 1.2; white-space: nowrap; align-self: center; }
-.feature.pill p { grid-column: 2; margin: 6px 0 0; max-width: 270px; font-size: .92rem; color: var(--muted); transition: max-height .5s var(--ease), opacity .4s, margin .4s; }
-.pill.spotlight .pill-ico, .pill:hover .pill-ico { color: var(--orb-warm); border-color: rgba(242, 167, 126, .45); }
+.pill-ico { display: grid; place-items: center; color: rgba(255, 255, 255, .55); transition: color .3s; }
+.pill-ico svg { width: 18px; height: 18px; }
+.feature.pill h3 { margin: 0; font-size: 1.08rem; font-weight: 400; line-height: 1.2; letter-spacing: -.01em; white-space: nowrap; color: rgba(255, 255, 255, .92); }
+.feature.pill p { grid-column: 1 / -1; margin: 10px 0 0; max-width: 300px; font-size: .9rem; line-height: 1.5; color: var(--muted); }
+.pill.spotlight .pill-ico, .pill:hover .pill-ico { color: var(--orb-warm); }
 
 .features.orbit-live { padding-top: 0; } /* the pinned screen is its own spacing, and Aria's jump lands on it */
 .orbit-live .feature-stage { height: 260vh; height: 260svh; }
@@ -328,11 +336,13 @@ textarea { resize: vertical; }
 .orbit-live .feature-lede { position: absolute; right: 0; top: 12%; max-width: 380px; text-align: left; opacity: 0; }
 .orbit-live .orbit { position: absolute; inset: 0; display: block; max-width: none; margin: 0; pointer-events: none; }
 .orbit-live .orbit-slot { position: absolute; left: 0; top: 0; pointer-events: auto; will-change: transform; }
-/* In orbit the features are pills; hover, focus or Aria's spotlight opens one */
-.orbit-live .pill { align-items: center; padding: 10px 22px 10px 10px; border-radius: 34px; }
+/* In orbit the features are slim tags; hover, focus or Aria's spotlight opens one */
+.orbit-live .feature.pill { column-gap: 9px; padding: 9px 16px 9px 13px; border-radius: 20px; }
+.orbit-live .feature.pill h3 { font-size: .98rem; }
+.orbit-live .pill-ico svg { width: 16px; height: 16px; }
 .orbit-live .feature.pill p { max-width: 0; max-height: 0; opacity: 0; margin: 0; overflow: hidden; transition: max-width .5s var(--ease), max-height .5s var(--ease), opacity .3s, margin .4s; }
-.orbit-live .pill:is(:hover, :focus, .spotlight) { border-radius: 22px; border-color: rgba(255, 206, 170, .5); box-shadow: 0 18px 50px rgba(0, 0, 0, .55), 0 0 40px rgba(242, 140, 80, .12), inset 0 1px 0 rgba(255, 255, 255, .1); }
-.orbit-live .feature.pill:is(:hover, :focus, .spotlight) p { width: 250px; max-width: 250px; max-height: 8em; opacity: 1; margin-top: 6px; transition: max-width .5s var(--ease), max-height .5s var(--ease), opacity .4s .15s, margin .4s; }
+.orbit-live .pill:is(:hover, :focus, .spotlight) { border-radius: 16px; background-color: rgba(14, 14, 18, .82); border-color: rgba(255, 224, 196, .2); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 18px 44px rgba(0, 0, 0, .5); }
+.orbit-live .feature.pill:is(:hover, :focus, .spotlight) p { width: 240px; max-width: 240px; max-height: 8em; opacity: 1; margin-top: 8px; transition: max-width .5s var(--ease), max-height .5s var(--ease), opacity .4s .15s, margin .4s; }
 .orbit-live .pill:hover, .orbit-live .pill.spotlight { transform: none; }
 
 /* The live call card: wide, with the call beside its description */
@@ -620,6 +630,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
   .row2 { grid-template-columns: 1fr; }
   .demo-head .checks { flex-direction: column; align-items: center; }
   .section { padding-top: 96px; }
+  .profile-glow i { top: 106px; }
   .dock { width: calc(100% - 16px); bottom: calc(8px + env(safe-area-inset-bottom)); border-radius: 22px; }
   .thread { max-height: 42vh; }
   .roi-hero b { font-size: 3.2rem; }
@@ -772,6 +783,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     <div class="content">
       <!-- 2. Your hotel -->
       <section id="profile" class="section">
+        <div class="profile-glow" aria-hidden="true"><i></i></div>
         <div class="section-head">
           <div>
             <p class="eyebrow">02 — Your hotel</p>
@@ -2375,6 +2387,28 @@ function updateScrollFx() {
   }
 }
 
+/* ---------- Section 2: the warm light spreads down the section as you scroll ---------- */
+// It starts as a small blob on the glass globe's rim and ends as a soft wash
+// over the whole section. Its layer is clipped to the section in CSS.
+
+const profileEl = $("#profile");
+const profileHead = $("#profile .section-head");
+const profileBlob = $(".profile-glow i");
+
+function updateProfileGlow() {
+  if (!profileBlob || reducedMotion) return;
+  const vh = innerHeight;
+  const r = profileEl.getBoundingClientRect();
+  if (r.bottom < -100 || r.top > vh + 100) return;
+  // 0 while the heading arrives, 1 when the end of the section reaches the bottom of the screen
+  const t = clamp((vh * 0.3 - r.top) / Math.max(1, r.height - vh * 0.7));
+  const e = t * t * (3 - 2 * t);
+  const y = lerp(profileHead.offsetTop + 10, r.height * 0.5, e);
+  const k = lerp(1, Math.max(2.4, (r.height * 1.05) / profileBlob.offsetHeight), e);
+  profileBlob.style.transform = `translate(-50%, -50%) translate3d(0, ${(y - profileBlob.offsetTop).toFixed(1)}px, 0) scale(${k.toFixed(3)})`;
+  profileBlob.style.opacity = lerp(1, 0.34, e).toFixed(3);
+}
+
 /* ---------- Section 3: the sphere with feature pills ---------- */
 // One pinned scroll transition (after mdx.so): at first the heading sits on the
 // sphere and the pills are spread wide (A); then the heading moves to the
@@ -2390,7 +2424,7 @@ const lede = $(".feature-lede");
 const orbitEl = $(".orbit");
 const slots = $$(".orbit-slot");
 const PILL_A = [[0.14, 0.15], [0.86, 0.2], [0.08, 0.72], [0.93, 0.66], [0.27, 0.86]]; // share of the whole screen
-const PILL_B = [[-1.4, -0.5], [1.4, -0.5], [-1.55, 0.35], [1.55, 0.45], [-0.8, 1.08]]; // sphere radii from its centre
+const PILL_B = [[-1.8, -0.75], [1.75, -0.6], [-1.95, 0.45], [1.9, 0.55], [-0.95, 1.3]]; // sphere radii from its centre
 const wideScreen = matchMedia("(min-width: 761px)");
 let stageLive = false;
 let stageE = 0;
@@ -2405,8 +2439,9 @@ wideScreen.addEventListener?.("change", setStageLive);
 
 function stageGeometry() {
   const r = pin.getBoundingClientRect();
-  const minSide = Math.min(innerWidth, innerHeight);
-  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.6, stageE) * r.height, R: lerp(0.3, 0.24, stageE) * minSide };
+  // On tall, narrow screens the sphere shrinks so the tags still fit beside it
+  const base = Math.min(innerHeight, innerWidth * 0.62);
+  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.56, stageE) * r.height, R: lerp(0.3, 0.24, stageE) * base };
 }
 
 // Where the page's particle sphere sits while section 3 owns the screen
@@ -2724,6 +2759,7 @@ function frame(now) {
   lenis?.raf(now);
   updateStates(dt);
   updateScrollFx();
+  updateProfileGlow();
   updateFeatureStage();
   updateEclipse();
   updateDemoLights();

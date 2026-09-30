@@ -560,6 +560,28 @@ function updateScrollFx() {
   }
 }
 
+/* ---------- Section 2: the warm light spreads down the section as you scroll ---------- */
+// It starts as a small blob on the glass globe's rim and ends as a soft wash
+// over the whole section. Its layer is clipped to the section in CSS.
+
+const profileEl = $("#profile");
+const profileHead = $("#profile .section-head");
+const profileBlob = $(".profile-glow i");
+
+function updateProfileGlow() {
+  if (!profileBlob || reducedMotion) return;
+  const vh = innerHeight;
+  const r = profileEl.getBoundingClientRect();
+  if (r.bottom < -100 || r.top > vh + 100) return;
+  // 0 while the heading arrives, 1 when the end of the section reaches the bottom of the screen
+  const t = clamp((vh * 0.3 - r.top) / Math.max(1, r.height - vh * 0.7));
+  const e = t * t * (3 - 2 * t);
+  const y = lerp(profileHead.offsetTop + 10, r.height * 0.5, e);
+  const k = lerp(1, Math.max(2.4, (r.height * 1.05) / profileBlob.offsetHeight), e);
+  profileBlob.style.transform = `translate(-50%, -50%) translate3d(0, ${(y - profileBlob.offsetTop).toFixed(1)}px, 0) scale(${k.toFixed(3)})`;
+  profileBlob.style.opacity = lerp(1, 0.34, e).toFixed(3);
+}
+
 /* ---------- Section 3: the sphere with feature pills ---------- */
 // One pinned scroll transition (after mdx.so): at first the heading sits on the
 // sphere and the pills are spread wide (A); then the heading moves to the
@@ -575,7 +597,7 @@ const lede = $(".feature-lede");
 const orbitEl = $(".orbit");
 const slots = $$(".orbit-slot");
 const PILL_A = [[0.14, 0.15], [0.86, 0.2], [0.08, 0.72], [0.93, 0.66], [0.27, 0.86]]; // share of the whole screen
-const PILL_B = [[-1.4, -0.5], [1.4, -0.5], [-1.55, 0.35], [1.55, 0.45], [-0.8, 1.08]]; // sphere radii from its centre
+const PILL_B = [[-1.8, -0.75], [1.75, -0.6], [-1.95, 0.45], [1.9, 0.55], [-0.95, 1.3]]; // sphere radii from its centre
 const wideScreen = matchMedia("(min-width: 761px)");
 let stageLive = false;
 let stageE = 0;
@@ -590,8 +612,9 @@ wideScreen.addEventListener?.("change", setStageLive);
 
 function stageGeometry() {
   const r = pin.getBoundingClientRect();
-  const minSide = Math.min(innerWidth, innerHeight);
-  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.6, stageE) * r.height, R: lerp(0.3, 0.24, stageE) * minSide };
+  // On tall, narrow screens the sphere shrinks so the tags still fit beside it
+  const base = Math.min(innerHeight, innerWidth * 0.62);
+  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.56, stageE) * r.height, R: lerp(0.3, 0.24, stageE) * base };
 }
 
 // Where the page's particle sphere sits while section 3 owns the screen
@@ -909,6 +932,7 @@ function frame(now) {
   lenis?.raf(now);
   updateStates(dt);
   updateScrollFx();
+  updateProfileGlow();
   updateFeatureStage();
   updateEclipse();
   updateDemoLights();
