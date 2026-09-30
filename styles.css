@@ -152,10 +152,13 @@ html.lenis { scroll-behavior: auto; }
 .js .beat .ch { opacity: clamp(0, calc((var(--bp, 0) - var(--r)) * 6), 1); }
 .js .beat-time {
   display: grid; place-items: center; position: absolute; inset: 0; margin: 0; pointer-events: none;
-  font: 400 clamp(10rem, 36vw, 32rem)/.8 var(--serif); letter-spacing: -.05em;
+  font: 400 calc(clamp(10rem, 36vw, 32rem) * var(--fit, 1))/.8 var(--serif); letter-spacing: -.05em;
   color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .15);
   transform: translateY(-12svh) scale(var(--ts, 1.1)); opacity: calc(var(--to, 0) * .8);
 }
+/* The clock's colon blinks once a second, like a desk clock */
+.js .beat-time .tick { animation: tick 2s steps(1, end) infinite; }
+@keyframes tick { 50% { opacity: .2; } }
 .js .greetings { display: block; position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
 .js .greetings li { position: absolute; left: 50%; top: 38%; white-space: nowrap; font: 400 clamp(1.8rem, 4.2vw, 4rem)/1 var(--serif); color: #fff; opacity: 0; will-change: transform, opacity, filter; }
 .js .greetings li:nth-child(odd) { color: var(--accent-text); }

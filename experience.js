@@ -22,6 +22,64 @@ const smooth = (a, b, v) => {
   return t * t * (3 - 2 * t);
 };
 
+/* ---------- The story opens at the visitor's own time ---------- */
+// The outlined clock and the first story line show the local time (12- or
+// 24-hour, as the visitor's device prefers) and keep up minute by minute.
+// By day, the last beat stops saying the night team sleeps.
+
+const clockBig = $("[data-clock]");
+const clockLine = $("[data-clock-line]");
+const twelveHour = (new Intl.DateTimeFormat(undefined, { hour: "numeric" }).resolvedOptions().hourCycle || "h12").startsWith("h1");
+
+function clockNow(d = new Date()) {
+  const h = d.getHours();
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  const hh = twelveHour ? String(h % 12 || 12) : String(h).padStart(2, "0");
+  return { hh, mm, line: twelveHour ? `${hh}:${mm} ${h < 12 ? "am" : "pm"}` : `${hh}:${mm}`, night: h >= 21 || h < 6 };
+}
+
+// Swap an element's text, keeping the per-letter spans the scrub animation uses
+function setLetters(el, text) {
+  if (!el.querySelector(".ch")) return void (el.textContent = text);
+  const old = $$(".ch", el);
+  el.replaceChildren(...[...text].map((c, i) => {
+    if (/\s/.test(c)) return " ";
+    const s = document.createElement("span");
+    s.className = "ch";
+    s.textContent = c;
+    s.style.setProperty("--r", old[i]?.style.getPropertyValue("--r") || (Math.random() * 0.62).toFixed(3));
+    return s;
+  }));
+  const line = el.closest("[data-split]");
+  const label = line && $(".sr-only", line);
+  if (label) label.textContent = $("[aria-hidden]", line).textContent.replace(/\s+/g, " ").trim();
+}
+
+function tickClock() {
+  const t = clockNow();
+  if (clockBig) {
+    // One inline face inside the grid, so the digits and the blinking colon stay on one line
+    const face = clockBig.firstElementChild || clockBig.appendChild(document.createElement("span"));
+    const tick = $(".tick", face) || Object.assign(document.createElement("span"), { className: "tick", textContent: ":" });
+    face.replaceChildren(t.hh, tick, t.mm);
+    clockBig.style.setProperty("--fit", (4 / (t.hh.length + 3)).toFixed(3)); // "12:05" is a digit wider than "2:14"
+  }
+  if (clockLine && clockLine.textContent.replace(/\s+/g, " ").trim() !== t.line) setLetters(clockLine, t.line);
+}
+
+{
+  const t = clockNow();
+  tickClock();
+  const daypart = $("[data-daypart]");
+  if (!t.night) {
+    if (daypart) daypart.textContent = "Your team stays with the guest in front of them.";
+    $("#story")?.setAttribute("aria-label", "A day at the front desk");
+  }
+  const next = () => setTimeout(() => { tickClock(); next(); }, 60000 - (Date.now() % 60000) + 50);
+  next();
+  document.addEventListener("visibilitychange", () => document.hidden || tickClock());
+}
+
 /* ---------- Text that resolves like a live transcript ---------- */
 
 function splitText(el) {

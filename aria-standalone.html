@@ -187,10 +187,13 @@ html.lenis { scroll-behavior: auto; }
 .js .beat .ch { opacity: clamp(0, calc((var(--bp, 0) - var(--r)) * 6), 1); }
 .js .beat-time {
   display: grid; place-items: center; position: absolute; inset: 0; margin: 0; pointer-events: none;
-  font: 400 clamp(10rem, 36vw, 32rem)/.8 var(--serif); letter-spacing: -.05em;
+  font: 400 calc(clamp(10rem, 36vw, 32rem) * var(--fit, 1))/.8 var(--serif); letter-spacing: -.05em;
   color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .15);
   transform: translateY(-12svh) scale(var(--ts, 1.1)); opacity: calc(var(--to, 0) * .8);
 }
+/* The clock's colon blinks once a second, like a desk clock */
+.js .beat-time .tick { animation: tick 2s steps(1, end) infinite; }
+@keyframes tick { 50% { opacity: .2; } }
 .js .greetings { display: block; position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
 .js .greetings li { position: absolute; left: 50%; top: 38%; white-space: nowrap; font: 400 clamp(1.8rem, 4.2vw, 4rem)/1 var(--serif); color: #fff; opacity: 0; will-change: transform, opacity, filter; }
 .js .greetings li:nth-child(odd) { color: var(--accent-text); }
@@ -767,8 +770,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     <section class="story" id="story" aria-label="A night at the front desk">
       <div class="story-pin">
         <div class="beat" data-beat="0">
-          <p class="beat-time" aria-hidden="true">2:14</p>
-          <h2 class="beat-line" data-split="scrub">2:14 am. A guest calls about <em>a late check-in.</em></h2>
+          <p class="beat-time" aria-hidden="true" data-clock><span>2<span class="tick">:</span>14</span></p>
+          <h2 class="beat-line" data-split="scrub"><span data-clock-line>2:14 am</span>. A guest calls about <em>a late check-in.</em></h2>
         </div>
         <div class="beat" data-beat="1">
           <ul class="greetings" aria-hidden="true">
@@ -777,7 +780,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
           <h2 class="beat-line" data-split="scrub">Aria answers on the first ring, <em>in their language.</em></h2>
         </div>
         <div class="beat" data-beat="2">
-          <h2 class="beat-line" data-split="scrub">The booking lands in your PMS. <em>Your night team sleeps.</em></h2>
+          <h2 class="beat-line" data-split="scrub">The booking lands in your PMS. <em data-daypart>Your night team sleeps.</em></h2>
         </div>
         <p class="story-count" aria-hidden="true"><span data-count>01</span> / 03<i><b></b></i></p>
       </div>
@@ -1861,6 +1864,64 @@ const smooth = (a, b, v) => {
   const t = clamp((v - a) / (b - a));
   return t * t * (3 - 2 * t);
 };
+
+/* ---------- The story opens at the visitor's own time ---------- */
+// The outlined clock and the first story line show the local time (12- or
+// 24-hour, as the visitor's device prefers) and keep up minute by minute.
+// By day, the last beat stops saying the night team sleeps.
+
+const clockBig = $("[data-clock]");
+const clockLine = $("[data-clock-line]");
+const twelveHour = (new Intl.DateTimeFormat(undefined, { hour: "numeric" }).resolvedOptions().hourCycle || "h12").startsWith("h1");
+
+function clockNow(d = new Date()) {
+  const h = d.getHours();
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  const hh = twelveHour ? String(h % 12 || 12) : String(h).padStart(2, "0");
+  return { hh, mm, line: twelveHour ? `${hh}:${mm} ${h < 12 ? "am" : "pm"}` : `${hh}:${mm}`, night: h >= 21 || h < 6 };
+}
+
+// Swap an element's text, keeping the per-letter spans the scrub animation uses
+function setLetters(el, text) {
+  if (!el.querySelector(".ch")) return void (el.textContent = text);
+  const old = $$(".ch", el);
+  el.replaceChildren(...[...text].map((c, i) => {
+    if (/\s/.test(c)) return " ";
+    const s = document.createElement("span");
+    s.className = "ch";
+    s.textContent = c;
+    s.style.setProperty("--r", old[i]?.style.getPropertyValue("--r") || (Math.random() * 0.62).toFixed(3));
+    return s;
+  }));
+  const line = el.closest("[data-split]");
+  const label = line && $(".sr-only", line);
+  if (label) label.textContent = $("[aria-hidden]", line).textContent.replace(/\s+/g, " ").trim();
+}
+
+function tickClock() {
+  const t = clockNow();
+  if (clockBig) {
+    // One inline face inside the grid, so the digits and the blinking colon stay on one line
+    const face = clockBig.firstElementChild || clockBig.appendChild(document.createElement("span"));
+    const tick = $(".tick", face) || Object.assign(document.createElement("span"), { className: "tick", textContent: ":" });
+    face.replaceChildren(t.hh, tick, t.mm);
+    clockBig.style.setProperty("--fit", (4 / (t.hh.length + 3)).toFixed(3)); // "12:05" is a digit wider than "2:14"
+  }
+  if (clockLine && clockLine.textContent.replace(/\s+/g, " ").trim() !== t.line) setLetters(clockLine, t.line);
+}
+
+{
+  const t = clockNow();
+  tickClock();
+  const daypart = $("[data-daypart]");
+  if (!t.night) {
+    if (daypart) daypart.textContent = "Your team stays with the guest in front of them.";
+    $("#story")?.setAttribute("aria-label", "A day at the front desk");
+  }
+  const next = () => setTimeout(() => { tickClock(); next(); }, 60000 - (Date.now() % 60000) + 50);
+  next();
+  document.addEventListener("visibilitychange", () => document.hidden || tickClock());
+}
 
 /* ---------- Text that resolves like a live transcript ---------- */
 

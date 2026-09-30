@@ -38,7 +38,7 @@ After changing `index.html`, `styles.css`, `app.js`, `experience.js` or `config.
 python tools/build_standalone.py
 ```
 
-`index.html` loads the CSS and JS with a version tag (`styles.css?v=8`). Bump the number when you change those files, so browsers fetch the new copy instead of a cached one.
+`index.html` loads the CSS and JS with a version tag (`styles.css?v=9`). Bump the number when you change those files, so browsers fetch the new copy instead of a cached one.
 
 ## Design and SEO tooling
 
