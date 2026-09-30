@@ -1,0 +1,6 @@
+# Project notes and tooling stay in the repo but aren't served on the live site
+.claude
+AGENT_SETUP.md
+README.md
+design-system
+tools
