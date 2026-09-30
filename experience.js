@@ -597,7 +597,9 @@ const lede = $(".feature-lede");
 const orbitEl = $(".orbit");
 const slots = $$(".orbit-slot");
 const PILL_A = [[0.14, 0.15], [0.86, 0.2], [0.08, 0.72], [0.93, 0.66], [0.27, 0.86]]; // share of the whole screen
-const PILL_B = [[-1.8, -0.75], [1.75, -0.6], [-1.95, 0.45], [1.9, 0.55], [-0.95, 1.3]]; // sphere radii from its centre
+// In B the pills sit evenly round the sphere, 72 degrees apart with one at the top
+// (degrees clockwise from the right), each the same gap from its edge
+const PILL_ANGLE = [-90, -18, 198, 54, 126];
 const wideScreen = matchMedia("(min-width: 761px)");
 let stageLive = false;
 let stageE = 0;
@@ -614,7 +616,8 @@ function stageGeometry() {
   const r = pin.getBoundingClientRect();
   // On tall, narrow screens the sphere shrinks so the tags still fit beside it
   const base = Math.min(innerHeight, innerWidth * 0.62);
-  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.56, stageE) * r.height, R: lerp(0.3, 0.24, stageE) * base };
+  const R = lerp(0.3, 0.21, stageE) * base;
+  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.545, stageE) * r.height, R, gap: Math.max(28, R * 0.2) };
 }
 
 // Where the page's particle sphere sits while section 3 owns the screen
@@ -626,6 +629,18 @@ function featureSphere() {
   }
   const o = orbitEl.getBoundingClientRect();
   return { cx: o.left + o.width / 2, cy: o.top + o.height / 2, radius: minSide * 0.34, alpha: 0.45 };
+}
+
+// How far along direction (a, b) to centre a hw x hh box so its nearest point is `target` from the origin
+function clearDistance(a, b, hw, hh, target) {
+  let lo = 0;
+  let hi = target + hw + hh;
+  for (let n = 0; n < 24; n++) {
+    const d = (lo + hi) / 2;
+    if (Math.hypot(Math.max(0, d * a - hw), Math.max(0, d * b - hh)) < target) lo = d;
+    else hi = d;
+  }
+  return hi;
 }
 
 function updateFeatureStage() {
@@ -651,15 +666,33 @@ function updateFeatureStage() {
   lede.style.transform = `translate3d(0, ${((1 - lIn) * 24).toFixed(1)}px, 0)`;
   const m = 1 - (1 - clamp(e / 0.85)) ** 3;
   const vw = document.documentElement.clientWidth;
+  const breath = Math.sin(time * 0.9) * 4;
   slots.forEach((slot, i) => {
     const w = slot.offsetWidth;
     const h = slot.offsetHeight;
+    const pill = slot.firstElementChild;
+    // Place by the closed size, so a pill that opens under the pointer stays put
+    if (!slot._w || !pill.matches(":hover, :focus, .spotlight")) [slot._w, slot._h] = [w, h];
     const [ax, ay] = PILL_A[i % PILL_A.length];
-    const [bx, by] = PILL_B[i % PILL_B.length];
-    // Spread across the whole screen in A, around the sphere in B (screen coordinates)
-    const x = clamp(lerp(ax * vw, g.r.left + g.cx + bx * g.R, m), w / 2 + 16, vw - w / 2 - 16) - g.r.left;
-    const y = clamp(lerp(ay * g.H, g.cy + by * g.R, m), h / 2 + 16, g.H - h / 2 - 100) + Math.sin(time * 0.9 + i * 1.7) * 6; // clear of the dock
+    const th = (PILL_ANGLE[i % PILL_ANGLE.length] * Math.PI) / 180;
+    const ux = Math.cos(th);
+    const uy = Math.sin(th);
+    // Far enough out that the pill's nearest edge is `gap` from the sphere; all breathe together
+    const d = clearDistance(Math.abs(ux), Math.abs(uy), slot._w / 2, slot._h / 2, g.R + g.gap) + breath;
+    const bob = Math.sin(time * 0.9 + i * 1.7) * 6 * (1 - m);
+    // Spread across the whole screen in A, round the sphere in B (screen coordinates)
+    const x = clamp(lerp(ax * vw, g.r.left + g.cx + ux * d, m), w / 2 + 16, vw - w / 2 - 16) - g.r.left;
+    const y = clamp(lerp(ay * g.H, g.cy + uy * d, m), h / 2 + 16, g.H - h / 2 - 92) + bob; // clear of the dock
     slot.style.transform = `translate3d(${(x - w / 2).toFixed(1)}px, ${(y - h / 2).toFixed(1)}px, 0)`;
+    // The sphere lights the glass on the side facing it: blue from its top half, orange from its bottom
+    const vx = g.cx - x;
+    const vy = g.cy - y;
+    const len = Math.hypot(vx, vy) || 1;
+    const k = clamp(0.5 + (y - g.cy) / (g.R * 3));
+    pill.style.setProperty("--lx", `${(50 + (50 * vx) / len).toFixed(1)}%`);
+    pill.style.setProperty("--ly", `${(50 + (70 * vy) / len).toFixed(1)}%`);
+    pill.style.setProperty("--tint", `${Math.round(lerp(120, 255, k))} ${Math.round(lerp(160, 140, k))} ${Math.round(lerp(255, 70, k))}`);
+    pill.style.setProperty("--ta", (0.05 + 0.15 * m).toFixed(3));
   });
 }
 
