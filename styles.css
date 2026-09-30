@@ -20,6 +20,7 @@
   --orb-gold: #edd685;
   --orb-orange: #e8622a;
   --orb-warm: #f2a77e;
+  --accent-text: rgba(255, 255, 255, .7); /* accent words: white at 70% */
   --orb-ring: linear-gradient(170deg, var(--orb-blue), var(--orb-mint) 52%, var(--orb-orange));
   --radius: 22px;
   --serif: "Ranade", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -34,7 +35,7 @@ body { margin: 0; font-family: var(--sans); background: var(--bg); color: var(--
 button, input, select, textarea { font-family: inherit; }
 h1, h2, h3 { font-weight: 400; line-height: 1.04; margin: 0 0 .5em; letter-spacing: -.03em; }
 h1, h2 { font-family: var(--serif); }
-h1 em, h2 em { font-style: italic; color: var(--orb-warm); }
+h1 em, h2 em { font-style: normal; color: var(--accent-text); }
 h2 { font-size: clamp(2.1rem, 4.1vw, 3.6rem); }
 h1, h2, h3 { font-family: var(--serif); }
 h3 { font-size: 1.5rem; font-weight: 500; letter-spacing: -.02em; line-height: 1.15; }
@@ -146,7 +147,7 @@ main { position: relative; z-index: 1; }
 }
 .js .greetings { display: block; position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
 .js .greetings li { position: absolute; left: 50%; top: 38%; white-space: nowrap; font: 400 clamp(1.8rem, 4.6vw, 4.6rem)/1 var(--serif); color: #fff; opacity: 0; will-change: transform, opacity; }
-.js .greetings li:nth-child(odd) { font-style: italic; color: var(--orb-warm); }
+.js .greetings li:nth-child(odd) { color: var(--accent-text); }
 .js .story-count {
   display: flex; align-items: center; gap: 12px; position: absolute; left: clamp(20px, 4vw, 48px); bottom: 34px; margin: 0;
   font: 500 .78rem var(--sans); letter-spacing: .06em; color: rgba(243, 241, 236, .6); font-variant-numeric: tabular-nums;
@@ -363,7 +364,7 @@ textarea { resize: vertical; }
 .dock-body { flex: 1; min-width: 0; }
 .dock-status { margin: 0; display: flex; align-items: center; gap: 10px; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: rgba(243, 241, 236, .6); font-weight: 600; }
 [data-state="listening"] .dock-status { color: var(--orb-mint); }
-[data-state="speaking"] .dock-status { color: var(--orb-warm); }
+[data-state="speaking"] .dock-status { color: var(--accent-text); }
 .dock-caption { margin: 1px 0 0; font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); transition: opacity .25s; }
 .dock-caption.user { color: var(--orb-mint); }
 .dock-caption.swap { opacity: 0; }
@@ -398,7 +399,7 @@ textarea { resize: vertical; }
 @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } }
 .msg.ai { align-self: flex-start; background: rgba(255, 255, 255, .08); border-bottom-left-radius: 5px; }
 .msg.user { align-self: flex-end; background: var(--light); color: var(--ink); border-bottom-right-radius: 5px; }
-.msg.activity { align-self: center; max-width: none; background: none; padding: 2px 8px; font-size: .75rem; color: var(--orb-warm); display: flex; align-items: center; gap: 7px; }
+.msg.activity { align-self: center; max-width: none; background: none; padding: 2px 8px; font-size: .75rem; color: var(--accent-text); display: flex; align-items: center; gap: 7px; }
 .msg.activity::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .msg.typing { display: inline-flex; gap: 4px; padding: 12px 14px; }
 .msg.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
