@@ -2,7 +2,7 @@
   "brand": "Amariya",
   "company": "Amariya AI",
   "site_url": "https://aria-hotel-website.vercel.app/",
-  "version": "10",
+  "version": "11",
   "pages": [
     { "key": "home", "path": "" },
     { "key": "hotels", "path": "hotels/", "label": "Hotels" },
