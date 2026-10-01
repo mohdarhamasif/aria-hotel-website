@@ -151,7 +151,7 @@ a.brand { color: inherit; text-decoration: none; }
 .hero-title {
   position: absolute; left: 50%; top: 45%; z-index: 2; transform: translate(-50%, -50%);
   width: calc(var(--orb) * .9); margin: 0; pointer-events: none;
-  font-size: var(--h1-size); line-height: var(--h1-lh); letter-spacing: var(--h1-ls); text-align: center; text-wrap: balance; color: #fff;
+  font-size: min(var(--h1-size), calc(var(--orb) * .118)); line-height: var(--h1-lh); letter-spacing: var(--h1-ls); /* 72px on a 612px orb; smaller orbs, smaller text */ text-align: center; text-wrap: balance; color: #fff;
 }
 .hero-orb {
   position: absolute; left: 50%; top: 45%; z-index: 1; transform: translate(-50%, -50%);
@@ -530,7 +530,9 @@ textarea { resize: vertical; }
 .footer-cta { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px; }
 .footer-cta h2 { margin: 0; max-width: 15ch; }
 /* Decorative: clicks pass straight through to the button above it */
-.wordmark { pointer-events: none; margin: 56px 0 0; text-align: center; font: 400 clamp(8rem, 34vw, 30rem)/.78 var(--serif); letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .18); transform: translate3d(0, var(--py, 0px), 0); }
+/* Sized from the screen width so the whole name always fits; --wordmark-em is the name's width in em
+   ("Amariya" in Ranade is about 3.9em; change it if the brand name changes) */
+.wordmark { --wordmark-em: 4.05; pointer-events: none; margin: 56px 0 .2em; /* room for the "y" descender */ text-align: center; font: 400 min(30rem, calc((100vw - 2 * clamp(16px, 4vw, 48px)) / var(--wordmark-em)))/.78 var(--serif); letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .18); transform: translate3d(0, var(--py, 0px), 0); }
 .footer-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 28px; margin-top: 28px; border-top: 1px solid var(--line); color: var(--faint); font-size: var(--small-size); max-width: 1240px; width: 100%; margin-inline: auto; }
 .footer-meta p { margin: 0; }
 .footer-meta .logo { font-size: var(--h3-size); color: var(--muted); }
@@ -637,6 +639,8 @@ textarea { resize: vertical; }
 :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
 
+/* 1101–1447px: the dock (540px, centred) would cover the end of the hero intro, so lift it above */
+@media (min-width: 1101px) and (max-width: 1447px) { .hero-foot { bottom: 104px; } }
 @media (min-width: 900px) {
   .dock.expanded { left: auto; right: 24px; transform: none; width: 400px; }
 }
