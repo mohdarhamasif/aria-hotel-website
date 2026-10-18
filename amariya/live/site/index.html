@@ -122,6 +122,16 @@ main { overflow-x: clip; padding-left: var(--gutter-l); padding-right: var(--gut
 .top-nav a { padding: 7px 14px; border-radius: 999px; font-size: var(--small-size); line-height: var(--small-lh); color: var(--muted); text-decoration: none; }
 .top-nav a:hover { color: var(--text); }
 .top-nav .btn { margin-left: 4px; }
+/* The niche pages, one tap away at the top */
+.niches {
+  position: absolute; top: 18px; left: 50%; z-index: 3; transform: translateX(-50%); display: flex; gap: 2px; padding: 4px; border-radius: 999px;
+  background: rgba(255, 255, 255, .045); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.niches a { padding: 7px 14px; border-radius: 999px; font-size: var(--small-size); line-height: var(--small-lh); color: var(--muted); text-decoration: none; white-space: nowrap; transition: color .3s, background-color .3s; }
+.niches a:hover { color: var(--text); background: rgba(255, 255, 255, .08); }
+.niches .short { display: none; }
+@media (max-width: 960px) { .niches { top: 72px; } }
+@media (max-width: 734px) { .niches .long { display: none; } .niches .short { display: inline; } .niches a { padding: 7px 12px; } }
 
 /* ========== Hero: the headline sits on the orb ========== */
 .hero { --orb: min(68svh, 84vw); --orb-top: 45%; position: relative; isolation: isolate; min-height: max(100svh, 700px); }
@@ -633,6 +643,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
 <main>
   <section class="hero" id="welcome" aria-labelledby="heroTitle">
     <a class="brand" href="#welcome"><i class="logo-mark" aria-hidden="true"></i>Amariya</a>
+    <nav class="niches" aria-label="Amariya for your business"><a href="/hotels"><span class="long">Hotels &amp; restaurants</span><span class="short">Hotels</span></a><a href="/clinics">Clinics</a><a href="/dental">Dental</a></nav>
     <nav class="top-nav" aria-label="On this page">
       <a href="#call">How it works</a>
       <a href="#pricing">Pricing</a>
