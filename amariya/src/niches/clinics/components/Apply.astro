@@ -1,0 +1,120 @@
+---
+// 07 · Apply (#apply, the agent's 'demo'): the split is the hand-off itself. Step 1 on her side, what she'll need
+// to know (prefilled from Your clinic); step 2 on the team's side, who she hands to. Qualification is silent.
+import { content } from '../../../data/content/clinics';
+import { given } from '../../../data/content/types';
+
+const { apply, applyExtras, sides, chapters } = content;
+const ch = chapters[7];
+const f = apply.fields;
+const reply = given(apply.success.replyTime);
+const mail = given(apply.noscript.email);
+---
+<section id={ch.id} class="ch ch-apply" data-chapter={ch.id} data-section="demo" data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="apply-title">
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+
+  <header class="ch-head her">
+    <p class="eyebrow mono">{apply.eyebrow}</p>
+    <h2 id="apply-title">{apply.title}</h2>
+    <p class="lede">{apply.lede}</p>
+  </header>
+
+  <ol class="next-steps" role="list" aria-label="What happens next">
+    {apply.nextSteps.map((s, i) => (
+      <li><span class="next-ring mono" aria-hidden="true">{i + 1}</span><b>{s.title}</b> <span>{s.text}</span></li>
+    ))}
+  </ol>
+
+  <noscript>
+    <p class="apply-noscript">{apply.noscript.line}{mail && <> <a href={`mailto:${mail}?subject=${encodeURIComponent(apply.noscript.subject)}`}>{mail}</a></>}</p>
+  </noscript>
+
+  <form class="apply" data-apply novalidate>
+    <div class="apply-errors" data-apply-errors role="alert" tabindex="-1" hidden></div>
+
+    <fieldset class="her side step" data-side="her" data-step="1">
+      <legend><h3 class="side-label">{sides.her} <span class="side-sub">{apply.steps[0].heading}</span></h3></legend>
+      <ol class="margin-notes" data-margin-notes aria-label="Amariya’s notes" role="list"></ol>
+      <div class="apply-anchor" data-orb-anchor></div>
+      <p class="step-of mono">{apply.stepOf(1, 2)}</p>
+
+      <div class="field" data-field="hotel_name">
+        <label class="field-label mono" for="a-hotel_name">{f.hotel_name.label}</label>
+        <input id="a-hotel_name" name="hotel_name" type="text" autocomplete="organization" placeholder={f.hotel_name.placeholder} maxlength="80" aria-describedby="a-hotel_name-err" />
+        <p class="field-error" id="a-hotel_name-err" hidden></p>
+      </div>
+      <div class="field" data-field="locations">
+        <label class="field-label mono" for="a-locations">{f.locations.label}</label>
+        <input id="a-locations" name="locations" type="number" inputmode="numeric" min="1" max="500" step="1" value="1" aria-describedby="a-locations-hint" />
+        <p class="field-hint" id="a-locations-hint">{f.locations.hint}</p>
+      </div>
+      <p class="groups-note" data-groups-note hidden>{applyExtras.groupsNote}</p>
+      <div class="field" data-field="software">
+        <label class="field-label mono" for="a-software">{f.software.label}</label>
+        <input id="a-software" name="software" type="text" autocomplete="off" placeholder={f.software.placeholder} maxlength="80" />
+      </div>
+      <div class="field" data-field="go_live">
+        <label class="field-label mono" for="a-go_live">{f.go_live.label}</label>
+        <select id="a-go_live" name="go_live">
+          <option value="">Choose one</option>
+          {apply.goLive.map((o) => <option value={o.value}>{o.label}</option>)}
+        </select>
+      </div>
+      <input type="hidden" name="plan" value={apply.plans.founding} />
+      <p class="plan-line mono" data-apply-plan>{apply.plans.founding}</p>
+    </fieldset>
+
+    <fieldset class="team side step" data-side="team" data-step="2">
+      <legend><h3 class="side-label">{sides.team} <span class="side-sub">{apply.steps[1].heading}</span></h3></legend>
+      <p class="step-of mono">{apply.stepOf(2, 2)}</p>
+
+      <div class="field" data-field="name">
+        <label class="field-label mono" for="a-name">{f.name.label}</label>
+        <input id="a-name" name="name" type="text" autocomplete="name" maxlength="80" aria-describedby="a-name-err" />
+        <p class="field-error" id="a-name-err" hidden></p>
+      </div>
+      <div class="field" data-field="role">
+        <label class="field-label mono" for="a-role">{f.role.label}</label>
+        <select id="a-role" name="role" autocomplete="organization-title">
+          <option value="">Choose one</option>
+          {apply.roles.map((r) => <option value={r}>{r}</option>)}
+        </select>
+      </div>
+      <div class="field" data-field="email">
+        <label class="field-label mono" for="a-email">{f.email.label}</label>
+        <input id="a-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="120" aria-describedby="a-email-err" />
+        <p class="field-error" id="a-email-err" hidden></p>
+      </div>
+      <div class="field" data-field="phone">
+        <label class="field-label mono" for="a-phone">{f.phone.label}</label>
+        <input id="a-phone" name="phone" type="tel" autocomplete="tel" maxlength="40" />
+        <label class="check"><input type="checkbox" name="whatsapp" value="yes" /><span>{applyExtras.whatsapp}</span></label>
+      </div>
+      <div class="field" data-field="preferred_time">
+        <label class="field-label mono" for="a-preferred_time">{f.preferred_time.label}</label>
+        <input id="a-preferred_time" name="preferred_time" type="text" autocomplete="off" placeholder={f.preferred_time.placeholder} maxlength="80" />
+      </div>
+      <div class="field" data-field="notes">
+        <label class="field-label mono" for="a-notes">{f.notes.label}</label>
+        <textarea id="a-notes" name="notes" rows="3" maxlength="1200"></textarea>
+      </div>
+      <label class="check check-consent"><input type="checkbox" name="consent" value="yes" /><span>{f.consent.label}</span></label>
+
+      <div class="apply-submit">
+        <button type="submit" class="btn btn-primary" data-apply-submit>{apply.submit}<i class="arrow" aria-hidden="true"></i></button>
+        <span class="stamp received" data-received hidden></span>
+      </div>
+
+      <div class="apply-result" data-apply-result tabindex="-1" hidden>
+        <h3 class="result-heading" data-result-heading>{apply.success.heading}</h3>
+        <p data-result-text>{apply.success.text}</p>
+        <p class="result-reply" data-result-reply>{reply ?? apply.success.fallback}</p>
+        <div class="meetings" data-meetings hidden>
+          <h4 class="mono rule-label">{apply.meetings.heading}</h4>
+          <div class="meetings-frame" data-meetings-frame></div>
+          <p><a data-meetings-link href="#" target="_blank" rel="noopener">{apply.meetings.link}</a></p>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</section>

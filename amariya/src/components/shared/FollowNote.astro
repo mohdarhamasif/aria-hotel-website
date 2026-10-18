@@ -1,0 +1,79 @@
+---
+// The follow note: when the agent wants a section while the visitor is reading (the polite rule in scroll.ts),
+// the page stays put and offers this instead. Pressing it goes there; it also hides when the section arrives,
+// when she offers another one, and when the conversation ends. Structural CSS only, every selector inside :where().
+interface Props {
+  /** The words before the section's label */
+  lead?: string;
+  /** An optional verb after it, e.g. 'Follow' */
+  action?: string;
+}
+const { lead = 'Amariya is showing', action } = Astro.props;
+---
+<button type="button" class="follow" data-follow data-voice-ui hidden>
+  {lead && <span class="follow-lead">{lead}</span>} <b class="follow-label" data-follow-label></b>
+  {action && <span class="follow-action">{action}</span>}
+</button>
+
+<script>
+  import { voice } from '../../scripts/voice/bridge';
+  import { markAgentMove } from '../../scripts/voice/tools';
+
+  const note = document.querySelector<HTMLButtonElement>('[data-follow]');
+  if (note) {
+    const label = note.querySelector<HTMLElement>('[data-follow-label]')!;
+    let section = '';
+    let arrival: IntersectionObserver | null = null;
+
+    const hide = () => {
+      note.hidden = true;
+      arrival?.disconnect();
+      arrival = null;
+    };
+    /** A section name, alias or chapter id, as the page knows it */
+    const find = (name: string) =>
+      document.getElementById(name) ??
+      document.querySelector(`[data-section="${CSS.escape(name)}"]`) ??
+      document.querySelector(`[data-chapter="${CSS.escape(name)}"]`);
+
+    voice.on('follow', (e) => {
+      hide();
+      section = e.section;
+      label.textContent = e.label;
+      note.hidden = false;
+      const target = find(e.section);
+      if (!target) return;
+      // The same band the page uses for "in view"
+      arrival = new IntersectionObserver((entries) => { if (entries.some((x) => x.isIntersecting)) hide(); }, { rootMargin: '-45% 0px -50% 0px' });
+      arrival.observe(target);
+    });
+    voice.on('state', ({ state }) => { if (state === 'idle') hide(); });
+
+    note.addEventListener('click', () => {
+      hide();
+      markAgentMove();
+      voice.presenter?.navigate(section, false);
+    });
+  }
+</script>
+
+<style is:global>
+  :where([data-follow]) {
+    position: fixed; z-index: var(--z-follow); left: 50%; bottom: calc(var(--dock-h, 0px) + 16px); translate: -50% 0;
+    display: inline-flex; align-items: center; gap: 8px; max-width: calc(100vw - 32px);
+    min-height: var(--target); padding: 0 18px; border-radius: 999px;
+    background: var(--color-bg-surface); color: var(--color-text-primary); box-shadow: inset 0 0 0 1px var(--color-border-strong);
+    font-size: var(--card-size); letter-spacing: var(--card-ls); white-space: nowrap;
+    transition: opacity var(--dur-control) var(--ease-out), translate var(--dur-control) var(--ease-out);
+  }
+  @starting-style {
+    :where([data-follow]) { opacity: 0; translate: -50% 8px; }
+  }
+  :where([data-follow] .follow-lead) { color: var(--color-text-secondary); }
+  :where([data-follow] .follow-label) { font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
+  :where([data-follow] .follow-action) { font-weight: 500; color: var(--color-accent-text); }
+  :where([data-follow]:hover) { box-shadow: inset 0 0 0 1px var(--color-text-primary); }
+  @media (prefers-reduced-motion: reduce) {
+    :where([data-follow]) { transition: none; }
+  }
+</style>

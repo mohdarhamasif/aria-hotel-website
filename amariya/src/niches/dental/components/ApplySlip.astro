@@ -1,0 +1,106 @@
+---
+// 18:00, Book your 20-minute call (#apply): step 1 is an appointment slip (the practice's software rides with its
+// name), step 2 exactly the three qualifying lines its heading promises.
+// presenter.ts validates, qualifies silently and sends through the adapter; a qualified application opens the
+// 18:00–18:20 block (the HubSpot meetings page when its link is configured, an honest line otherwise). The status
+// says 'Application received', and 'Call booked' only when the meetings page reports a booking.
+import { content } from '../../../data/content/dental';
+import { given } from '../../../data/content/types';
+
+const { apply, applySlip, profile, chapters } = content;
+const ch = chapters.find((c) => c.id === 'apply')!;
+const F = apply.fields;
+const reply = given(apply.success.replyTime) ?? apply.success.fallback;
+const mail = given(apply.noscript.email);
+const field = (name: string) => ({ id: `a-${name}`, err: `a-${name}-err` });
+---
+<section id="apply" class="ch apply sheet-grid" data-chapter="apply" data-section="demo" data-time={ch.time} aria-labelledby="apply-title">
+  <div class="chairs c-chairs" data-chairs="18:00-18:30" aria-hidden="true"></div>
+
+  <header class="ch-head c-text">
+    <p class="ch-time" aria-hidden="true"><span>{ch.time}</span></p>
+    <h2 id="apply-title" class="ch-title"><span class="sr-only">{ch.time}, </span>{applySlip.title}</h2>
+    <p class="ch-lede ink">{apply.lede}</p>
+  </header>
+
+  <form class="slip apply-form c-text" data-apply novalidate data-step="1">
+    <input type="hidden" name="plan" value={apply.plans.founding} />
+    <fieldset class="apply-step" data-apply-step="1">
+      <legend class="step-legend">{apply.stepOf(1, 2)} · {apply.steps[0].label}</legend>
+      <p class="apply-plan" data-apply-plan>{apply.plans.founding}</p>
+      <div class="slip-rows">
+        <label class="slip-row"><span class="slip-label">{F.name.label}</span><input name="name" type="text" autocomplete="name" required aria-describedby={field('name').err} /></label>
+        <p class="field-err" id={field('name').err} hidden></p>
+        <label class="slip-row"><span class="slip-label">{F.role.label}</span><select name="role" autocomplete="organization-title"><option value=""></option>{apply.roles.map((r) => <option value={r}>{r}</option>)}</select></label>
+        <label class="slip-row"><span class="slip-label">{F.hotel_name.label}</span><input name="hotel_name" type="text" autocomplete="organization" required placeholder={F.hotel_name.placeholder} aria-describedby={field('hotel_name').err} /></label>
+        <p class="field-err" id={field('hotel_name').err} hidden></p>
+        <label class="slip-row"><span class="slip-label">{F.software.label}</span><input name="software" type="text" autocomplete="off" placeholder={F.software.placeholder} /></label>
+        <label class="slip-row"><span class="slip-label">{F.email.label}</span><input name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby={field('email').err} /></label>
+        <p class="field-err" id={field('email').err} hidden></p>
+        <label class="slip-row"><span class="slip-label">{F.phone.label}</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" /></label>
+        <label class="slip-row"><span class="slip-label">{F.preferred_time.label}</span><input name="preferred_time" type="text" placeholder={F.preferred_time.placeholder} /></label>
+        <label class="slip-row"><span class="slip-label">{F.notes.label}</span><textarea name="notes" rows="2"></textarea></label>
+      </div>
+      <div class="step-actions">
+        <button type="button" class="btn btn-primary" data-apply-next>{apply.next}</button>
+      </div>
+    </fieldset>
+
+    <fieldset class="apply-step" data-apply-step="2" disabled hidden>
+      <legend class="step-legend">{apply.stepOf(2, 2)} · {apply.steps[1].label}</legend>
+      <fieldset class="answers" data-field="answers">
+        <legend class="slip-label">{applySlip.qualifying.label}</legend>
+        <div class="answer-list">
+          {applySlip.qualifying.options.map((o) => (
+            <label class="answer"><input type="radio" name="answers" value={o} /><span>{o}</span></label>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="pair">
+        <legend class="slip-label">{applySlip.chairsLocations}</legend>
+        <div class="pair-row">
+          <label class="pair-field"><span class="pair-label">{profile.labels.rooms}</span><input class="slip-input" name="chairs" type="number" inputmode="numeric" min="1" step="1" /></label>
+          <label class="pair-field"><span class="pair-label">{F.locations.label}</span><input class="slip-input" name="locations" type="number" inputmode="numeric" min="1" step="1" value="1" aria-describedby="a-locations-hint" /></label>
+        </div>
+        <p class="slip-hint" id="a-locations-hint">{F.locations.hint}</p>
+      </fieldset>
+      <div class="slip-rows">
+        <label class="slip-row"><span class="slip-label">{F.go_live.label}</span><select name="go_live"><option value=""></option>{apply.goLive.map((g) => <option value={g.value}>{g.label}</option>)}</select></label>
+      </div>
+      <label class="consent"><input type="checkbox" name="consent" value="yes" /><span>{F.consent.label}</span></label>
+      <div class="step-actions">
+        <button type="button" class="btn btn-ghost" data-apply-back>{apply.back}</button>
+        <button type="submit" class="btn btn-primary" data-apply-submit><span data-submit-label>{apply.submit}</span></button>
+      </div>
+    </fieldset>
+
+    <p class="apply-errors" role="alert" tabindex="-1" data-apply-errors hidden></p>
+    <noscript>
+      <p class="noscript">{apply.noscript.line}{mail && <> <a href={`mailto:${mail}?subject=${encodeURIComponent(apply.noscript.subject)}`}>{mail}</a></>}</p>
+    </noscript>
+  </form>
+
+  <aside class="next-steps c-lane" aria-labelledby="next-title">
+    <h3 id="next-title" class="lane-title">What happens next</h3>
+    <ol class="next-list" role="list">
+      {apply.nextSteps.map((s, i) => <li class="next-step ink"><b><span class="next-n" aria-hidden="true">{i + 1}</span>{s.title}</b><span>{s.text}</span></li>)}
+    </ol>
+  </aside>
+
+  <div class="apply-result c-textlane" data-apply-result tabindex="-1" hidden>
+    <p class="result-stamp"><svg class="glyph" aria-hidden="true"><use href="#g-tick" /></svg><span data-result-heading>{applySlip.status.received}</span></p>
+    <p class="result-text" data-result-text>{apply.success.text}</p>
+    <p class="result-reply" data-result-reply>{reply}</p>
+    <div class="meet" data-meetings hidden>
+      <p class="meet-block"><time>{applySlip.block}</time><b>{applySlip.pick}</b></p>
+      <div class="meet-frame" data-meetings-frame data-title={apply.meetings.frameTitle}>
+        <p class="meet-placeholder" data-meetings-placeholder>{apply.meetings.heading}. {apply.success.fallback}</p>
+      </div>
+      <a class="meet-link" data-meetings-link href="#apply" target="_blank" rel="noopener" hidden>{apply.meetings.link}</a>
+    </div>
+  </div>
+
+  <div class="recess-cell c-track">
+    <span class="recess anchor-recess" data-slot="apply" data-time={ch.time} data-anchor aria-hidden="true"></span>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import { getNiche } from '../data/niches';
+---
+<Base title="Not found · Amariya" description="This page doesn’t exist." theme="hospitality" fonts={[getNiche('hotels').displayFont]} noindex>
+  <main class="lost wrap">
+    <p class="eyebrow">404</p>
+    <h1>This room doesn’t exist.</h1>
+    <a class="btn btn-primary" href="/">The desk is this way</a>
+  </main>
+</Base>
+
+<style>
+  .lost { display: grid; align-content: center; justify-items: center; gap: 24px; min-height: 100svh; text-align: center; }
+  h1 { font: var(--h1-weight) var(--h1-size)/var(--h1-lh) var(--font-display); letter-spacing: var(--h1-ls); text-wrap: balance; }
+</style>

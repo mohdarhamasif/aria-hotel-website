@@ -1,0 +1,58 @@
+---
+// IX · 07:30 · The key rack (#keys): thirty founding keys behind the desk. The price, the inclusions, the brass
+// guarantee plate and the honest ledger, as text and as a list of thirty keys (shape-coded: open hangs, held is
+// tinted, issued leaves an empty hook). Hover or focus swings the key in the 3D rack (amariyaKeys.swing).
+import { content } from '../../../data/content/hotels';
+import { given } from '../../../data/content/types';
+import { ledgerCounts } from '../../../scripts/apply/adapter';
+import LogEntry from './LogEntry.astro';
+import Icons from './Icons.astro';
+
+const chapter = content.chapters.find((c) => c.id === 'keys')!;
+const { keys, offer } = content;
+const counts = ledgerCounts('hotels');
+const why = given(offer.why);
+const stateOf = (n: number) => (n <= counts.issued ? 'issued' : n <= counts.issued + counts.held ? 'held' : 'open') as 'open' | 'held' | 'issued';
+const pad = (n: number) => String(n).padStart(2, '0');
+const parts = (s: string) => s.split(/(\d[\d:.,]*\d|\d)/);
+const firstOpen = Array.from({ length: offer.cap }, (_, i) => i + 1).find((n) => stateOf(n) === 'open') ?? 1;
+---
+<LogEntry chapter={chapter}>
+  <div class="rack" data-rack>
+    <div class="panel plan" data-plan="founding">
+      <p class="eyebrow">{keys.eyebrow}</p>
+      <p class="rack-price">{parts(keys.price).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</p>
+      <ul class="inclusions" role="list">
+        {offer.inclusions.map((x) => <li><Icons name="key" /><span>{parts(x).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</span></li>)}
+      </ul>
+      <p class="plate"><span>{parts(keys.plate).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</span></p>
+      <p class="plan-reason" data-plan-reason hidden></p>
+    </div>
+
+    <div class="ledger">
+      <p class="ledger-text" data-ledger-text>{parts(offer.ledger(counts)).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</p>
+      <ol class="keys" role="list" aria-label={offer.ledger(counts)} data-keys>
+        {Array.from({ length: offer.cap }, (_, i) => i + 1).map((n) => (
+          <li class="key" data-key={pad(n)} data-state={stateOf(n)} tabindex={n === firstOpen ? 0 : -1}>
+            <span class="sr-only">{keys.keyItem(n, stateOf(n)).split(pad(n))[0]}</span><span class="key-num">{pad(n)}</span><span class="sr-only"> — </span><span class="key-state">{stateOf(n)}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="ledger-note">{offer.heldNote}</p>
+      <p class="ledger-holds">{offer.holds}</p>
+      {why && (
+        <details class="why">
+          <summary>{keys.whyLabel}</summary>
+          <p>{why}</p>
+        </details>
+      )}
+    </div>
+
+    <p class="after">{parts(keys.after).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</p>
+
+    <div class="panel plan plan--groups" data-plan="groups">
+      <p>{offer.groupsNote}</p>
+      <p class="plan-reason" data-plan-reason hidden></p>
+    </div>
+  </div>
+</LogEntry>

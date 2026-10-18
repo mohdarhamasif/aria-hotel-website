@@ -1,0 +1,78 @@
+---
+// 17:30, Founding licence (#pricing): written like a fee line on a treatment plan, its four sub-lines, THE SEATS
+// (thirty recesses pressed into the paper, by state: open, held, issued; counts from ledgerCounts), the seven-day
+// strip, the after-the-30 footnote and the Dental groups entry. recommend_plan lights [data-plan] lines and writes
+// the reason into their [data-plan-reason] margin note.
+import { content } from '../../../data/content/dental';
+import { given } from '../../../data/content/types';
+import { ledgerCounts } from '../../../scripts/apply/adapter';
+
+const { licenceLine: L, offer, chapters } = content;
+const ch = chapters.find((c) => c.id === 'pricing')!;
+const counts = ledgerCounts('dental');
+const seats = Array.from({ length: offer.cap }, (_, i) => (i < counts.issued ? 'issued' : i < counts.issued + counts.held ? 'held' : 'open'));
+const ledger = offer.ledger(counts);
+const why = given(offer.why);
+// The strip's widths are the days they cover
+const spans = L.sevenDays.days.map((d) => {
+  const n = d.days.match(/(\d+)\D+(\d+)/);
+  return n ? Number(n[2]) - Number(n[1]) + 1 : 1;
+});
+---
+<section id="pricing" class="ch licence sheet-grid" data-chapter="pricing" data-section="pricing" data-time={ch.time} aria-labelledby="pricing-title">
+  <div class="chairs c-chairs" data-chairs="17:30-18:00" aria-hidden="true"></div>
+
+  <header class="ch-head c-text">
+    <p class="ch-time" aria-hidden="true"><span>{ch.time}</span></p>
+    <h2 id="pricing-title" class="ch-title"><span class="sr-only">{ch.time}, </span>{L.title}</h2>
+  </header>
+
+  <div class="fee-wrap c-text">
+    <div class="fee" data-plan="founding">
+      <p class="fee-line ink"><span class="entry-tick" aria-hidden="true"></span><span>{L.line}</span>{offer.provisional && <span class="fee-provisional"> {L.provisional}</span>}</p>
+      <ul class="fee-sub" role="list">
+        {offer.inclusions.map((i) => <li class="ink">{i}</li>)}
+      </ul>
+      <p class="plan-reason" data-plan-reason hidden></p>
+      <p class="fee-note">{offer.holds}</p>
+      {why && <p class="fee-note">{why}</p>}
+    </div>
+
+    <div class="seats" data-seats>
+      <h3 class="seats-title">{L.seats.label}</h3>
+      <ol class="seat-grid" role="list" aria-hidden="true">
+        {seats.map((s, i) => (
+          <li class="seat" data-seat={s} id={`seat-${i + 1}`}>{s === 'held' && <span class="seat-tag">{L.seats.held}</span>}</li>
+        ))}
+      </ol>
+      <p class="sr-only">{ledger}</p>
+      <p class="ledger-line" aria-hidden="true">{ledger}</p>
+      <ul class="seat-legend" role="list" aria-hidden="true">
+        <li><span class="seat seat-key" data-seat="open"></span>{L.seats.open}</li>
+        <li><span class="seat seat-key" data-seat="held"></span>{L.seats.held}</li>
+        <li><span class="seat seat-key" data-seat="issued"></span>{L.seats.issued}</li>
+      </ul>
+      <p class="fee-note">{offer.heldNote}</p>
+    </div>
+  </div>
+
+  <aside class="groups c-lane" data-plan="groups" aria-labelledby="groups-title">
+    <span class="groups-mark" data-groups-mark aria-hidden="true"></span>
+    <h3 id="groups-title" class="groups-title">{L.groups.title}</h3>
+    <p class="groups-text">{L.groups.text}</p>
+    <p class="plan-reason" data-plan-reason hidden></p>
+    <p class="after">{offer.after}</p>
+  </aside>
+
+  <div class="seven c-textlane" aria-labelledby="seven-title">
+    <h3 id="seven-title" class="seven-title">{L.sevenDays.title}</h3>
+    <ol class="seven-strip" role="list" style={`--days:${spans.map((n) => `${n}fr`).join(' ')}`}>
+      {L.sevenDays.days.map((d) => <li class="seven-day"><b>{d.days}</b><span>{d.label}</span></li>)}
+    </ol>
+    <p class="seven-line ink">{L.sevenDays.line}</p>
+  </div>
+
+  <div class="recess-cell c-track">
+    <span class="recess anchor-recess" data-slot="pricing" data-time={ch.time} data-anchor aria-hidden="true"></span>
+  </div>
+</section>

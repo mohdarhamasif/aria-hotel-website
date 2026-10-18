@@ -1,0 +1,85 @@
+---
+// 01 · Right now (#story): the live-time story in three beats. Pinned for 180svh with motion; without JS or
+// under reduced motion the three beats read as stacked blocks. A mono time stamp, never a display clock.
+import { content } from '../../../data/content/clinics';
+import { fmtHM } from '../../../scripts/motion/clock';
+
+const { story, greetings, sides, chapters } = content;
+const ch = chapters[1];
+// The HTML's own moment (2:14 pm) until the script reads the visitor's clock
+const STATIC = 14 * 60 + 14;
+const band = story.situations.find((s) => s.from === '14:00') ?? story.situations[0];
+const line = band.line;
+const booking = story.booking;
+const beat2 = story.beat2;
+const sheetHours = [8, 10, 12, 14, 16, 18];
+const pct = (m: number) => `${(((m - 480) / 600) * 100).toFixed(2)}%`;
+const subs = [0.02, 0.45, 0.82];
+---
+<section id={ch.id} class="ch ch-story" data-chapter={ch.id} data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="story-title" data-story>
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+  {subs.map((f, i) => <i class="sub" data-sub={`story:${i + 1}`} style={`--f:${f}`} aria-hidden="true"></i>)}
+
+  <div class="story-stage" data-story-stage>
+    <header class="ch-head her">
+      <p class="eyebrow mono">{ch.point} · {story.label}</p>
+      <p class="stamp" data-story-time>{fmtHM(STATIC, true)}</p>
+      <h2 id="story-title" data-story-situation>
+        {typeof line === 'string' ? line : <><span data-lens-text="medical">{line.medical}</span><span data-lens-text="aesthetic">{line.aesthetic}</span></>}
+      </h2>
+    </header>
+
+    <div class="her side" data-side="her">
+      <h3 class="side-label">{sides.her}</h3>
+      <ol class="margin-notes" data-margin-notes aria-label="Amariya’s notes" role="list"></ol>
+      <div class="story-anchor" data-orb-anchor></div>
+
+      <div class="beat beat-1" data-beat="1">
+        <p class="beat-copy">
+          <span data-lens-text="medical"><span data-story-now>{fmtHM(STATIC, true)}</span>{story.beat0.medical[0]}<b>{story.beat0.medical[1]}</b>{story.beat0.medical[2]}</span>
+          <span data-lens-text="aesthetic"><span data-story-now>{fmtHM(STATIC, true)}</span>{story.beat0.aesthetic[0]}<b>{story.beat0.aesthetic[1]}</b>{story.beat0.aesthetic[2]}</span>
+        </p>
+      </div>
+
+      <div class="beat beat-2" data-beat="2">
+        <p class="beat-copy">{story.beat1[0]}<b>{story.beat1[1]}</b>{story.beat1[2]}</p>
+        <ol class="greetings" data-greetings role="list" aria-label="Greetings, in nine languages">
+          {greetings.map((g, i) => (
+            <li data-greeting={i} aria-current={i === 0 ? 'true' : undefined}>
+              <span class="greeting-text" lang={g.lang} dir={g.dir}>{g.text}</span>
+              <span class="greeting-name mono">{g.name}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="beat beat-3" data-beat="3">
+        <p class="beat-copy">
+          {typeof beat2 === 'string' ? beat2 : <><span data-lens-text="medical">{beat2.medical}</span><span data-lens-text="aesthetic">{beat2.aesthetic}</span></>}
+        </p>
+        <div class="day-sheet" data-day-sheet>
+          <ol class="day-hours" role="list" aria-hidden="true">
+            {sheetHours.map((h) => <li style={`--at:${pct(h * 60)}`}><span class="mono">{String(h).padStart(2, '0')}:00</span></li>)}
+          </ol>
+          <span class="day-now" data-day-now aria-hidden="true" hidden><span class="mono">now</span></span>
+          <p class="day-booking slip" style={`--at:${pct(16 * 60)}`} data-day-booking>
+            <span class="mono">
+              <span data-lens-text="medical">{booking.medical}</span>
+              <span data-lens-text="aesthetic">{booking.aesthetic}</span>
+            </span>
+          </p>
+        </div>
+        <p class="night-line" data-night-line>{story.nightLine}</p>
+      </div>
+    </div>
+
+    <div class="team side" data-side="team">
+      <h3 class="side-label">{sides.team}</h3>
+      <p class="stamp team-status" data-story-status>{band.status}</p>
+      <p class="team-copy" data-story-closing>{story.closing.day}</p>
+      <p class="team-copy team-closed" data-story-closed hidden>{story.closed}</p>
+    </div>
+
+    <p class="bead" data-story-bead aria-hidden="true"><span class="bead-dot"></span><span class="mono" data-story-count>{story.counter(1)}</span></p>
+  </div>
+</section>

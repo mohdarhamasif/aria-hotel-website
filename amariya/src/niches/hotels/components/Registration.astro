@@ -1,0 +1,133 @@
+---
+// X · 07:45 · Registration (#register): the two-step registration card. Step 1 You, step 2 Your house
+// (prefilled from the property card). Inline errors, an honest success, and for qualified applicants the
+// meetings calendar framed as a 20-minute call. Without JavaScript the card is replaced by a plain note.
+import { content } from '../../../data/content/hotels';
+import { given } from '../../../data/content/types';
+import LogEntry from './LogEntry.astro';
+import Icons from './Icons.astro';
+
+const chapter = content.chapters.find((c) => c.id === 'register')!;
+const { apply: a, registration, propertyCard, voice } = content;
+const F = a.fields;
+const email = given(a.noscript.email);
+const errors = {
+  name: 'Please add your name.',
+  email: a.errors.email,
+  hotel_name: `Please add your ${voice.nameLabel}.`,
+  consent: 'Please tick this so our team can contact you about your key.',
+};
+---
+<LogEntry chapter={chapter}>
+  <div class="panel reg" data-reg>
+    <p class="eyebrow">{registration.eyebrow}</p>
+    <p class="reg-title">{a.title}</p>
+    <p class="reg-lede">{a.lede}</p>
+    <ol class="next-steps" role="list">
+      {a.nextSteps.map((s, i) => <li><span class="n">{i + 1}</span><span><b>{s.title}</b> {s.text}</span></li>)}
+    </ol>
+
+    <noscript>
+      <style is:inline>[data-apply] { display: none !important; }</style>
+      <p class="reg-noscript">{a.noscript.line}{email && <> <a href={`mailto:${email}?subject=${encodeURIComponent(a.noscript.subject)}`}>{email}</a></>}</p>
+    </noscript>
+
+    <form class="reg-form" data-apply data-step="1" novalidate aria-label={registration.title}>
+      <div class="reg-progress">
+        <p class="reg-stepof" data-stepof>{a.stepOf(1, 2)}</p>
+        <ol class="reg-marks" role="list">
+          {registration.stepLabels.map((label, i) => <li class="reg-mark" data-step-mark={i + 1} aria-current={i === 0 ? 'step' : undefined}><span class="n">{i + 1}</span> {label}</li>)}
+        </ol>
+      </div>
+
+      <fieldset class="reg-step" data-step-panel="1">
+        <legend class="sr-only">{a.steps[0].heading}</legend>
+        <h3 class="reg-step-title" tabindex="-1" data-step-title>{a.steps[0].heading}</h3>
+        <div class="field">
+          <label for="r-name">{F.name.label}</label>
+          <input id="r-name" name="name" type="text" autocomplete="name" required aria-describedby="r-name-err" data-err={errors.name} />
+          <p class="field-error" id="r-name-err" hidden></p>
+        </div>
+        <div class="field">
+          <label for="r-email">{F.email.label}</label>
+          <input id="r-email" name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" required aria-describedby="r-email-err" data-err={errors.email} />
+          <p class="field-error" id="r-email-err" hidden></p>
+        </div>
+        <div class="field">
+          <label for="r-phone">{F.phone.label}</label>
+          <input id="r-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" />
+        </div>
+        <div class="field">
+          <label for="r-role">{F.role.label}</label>
+          <select id="r-role" name="role" autocomplete="organization-title">
+            <option value="">—</option>
+            {a.roles.map((r) => <option value={r}>{r}</option>)}
+          </select>
+        </div>
+        <div class="reg-actions">
+          <button type="button" class="fob" data-step-next><span class="fob-hole" aria-hidden="true"></span><span>{a.next}</span></button>
+        </div>
+      </fieldset>
+
+      <fieldset class="reg-step" data-step-panel="2" hidden>
+        <legend class="sr-only">{a.steps[1].heading}</legend>
+        <h3 class="reg-step-title" tabindex="-1" data-step-title>{a.steps[1].heading}</h3>
+        <div class="field">
+          <label for="r-hotel_name">{F.hotel_name.label}</label>
+          <input id="r-hotel_name" name="hotel_name" type="text" autocomplete="organization" placeholder={F.hotel_name.placeholder} required aria-describedby="r-hotel_name-err" data-err={errors.hotel_name} />
+          <p class="field-error" id="r-hotel_name-err" hidden></p>
+        </div>
+        <p class="reg-house" data-reg-house><span data-reg-house-text></span> <a class="text-link" href="#house">{propertyCard.eyebrow}</a></p>
+        <div class="field-pair">
+          <div class="field">
+            <label for="r-locations">{F.locations.label}</label>
+            <input id="r-locations" name="locations" type="text" inputmode="numeric" autocomplete="off" value="1" aria-describedby="r-locations-hint" />
+            <p class="field-hint" id="r-locations-hint">{F.locations.hint}</p>
+          </div>
+          <div class="field">
+            <label for="r-go_live">{F.go_live.label}</label>
+            <select id="r-go_live" name="go_live">
+              <option value="">—</option>
+              {a.goLive.map((o) => <option value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="r-software">{F.software.label}</label>
+          <input id="r-software" name="software" type="text" autocomplete="off" placeholder={F.software.placeholder} />
+        </div>
+        <div class="field">
+          <label for="r-preferred_time">{F.preferred_time.label}</label>
+          <input id="r-preferred_time" name="preferred_time" type="text" autocomplete="off" placeholder={F.preferred_time.placeholder} />
+        </div>
+        <div class="field">
+          <label for="r-notes">{F.notes.label}</label>
+          <textarea id="r-notes" name="notes" rows="3"></textarea>
+        </div>
+        <div class="field field--check">
+          <input id="r-consent" name="consent" type="checkbox" value="yes" required aria-describedby="r-consent-err" data-err={errors.consent} />
+          <label for="r-consent">{F.consent.label}</label>
+          <p class="field-error" id="r-consent-err" hidden></p>
+        </div>
+        <input type="hidden" name="plan" value="founding" />
+        <p class="form-error" role="alert" data-apply-error hidden></p>
+        <div class="reg-actions">
+          <button type="button" class="text-link" data-step-back>{a.back}</button>
+          <button type="submit" class="fob" data-apply-submit><span class="fob-hole" aria-hidden="true"></span><span data-submit-label>{a.submit}</span></button>
+        </div>
+      </fieldset>
+    </form>
+
+    <div class="reg-done" data-apply-done hidden>
+      <p class="pencil" aria-hidden="true"><Icons name="nib" /></p>
+      <h3 class="reg-done-title" tabindex="-1" data-done-title>{a.success.heading}</h3>
+      <p data-done-text>{a.success.text}</p>
+      <div class="meetings" data-meetings hidden>
+        <h4 class="meetings-title">{a.meetings.heading}</h4>
+        <iframe class="meetings-frame" title={a.meetings.frameTitle} data-meetings-frame loading="lazy"></iframe>
+        <a class="text-link" data-meetings-link target="_blank" rel="noopener">{a.meetings.link}</a>
+      </div>
+      <p class="reg-reply" data-done-reply></p>
+    </div>
+  </div>
+</LogEntry>

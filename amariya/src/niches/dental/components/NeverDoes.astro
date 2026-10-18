@@ -1,0 +1,25 @@
+---
+// 16:40, What she never does: a margin block of the owner-confirmed lines. A line still Pending renders nothing,
+// and with no confirmed line the block is not on the sheet at all (the ruler leaves its hour out too).
+import { content } from '../../../data/content/dental';
+import { given } from '../../../data/content/types';
+
+const { neverDoes, chapters } = content;
+const ch = chapters.find((c) => c.id === 'never')!;
+const lines = neverDoes.lines.map((l) => given(l)).filter((l): l is string => !!l);
+---
+{lines.length > 0 && (
+  <section id="never" class="ch never sheet-grid" data-chapter="never" data-time={ch.time} aria-labelledby="never-title">
+    <div class="chairs c-chairs" data-chairs="16:40-17:30" aria-hidden="true"></div>
+    <header class="ch-head c-text">
+      <p class="ch-time" aria-hidden="true"><span>{ch.time}</span></p>
+      <h2 id="never-title" class="ch-title"><span class="sr-only">{ch.time}, </span>{neverDoes.title}</h2>
+    </header>
+    <ul class="never-lines c-textlane" role="list">
+      {lines.map((l) => <li class="never-line ink">{l}</li>)}
+    </ul>
+    <div class="recess-cell c-track">
+      <span class="recess anchor-recess" data-slot="never" data-time={ch.time} data-anchor aria-hidden="true"></span>
+    </div>
+  </section>
+)}

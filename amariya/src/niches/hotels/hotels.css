@@ -1,0 +1,924 @@
+/* The Night Log (/hotels). An architectural monograph at night: the house drawn on the fixed canvas in
+   columns 1–8, the log column (9–12, at most 440 px) over the 92 % forest scrim, hour numerals hanging into it.
+   Colours: --color-* roles only. No italics. Numbers in the display face's lining tabular figures. */
+
+:root {
+  --dock-h: 72px;
+  --bar-h: 72px;
+  /* The log column, its right margin and the hang of the hour numerals into column 8 */
+  --log-w: clamp(360px, 31vw, 440px);
+  --frame: max(48px, calc((100vw - 1440px) / 2 + 48px));
+  --hang: 72px;
+  --scrim-w: calc(var(--frame) + var(--log-w) + var(--hang) + 28px);
+  --scrim: color-mix(in oklab, var(--color-scrim) 92%, transparent);
+  --ground: max(56svh, min(64svh, calc(100svh - 300px)));
+  /* The lantern's seat: her ring (1.37 r with the hand) and the coaster under it fit between the cornice and the ground line */
+  --seat: min(38svh, 76vw, calc((var(--ground) - var(--bar-h) - 56px) / 1.37));
+  /* Decorative type tokens (art, not text; spec/typography.md allows one documented token each): the hour numerals
+     hanging into the log (aria-hidden: each h2 says its hour) and the wordmark engraved on the checkout's brass plate */
+  --hour-size: 168px;
+  --plate-size: 46px;
+}
+
+/* The house scene writes these every frame on :root (the page contract) and on each element whose rules read them
+   (scene/director.ts; ui.ts without the scene). Registered as not inherited, a write on :root restyles :root alone:
+   inherited, every frame of a move restyled the whole page (25–60 ms a frame on a low-end laptop). */
+@property --t { syntax: '*'; inherits: false; }
+@property --ox { syntax: '*'; inherits: false; }
+@property --oy { syntax: '*'; inherits: false; }
+@property --or { syntax: '*'; inherits: false; }
+@property --gx { syntax: '*'; inherits: false; }
+@property --gy { syntax: '*'; inherits: false; }
+@property --band { syntax: '*'; inherits: false; }
+@property --bandf { syntax: '*'; inherits: false; }
+
+/* A restaurant-only house reads its own copy; every other house reads the hotel's */
+html:not([data-house="restaurant"]) [data-variant="restaurant"],
+html[data-house="restaurant"] [data-variant="hotel"] { display: none !important; }
+
+/* ---------- Type ---------- */
+
+/* Numbers in the display face's lining tabular figures (Supreme has none), at the size of the words around them */
+.n { font-family: var(--font-display); font-weight: 400; font-variant-numeric: lining-nums tabular-nums; }
+:is(.log-lines, .call-title, .call-meta, .slips, .stamp, .pro-terms, .inclusions, .ledger-text, .after, .plate, .next-steps, .reg-marks, .checkout-meta, .pro-eyebrow) .n { line-height: 1; }
+/* Running heads, room labels and the log's own headings: Bona Nova SC's real small caps (Google strips them from Bona
+   Nova itself), set at 16 px so they match 12 px Supreme capitals */
+.running-head, .annotation-label, .room-tag, .call-meta, .does summary, .faq-h, .meetings-title {
+  font: 400 var(--body-size)/var(--eyebrow-lh) var(--font-smallcaps-hospitality); letter-spacing: .05em; text-transform: lowercase;
+}
+
+.text-link {
+  display: inline-flex; align-items: center; min-height: var(--target);
+  color: var(--color-text-primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px;
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+  background: linear-gradient(currentColor 0 0) 0 calc(50% + .78em) / 0 1px no-repeat;
+  transition: background-size 240ms var(--ease-out), color var(--dur-micro) var(--ease-out);
+}
+.text-link:hover, .text-link:focus-visible { background-size: 100% 1px; text-decoration-color: transparent; }
+
+/* The primary: an elongated brass key fob (a rounded hexagon) with a 6 px punched hole; the sheen follows the lantern */
+.fob {
+  --sheen-a: 115deg;
+  position: relative; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: 52px; padding: 0 30px 0 42px;
+  font: 500 var(--body-size)/1 var(--font-body); color: var(--color-accent-ink); text-decoration: none; white-space: nowrap;
+  transition: transform var(--dur-micro) var(--ease-mech);
+}
+.fob::before, .fob::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%);
+  -webkit-mask: radial-gradient(circle 3px at 24px 50%, transparent 97%, currentColor);
+  mask: radial-gradient(circle 3px at 24px 50%, transparent 97%, currentColor);
+}
+.fob::before { background: var(--color-accent-solid); transition: background-color var(--dur-micro) var(--ease-out); }
+.fob::after {
+  background: linear-gradient(var(--sheen-a), transparent 36%, color-mix(in oklab, var(--color-gilt-hi) 60%, transparent) 50%, transparent 64%) 100% 0 / 300% 100% no-repeat;
+  opacity: 0;
+}
+.fob:hover::before { background-color: var(--color-accent-solid-hover); }
+.fob:hover::after { opacity: 1; background-position: 0 0; transition: background-position 700ms var(--ease-light), opacity 120ms linear; }
+.fob:active { transform: translateY(1px); }
+.fob-hole { position: absolute; left: 24px; top: 50%; width: 8px; height: 8px; translate: -50% -50%; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--color-accent-ink); }
+.fob:focus-visible { outline-offset: 4px; }
+@supports (rotate: atan2(1, 1)) {
+  .fob { --sheen-a: atan2(calc(50vw - var(--gx, 70vw)), calc(var(--gy, 30vh) - 50vh)); }
+}
+
+/* Ring for Amariya: the desk bell and the words */
+.ring-btn {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 20px;
+  font: 500 var(--body-size)/1 var(--font-body); color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-brass);
+  transition: box-shadow var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+}
+.ring-btn:hover { box-shadow: inset 0 0 0 1px var(--color-brass-hi); color: var(--color-gilt-hi); }
+.ring-btn .icon, .line-btn .icon, .index-tool .icon, .inclusions .icon, .fob-tag .icon { width: 22px; height: 22px; flex: none; }
+
+/* ---------- Fixed layers ---------- */
+
+/* Grain stays off the log column (and, on phones, off everything below the house band) */
+[data-theme="hospitality"] body::after {
+  -webkit-mask: linear-gradient(to left, transparent var(--scrim-w), currentColor var(--scrim-w));
+  mask: linear-gradient(to left, transparent var(--scrim-w), currentColor var(--scrim-w));
+}
+
+/* Lights down: the house dims (240 ms), holds, and comes back (420 ms) around a far jump */
+.lights {
+  position: fixed; inset: 0; z-index: calc(var(--z-grain) + 5); pointer-events: none;
+  background: var(--color-scrim); opacity: 0; transition: opacity 420ms var(--ease-light);
+}
+html[data-lights-down] .lights { opacity: 1; transition-duration: 240ms; }
+
+/* The annotation layer: one leader from the entry's room label to the lantern in that room */
+.annotation { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; z-index: var(--z-overlay); pointer-events: none; overflow: visible; }
+.annotation-line { fill: none; stroke: var(--color-brass); stroke-opacity: .7; stroke-width: 1; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+.annotation-ring { fill: none; stroke: var(--color-brass-hi); stroke-width: 1; opacity: 0; transition: opacity var(--dur-control) var(--ease-out); }
+.annotation-ring[data-on] { opacity: 1; }
+
+.band-hour, .room-tag { display: none; }
+
+/* ---------- The cornice ---------- */
+
+.cornice {
+  position: fixed; inset: 0 0 auto; z-index: var(--z-chrome);
+  display: flex; align-items: center; gap: 16px; height: var(--bar-h); padding: 0 var(--frame);
+  /* Opaque: the log's words and its big hour numerals scroll under it, and their ghost through a 92 % scrim read as
+     a smudge across the bar */
+  background: var(--color-scrim); box-shadow: inset 0 -1px 0 var(--color-brass);
+}
+.cornice .brand { flex: none; display: inline-flex; align-items: center; min-height: var(--target); font: 500 var(--h3-size)/1 var(--font-brand); letter-spacing: .01em; color: var(--color-text-primary); text-decoration: none; }
+.cornice-tools { flex: none; display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.cornice-switcher summary { color: var(--color-text-secondary); }
+.cornice-switcher .switcher-list { background: var(--color-bg-surface); box-shadow: inset 0 0 0 1px var(--color-brass); border-radius: 0; }
+.cornice-sound, .hanger { padding: 0 10px; }
+.cornice-sound[aria-pressed="true"] { color: var(--color-accent-text); }
+.cornice-sound .icon { width: 20px; height: 20px; }
+
+/* Pause motion is a Do Not Disturb door hanger: it flips when turned */
+.hanger-card { display: inline-grid; place-items: center; width: 26px; height: 36px; color: inherit; transform-origin: 50% 0; }
+.hanger-card .icon { width: 24px; height: 24px; }
+.hanger[aria-pressed="true"] { color: var(--color-accent-text); }
+.hanger[aria-pressed="true"] .hanger-card { background: var(--color-bg-accent-subtle); color: var(--color-accent-text-on-subtle); }
+/* It flips back as motion resumes (pressing Pause stops everything at once, the hanger included) */
+html[data-motion="on"] .hanger[data-flip="a"] .hanger-card { animation: hanger-flip-a 420ms var(--ease-mech); }
+html[data-motion="on"] .hanger[data-flip="b"] .hanger-card { animation: hanger-flip-b 420ms var(--ease-mech); }
+@keyframes hanger-flip-a { from { transform: perspective(240px) rotateY(-180deg); } to { transform: perspective(240px) rotateY(0); } }
+@keyframes hanger-flip-b { from { transform: perspective(240px) rotateY(180deg); } to { transform: perspective(240px) rotateY(0); } }
+
+/* The key-fob tag: 'Take a key · 30 open', retired while the rack is on screen */
+.fob-tag {
+  display: inline-flex; align-items: center; gap: 8px; min-height: var(--target); margin-left: 8px; padding: 0 14px 0 10px;
+  font: 500 var(--card-size)/1 var(--font-body); color: var(--color-text-primary); text-decoration: none; white-space: nowrap;
+  box-shadow: inset 0 0 0 1px var(--color-brass);
+  transition: opacity var(--dur-control) var(--ease-out), visibility 0s linear 0s, box-shadow var(--dur-micro) var(--ease-out);
+}
+.fob-tag:hover { box-shadow: inset 0 0 0 1px var(--color-brass-hi); color: var(--color-gilt-hi); }
+.fob-tag .icon { color: var(--color-brass-hi); }
+html[data-keys-in] .fob-tag { opacity: 0; visibility: hidden; transition: opacity var(--dur-control) var(--ease-out), visibility 0s linear var(--dur-control); }
+.fob-apply { display: none; }
+
+/* The Night Dial: the top arc of the hour ring through a brass window, under a fixed index */
+.dial { position: relative; flex: none; margin-inline: auto; }
+.dial-window {
+  position: relative; width: 240px; height: 64px; cursor: ew-resize; touch-action: pan-y;
+  transition: opacity 600ms var(--ease-light);
+}
+.dial-window svg { position: absolute; inset: 0 0 auto; width: 100%; height: 64px; max-width: none; clip-path: inset(0 0 22px 0); -webkit-mask: linear-gradient(to right, transparent, currentColor 20%, currentColor 80%, transparent); mask: linear-gradient(to right, transparent, currentColor 20%, currentColor 80%, transparent); }
+.dial-window:focus-visible { outline-offset: 2px; }
+.dial-readout { position: absolute; inset: auto 0 2px; display: flex; justify-content: center; font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; }
+.dial-readout .dial-time { font: 400 var(--body-size)/1 var(--font-display); letter-spacing: 0; text-transform: none; font-variant-numeric: lining-nums tabular-nums; color: var(--color-text-primary); }
+.dial-index { fill: var(--color-brass-hi); }
+.dial-chevron { fill: none; stroke: var(--color-needle); stroke-width: 1.5; }
+.dial-chip { display: none; }
+html:not([data-docked]) .dial:not(:focus-within) .dial-window { opacity: 0; pointer-events: none; }
+/* The hour links: always in the page, shown as a list when a keyboard reaches them */
+.dial-hours:not(:focus-within) { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.dial-hours:focus-within {
+  position: absolute; top: calc(100% + 4px); left: 50%; translate: -50% 0; z-index: 1; width: 300px; margin: 0; padding: 8px; list-style: none;
+  background: var(--color-bg-surface); box-shadow: inset 0 0 0 1px var(--color-brass);
+}
+.dial-hours a { display: flex; align-items: center; min-height: var(--target); padding: 0 10px; color: var(--color-text-primary); text-decoration: none; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); }
+.dial-hours-time { font: 400 var(--body-size)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; margin-right: 4px; }
+
+/* ---------- The hour ring (both instances) ---------- */
+
+.ring-glass {
+  position: fixed; left: 0; top: 0; z-index: 1; width: calc(var(--or, 0px) * 2.7); aspect-ratio: 1; pointer-events: none;
+  transform: translate(calc(var(--ox, -9999px) - var(--or, 0px) * 1.35), calc(var(--oy, -9999px) - var(--or, 0px) * 1.35));
+  transition: opacity 600ms var(--ease-light), visibility 0s linear 0s;
+}
+.ring-glass svg { width: 100%; height: 100%; overflow: visible; }
+html[data-docked]:not([data-director][data-in="lobby"]) .ring-glass { opacity: 0; visibility: hidden; transition: opacity 600ms var(--ease-light), visibility 0s linear 600ms; }
+.ring-band { fill: none; stroke: var(--color-brass); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ring-clasp { fill: none; stroke: var(--color-brass); stroke-width: 4; stroke-linecap: butt; }
+.ring-pin { fill: var(--color-brass-hi); }
+.ring-tick { stroke: var(--color-brass); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke 500ms var(--ease-out); }
+.ring-tick--h { stroke: var(--color-brass-hi); stroke-width: 1.25; }
+.ring-tick.lit { stroke: var(--color-gilt-hi); transition-duration: 0s; }
+/* The engraved hour numerals: SVG text in the cornice dial (drawn at 1:1), HTML on the glass, so they stay at the label
+   size however large the lantern is drawn */
+.ring-num { fill: var(--color-brass-hi); color: var(--color-brass-hi); font: 400 var(--label-size)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; letter-spacing: .02em; }
+.ring-glass .ring-num { position: absolute; translate: -50% -50%; white-space: nowrap; }
+.ring-hand line { stroke: var(--color-brass-hi); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.ring-hand circle, .ring-hand path { fill: var(--color-brass-hi); }
+.ring-now line { stroke: var(--color-now-pin); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ring-now circle { fill: var(--color-now-pin); }
+html[data-up-late] .ring-now circle { filter: drop-shadow(0 0 3px var(--color-now-pin)); }
+.ring-needle line { stroke: var(--color-needle); stroke-width: .75; vector-effect: non-scaling-stroke; }
+.ring-needle path { fill: var(--color-needle); }
+.ring-hit { fill: none; stroke: transparent; stroke-width: 26; pointer-events: stroke; cursor: ew-resize; }
+html[data-ring-drag], html[data-ring-drag] * { cursor: ew-resize !important; user-select: none; }
+
+/* ---------- The prologue (NOW) ---------- */
+
+.prologue {
+  /* overflow-x: clip: the porter's light (the seat's glow, 30 % past it) must not widen the page */
+  position: relative; min-height: 100svh; overflow-x: clip;
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: var(--ground) auto; column-gap: 48px;
+  padding: 0 var(--frame);
+}
+.pro-title { position: relative; z-index: 1; grid-column: 1 / 9; grid-row: 1; align-self: end; padding: 40px 0 0; }
+/* The title block sits on its own scrim, so the gilt H1 never meets a lit window */
+.pro-title::before {
+  content: ""; position: absolute; z-index: -1; inset: -48px -72px 0 calc(var(--frame) * -1);
+  background: linear-gradient(to top, var(--scrim) 0 72%, transparent);
+  -webkit-mask: linear-gradient(to left, transparent, currentColor 72px);
+  mask: linear-gradient(to left, transparent, currentColor 72px);
+}
+.welcome-back { font: 500 var(--eyebrow-size)/var(--eyebrow-lh) var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-accent-text); margin-bottom: 10px; }
+.pro-eyebrow { font: 400 var(--body-size)/var(--body-lh) var(--font-body); color: var(--color-text-secondary); margin-bottom: 10px; }
+.pro-now { font: 400 var(--body-size)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; color: var(--color-text-primary); }
+/* inline-block: a closed details still lays out its (hidden) content box as a block, which broke the line before the full stop */
+.scenario { display: inline-block; position: relative; }
+.scenario summary {
+  display: inline-flex; align-items: center; gap: 6px; min-height: var(--target); cursor: pointer; list-style: none;
+  color: var(--color-text-primary); text-decoration: underline dotted; text-decoration-color: var(--color-brass); text-underline-offset: 5px;
+}
+.scenario summary::-webkit-details-marker { display: none; }
+.scenario-caret { width: 7px; height: 7px; border: solid var(--color-brass-hi); border-width: 0 1.5px 1.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform var(--dur-micro) var(--ease-out); }
+.scenario[open] .scenario-caret { transform: translateY(1px) rotate(-135deg); }
+.chips {
+  position: absolute; left: 0; top: calc(100% + 6px); z-index: 2; display: grid; gap: 4px; min-width: 260px; margin: 0; padding: 10px;
+  border: 0; background: var(--color-bg-surface); box-shadow: inset 0 0 0 1px var(--color-brass);
+}
+.chips-legend { padding: 0 0 6px; font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+.chip { position: relative; display: flex; }
+.chip input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.chip span { display: flex; align-items: center; flex: 1; min-height: var(--target); padding: 0 12px; color: var(--color-text-primary); box-shadow: inset 0 0 0 1px var(--color-border); }
+.chip input:checked + span { box-shadow: inset 0 0 0 1px var(--color-brass-hi), inset 3px 0 0 var(--color-brass-hi); }
+.chip input:focus-visible + span { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }
+.chip:hover span { box-shadow: inset 0 0 0 1px var(--color-brass); }
+
+/* The H1 sits on the ground line: its baseline on the brass rule, the descenders through it */
+.pro-h1 { margin-bottom: -.13em; font: var(--h1-weight) var(--h1-size)/var(--h1-lh) var(--font-display); letter-spacing: var(--h1-ls); color: var(--color-gilt-lo); text-wrap: balance; }
+.gilt { color: var(--color-gilt-lo); }
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  html[data-night] .gilt {
+    --sweep-a: 110deg;
+    color: transparent;
+    background: linear-gradient(var(--sweep-a), var(--color-gilt-lo) 42%, var(--color-gilt-hi) 50%, var(--color-gilt-lo) 58%) 100% 0 / 300% 100% no-repeat;
+    -webkit-background-clip: text; background-clip: text;
+  }
+  html[data-night][data-motion="on"] .gilt { animation: gilt-sweep 1.2s var(--ease-light) .5s 1 both; }
+  html[data-night][data-intro][data-motion="on"] .gilt { animation-delay: 1.7s; }
+}
+@supports (rotate: atan2(1, 1)) {
+  html[data-night] .gilt { --sweep-a: atan2(calc(30vw - var(--gx, 70vw)), calc(var(--gy, 30vh) - 50vh)); }
+}
+@keyframes gilt-sweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+.seat { position: relative; grid-column: 9 / 13; grid-row: 1; align-self: end; justify-self: center; width: var(--seat); aspect-ratio: 1; margin-bottom: calc(var(--seat) * .18 + 46px); }
+.prologue .orb { --orb: var(--seat); }
+/* The porter's light: one warm point at the desk while the house draws itself (the 3D intro is the scene's) */
+.seat::before {
+  content: ""; position: absolute; inset: -30%; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--color-lantern) 34%, transparent), transparent);
+}
+html[data-intro][data-motion="on"] .seat::before { animation: porter 1.6s var(--ease-light) both; }
+@keyframes porter { 0% { opacity: 0; transform: scale(.2); } 35% { opacity: 1; } 100% { opacity: 0; transform: scale(1); } }
+/* The coaster sits under the glass wherever the scene sets it down */
+.coaster {
+  /* Placed on a transform from the corner: following the glass with left/top was a layout shift on every move */
+  position: fixed; z-index: 1; left: 0; top: 0; translate: calc(var(--ox, -9999px) - 50%) calc(var(--oy, -9999px) + var(--or, 0px) * 1.36 + 8px); padding: 7px 16px; border-radius: 50%; white-space: nowrap;
+  font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary);
+  background: var(--scrim); box-shadow: inset 0 0 0 1px var(--color-brass);
+  transition: opacity var(--dur-entry) var(--ease-out);
+}
+html[data-used] .coaster, html[data-docked] .coaster { opacity: 0; visibility: hidden; transition: opacity var(--dur-entry) var(--ease-out), visibility 0s linear var(--dur-entry); }
+html[data-intro][data-motion="on"] .coaster { animation: coaster-in 600ms var(--ease-out) 1.2s both; }
+@keyframes coaster-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* The basement band below the ground line: the drawing's poché, solid enough for text */
+.basement {
+  position: relative; grid-column: 1 / -1; grid-row: 2;
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-columns: subgrid; column-gap: inherit; align-items: start;
+  margin: 0 calc(var(--frame) * -1); padding: 22px var(--frame) 28px;
+  background: var(--scrim);
+}
+.basement::before { content: ""; position: absolute; inset: -1px 0 auto; height: 1px; background: var(--color-brass); transform-origin: 72% 0; }
+/* Desktops and tablets: the page scrolls over the still drawing, and the basement slides up over all of it, the hour
+   ring, the coaster and the glass's hit area as well as the glass, so a ring numeral never sits on the offer and a
+   click on the offer never rings her. The title stays on top: the H1's descenders cross the ground line. Its scrim
+   lets the pointer through to the ring beside it. */
+@media (min-width: 734px) {
+  .basement { z-index: 2; }
+  .pro-title { z-index: 3; }
+  .pro-title::before { pointer-events: none; }
+}
+html[data-intro][data-motion="on"] .basement::before { animation: ground-draw 1.2s var(--ease-draw) .15s both; }
+@keyframes ground-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.pro-actions { grid-column: 1 / 8; display: grid; gap: 16px; justify-items: start; }
+.pro-lede { max-width: 64ch; font: 400 var(--lead-size)/var(--lead-lh) var(--font-body); color: var(--color-text-secondary); }
+.pro-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.pro-links { display: flex; flex-wrap: wrap; gap: 0 24px; margin-top: -8px; }
+.pro-offer { grid-column: 9 / 13; display: grid; gap: 8px; padding-left: 20px; box-shadow: inset 1px 0 0 var(--color-house-hatch); }
+.pro-price { font: var(--stat-weight) var(--stat-size)/var(--stat-lh) var(--font-display); letter-spacing: var(--stat-ls); font-variant-numeric: lining-nums tabular-nums; color: var(--color-text-primary); }
+.pro-terms { display: grid; gap: 4px; margin: 0; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.pro-terms li:last-child { color: var(--color-accent-text); }
+
+/* ---------- Chapters: the log column over the scrim ---------- */
+
+.chapter:not(.prologue) {
+  position: relative; isolation: isolate; min-height: var(--span, auto);
+  display: flex; justify-content: flex-end; padding: calc(var(--bar-h) + 56px) var(--frame) 104px 0;
+}
+/* The scrim column runs the full height of every chapter, so the log never meets a lit window */
+.chapter:not(.prologue)::before {
+  content: ""; position: absolute; inset: 0 0 0 auto; z-index: -1; width: var(--scrim-w);
+  background: var(--scrim); box-shadow: inset 1px 0 0 var(--color-house-hatch);
+}
+.log { position: relative; width: var(--log-w); }
+.running-head { margin-bottom: 28px; color: var(--color-text-secondary); }
+.running-head .foil { color: var(--color-text-secondary); }
+[data-running-head].foil { animation: foil 900ms var(--ease-light); }
+@keyframes foil { from { color: var(--color-gilt-hi); text-shadow: 0 0 14px color-mix(in oklab, var(--color-gilt-hi) 55%, transparent); } to { color: var(--color-text-secondary); text-shadow: none; } }
+.hour {
+  display: flex; align-items: baseline; gap: 10px; margin: 0 0 14px calc(var(--hang) * -1);
+  font: 400 var(--hour-size)/.85 var(--font-display); letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; color: var(--color-text-primary);
+}
+.hour-ap { font: 500 var(--eyebrow-size)/1 var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+.hour[data-own] .hour-num { color: var(--color-gilt-hi); }
+.annotation-label { margin-bottom: 8px; color: var(--color-accent-text); }
+.entry-title { font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); color: var(--color-text-primary); text-wrap: balance; }
+.entry-title:focus { outline: none; }
+.entry-title:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 6px; }
+.entry-lede { margin-top: 12px; font: 400 var(--lead-size)/var(--lead-lh) var(--font-display); color: var(--color-accent-text); }
+
+/* Log entries settle 8 px from 75 % as they arrive (every frame stays AA: only primary, secondary and accent text here) */
+.chapter--entry .log { transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out); }
+html[data-night][data-motion="on"] .chapter--entry .log:not([data-settled]) { opacity: .75; transform: translateY(8px); }
+
+/* The night log's own lines; their brass ticks light as the chapter is read */
+.log-lines { display: grid; gap: 6px; margin: 24px 0 0; padding: 0; list-style: none; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.log-lines li { display: grid; grid-template-columns: 14px 1fr; align-items: baseline; }
+.log-lines li::before { content: ""; width: 7px; height: 7px; translate: 0 -1px; box-shadow: inset 0 0 0 1px var(--color-brass); transition: background-color 400ms var(--ease-out); }
+.chapter[data-lit] .log-lines li::before, html:not([data-motion="on"]) .log-lines li::before { background: var(--color-brass-hi); }
+.chapter[data-lit] .log-lines li:nth-child(2)::before { transition-delay: 160ms; }
+.chapter[data-lit] .log-lines li:nth-child(3)::before { transition-delay: 320ms; }
+.chapter[data-lit] .log-lines li:nth-child(n + 4)::before { transition-delay: 480ms; }
+
+/* What she does here */
+.does { margin-top: 20px; box-shadow: inset 0 1px 0 var(--color-house-hatch), inset 0 -1px 0 var(--color-house-hatch); }
+.does summary {
+  display: flex; align-items: center; gap: 8px; min-height: var(--target); cursor: pointer; list-style: none;
+  color: var(--color-text-primary);
+}
+.does summary::-webkit-details-marker { display: none; }
+.does summary::after { content: ""; width: 9px; height: 9px; margin-left: auto; background: linear-gradient(currentColor 0 0) center / 9px 1px no-repeat, linear-gradient(currentColor 0 0) center / 1px 9px no-repeat; transition: transform var(--dur-micro) var(--ease-out); }
+.does[open] summary::after { transform: rotate(45deg); }
+.does-feature { color: var(--color-accent-text); }
+.does p { padding: 0 0 14px; color: var(--color-text-secondary); }
+.chapter.spotlight .log::before { content: ""; position: absolute; top: 0; bottom: 0; left: -22px; width: 2px; background: var(--color-brass-hi); }
+.chapter.spotlight .does { box-shadow: inset 0 1px 0 var(--color-brass-hi), inset 0 -1px 0 var(--color-brass-hi); }
+
+.greetings { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 22px 0 0; padding: 0; list-style: none; font: 400 var(--lead-size)/var(--lead-lh) var(--font-display); color: var(--color-accent-text); }
+.greetings li:first-child { color: var(--color-text-primary); }
+
+/* ---------- The scripted calls ---------- */
+
+.calls { margin-top: 28px; display: grid; gap: 24px; }
+.call { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding-top: 16px; box-shadow: inset 0 1px 0 var(--color-house-hatch); }
+/* Next line sits at the foot of the transcript's reserved room while the call plays and hides as its last line begins
+   (ui.ts), so showing and hiding it never moves the chapters below */
+.call > .call-lines, .call > .next-line { grid-row: 2; grid-column: 1; }
+.call > .next-line { align-self: end; justify-self: start; }
+.call > .slips { grid-row: 3; }
+.call-cap { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; row-gap: 2px; margin-bottom: 12px; }
+.call-title { grid-column: 2; font: 500 var(--h3-size)/var(--h3-lh) var(--font-body); color: var(--color-text-primary); }
+.call-meta { grid-column: 2; color: var(--color-text-secondary); }
+/* The room phone's LED: the UK double ring (0.4 on, 0.2 off, 0.4 on, 2.0 off) until she answers */
+.led { grid-row: 1 / span 2; width: 8px; height: 8px; border-radius: 50%; background: var(--color-window-lit); box-shadow: 0 0 8px color-mix(in oklab, var(--color-window-lit) 55%, transparent); }
+html[data-night][data-motion="on"] .call:not([data-answered]) .led { animation: uk-ring 3s step-end infinite; }
+@keyframes uk-ring { 0% { opacity: 1; } 13.33% { opacity: .3; } 20% { opacity: 1; } 33.33% { opacity: .3; } }
+
+/* align-content: start: while a call plays the list holds its final height, and stretched rows drew the last line's
+   brass rule down to the foot of that room */
+.call-lines { display: grid; align-content: start; gap: 12px; margin: 0; padding: 0; list-style: none; font-size: var(--body-size); line-height: var(--body-lh); color: var(--color-text-primary); }
+.call-lines li { position: relative; padding-left: 16px; }
+.call-lines li[data-who="a"] { box-shadow: inset 1px 0 0 var(--color-brass); }
+.call-lines .who,
+.call-lines li[data-who]:not([data-static]):not([data-reserve])::before {
+  display: block; margin-bottom: 2px; font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary);
+}
+.call-lines li[data-who]:not([data-static]):not([data-reserve])::before { content: var(--who-g); }
+.call-lines li[data-who="a"]:not([data-static]):not([data-reserve])::before { content: var(--who-a); color: var(--color-accent-text); }
+.call-lines li[data-who="a"] .who { color: var(--color-accent-text); }
+.call-lines .gloss { display: block; margin-top: 2px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.call-lines .w { transition: opacity 160ms var(--ease-out); }
+.call-lines .w:not(.on) { opacity: 0; }
+.call-lines li[data-state="typing"] i { display: inline-block; width: 5px; height: 5px; margin: 6px 4px 0 0; border-radius: 50%; background: var(--color-text-secondary); animation: pen-dot 1s var(--ease-light) infinite; }
+.call-lines li[data-state="typing"] i:nth-child(2) { animation-delay: .15s; }
+.call-lines li[data-state="typing"] i:nth-child(3) { animation-delay: .3s; }
+@keyframes pen-dot { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+.call-lines li[data-done] { padding: 10px 0 0; font: 500 var(--eyebrow-size)/var(--eyebrow-lh) var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-stamp-ink); box-shadow: inset 0 1px 0 var(--color-house-hatch); }
+html[data-night][data-motion="on"] .call-lines li[data-reserve] { visibility: hidden; }
+.next-line { display: inline-flex; align-items: center; min-height: var(--target); font: 500 var(--eyebrow-size)/1 var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-accent-text); }
+.next-line:hover { color: var(--color-gilt-hi); }
+.calls-note { font-size: var(--small-size); line-height: var(--small-lh); letter-spacing: var(--small-ls); color: var(--color-text-secondary); }
+
+/* Routed requests drop as slips, stamped with the team they went to */
+.slips { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+.slip { position: relative; display: grid; gap: 4px; padding: 12px 14px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); background: var(--color-bg-surface); box-shadow: inset 0 0 0 1px var(--color-house-hatch); }
+.slip-stamp { justify-self: start; padding: 3px 8px; font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-stamp-ink); box-shadow: inset 0 0 0 1px var(--color-stamp-ink); }
+html[data-night][data-motion="on"] .call:not([data-done]) [data-slips] { visibility: hidden; }
+html[data-night][data-motion="on"] .call[data-done] .slip { animation: slip-drop 520ms var(--ease-mech) both; }
+html[data-night][data-motion="on"] .call[data-done] .slip:nth-child(2) { animation-delay: 140ms; }
+@keyframes slip-drop { from { opacity: 0; transform: translateY(-14px) rotate(-1.5deg); } to { opacity: 1; transform: none; } }
+
+/* The outcome stamp: letterpress ink, pressed in at 70 % of the chapter */
+.stamp {
+  display: inline-block; margin-top: 24px; padding: 9px 14px;
+  font: 500 var(--eyebrow-size)/var(--eyebrow-lh) var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-stamp-ink);
+  box-shadow: inset 0 0 0 2px var(--color-stamp-ink); transform: rotate(var(--rot, -1deg));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='i'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.6 1.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23i)'/%3E%3C/svg%3E");
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='i'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.6 1.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23i)'/%3E%3C/svg%3E");
+}
+html[data-night][data-motion="on"] .chapter:not([data-stamped]) .stamp { opacity: 0; }
+html[data-night][data-motion="on"] .chapter[data-stamped] .stamp { animation: stamp-press 260ms var(--ease-mech) both; }
+@keyframes stamp-press {
+  from { opacity: 0; transform: rotate(var(--rot, -1deg)) scale(1.18); }
+  55% { opacity: 1; }
+  to { opacity: 1; transform: rotate(var(--rot, -1deg)) scale(1); text-shadow: 0 0 .6px currentColor; }
+}
+.closing { margin-top: 24px; font: 400 var(--lead-size)/var(--lead-lh) var(--font-display); color: var(--color-accent-text); }
+
+/* ---------- Panels: paper planes with a 1 px rule and a brass corner tick ---------- */
+
+.panel { position: relative; margin-top: 32px; padding: 28px 26px 26px; background: var(--color-bg-surface); box-shadow: inset 0 0 0 1px var(--color-house-hatch); }
+.panel::before { content: ""; position: absolute; top: 0; left: 0; width: 16px; height: 16px; box-shadow: inset 2px 2px 0 var(--color-brass); pointer-events: none; }
+.panel-hint { margin-top: 10px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+
+.field { display: grid; gap: 6px; margin: 18px 0 0; padding: 0; border: 0; min-width: 0; }
+.field > label, .field > legend, .field--inline label {
+  padding: 0; font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary);
+}
+.field input:not([type="checkbox"]):not([type="radio"]), .field textarea, .field select {
+  width: 100%; min-height: 48px; padding: 11px 14px; border-radius: 0;
+  font: 400 var(--body-size)/1.4 var(--font-body); color: var(--color-text-primary);
+  background: var(--color-bg-page); border: 1px solid var(--color-border-strong);
+  transition: border-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+}
+.field textarea { resize: vertical; }
+.field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--color-brass-hi) 50%), linear-gradient(135deg, var(--color-brass-hi) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 40px; }
+.field ::placeholder { color: var(--color-text-tertiary); opacity: 1; }
+.field input:hover, .field textarea:hover, .field select:hover { border-color: var(--color-brass); }
+.field [aria-invalid="true"] { border-color: var(--color-error-border); }
+.field .filling { caret-color: var(--color-gilt-hi); box-shadow: 0 0 0 1px var(--color-gilt-lo); }
+.field-error { font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-error-text); }
+.field-hint { font-size: var(--small-size); line-height: var(--small-lh); letter-spacing: var(--small-ls); color: var(--color-text-secondary); }
+.field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.field--check { grid-template-columns: 24px 1fr; align-items: start; column-gap: 12px; min-height: var(--target); }
+.field--check input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--color-accent-solid); }
+.field--check label { font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); padding-top: 1px; }
+.field--check .field-error { grid-column: 2; }
+
+/* ---------- I · Your house: the property card ---------- */
+
+.canopy { padding-bottom: 14px; box-shadow: inset 0 -1px 0 var(--color-house-hatch); }
+.canopy-name { margin-top: 6px; font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); color: var(--color-gilt-lo); overflow-wrap: anywhere; }
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .canopy-name[data-named] { color: transparent; background: linear-gradient(100deg, var(--color-gilt-lo) 30%, var(--color-gilt-hi) 50%, var(--color-gilt-lo) 70%) 0 0 / 220% 100%; -webkit-background-clip: text; background-clip: text; }
+  html[data-motion="on"] .canopy-name[data-named] { animation: gild 1.4s var(--ease-light) both; }
+}
+@keyframes gild { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.canopy .welcome-back { margin: 8px 0 0; }
+.forget { font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.type-tabs .tabs-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.type-tab { position: relative; display: flex; }
+.type-tab input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.type-tab span {
+  display: flex; align-items: center; min-height: var(--target); padding: 0 12px;
+  font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); text-shadow: 0 1px 0 var(--color-bg-page);
+  box-shadow: inset 0 0 0 1px var(--color-house-hatch); transition: box-shadow var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+}
+.type-tab:hover span { color: var(--color-text-primary); box-shadow: inset 0 0 0 1px var(--color-brass); }
+.type-tab input:checked + span { color: var(--color-text-primary); box-shadow: inset 0 0 0 1px var(--color-brass), inset 0 -3px 0 var(--color-brass-hi); }
+.type-tab input:focus-visible + span { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }
+.type-tab input.flash + span, .type-tab.flash span { box-shadow: inset 0 0 0 1px var(--color-gilt-hi), inset 0 -3px 0 var(--color-gilt-hi); }
+.teaser { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 12px; margin-top: 20px; padding-top: 14px; box-shadow: inset 0 1px 0 var(--color-house-hatch); }
+.teaser [data-teaser-text] { font: 400 var(--lead-size)/var(--lead-lh) var(--font-display); color: var(--color-text-primary); }
+
+/* ---------- VIII · The morning handover ---------- */
+
+.note { padding-top: 34px; }
+/* A perforated top edge, torn from the pad */
+.note::after {
+  content: ""; position: absolute; inset: -5px 0 auto; height: 10px; pointer-events: none;
+  background: radial-gradient(circle 3px, var(--color-scrim) 96%, transparent) 0 0 / 14px 10px repeat-x;
+}
+.note-head { margin-top: 6px; font: 500 var(--h3-size)/var(--h3-lh) var(--font-body); color: var(--color-text-primary); }
+.note-empty { margin-top: 10px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.note:not([data-empty]) .note-empty { display: none; }
+.note-lines { margin: 12px 0 0; padding: 0; list-style: none; }
+.note-line { min-height: 46px; padding: 10px 0 8px; font: 400 var(--body-size)/var(--body-lh) var(--font-body); color: var(--color-text-primary); box-shadow: inset 0 -1px 0 var(--color-house-hatch); }
+.note-line--small { font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+/* The figures are the note's stats; in the small lines they keep the words' size */
+.note-line .num { font: var(--stat-weight) var(--stat-size)/var(--stat-lh) var(--font-display); letter-spacing: var(--stat-ls); font-variant-numeric: lining-nums tabular-nums; color: var(--color-accent-text); }
+.note-line--small .num { font-size: inherit; letter-spacing: 0; }
+.note-basis { margin-top: 12px; font-size: var(--small-size); line-height: var(--small-lh); letter-spacing: var(--small-ls); color: var(--color-text-secondary); }
+.note-disclaimer { margin-top: 4px; font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+.note-inputs { display: grid; gap: 4px; margin-top: 18px; }
+.field--inline { display: grid; grid-template-columns: 1fr 112px; align-items: center; gap: 12px; margin: 0; }
+.note-needs { font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.note-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.line-btn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: var(--target); padding: 0 14px;
+  font: 500 var(--card-size)/1 var(--font-body); color: var(--color-text-primary); text-decoration: none; box-shadow: inset 0 0 0 1px var(--color-brass);
+}
+.line-btn:hover { box-shadow: inset 0 0 0 1px var(--color-brass-hi); color: var(--color-gilt-hi); }
+.note.flash { animation: note-flash 1.4s var(--ease-out); }
+@keyframes note-flash { from { box-shadow: inset 0 0 0 1px var(--color-house-hatch), 0 0 0 3px var(--color-gilt-lo); } to { box-shadow: inset 0 0 0 1px var(--color-house-hatch), 0 0 0 3px transparent; } }
+
+/* ---------- IX · The key rack ---------- */
+
+.rack { display: grid; gap: 0; }
+.rack-price { margin-top: 8px; font: var(--stat-weight) var(--stat-size)/var(--stat-lh) var(--font-display); letter-spacing: var(--stat-ls); color: var(--color-text-primary); }
+.inclusions { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.inclusions li { display: flex; align-items: center; gap: 10px; }
+.inclusions .icon { color: var(--color-brass-hi); width: 18px; height: 18px; }
+/* The brass guarantee plate under the rack, engraved */
+.plate {
+  position: relative; margin-top: 20px; padding: 12px 18px; text-align: center;
+  font: 500 var(--body-size)/1.35 var(--font-body); letter-spacing: .02em; color: var(--color-accent-ink);
+  background: linear-gradient(160deg, var(--color-brass) 0%, var(--color-brass-hi) 46%, var(--color-brass) 60%, var(--color-brass-hi) 100%);
+  box-shadow: inset 0 1px 0 var(--color-gilt-hi), inset 0 -1px 0 var(--color-orb-core-deep);
+  text-shadow: 0 1px 0 color-mix(in oklab, var(--color-gilt-hi) 60%, transparent);
+}
+.plate::before, .plate::after { content: ""; position: absolute; top: 50%; width: 5px; height: 5px; translate: 0 -50%; border-radius: 50%; background: var(--color-orb-core-deep); }
+.plate::before { left: 8px; } .plate::after { right: 8px; }
+.plan-reason { margin-top: 14px; padding: 10px 12px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-accent-text-on-subtle); background: var(--color-bg-accent-subtle); }
+.plan.recommended { box-shadow: inset 0 0 0 1px var(--color-brass-hi); }
+.ledger { margin-top: 28px; }
+.ledger-text { font: 500 var(--eyebrow-size)/var(--eyebrow-lh) var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-text-primary); }
+.keys { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+.key {
+  position: relative; isolation: isolate; display: grid; justify-items: center; align-content: end; gap: 1px; min-height: 64px; padding: 0 0 8px;
+  font: 500 var(--label-size)/1.2 var(--font-body); letter-spacing: var(--label-ls); color: var(--color-text-secondary);
+  transform-origin: 50% 0; cursor: default;
+}
+/* The hook, and a fob hanging from it */
+.key::before { content: ""; position: absolute; top: 0; left: 50%; width: 1px; height: 12px; background: var(--color-brass); }
+.key::after {
+  content: ""; position: absolute; inset: 12px 4px 0; z-index: -1;
+  border: 1px solid var(--color-brass); border-radius: 12px 12px 3px 3px; background: var(--color-bg-surface);
+}
+.key-num { font: 400 var(--lead-size)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; color: var(--color-text-primary); }
+.key[data-state="held"]::after { background: var(--color-bg-accent-subtle); border-color: var(--color-brass-hi); }
+.key[data-state="held"], .key[data-state="held"] .key-num { color: var(--color-accent-text-on-subtle); }
+.key[data-state="issued"]::after { background: none; border-style: dashed; border-color: var(--color-border-strong); }
+.key:focus-visible { outline-offset: 2px; }
+.key[data-lifted] { translate: 0 -6px; }
+.key[data-lifted]::after { border-color: var(--color-gilt-hi); box-shadow: inset 0 0 0 1px var(--color-gilt-hi); }
+.key.swing { animation: key-swing 900ms var(--ease-light); }
+@keyframes key-swing { 0% { rotate: 0deg; } 20% { rotate: 7deg; } 45% { rotate: -4deg; } 70% { rotate: 2deg; } 100% { rotate: 0deg; } }
+.ledger-note, .ledger-holds { margin-top: 12px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.why { margin-top: 12px; }
+.why summary { display: flex; align-items: center; min-height: var(--target); cursor: pointer; color: var(--color-text-primary); }
+.why p { color: var(--color-text-secondary); }
+.after { margin-top: 24px; font: 400 var(--lead-size)/var(--lead-lh) var(--font-display); color: var(--color-accent-text); }
+.plan--groups { margin-top: 20px; padding: 18px 22px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+
+/* ---------- X · Registration ---------- */
+
+.reg-title { margin-top: 6px; font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); color: var(--color-gilt-lo); }
+.reg-lede { margin-top: 10px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.next-steps { display: grid; gap: 6px; margin: 16px 0 0; padding: 0; list-style: none; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.next-steps li { display: grid; grid-template-columns: 22px 1fr; }
+.next-steps b { font-weight: 500; color: var(--color-text-primary); }
+.next-steps .n { color: var(--color-brass-hi); }
+.reg-noscript { margin-top: 18px; font-size: var(--body-size); color: var(--color-text-primary); }
+.reg-form { margin-top: 22px; padding-top: 16px; box-shadow: inset 0 1px 0 var(--color-house-hatch); }
+.reg-progress { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; }
+.reg-stepof { font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-accent-text); }
+.reg-marks { display: flex; gap: 14px; margin: 0; padding: 0; list-style: none; font-size: var(--small-size); line-height: var(--small-lh); letter-spacing: var(--small-ls); color: var(--color-text-secondary); }
+.reg-mark { display: inline-flex; align-items: center; gap: 6px; }
+.reg-mark[aria-current="step"] { color: var(--color-text-primary); }
+/* Step 1 keeps a pencil tick once it is done */
+.reg-mark[data-done] .n { color: transparent; position: relative; }
+.reg-mark[data-done] .n::after { content: ""; position: absolute; left: 1px; top: 50%; width: 10px; height: 5px; translate: 0 -70%; rotate: -45deg; box-shadow: inset 1.5px -1.5px 0 var(--color-brass-hi); }
+.reg-step { margin: 0; padding: 0; border: 0; min-width: 0; }
+.reg-step-title { margin-top: 18px; font: 500 var(--h3-size)/var(--h3-lh) var(--font-body); color: var(--color-text-primary); }
+.reg-step-title:focus { outline: none; }
+.reg-step-title:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 4px; }
+.reg-house { margin-top: 14px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.reg-house [data-reg-house-text]:empty { display: none; }
+.reg-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; }
+.reg-actions .fob:only-child { margin-left: auto; }
+.reg-actions .fob[disabled] { opacity: .8; cursor: progress; }
+.form-error { margin-top: 18px; padding: 12px 14px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-error-text); box-shadow: inset 2px 0 0 var(--color-error-border); }
+.reg-done { margin-top: 20px; }
+.pencil { color: var(--color-brass-hi); }
+.pencil .icon { width: 28px; height: 28px; }
+/* The panel's title once she has the application, in the place and style of the one it replaces */
+.reg-done-title { margin-top: 8px; font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); color: var(--color-gilt-lo); }
+.reg-done-title:focus { outline: none; }
+.reg-done-title:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 4px; }
+.reg-done p { margin-top: 10px; color: var(--color-text-secondary); }
+.meetings { margin-top: 20px; }
+.meetings-title { color: var(--color-accent-text); }
+.meetings-frame { display: block; width: 100%; min-height: 640px; margin-top: 10px; border: 0; background: var(--color-bg-page); box-shadow: inset 0 0 0 1px var(--color-house-hatch); }
+
+/* ---------- XI · Questions at the desk ---------- */
+
+.faq-title { margin-top: 18px; font: 400 var(--lead-size)/var(--lead-lh) var(--font-display); color: var(--color-accent-text); }
+.faq-tabs { display: flex; gap: 2px; margin-top: 20px; overflow-x: auto; scrollbar-width: none; box-shadow: inset 0 -1px 0 var(--color-house-hatch); }
+.faq-tabs::-webkit-scrollbar { display: none; }
+.faq-tab {
+  flex: none; min-height: var(--target); padding: 0 12px; white-space: nowrap;
+  font: 500 var(--label-size)/1 var(--font-body); letter-spacing: var(--label-ls); color: var(--color-text-secondary);
+}
+.faq-tab[aria-selected="true"] { color: var(--color-text-primary); box-shadow: inset 0 -2px 0 var(--color-brass-hi); }
+.faq-tab:hover { color: var(--color-text-primary); }
+.faq-h { margin-top: 26px; color: var(--color-accent-text); }
+.faq[data-tabs] .faq-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.faq-item { box-shadow: inset 0 -1px 0 var(--color-house-hatch); }
+.faq-item summary {
+  display: grid; grid-template-columns: 1fr 12px; align-items: center; gap: 12px; min-height: 56px; padding: 10px 0; cursor: pointer; list-style: none;
+  font: 500 var(--h3-size)/var(--h3-lh) var(--font-body); color: var(--color-text-primary);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: ""; width: 8px; height: 8px; border: solid var(--color-brass-hi); border-width: 0 1.5px 1.5px 0; rotate: 45deg; translate: 0 -2px; transition: rotate var(--dur-micro) var(--ease-out); }
+.faq-item[open] summary::after { rotate: -135deg; translate: 0 2px; }
+.faq-a { padding: 0 0 16px; color: var(--color-text-secondary); }
+.ask { margin-top: 4px; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-accent-text); }
+
+/* ---------- XII · Checkout ---------- */
+
+.checkout.chapter { flex-direction: column; justify-content: flex-end; align-items: flex-end; padding-bottom: 0; }
+.checkout::after {
+  content: ""; position: absolute; inset: auto 0 0 0; height: 60%; z-index: -2; pointer-events: none;
+  background: linear-gradient(to top, color-mix(in oklab, var(--color-dawn) 16%, transparent), transparent);
+}
+.checkout-log { padding-bottom: 56px; }
+.checkout-title { font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); color: var(--color-text-primary); }
+/* Emphasis by placement, never an accent-coloured word (the concept retired that formula; Bona Nova has one weight) */
+.checkout-title b { display: block; font-weight: inherit; }
+.checkout-title:focus { outline: none; }
+.brass-plate {
+  position: relative; display: grid; place-items: center; width: min(100%, 320px); aspect-ratio: 2.6; margin-top: 28px;
+  background: linear-gradient(155deg, var(--color-brass) 0%, var(--color-brass-hi) 42%, var(--color-brass) 58%, var(--color-orb-core-deep) 100%);
+  box-shadow: inset 0 1px 0 var(--color-gilt-hi), inset 0 -2px 0 var(--color-orb-core-deep), inset 0 0 0 6px color-mix(in oklab, var(--color-brass) 70%, transparent);
+}
+.brass-plate span { font: 500 var(--plate-size)/1 var(--font-brand); letter-spacing: .03em; color: var(--color-orb-core-deep); text-shadow: 0 1px 0 var(--color-gilt-hi), 0 -1px 0 color-mix(in oklab, var(--color-accent-ink) 50%, transparent); }
+.brass-plate::before, .brass-plate::after { content: ""; position: absolute; top: 12px; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--color-gilt-hi), var(--color-orb-core-deep)); }
+.brass-plate::before { left: 12px; } .brass-plate::after { right: 12px; }
+.checkout-line { margin-top: 24px; font: 400 var(--lead-size)/var(--lead-lh) var(--font-display); color: var(--color-accent-text); }
+.checkout-log .ring-btn { margin-top: 20px; }
+.checkout-meta {
+  position: relative; align-self: stretch; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 24px;
+  margin-right: calc(var(--frame) * -1); padding: 18px var(--frame) 18px var(--frame);
+  font-size: var(--small-size); line-height: var(--small-lh); letter-spacing: var(--small-ls); color: var(--color-text-secondary); background: var(--color-bg-surface); box-shadow: inset 0 1px 0 var(--color-brass);
+}
+.checkout-meta a { display: inline-flex; align-items: center; min-height: var(--target); color: var(--color-text-primary); text-underline-offset: 4px; }
+.checkout-legal { display: flex; gap: 16px; margin: 0; padding: 0; list-style: none; }
+
+/* ---------- The Night index: an in-room directory card ---------- */
+
+.index {
+  width: min(560px, calc(100vw - 32px)); max-height: min(86svh, 820px); margin: auto; padding: 0; border: 0; overflow: auto;
+  color: var(--color-text-primary); background: var(--color-bg-surface); box-shadow: inset 0 0 0 1px var(--color-brass);
+  overscroll-behavior: contain;
+}
+.index::backdrop { background: color-mix(in oklab, var(--color-scrim) 60%, transparent); backdrop-filter: blur(4px); }
+html[data-motion="on"] .index[open] { animation: card-rise 450ms var(--ease-out); }
+@keyframes card-rise { from { opacity: 0; translate: 0 16px; } to { opacity: 1; translate: 0 0; } }
+.index-card { position: relative; padding: 28px 28px 24px; }
+.index-card::before { content: ""; position: absolute; inset: 10px; pointer-events: none; box-shadow: inset 0 0 0 1px var(--color-house-hatch); }
+.index-head { position: relative; text-align: center; padding: 6px 48px 16px; }
+.index-brand { font: 500 var(--card-size)/1 var(--font-brand); letter-spacing: .08em; color: var(--color-brass-hi); }
+.index-title { margin-top: 10px; font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); color: var(--color-text-primary); }
+.index-lede { margin-top: 6px; font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+.index-close { position: absolute; top: -6px; right: -6px; display: grid; place-items: center; width: var(--target); height: var(--target); font-size: var(--h2-size); line-height: 1; color: var(--color-text-secondary); }
+.index-close:hover { color: var(--color-text-primary); }
+.index-rows { margin: 0; padding: 0; list-style: none; }
+.index-row {
+  position: relative; display: grid; grid-template-columns: 64px 1fr; column-gap: 14px; align-items: baseline; padding: 12px 10px; min-height: 56px;
+  color: var(--color-text-primary); text-decoration: none; box-shadow: inset 0 -1px 0 var(--color-house-hatch);
+}
+.index-row:hover { background: var(--color-bg-raised); }
+.index-row[aria-current] { box-shadow: inset 0 -1px 0 var(--color-house-hatch), inset 3px 0 0 var(--color-brass-hi); }
+.index-hour { grid-row: 1 / span 2; font: 400 var(--lead-size)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; color: var(--color-brass-hi); }
+.index-room { font-weight: 500; }
+.index-sum { grid-column: 2; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); }
+.index-tools { display: grid; gap: 12px; margin-top: 18px; }
+.index-switcher .switcher-list { justify-content: center; }
+.index-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.index-tool { display: inline-flex; align-items: center; gap: 8px; min-height: var(--target); padding: 0 14px; font-size: var(--card-size); font-weight: 500; color: var(--color-text-primary); box-shadow: inset 0 0 0 1px var(--color-brass); }
+.index-tool[aria-pressed="true"] { color: var(--color-accent-text-on-subtle); background: var(--color-bg-accent-subtle); }
+
+/* ---------- The desk slip (the dock as a telephone message pad) ---------- */
+
+[data-theme="hospitality"] .dock[data-variant="bottom"] {
+  gap: 16px; border-top: 0; background: var(--color-bg-surface); box-shadow: inset 0 1px 0 var(--color-brass);
+}
+/* The pad's perforated top edge */
+[data-theme="hospitality"] .dock[data-variant="bottom"]::before {
+  content: ""; position: absolute; inset: -5px 0 auto; height: 6px; pointer-events: none;
+  background: radial-gradient(circle 2.5px at 50% 0, transparent 96%, var(--color-bg-surface)) 0 0 / 12px 6px repeat-x;
+}
+[data-theme="hospitality"] .dock .dock-mini { width: 40px; height: 40px; transform: scale(calc(1 + var(--amp, 0) * .08)); box-shadow: 0 0 0 1px var(--color-brass); }
+[data-theme="hospitality"] .dock .dock-header { font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); color: var(--color-text-secondary); }
+[data-theme="hospitality"] .dock .dock-status { font: 500 var(--card-size)/var(--card-lh) var(--font-body); }
+[data-theme="hospitality"] .dock .dock-states { gap: 14px; }
+[data-theme="hospitality"] .dock .dock-box rect { stroke: var(--color-brass); }
+[data-theme="hospitality"] .dock .dock-box path { stroke: var(--color-gilt-hi); }
+[data-theme="hospitality"] .dock .dock-caption::before { content: "Message: "; font: 500 var(--kicker-size)/1 var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+[data-theme="hospitality"] .dock .dock-caption[data-who="user"]::before { content: "Message: You: "; }
+[data-theme="hospitality"] .dock .dock-timer { font: 400 var(--lead-size)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; color: var(--color-text-primary); }
+[data-theme="hospitality"] .dock .dock-timer::before { content: "Time "; font: 500 var(--kicker-size)/1 var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+[data-theme="hospitality"] .dock .dock-btn { border-radius: 0; box-shadow: inset 0 0 0 1px var(--color-brass); }
+[data-theme="hospitality"] .dock .dock-btn:hover { box-shadow: inset 0 0 0 1px var(--color-brass-hi); color: var(--color-gilt-hi); }
+[data-theme="hospitality"] .dock .dock-talk { background: var(--color-accent-solid); color: var(--color-accent-ink); box-shadow: none; }
+[data-theme="hospitality"] .dock .dock-talk:hover { background: var(--color-accent-solid-hover); color: var(--color-accent-ink); box-shadow: none; }
+[data-theme="hospitality"] .dock .dock-btn .icon { width: 20px; height: 20px; }
+
+/* Tonight's log, the start sheet ('Before you ring'), the follow slip and the desk notes */
+[data-theme="hospitality"] [data-log] { background: var(--color-bg-surface); box-shadow: inset 1px 0 0 var(--color-brass); }
+[data-theme="hospitality"] [data-log] .log-btn { border-radius: 0; }
+[data-theme="hospitality"] [data-log] .log-thread > li[data-who="activity"] { color: var(--color-accent-text); }
+[data-theme="hospitality"] dialog[data-sheet] {
+  color: var(--color-text-primary); background: var(--color-bg-surface); border: 0; border-radius: 0;
+  box-shadow: inset 0 0 0 1px var(--color-brass), inset 0 0 0 10px var(--color-bg-surface), inset 0 0 0 11px var(--color-house-hatch);
+  /* A heavy hotel card with a punched hole in its top edge */
+  -webkit-mask: radial-gradient(circle 8px at 50% 20px, transparent 96%, currentColor);
+  mask: radial-gradient(circle 8px at 50% 20px, transparent 96%, currentColor);
+}
+[data-theme="hospitality"] dialog[data-sheet]::backdrop { background: color-mix(in oklab, var(--color-scrim) 60%, transparent); backdrop-filter: blur(4px); }
+[data-theme="hospitality"] [data-sheet] .sheet-form { padding-top: 44px; }
+[data-theme="hospitality"] [data-sheet] .sheet-btn { border-radius: 0; }
+[data-theme="hospitality"] [data-follow] {
+  position: fixed; left: 50%; bottom: calc(var(--dock-h) + 14px); translate: -50% 0; z-index: var(--z-follow);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 10px; max-width: calc(100vw - 32px); min-height: var(--target); padding: 10px 18px;
+  font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); background: var(--color-bg-surface); box-shadow: inset 0 0 0 1px var(--color-needle);
+}
+[data-theme="hospitality"] [data-follow] .follow-label { font: 400 var(--body-size)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; color: var(--color-text-primary); }
+[data-theme="hospitality"] [data-follow] .follow-action { font: 500 var(--eyebrow-size)/1 var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-accent-text); text-decoration: underline; text-underline-offset: 4px; }
+[data-theme="hospitality"] [data-toast] { border-radius: 0; background: var(--color-bg-surface); box-shadow: inset 0 0 0 1px var(--color-brass); }
+
+/* ---------- Tablet (734–1067): the house 58 %, the log 42 % ---------- */
+
+@media (max-width: 1067.98px) {
+  :root {
+    --log-w: max(320px, calc(42vw - 40px)); --frame: 24px; --hang: 40px; --hour-size: 120px;
+    /* Her ring (1.37 × the seat) stays in the seat's five columns: on a portrait tablet 38svh made it run over the
+       eyebrow and off the right edge */
+    --seat: min(38svh, 76vw, calc((var(--ground) - var(--bar-h) - 56px) / 1.37), calc((100vw - 2 * var(--frame)) * 5 / 12 / 1.37));
+  }
+  .prologue { column-gap: 24px; }
+  .pro-title { grid-column: 1 / 8; }
+  .seat { grid-column: 8 / 13; }
+  .pro-actions { grid-column: 1 / 8; }
+  .pro-offer { grid-column: 8 / 13; }
+  .dial-window { width: 180px; }
+  .cornice { gap: 10px; }
+  .cornice-sound [data-motion-label], .cornice-sound > span:not(.icon), .hanger [data-motion-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fob-take { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .field-pair { grid-template-columns: 1fr; }
+}
+@media (min-width: 1068px) and (max-width: 1279.98px) {
+  .cornice-sound > span:not(.icon), .hanger [data-motion-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fob-take { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+
+/* ---------- Phones (< 734): the house band on top, one column below ---------- */
+
+@media (max-width: 733.98px) {
+  :root { --dock-h: calc(64px + env(safe-area-inset-bottom, 0px)); --bar-h: 56px; --frame: 16px; --hang: 0px; --scrim-w: 0px; --seat: min(38vw, calc((56svh - 260px) / 1.35)); --hour-size: 88px; }
+
+  /* The band covers the top of the screen: an anchor, a focused field or a move to a chapter stops at the reading line
+     under it (45 %, less 8 px: ring.ts's lead), where a chapter opens */
+  html { scroll-padding-top: calc(45dvh - 8px); }
+  /* The band is the top of the fixed canvas, revealed by a clip; the rest of the page sits on the solid page colour */
+  .stage-canvas { z-index: var(--z-overlay); clip-path: inset(0 0 calc(100% - var(--bandf, 56) * 1svh) 0); }
+  main, footer { z-index: auto; }
+  .orb, .ring-glass { z-index: calc(var(--z-overlay) + 1); }
+  [data-theme="hospitality"] body::after {
+    -webkit-mask: linear-gradient(to bottom, currentColor 44svh, transparent 44svh);
+    mask: linear-gradient(to bottom, currentColor 44svh, transparent 44svh);
+  }
+  .annotation { display: none; }
+  /* The chapter's hour numeral on the band's bottom edge, and the room tag inside the band */
+  .band-hour {
+    /* It rides the band edge on a transform: moving top every frame was a layout shift (CLS) and a layout per frame */
+    display: block; position: fixed; left: 16px; top: 0; z-index: calc(var(--z-overlay) + 1); translate: 0 calc(var(--bandf, 44) * 1svh - 78%);
+    padding: 6px 10px 0; font: 400 var(--hour-size)/.85 var(--font-display); letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums;
+    /* Opaque: the log scrolls under it, and a ghost of the text through a 92 % scrim reads as a smudge */
+    color: var(--color-text-primary); background: var(--color-scrim); pointer-events: none;
+  }
+  .band-hour .band-ap { margin-left: 8px; font: 500 var(--eyebrow-size)/1 var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+  /* Below the band's edge the numeral's strip runs the full width, so no line of the log peeks out beside it */
+  .band-hour::after {
+    content: ""; position: absolute; z-index: -1; left: -16px; width: 100vw; top: 78%; bottom: 0;
+    background: var(--color-scrim); box-shadow: inset 0 -1px 0 var(--color-brass);
+  }
+  .room-tag {
+    display: block; position: fixed; z-index: calc(var(--z-overlay) + 1); pointer-events: none;
+    left: clamp(16px, calc(var(--ox, 50vw) - 70px), calc(100vw - 200px));
+    top: clamp(64px, calc(var(--oy, 22svh) + var(--or, 0px) + 10px), calc(var(--bandf, 44) * 1svh - 112px));
+    padding: 6px 10px; color: var(--color-text-primary);
+    background: var(--scrim); box-shadow: inset 0 0 0 1px var(--color-brass);
+  }
+  .band-hour:empty, .room-tag:empty, html[data-in="welcome"] .band-hour, html[data-in="welcome"] .room-tag, html[data-in="faq"] .band-hour, html[data-in="checkout"] .band-hour { display: none; }
+
+  .cornice { gap: 6px; padding: 0 8px 0 16px; }
+  .dial { margin-inline: auto 0; }
+  .dial-window { display: none; }
+  .dial-chip {
+    display: inline-flex; align-items: center; gap: 6px; min-height: var(--target); padding: 0 12px;
+    color: var(--color-text-primary); box-shadow: inset 0 0 0 1px var(--color-brass);
+  }
+  .dial-chip .dial-time { font: 400 var(--lead-size)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; }
+  .dial-caret { width: 6px; height: 6px; border: solid var(--color-brass-hi); border-width: 0 1.5px 1.5px 0; rotate: 45deg; translate: 0 -2px; }
+  .cornice-tools { margin-left: 0; gap: 2px; }
+  .cornice-switcher, .cornice-sound, .fob-tag { display: none; }
+  .hanger { padding: 0 6px; }
+  .hanger [data-motion-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fob-apply {
+    display: inline-flex; align-items: center; min-height: var(--target); padding: 0 16px 0 20px; margin-left: 4px;
+    font: 500 var(--card-size)/1 var(--font-body); color: var(--color-accent-ink); text-decoration: none; background: var(--color-accent-solid);
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
+  }
+
+  .prologue { grid-template-columns: minmax(0, 1fr); grid-template-rows: 56svh auto; column-gap: 0; padding: 0 16px; }
+  /* Under the band, like the rest of the page: the band ends at its top (the director), so it scrolls under the drawing */
+  .pro-title { grid-column: 1; z-index: auto; margin: 0 -16px; padding: 22px 16px 10px; background: var(--scrim); box-shadow: inset 0 -1px 0 var(--color-brass); }
+  .pro-title::before { content: none; }
+  .pro-eyebrow { margin-bottom: 6px; }
+  /* Centred between the cornice and the title block (the director measures the real one) */
+  .seat { grid-column: 1; align-self: start; justify-self: center; margin: calc(var(--bar-h) + (56svh - 182px - var(--bar-h) - var(--seat)) / 2) 0 0; }
+  .coaster { display: none; }
+  .chips { position: fixed; left: 0; right: 0; top: auto; bottom: var(--dock-h); z-index: calc(var(--z-overlay) + 2); min-width: 0; padding: 16px 16px 20px; box-shadow: inset 0 1px 0 var(--color-brass); }
+  .basement { grid-template-columns: minmax(0, 1fr); margin: 0 -16px; padding: 20px 16px 32px; background: none; }
+  .pro-actions, .pro-offer { grid-column: 1; }
+  .pro-buttons { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .pro-buttons .fob { grid-column: 1 / -1; }
+  .pro-buttons .ring-btn { grid-column: 1 / -1; justify-content: center; }
+  .pro-links { margin-top: 0; }
+  .pro-offer { margin-top: 24px; padding: 16px 0 0; box-shadow: inset 0 1px 0 var(--color-house-hatch); }
+
+  .chapter:not(.prologue) { display: block; padding: 40px 16px 64px; min-height: 0; }
+  .chapter:not(.prologue)::before { content: none; }
+  .log { width: auto; }
+  .hour { display: none; }
+  .panel { margin-left: -4px; margin-right: -4px; padding: 24px 18px 20px; }
+  .field--inline { grid-template-columns: 1fr 96px; }
+  .keys { gap: 6px; }
+  .key { min-height: 58px; }
+  .meetings-frame { min-height: 680px; }
+  .checkout.chapter { align-items: stretch; padding: 64px 16px 0; min-height: 90svh; }
+  .checkout-meta { margin: 0 -16px; padding: 16px; }
+  .dial-hours:focus-within { left: auto; right: -40px; translate: none; width: min(300px, calc(100vw - 32px)); }
+  .index { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; }
+  .index-head { padding-inline: 44px; }
+
+  [data-theme="hospitality"] .dock[data-variant="bottom"] { gap: 8px; padding-inline: 12px; }
+  [data-theme="hospitality"] .dock .dock-mini { width: 32px; height: 32px; }
+  /* The printed boxes fold to the active one, ticked, beside the mini lantern */
+  [data-theme="hospitality"] .dock .dock-states { display: flex; }
+  [data-theme="hospitality"] .dock .dock-state[data-on="false"] { display: none; }
+  [data-theme="hospitality"] .dock[data-state="idle"] .dock-states { display: none; }
+}
+
+/* ---------- Motion, contrast and colours the visitor chose ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-glass, .dial-window, .lights, .chapter--entry .log, .fob, .fob::before, .fob::after, .text-link, .ring-tick, .coaster { transition: none; }
+  .key.swing, .hanger .hanger-card, .index[open] { animation: none !important; }
+}
+@media (prefers-contrast: more) {
+  .annotation-line { stroke-opacity: 1; }
+  .chapter:not(.prologue)::before, .basement, .cornice { background: var(--color-scrim); }
+  .type-tab span, .chip span { box-shadow: inset 0 0 0 1px var(--color-border-strong); }
+}
+@media (forced-colors: active) {
+  .stage-canvas, .ring-glass, .annotation, .lights { display: none; }
+  .gilt, .canopy-name[data-named] { color: CanvasText; background: none; }
+  .fob::before { background: ButtonText; }
+  .fob { color: ButtonFace; }
+}
+
+/* ---------- Print: the handover as one A4 page; the conversation when its log is open ---------- */
+
+@media print {
+  @page { size: A4; margin: 16mm; }
+  [data-theme="hospitality"] {
+    --color-text-primary: var(--color-accent-ink); --color-text-secondary: var(--color-accent-ink); --color-text-tertiary: var(--color-accent-ink);
+    --color-accent-text: var(--color-accent-ink); --color-stamp-ink: var(--color-accent-ink); --color-gilt-lo: var(--color-accent-ink); --color-gilt-hi: var(--color-accent-ink);
+    --hour-size: 48px;
+  }
+  body { background: none; padding: 0; }
+  .cornice, .scrim, .annotation, .lights, .band-hour, .room-tag, .ring-glass, .seat, .index, .dial-hours, .next-line, .note-actions, .note-inputs { display: none !important; }
+  .chapter:not(.prologue)::before, .checkout::after { content: none; }
+  .chapter, .prologue { min-height: 0 !important; display: block; padding: 0 0 12mm; }
+  .log { width: auto; }
+  .hour { margin: 0; }
+  .panel, .slip { background: none; }
+  .gilt { color: var(--color-accent-ink); background: none; }
+  html[data-print="handover"] body > :not(main) { display: none !important; }
+  html[data-print="handover"] main > :not(#handover) { display: none !important; }
+  html[data-print="handover"] #handover .log > :not(.note) { display: none !important; }
+  html[data-print="handover"] #handover { padding: 0; }
+  html[data-print="handover"] .note { margin: 0; padding: 0; box-shadow: none; }
+  html[data-print="handover"] .note::before, html[data-print="handover"] .note::after { content: none; }
+  html:not([data-print]):has([data-log]:not([hidden])) body > :not([data-log]) { display: none !important; }
+}

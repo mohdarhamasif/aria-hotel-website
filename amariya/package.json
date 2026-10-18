@@ -1,0 +1,30 @@
+{
+  "name": "amariya",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/check-type.mjs && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "palettes": "node scripts/palettes.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check:funnel": "node --experimental-strip-types --no-warnings scripts/check-funnel.mjs",
+    "check:type": "node scripts/check-type.mjs"
+  },
+  "dependencies": {
+    "@elevenlabs/client": "1.25.0",
+    "astro": "7.3.8",
+    "gsap": "3.15.0",
+    "lenis": "1.3.27",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.186.0",
+    "culori": "4.0.2",
+    "typescript": "5.9.3"
+  }
+}

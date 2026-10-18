@@ -1,0 +1,84 @@
+---
+// 04 · The line (#line): a scripted demonstration of her routing rules. Administrative questions she answers
+// on her side; clinical ones push her into the line and a slip passes to the team's hand-off log.
+// Every owner-unconfirmed claim (emergency numbers, consent statements) is a Pending slot that renders nothing.
+import { content } from '../../../data/content/clinics';
+import { given } from '../../../data/content/types';
+
+const { line, sides, chapters } = content;
+const ch = chapters[4];
+const emergency = given(line.emergency.instruction);
+const consent = line.consent.flatMap((c) => {
+  const body = given(c.body);
+  return body ? [{ ...c, body }] : [];
+});
+---
+<section id={ch.id} class="ch ch-line" data-chapter={ch.id} data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="line-title" data-line-chapter>
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+
+  <header class="ch-head team">
+    <p class="eyebrow mono">{ch.point} · {ch.title}</p>
+    <h2 id="line-title">{line.title}</h2>
+  </header>
+
+  <div class="her side" data-side="her">
+    <h3 class="side-label">{sides.her} <span class="side-sub">{line.ask}</span></h3>
+    <ol class="margin-notes" data-margin-notes aria-label="Amariya’s notes" role="list"></ol>
+    <div class="line-anchor" data-orb-anchor></div>
+
+    <ul class="questions" role="list">
+      {line.questions.map((q, i) => (
+        <li>
+          <button type="button" class="question" data-ask-question data-kind={q.kind} data-q={i} data-ask={q.q}>{q.q}</button>
+        </li>
+      ))}
+    </ul>
+
+    <form class="ask-free" data-ask-free>
+      <label class="field-label mono" for="ask-free-input">{line.freeLabel}</label>
+      <div class="ask-free-row">
+        <input id="ask-free-input" name="question" type="text" autocomplete="off" maxlength="200" required />
+        <button type="submit" class="btn btn-ghost btn-sm">{line.freeSubmit}</button>
+      </div>
+    </form>
+
+    <ol class="answers" data-answers role="list" aria-live="polite" aria-label="Her answers"></ol>
+    <p class="honest mono">{line.honest}</p>
+  </div>
+
+  <div class="team side" data-side="team">
+    <h3 class="side-label">{sides.team}</h3>
+
+    <div class="urgent" data-urgent hidden>
+      <p class="urgent-text" role="alert">{line.emergency.urgent}</p>
+      {emergency && (
+        <dl class="urgent-table">
+          {Object.entries(emergency).map(([where, what]) => <div><dt class="mono">{where}</dt><dd>{what}</dd></div>)}
+        </dl>
+      )}
+    </div>
+
+    <section class="handoff" aria-labelledby="handoff-log-title">
+      <h4 class="mono rule-label" id="handoff-log-title">{line.logTitle}</h4>
+      <ol class="handoff-log" data-handoff-log role="list"></ol>
+      <p class="unsure mono">{line.unsure}</p>
+    </section>
+
+    <section class="stays" aria-labelledby="stays-title">
+      <h4 class="mono rule-label" id="stays-title">{line.staysTitle}</h4>
+      <ul role="list">{line.stays.map((s) => <li>{s}</li>)}</ul>
+    </section>
+
+    {consent.length > 0 && (
+      <section class="consent" aria-labelledby="consent-title">
+        <h4 class="mono rule-label" id="consent-title">{line.consentTitle}</h4>
+        <ol role="list">{consent.map((c) => <li><b class="mono">{c.id} · {c.title}</b> {c.body}</li>)}</ol>
+      </section>
+    )}
+
+    <section class="chatbot" aria-labelledby="chatbot-title" data-ask={line.chatbot.q}>
+      <h4 id="chatbot-title">{line.chatbot.q}</h4>
+      <p>{line.chatbot.a}</p>
+    </section>
+  </div>
+</section>

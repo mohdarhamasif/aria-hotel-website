@@ -1,0 +1,1850 @@
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/*FONTS*/
+/* One story, top to bottom (the previous Amariya design, after mdx.so).
+   A fixed particle field runs behind the whole page and reshapes for each
+   section; glass appears only where something floats or catches light. */
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+:root {
+  --bg: #050506;
+  --surface: rgba(12, 12, 15, .74);
+  --line: rgba(255, 255, 255, .1);
+  --line-strong: rgba(255, 255, 255, .2);
+  --text: #f3f1ec;
+  --muted: rgba(243, 241, 236, .66);
+  --faint: rgba(243, 241, 236, .54);
+  --light: #f3f1ec;
+  --ink: #0b0b0d;
+  --orb-blue: #3e7fd8;
+  --orb-mint: #86d6c4;
+  --orb-gold: #edd685;
+  --orb-orange: #e8622a;
+  --accent-text: rgba(255, 255, 255, .7);
+  --orb-ring: linear-gradient(170deg, var(--orb-blue), var(--orb-mint) 52%, var(--orb-orange));
+  --radius: 22px;
+  --serif: "Ranade", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --sans: "Supreme", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --h1-size: 72px; --h1-lh: 1.05; --h1-ls: -.012em;
+  --h2-size: 29px; --h2-lh: 1.14; --h2-ls: -.01em;
+  --h3-size: 18px; --h3-lh: 1.3;
+  --lead-size: 19px; --lead-lh: 1.5;
+  --body-size: 16px; --body-lh: 1.5;
+  --card-size: 14px;
+  --small-size: 13px; --small-lh: 1.5;
+  --eyebrow-size: 12px; --label-size: 11px;
+  --stat-size: 34px; --stat-lh: 1.1;
+  --head-gap: 64px;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: dark;
+}
+@media (max-width: 1068px) { :root { --h1-size: 56px; --h1-lh: 1.07; --h1-ls: -.006em; --h2-size: 28px; --head-gap: 48px; } }
+@media (max-width: 734px) { :root { --h1-size: 40px; --h1-lh: 1.1; --h1-ls: 0em; --h2-size: 26px; --h2-lh: 1.15; --lead-size: 17px; --stat-size: 30px; --head-gap: 40px; } }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--bg); }
+body {
+  margin: 0; font-family: var(--sans); font-size: var(--body-size); line-height: var(--body-lh); background: var(--bg); color: var(--text);
+  overflow-x: hidden; -webkit-font-smoothing: antialiased;
+}
+button, input, select { font-family: inherit; color: inherit; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.04; margin: 0 0 .5em; letter-spacing: -.03em; }
+h2 em { font-style: normal; color: var(--accent-text); }
+h2 { font-size: var(--h2-size); line-height: var(--h2-lh); letter-spacing: var(--h2-ls); }
+h3 { font-size: var(--h3-size); line-height: var(--h3-lh); letter-spacing: 0; }
+p { margin: 0 0 1em; }
+a { color: inherit; }
+.muted { color: var(--muted); }
+.eyebrow { font-size: var(--eyebrow-size); line-height: 1.33; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 500; margin: 0 0 8px; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* Buttons: a light pill for the main action, an outline for the rest */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: .9em 1.55em; border-radius: 999px; border: 1px solid transparent; font: 500 var(--body-size)/1 var(--sans); text-decoration: none; cursor: pointer; white-space: nowrap; transition: background-color .3s, border-color .3s, box-shadow .3s, transform .2s var(--ease); }
+.btn:active { transform: scale(.97); }
+.btn-dark { background: var(--light); color: var(--ink); }
+.btn-dark:hover { background: #fff; box-shadow: 0 0 0 6px rgba(255, 255, 255, .06); }
+.btn-ghost { background: rgba(5, 5, 6, .35); color: var(--text); border-color: var(--line-strong); }
+.btn-ghost:hover { border-color: var(--light); }
+.btn-sm { min-height: 38px; padding: .5em 1.05em; font-size: var(--small-size); }
+.btn-block { width: 100%; }
+.btn svg { width: 20px; height: 20px; margin: -2px 0; }
+.link { display: inline-flex; align-items: center; gap: 8px; padding: 6px 0; border: 0; border-bottom: 1px solid var(--line-strong); background: none; color: var(--text); font-size: var(--card-size); font-weight: 500; cursor: pointer; }
+.link:hover { border-color: var(--text); }
+
+/* The particle field sits behind everything */
+.fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+main, .footer { position: relative; z-index: 1; }
+/* The lights and globes reach past the column; they stop at the screen edge */
+main { overflow-x: clip; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* Brand and nav */
+.brand { position: absolute; top: 26px; left: clamp(4px, 3vw, 32px); z-index: 3; margin: 0; display: inline-flex; align-items: center; gap: 10px; font: 400 var(--h3-size) var(--serif); text-decoration: none; }
+.logo-mark { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, var(--bg) 55%, transparent 56%), var(--orb-ring); }
+.top-nav {
+  position: absolute; top: 18px; right: clamp(4px, 3vw, 32px); z-index: 3; display: flex; align-items: center; gap: 2px; padding: 4px; border-radius: 999px;
+  background: rgba(255, 255, 255, .045); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.top-nav a { padding: 7px 14px; border-radius: 999px; font-size: var(--small-size); line-height: var(--small-lh); color: var(--muted); text-decoration: none; }
+.top-nav a:hover { color: var(--text); }
+.top-nav .btn { margin-left: 4px; }
+
+/* ========== Hero: the headline sits on the orb ========== */
+.hero { --orb: min(68svh, 84vw); --orb-top: 45%; position: relative; isolation: isolate; min-height: max(100svh, 700px); }
+.hero::before { content: ""; position: absolute; z-index: -1; inset: -10% -25% 0; pointer-events: none; transform: translate3d(0, var(--gy, 0px), 0);
+  background: radial-gradient(34% 34% at 50% 36%, rgba(62, 127, 216, .16), transparent 70%), radial-gradient(30% 26% at 50% 60%, rgba(232, 98, 42, .12), transparent 70%); }
+.hero-title {
+  position: absolute; left: 50%; top: var(--orb-top); z-index: 2; transform: translate(-50%, -50%);
+  width: calc(var(--orb) * 1.05); margin: 0; pointer-events: none;
+  font-size: min(var(--h1-size), calc(var(--orb) * .108)); line-height: var(--h1-lh); letter-spacing: var(--h1-ls); text-align: center; text-wrap: balance; color: #fff;
+}
+.hero-orb {
+  position: absolute; left: 50%; top: var(--orb-top); z-index: 1; transform: translate(-50%, -50%);
+  width: var(--orb); height: var(--orb); padding: 0; border: 0; border-radius: 50%; background: none; color: var(--text); cursor: pointer;
+}
+.hero-orb:focus-visible { outline: 1px dashed rgba(255, 255, 255, .5); outline-offset: 10px; }
+.hero-orb-label {
+  position: absolute; left: 50%; top: calc(100% + 16px); transform: translateX(-50%); white-space: nowrap;
+  font: 500 var(--body-size)/1 var(--sans); padding: .75em 1.35em; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .32); background: rgba(5, 5, 6, .45); transition: border-color .3s, background-color .3s;
+}
+.hero-orb:hover .hero-orb-label { border-color: #fff; background: rgba(255, 255, 255, .08); }
+.hero-foot { position: absolute; left: 0; right: 0; bottom: 112px; z-index: 2; padding: 0 clamp(4px, 3vw, 32px); }
+.hero-intro { max-width: 400px; }
+.hero .lede { margin: 0; font-size: var(--lead-size); line-height: var(--lead-lh); color: var(--muted); }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+
+/* Paragraphs light up word by word as they scroll through */
+.js [data-scrub] .w { color: rgba(243, 241, 236, .2); transition: color .4s var(--ease); }
+.js [data-scrub] .w.on { color: rgba(243, 241, 236, .92); }
+/* Letters that resolve like a live transcript */
+.js [data-split] .ch { opacity: 0; }
+.js [data-split="in"] .ch { filter: blur(6px); transition: opacity 1s var(--ease), filter 1s var(--ease); transition-delay: calc(.15s + var(--r) * 1.2s); }
+.js [data-split="in"].is-in .ch { opacity: 1; filter: none; }
+
+/* ========== Story: three beats while the orb plays (pinned; scroll drives --bp on each beat) ========== */
+.story { position: relative; }
+.story-pin { position: relative; }
+.beat { position: relative; display: grid; place-items: center; padding: 80px 24px; }
+.beat-line { margin: 0; max-width: 28ch; text-align: center; text-wrap: balance; font-size: var(--h2-size); line-height: var(--h2-lh); color: #fff; }
+.beat-time, .greetings, .story-count { display: none; }
+.js .story { height: 420svh; }
+.js .story-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.js .beat { position: absolute; inset: 0; place-items: end center; padding: 0 24px 15svh; opacity: var(--vis, 0); }
+.js .beat-line { position: relative; z-index: 1; }
+.js .beat .ch { opacity: clamp(0, calc((var(--bp, 0) - var(--r)) * 6), 1); }
+.js .beat-time {
+  display: grid; place-items: center; position: absolute; inset: 0; margin: 0; pointer-events: none;
+  font: 400 clamp(10rem, 36vw, 32rem)/.8 var(--serif); letter-spacing: -.05em;
+  color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .15);
+  transform: translateY(-12svh) scale(var(--ts, 1.1)); opacity: calc(var(--to, 0) * .8);
+}
+.js .beat-time .tick { animation: tick 2s steps(1, end) infinite; }
+@keyframes tick { 50% { opacity: .2; } }
+.js .greetings { display: block; position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
+.js .greetings li { position: absolute; left: 50%; top: 38%; white-space: nowrap; font: 400 var(--h2-size)/1 var(--serif); color: #fff; opacity: 0; will-change: transform, opacity, filter; }
+.js .greetings li:nth-child(odd) { color: var(--accent-text); }
+.js .story-count {
+  display: flex; align-items: center; gap: 12px; position: absolute; left: clamp(4px, 3vw, 32px); bottom: 38px; margin: 0;
+  font: 500 var(--label-size)/1.33 var(--sans); letter-spacing: .12em; color: rgba(243, 241, 236, .6); font-variant-numeric: tabular-nums;
+}
+.story-count span { color: #fff; }
+.story-count i { position: relative; width: 120px; height: 1px; background: rgba(255, 255, 255, .18); }
+.story-count b { position: absolute; inset: 0; background: #fff; transform-origin: left; transform: scaleX(var(--sp, 0)); }
+
+/* ========== Sections ========== */
+.content { max-width: 1240px; margin: 0 auto; padding: 0 clamp(0px, 3vw, 32px); }
+.section { position: relative; isolation: isolate; padding: 140px 0 24px; }
+.section + .section { margin-top: 96px; }
+/* Big soft light in the orb's colours; it drifts a little with the scroll */
+.section::before, .footer::before {
+  content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: 140vw; height: 100%; pointer-events: none;
+  transform: translate3d(-50%, var(--gy, 0px), 0); background: var(--glow, none);
+}
+#call { --glow: radial-gradient(30% 24% at 30% 55%, rgba(62, 127, 216, .1), transparent 70%); }
+#pricing { --glow: radial-gradient(28% 20% at 50% 70%, rgba(232, 98, 42, .1), transparent 70%); }
+.footer { --glow: radial-gradient(22% 22% at 50% 40%, rgba(255, 150, 70, .3), transparent 70%), radial-gradient(46% 40% at 50% 46%, rgba(242, 140, 80, .12), transparent 70%); }
+.section-head { position: relative; isolation: isolate; display: grid; justify-items: center; text-align: center; gap: calc(var(--lead-size) * 1.1); max-width: 1000px; margin: 0 auto var(--head-gap); padding-top: 56px; }
+.section-head hgroup { display: grid; justify-items: center; margin: 0; }
+.section-head h2 { margin: 0; max-width: 980px; }
+.section-head > .muted { margin: 0; max-width: 60ch; font-size: var(--lead-size); line-height: var(--lead-lh); }
+
+/* The problem: a blurred warm light, and in front of it a half globe of frosted
+   glass (after mdx.so). The light spreads down the section as you scroll. */
+.warm-glow {
+  position: absolute; z-index: -2; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 120px, #000 calc(100% - 220px), transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 120px, #000 calc(100% - 220px), transparent);
+}
+.warm-glow i {
+  position: absolute; left: 50%; top: 150px; width: min(600px, 118vw); height: 440px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 160, 72, .95), rgba(255, 130, 52, .58) 40%, rgba(250, 112, 44, .18) 70%, rgba(250, 112, 44, 0));
+  filter: blur(24px); transform: translate(-50%, -50%); will-change: transform, opacity;
+}
+#problem .section-head::before {
+  content: ""; position: absolute; z-index: -1; left: 50%; top: 0; width: min(1100px, 130vw); aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; pointer-events: none;
+  background:
+    radial-gradient(62% 40% at 50% 0%, rgba(255, 196, 150, .3), rgba(255, 196, 150, .1) 45%, rgba(255, 196, 150, 0) 75%),
+    radial-gradient(90% 55% at 50% 12%, rgba(255, 232, 214, .07), rgba(255, 232, 214, 0) 70%),
+    linear-gradient(180deg, rgba(255, 244, 234, .14), rgba(255, 244, 234, .06) 22%, rgba(255, 244, 234, .02) 38%, rgba(255, 244, 234, 0) 50%);
+  border: 1px solid rgba(255, 236, 220, .22);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .6), inset 0 30px 70px -34px rgba(255, 214, 180, .5);
+  -webkit-backdrop-filter: blur(26px) saturate(1.35); backdrop-filter: blur(26px) saturate(1.35);
+  -webkit-mask-image: linear-gradient(180deg, #000, #000 16%, transparent 44%); mask-image: linear-gradient(180deg, #000, #000 16%, transparent 44%);
+}
+#problem .section-head { padding-top: 96px; }
+#problem .section-head .eyebrow { color: rgba(255, 238, 224, .82); }
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.card {
+  --mx: 50%; --my: 50%;
+  position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  transition: border-color .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease), background-color .35s var(--ease), color .35s var(--ease);
+}
+/* A soft light that follows the cursor */
+.card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; background: radial-gradient(360px circle at var(--mx) var(--my), rgba(255, 255, 255, .06), transparent 45%); transition: opacity .4s; }
+.card:hover::after { opacity: 1; }
+.fact { display: grid; gap: 10px; align-content: start; padding: 26px; }
+.fact b { font: 400 var(--stat-size)/var(--stat-lh) var(--serif); color: #fff; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.fact p { margin: 0; font-size: var(--card-size); color: var(--muted); }
+.fact cite { font-style: normal; font-size: var(--small-size); color: var(--faint); margin-top: 4px; }
+.fact cite a { color: inherit; text-underline-offset: 3px; }
+
+/* ========== The live call: bubbles and the dot field are driven by the script ========== */
+.bento { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); padding: 0; overflow: hidden; }
+.call-demo { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; gap: 18px; padding: 32px; background: #08080a; border-right: 1px solid var(--line); border-radius: var(--radius) 0 0 var(--radius); }
+.call-field { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; }
+.call-head { display: flex; align-items: center; gap: 12px; font-size: var(--label-size); line-height: 1.33; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.call-live { flex: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; border: 1px solid rgba(134, 214, 196, .35); background: rgba(5, 5, 6, .7); color: var(--orb-mint); font-weight: 500; }
+.call-live i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: blink 1.6s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.call-meta { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.call-timer { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--muted); }
+.call-thread {
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; height: 320px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 56px); mask-image: linear-gradient(180deg, transparent, #000 56px);
+}
+.call-thread.out > * { opacity: 0; transform: translateY(-10px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+.call-thread .enter { animation: bubbleIn .55s var(--ease) both; }
+@keyframes bubbleIn { from { opacity: 0; transform: translateY(12px) scale(.94); } }
+.mini-bubble { max-width: 76%; padding: 10px 14px; border-radius: 16px; font-size: var(--card-size); line-height: var(--body-lh); }
+.mini-bubble.g { align-self: flex-start; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); border-bottom-left-radius: 5px; transform-origin: bottom left; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.mini-bubble.a { align-self: flex-end; background: var(--light); color: var(--ink); border-bottom-right-radius: 5px; transform-origin: bottom right; }
+.mini-bubble.typing { display: inline-flex; gap: 4px; padding: 14px 15px; }
+.mini-bubble.typing i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .45; animation: bounce 1.2s infinite; }
+.mini-bubble.typing i:nth-child(2) { animation-delay: .15s; }
+.mini-bubble.typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+.mini-bubble .w { opacity: 0; transition: opacity .25s; }
+.mini-bubble .w.on { opacity: 1; }
+.call-done { align-self: center; display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; padding: 7px 14px; border-radius: 999px; font-size: var(--small-size); color: var(--orb-mint); background: rgba(134, 214, 196, .08); border: 1px solid rgba(134, 214, 196, .3); }
+.call-done svg { width: 16px; height: 16px; }
+.call-copy { align-self: center; padding: 40px; display: grid; gap: 14px; justify-items: start; }
+.call-copy h3 { margin: 0; }
+.call-copy p { margin: 0 0 8px; color: var(--muted); font-size: var(--card-size); }
+
+/* ========== What she handles: the sphere with pills (pinned, after mdx.so) ========== */
+.feature-stage { position: relative; }
+.feature-pin { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 22px; }
+.fh-a { display: grid; justify-items: center; }
+.fh-a h2 { margin: 0; max-width: 980px; }
+.fh-b { display: none; }
+.fh-b-title { margin: 0; max-width: 16ch; font: 400 var(--h2-size)/var(--h2-lh) var(--serif); letter-spacing: var(--h2-ls); color: var(--text); }
+.fh-b-title em { font-style: normal; color: var(--accent-text); }
+.feature-lede { margin: 0; max-width: 60ch; font-size: var(--lead-size); line-height: var(--lead-lh); }
+.orbit { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; width: 100%; max-width: 1000px; margin: 30px auto 0; padding: 0; list-style: none; text-align: left; }
+.pill {
+  --lx: 50%; --ly: 120%; --tint: 255 255 255; --ta: 0;
+  position: relative; display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; padding: 16px 18px;
+  border-radius: 16px; border: 1px solid rgba(255, 255, 255, .05);
+  background:
+    radial-gradient(90% 150% at var(--lx) var(--ly), rgb(var(--tint) / var(--ta)), transparent 70%),
+    linear-gradient(160deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .04) 42%, rgba(255, 255, 255, .02) 62%, rgba(255, 255, 255, .07)),
+    rgba(18, 18, 24, .3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6); backdrop-filter: blur(18px) saturate(1.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 0 14px rgba(255, 255, 255, .03), 0 10px 30px rgba(0, 0, 0, .35);
+  transition: border-radius .5s var(--ease), border-color .3s, box-shadow .3s, background-color .3s;
+}
+.pill::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(170deg, rgba(255, 255, 255, .42), rgba(255, 255, 255, .1) 30%, rgba(255, 255, 255, .03) 62%, rgba(255, 255, 255, .15));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.pill-ico { width: 30px; height: 30px; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .5)); }
+.pill h3 { margin: 0; font-size: var(--body-size); line-height: 1.3; letter-spacing: -.01em; white-space: nowrap; color: rgba(255, 255, 255, .94); }
+.pill p { grid-column: 1 / -1; margin: 10px 0 0; max-width: 300px; font-size: var(--card-size); line-height: var(--body-lh); color: var(--muted); }
+.features.orbit-live { padding-top: 0; }
+.orbit-live .feature-stage { height: 260vh; height: 260svh; }
+.orbit-live .feature-pin { position: sticky; top: 0; display: block; height: 100vh; height: 100svh; }
+.orbit-live .fh-a { position: absolute; left: 50%; top: 50%; z-index: 2; width: min(1000px, 92%); transform: translate(-50%, -50%); pointer-events: none; will-change: transform, opacity, filter; }
+.orbit-live .fh-b { display: block; position: absolute; left: 0; top: 11%; text-align: left; opacity: 0; }
+.orbit-live .fh-b .eyebrow { margin-bottom: .9em; }
+.orbit-live .feature-lede { position: absolute; right: 0; top: 12%; max-width: 380px; text-align: left; opacity: 0; }
+.orbit-live .orbit { position: absolute; inset: 0; display: block; max-width: none; margin: 0; pointer-events: none; }
+.orbit-live .orbit-slot { position: absolute; left: 0; top: 0; pointer-events: auto; will-change: transform; }
+/* In orbit the features are slim tags; hover or focus opens one */
+.orbit-live .pill { column-gap: 9px; padding: 8px 16px 8px 9px; border-radius: 24px; }
+.orbit-live .pill-ico { width: 28px; height: 28px; }
+.orbit-live .pill p { max-width: 0; max-height: 0; opacity: 0; margin: 0; overflow: hidden; transition: max-width .5s var(--ease), max-height .5s var(--ease), opacity .3s, margin .4s; }
+.orbit-live .pill:is(:hover, :focus) { border-radius: 16px; background-color: rgba(16, 16, 22, .62); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), inset 0 0 14px rgba(255, 255, 255, .03), 0 18px 44px rgba(0, 0, 0, .5); }
+.pill.spot { border-color: rgba(134, 214, 196, .6); box-shadow: 0 0 0 4px rgba(134, 214, 196, .14), inset 0 1px 0 rgba(255, 255, 255, .2); }
+.orbit-live .pill:is(:hover, :focus) p { width: 240px; max-width: 240px; max-height: 8em; opacity: 1; margin-top: 8px; transition: max-width .5s var(--ease), max-height .5s var(--ease), opacity .4s .15s, margin .4s; }
+
+/* ========== Live in seven days: inside a large glass globe with two soft lights (after mdx.so) ========== */
+.golive { padding-bottom: 60px; }
+.globe-backdrop { position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent); }
+.globe {
+  position: absolute; left: 50%; top: 50%; width: max(min(1680px, 150vw), 130vh); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, .045), rgba(255, 255, 255, .012) 58%, rgba(255, 255, 255, .03) 69%, transparent 71%);
+  border: 1px solid rgba(255, 255, 255, .1);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .16), inset 0 0 160px rgba(143, 180, 255, .07);
+}
+.blob { position: absolute; border-radius: 50%; filter: blur(80px); will-change: transform; }
+.blob-blue { left: 5%; top: 22%; width: 34%; height: 46%; background: radial-gradient(closest-side, rgba(62, 127, 216, .95), rgba(62, 127, 216, .35) 60%, transparent); animation: drift-a 22s ease-in-out infinite alternate; }
+.blob-mint { right: 7%; bottom: 20%; width: 30%; height: 40%; background: radial-gradient(closest-side, rgba(134, 214, 196, .78), rgba(134, 214, 196, .28) 60%, transparent); animation: drift-b 26s ease-in-out infinite alternate; }
+@keyframes drift-a { from { transform: rotate(-24deg) scale(1); } to { transform: rotate(-4deg) scale(1.12) translate(40px, 30px); } }
+@keyframes drift-b { from { transform: rotate(18deg) scale(1.05); } to { transform: rotate(-6deg) scale(.95) translate(-50px, -30px); } }
+/* Her setup, sketched on a blueprint one day at a time (after the build story on legitdesign.studio).
+   Without motion it is a plain list; with motion the list sits beside the drawing and scrolling plays it. */
+.setup-pin { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; max-width: 620px; margin: 0 auto; }
+.setup-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.setup-steps button { display: grid; gap: 3px; width: 100%; padding: 12px 16px; border: 1px solid transparent; border-radius: 14px; background: none; color: var(--muted); text-align: left; cursor: pointer; transition: background-color .3s, border-color .3s, color .3s; }
+.setup-steps button:hover { background: rgba(255, 255, 255, .03); }
+.setup-steps [aria-current="step"] { background: rgba(255, 255, 255, .05); border-color: var(--line); color: var(--text); }
+.ss-when { font-size: var(--small-size); line-height: var(--small-lh); color: var(--faint); font-variant-numeric: tabular-nums; transition: color .3s; }
+.setup-steps [aria-current="step"] .ss-when { color: var(--orb-mint); }
+.ss-title { font: 400 var(--h3-size)/var(--h3-lh) var(--serif); }
+.ss-more { display: grid; grid-template-rows: 1fr; }
+.ss-more > span { overflow: hidden; }
+.ss-body { display: block; padding-top: 6px; font-size: var(--card-size); line-height: var(--body-lh); color: var(--muted); }
+.ss-bar, .sketch-box, .setup-now { display: none; }
+.setup-live .setup-pin, .setup-still .setup-pin { max-width: none; grid-template-columns: minmax(240px, 300px) minmax(0, 1fr); align-items: center; gap: 40px; }
+.setup-live { height: 400vh; height: 400svh; }
+.setup-live .setup-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+.setup-live .ss-more { grid-template-rows: 0fr; transition: grid-template-rows .45s var(--ease); }
+.setup-live [aria-current="step"] .ss-more { grid-template-rows: 1fr; }
+.setup-live .ss-bar { display: block; height: 2px; margin-top: 12px; border-radius: 2px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+.ss-bar i { display: block; height: 100%; background: var(--orb-mint); transform-origin: left; transform: scaleX(var(--p, 0)); }
+.setup-live .sketch-box, .setup-still .sketch-box {
+  display: block; position: relative; width: 100%; max-width: calc((100vh - 120px) * 1.6); max-width: calc((100svh - 120px) * 1.6); margin: 0 auto;
+  aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--radius); border: 1px solid var(--line);
+  background: radial-gradient(55% 60% at 28% 18%, rgba(62, 127, 216, .16), transparent 70%), radial-gradient(45% 50% at 78% 88%, rgba(232, 98, 42, .09), transparent 70%), rgba(12, 12, 15, .74);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 30px 80px rgba(0, 0, 0, .45);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+/* The drawing lives on a fixed 800 x 500 stage, scaled to the box */
+.sketch { position: absolute; left: 0; top: 0; width: 800px; height: 500px; transform-origin: 0 0; transform: scale(var(--s, 0)); }
+.sketch-grid {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(243, 241, 236, .1) 1px, transparent 1.5px); background-size: 20px 20px; background-position: 10px 10px;
+  -webkit-mask-image: radial-gradient(70% 75% at 50% 48%, #000 40%, transparent 100%); mask-image: radial-gradient(70% 75% at 50% 48%, #000 40%, transparent 100%);
+}
+.sketch-dim { position: absolute; inset: 0; background: rgba(5, 5, 6, .6); opacity: 0; }
+.sketch-label { position: absolute; left: 24px; top: 22px; margin: 0; display: grid; font: 500 13px/1.5 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: rgba(243, 241, 236, .72); }
+.sketch-label .rev { grid-area: 2 / 1; color: var(--faint); }
+.sketch-label .rev + .rev { color: var(--orb-mint); opacity: 0; }
+.sketch-lines { position: absolute; left: 0; top: 0; width: 800px; height: 500px; overflow: visible; }
+.sketch-lines path { stroke: rgba(243, 241, 236, .86); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; opacity: 0; }
+.sketch-lines .thin { stroke: rgba(243, 241, 236, .2); stroke-width: .8; }
+.sketch-lines .hub { stroke: url(#orbStroke); stroke-width: 2; }
+.sketch-lines .tick { stroke: var(--orb-mint); stroke-width: 2; }
+.sketch-lines text { font: 500 13px var(--sans); letter-spacing: .14em; fill: rgba(243, 241, 236, .6); stroke: none; opacity: 0; }
+.sketch-lines .progress { stroke: url(#dayStroke); stroke-width: 2.5; stroke-linecap: round; opacity: 0; }
+.sketch-lines .cell { fill: var(--orb-mint); stroke: none; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.sketch-orb { position: absolute; left: 320px; top: 118px; width: 160px; height: 160px; opacity: 0; }
+.sketch-live { position: absolute; left: 462px; top: 108px; display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(134, 214, 196, .35); background: rgba(5, 5, 6, .7); color: var(--orb-mint); font: 500 13px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; opacity: 0; }
+.sketch-live i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: blink 1.6s ease-in-out infinite; }
+/* The pen is a point of light from the orb, with a short trail of particles behind it */
+.spark, .trail i { position: absolute; left: 0; top: 0; border-radius: 50%; pointer-events: none; opacity: 0; will-change: transform, opacity; }
+.spark { width: 10px; height: 10px; margin: -5px 0 0 -5px; background: radial-gradient(circle, #fff 30%, #c8f1e6 55%, rgba(134, 214, 196, 0) 72%); box-shadow: 0 0 14px 4px rgba(134, 214, 196, .45), 0 0 34px 10px rgba(62, 127, 216, .3); }
+.trail i { width: 4px; height: 4px; margin: -2px 0 0 -2px; background: var(--orb-mint); box-shadow: 0 0 6px rgba(134, 214, 196, .6); }
+.trail i:nth-child(even) { background: #8fb8f0; box-shadow: 0 0 6px rgba(62, 127, 216, .6); }
+/* Phones and tablets: the drawing on top, the current day under it */
+.sn-segs { display: flex; gap: 6px; margin-bottom: 6px; }
+.sn-segs i { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+.sn-segs b { display: block; height: 100%; background: var(--orb-mint); transform-origin: left; transform: scaleX(0); }
+.sn-when { margin: 0; font-size: var(--small-size); color: var(--orb-mint); font-variant-numeric: tabular-nums; }
+.sn-title { margin: 0; font: 400 var(--h3-size)/var(--h3-lh) var(--serif); color: var(--text); }
+.sn-body { margin: 0; font-size: var(--card-size); line-height: var(--body-lh); color: var(--muted); }
+@media (max-width: 900px) {
+  .setup-live .setup-pin { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 22px; padding-bottom: 84px; }
+  .setup-live .setup-steps { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .setup-live .setup-now { display: grid; gap: 6px; }
+  .setup-still .setup-pin { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ========== Pricing: the plans sit above a planet's horizon; the founding licence turns to light ========== */
+.seg { display: inline-flex; gap: 2px; max-width: 100%; overflow-x: auto; scrollbar-width: none; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, .045); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.seg button { flex: none; min-height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--muted); font-size: var(--small-size); cursor: pointer; transition: color .3s, background-color .3s; }
+.seg button[aria-pressed="true"] { color: var(--text); background: rgba(255, 255, 255, .1); }
+.plan-stage { position: relative; isolation: isolate; }
+.eclipse { position: absolute; z-index: -1; left: 50%; top: calc(34% - 150px); bottom: -240px; width: 100vw; transform: translateX(-50%); overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent); mask-image: linear-gradient(180deg, #000 72%, transparent); }
+.planet {
+  --rise: 0px; --glow: 1; --hx: 50%;
+  position: absolute; left: 50%; top: 150px; width: max(2400px, 210vw); aspect-ratio: 1; border-radius: 50%;
+  transform: translate3d(-50%, var(--rise), 0);
+  background: radial-gradient(closest-side, #050506 96.8%, #0c0c11 99.3%, #16161d 100%);
+}
+.planet::before, .planet::after {
+  content: ""; position: absolute; border-radius: 50%;
+  background: linear-gradient(90deg, transparent 29%, var(--orb-blue) 39%, var(--orb-mint) 46%, var(--orb-gold) 53%, var(--orb-orange) 61%, transparent 71%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.planet::before { inset: 0; padding: 1.5px; opacity: calc(.55 + .45 * var(--glow)); }
+.planet::after { inset: -46px; padding: 46px; filter: blur(30px); opacity: calc(.55 * var(--glow)); }
+.rim-light { position: absolute; top: -110px; left: var(--hx); width: 560px; height: 240px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 176, 104, .55), rgba(255, 140, 70, .18) 55%, transparent); filter: blur(18px); opacity: var(--glow); transition: left .9s var(--ease); }
+.plan-grid { display: grid; grid-template-columns: 1.35fr 1fr 1fr 1fr; gap: 16px; align-items: stretch; }
+.plan { display: flex; flex-direction: column; padding-top: 30px; }
+.plan h3 { margin: 0 0 .15em; }
+.plan-for { margin: 0 0 20px; color: var(--muted); font-size: var(--small-size); line-height: var(--small-lh); }
+.price { margin: 0 0 22px; font: 400 var(--stat-size)/var(--stat-lh) var(--serif); font-variant-numeric: tabular-nums; }
+.price small { font: 400 var(--small-size) var(--sans); color: var(--muted); margin-left: 4px; }
+.plan ul { list-style: none; padding: 20px 0 0; margin: 0 0 24px; display: grid; gap: 10px; border-top: 1px solid var(--line); font-size: var(--card-size); line-height: var(--body-lh); }
+.plan li { display: flex; align-items: flex-start; gap: 10px; }
+.plan li img { width: 20px; height: 20px; margin-top: 1px; flex: none; }
+.plan .btn { margin-top: auto; }
+/* The founding licence: light, with a slow ring in the orb's colours */
+.card.plan.recommended { background: var(--light); color: var(--ink); border-color: transparent; transform: translateY(-8px); box-shadow: 0 40px 90px rgba(0, 0, 0, .55); }
+.plan.recommended::before {
+  content: ""; position: absolute; inset: -6px; border-radius: calc(var(--radius) + 6px); padding: 1px; pointer-events: none;
+  background: conic-gradient(from var(--spin), var(--orb-blue), var(--orb-mint), var(--orb-gold), var(--orb-orange), var(--orb-blue));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: spin 6s linear infinite;
+}
+@keyframes spin { to { --spin: 360deg; } }
+.plan.recommended::after { background: radial-gradient(360px circle at var(--mx) var(--my), rgba(0, 0, 0, .04), transparent 45%); }
+.plan.recommended .plan-for, .plan.recommended .price small { color: rgba(11, 11, 13, .62); }
+.plan.recommended ul { border-color: rgba(11, 11, 13, .14); }
+.plan-badge { align-self: flex-start; margin-bottom: 14px; font-size: var(--label-size); line-height: 1.33; letter-spacing: .08em; text-transform: uppercase; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: var(--ink); color: var(--light); }
+.seats { display: grid; gap: 8px; margin: -6px 0 18px; }
+.dots { display: grid; grid-template-columns: repeat(15, 7px); justify-content: space-between; row-gap: 6px; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); transition: opacity .4s var(--ease), transform .4s var(--ease); transition-delay: calc(var(--i) * 18ms); }
+.js .dots.off i { opacity: 0; transform: scale(.4); }
+.seat-label { margin: 0; font-size: var(--small-size); color: rgba(11, 11, 13, .62); }
+.seat-label b { color: var(--ink); font-weight: 500; }
+.promises { display: grid; gap: 8px; margin: 0 0 22px; padding: 14px 16px; border-radius: 14px; background: rgba(11, 11, 13, .05); }
+.promise { display: flex; align-items: center; gap: 10px; margin: 0; font-size: var(--card-size); font-weight: 500; }
+.promise img { width: 22px; height: 22px; flex: none; }
+.plan.recommended .btn-dark { background: var(--ink); color: var(--light); }
+.plan.recommended .btn-dark:hover { box-shadow: 0 0 0 6px rgba(11, 11, 13, .08); }
+.pricing-note { max-width: 760px; margin: 34px auto 0; text-align: center; font-size: var(--small-size); line-height: var(--small-lh); color: var(--faint); }
+.pricing-note a { color: var(--muted); }
+
+/* ========== Questions ========== */
+.faq-list { max-width: 900px; margin: 0 auto; display: grid; gap: 10px; }
+.faq-list details { padding: 0; }
+.faq-list summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 26px; cursor: pointer; font: 400 var(--h3-size)/var(--h3-lh) var(--serif); }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary svg { transition: transform .4s var(--ease); color: var(--muted); }
+.faq-list details[open] summary svg { transform: rotate(45deg); }
+.faq-list details p { margin: 0; padding: 0 26px 24px; max-width: 64ch; color: var(--muted); }
+
+/* Cards rise into view */
+.reveal { opacity: 0; transform: translateY(28px); filter: blur(8px); transition: opacity .9s var(--ease), transform .9s var(--ease), filter .9s var(--ease), border-color .35s, box-shadow .35s, background-color .35s, color .35s; transition-delay: var(--d, 0s); }
+.reveal.in { opacity: 1; transform: none; filter: none; }
+.card.plan.recommended.reveal.in { transform: translateY(-8px); }
+
+/* ========== Footer: the orb returns over the wordmark, under a closing line ========== */
+.footer { position: relative; isolation: isolate; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 calc(var(--gutter-r) + clamp(0px, 3vw, 32px)) 120px calc(var(--gutter-l) + clamp(0px, 3vw, 32px)); margin-top: 140px; overflow: hidden; }
+.footer-cta { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px; }
+.footer-cta h2 { margin: 0; max-width: 15ch; font-size: var(--h1-size); line-height: var(--h1-lh); letter-spacing: var(--h1-ls); }
+.footer-cta .muted { margin: -6px 0 0; font-size: var(--lead-size); }
+.path { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 14px; margin: 6px 0 0; padding: 0; list-style: none; font-size: var(--small-size); color: var(--muted); }
+.path li { display: inline-flex; align-items: center; gap: 14px; }
+.path li + li::before { content: ""; width: 28px; height: 1px; background: var(--line-strong); }
+.path b { color: var(--text); font-weight: 500; }
+.wordmark { --wordmark-em: 4.05; pointer-events: none; margin: 56px 0 .2em; text-align: center; font: 400 min(30rem, calc((100vw - 2 * clamp(16px, 4vw, 48px)) / var(--wordmark-em)))/.78 var(--serif); letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .18); transform: translate3d(0, var(--py, 0px), 0); }
+.footer-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 28px; margin: 28px auto 0; border-top: 1px solid var(--line); color: var(--faint); font-size: var(--small-size); max-width: 1240px; width: 100%; }
+.footer-meta p { margin: 0; text-wrap: balance; }
+.footer-meta nav { display: flex; gap: 18px; }
+.footer-meta a { color: var(--muted); text-decoration: none; }
+.footer-meta a:hover { color: var(--text); }
+
+/* Small particle orb in the dock */
+.orb { position: relative; display: block; border-radius: 50%; overflow: hidden; background: var(--bg); }
+.orb canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.orb-sm { width: 44px; height: 44px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
+.dock {
+  position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 30;
+  width: min(540px, calc(100% - 32px));
+  background: rgba(14, 14, 17, .74); -webkit-backdrop-filter: blur(20px) saturate(1.3); backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid var(--line); border-radius: 26px; box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+}
+.dock-bar { display: flex; align-items: center; gap: 12px; padding: 9px 10px 9px 11px; }
+.dock-orb { background: none; border: 0; padding: 0; cursor: pointer; flex: none; border-radius: 50%; }
+.dock-body { flex: 1; min-width: 0; }
+.dock-status { margin: 0; display: flex; align-items: center; gap: 10px; font-size: var(--label-size); line-height: 1.33; letter-spacing: .12em; text-transform: uppercase; color: rgba(243, 241, 236, .6); font-weight: 500; }
+#dockStatus { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock[data-state="listening"] .dock-status, .dock[data-state="speaking"] .dock-status { color: var(--orb-mint); }
+.dock[data-state="listening"], .dock[data-state="speaking"] { box-shadow: 0 20px 60px rgba(0, 0, 0, .5), 0 0 0 1px var(--orb-mint); }
+.dock[data-state="connecting"] .dock-orb { animation: breathe 1.1s ease-in-out infinite alternate; }
+@keyframes breathe { to { transform: scale(.9); opacity: .65; } }
+.wave { display: none; align-items: center; gap: 3px; height: 12px; }
+.dock[data-state="listening"] .wave, .dock[data-state="speaking"] .wave { display: inline-flex; }
+.wave i { width: 3px; border-radius: 2px; background: currentColor; height: calc(3px + var(--level, 0) * 9px * var(--k)); }
+.wave i:nth-child(1) { --k: .5; } .wave i:nth-child(2) { --k: .85; } .wave i:nth-child(3) { --k: 1; } .wave i:nth-child(4) { --k: .7; } .wave i:nth-child(5) { --k: .4; }
+.dock-form { display: none; margin-top: 6px; }
+.dock[data-mode="text"] .dock-form { display: block; }
+.dock-form input { width: 100%; height: 34px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--text); font: inherit; font-size: var(--small-size); }
+@media (pointer: coarse) { .dock-form input { font-size: 16px; } }
+.dock-form input:focus-visible { outline: 2px solid var(--orb-mint); outline-offset: 2px; }
+.dock-actions { display: flex; gap: 6px; }
+.dock-caption { margin: 1px 0 0; font-size: var(--small-size); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+.icon-btn { width: 40px; height: 40px; display: grid; place-items: center; flex: none; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .12); background: rgba(255, 255, 255, .06); color: var(--text); cursor: pointer; transition: background-color .2s, transform .15s; }
+.icon-btn:hover { background: rgba(255, 255, 255, .12); }
+.icon-btn:active { transform: scale(.94); }
+.ico-end, .dock.in-call .ico-mic { display: none; }
+.dock.in-call .ico-end { display: block; }
+
+/* The application: three short steps */
+dialog.apply { width: min(560px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--line); border-radius: 26px; color: var(--text); background: #0d0d10; box-shadow: 0 40px 100px rgba(0, 0, 0, .65); overflow: auto; }
+dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.apply-in { padding: 28px; display: grid; gap: 20px; }
+.apply-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.apply-top h2 { margin: 0; }
+.steps { display: flex; gap: 6px; }
+.steps i { width: 28px; height: 3px; border-radius: 3px; background: var(--line-strong); transition: background-color .3s; }
+.steps i.on { background: var(--orb-mint); }
+.fields { display: grid; gap: 16px; }
+.field { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; }
+.field label, .field legend { font-size: var(--small-size); font-weight: 500; color: var(--muted); padding: 0; }
+.field input, .field select { min-height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, .04); color: var(--text); font-size: var(--body-size); }
+.field select option { background: #0d0d10; }
+.field input:focus, .field select:focus { outline: none; border-color: rgba(255, 255, 255, .45); box-shadow: 0 0 0 4px rgba(255, 255, 255, .06); }
+.field .err { font-size: var(--small-size); color: #ffb4a6; }
+.checks { display: flex; flex-wrap: wrap; gap: 8px; }
+.checks label { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); font-size: var(--small-size); color: var(--text); cursor: pointer; }
+.checks input { accent-color: var(--orb-mint); width: 16px; height: 16px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.apply-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.note { margin: 0; font-size: var(--small-size); line-height: var(--small-lh); color: var(--faint); }
+
+/* Below 1320px the intro would run into the orb, so the hero centres: a smaller orb, the words beneath it */
+@media (max-width: 1320px) {
+  .hero { --orb: min(56svh, 70vw); --orb-top: 38%; }
+  .hero-orb-label { display: none; }
+  .hero-foot { text-align: center; }
+  .hero-intro { max-width: 600px; margin: 0 auto; }
+  .hero .lede { text-wrap: balance; }
+  .hero-actions { justify-content: center; }
+}
+@media (max-width: 1068px) {
+  .facts { grid-template-columns: 1fr 1fr; }
+  .bento { grid-template-columns: 1fr; }
+  .call-demo { border-right: 0; border-bottom: 1px solid var(--line); border-radius: var(--radius) var(--radius) 0 0; }
+  .plan-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 734px) {
+  .top-nav a:not(.btn) { display: none; }
+  .hero { --orb: min(68svh, 84vw); }
+  .hero-foot { bottom: 104px; text-align: left; }
+  .hero-intro { max-width: none; }
+  .hero-actions .btn { flex: 1; padding-inline: 14px; }
+  .js .story { height: 380svh; }
+  .js .beat { padding-bottom: 20svh; }
+  .js .story-count { bottom: 92px; }
+  .section { padding-top: 104px; }
+  .section + .section { margin-top: 64px; }
+  .facts { grid-template-columns: 1fr; }
+  .call-demo { padding: 22px; }
+  .call-head { flex-wrap: wrap; row-gap: 10px; }
+  .call-meta { order: 3; flex-basis: 100%; }
+  .path { display: grid; grid-template-columns: auto auto; gap: 10px 22px; }
+  .path li + li::before { display: none; }
+  .call-copy { padding: 26px 22px; }
+  .plan-grid { grid-template-columns: 1fr; }
+  .card.plan.recommended, .card.plan.recommended.reveal.in { transform: none; }
+  .two { grid-template-columns: 1fr; }
+  .apply-in { padding: 22px; }
+  .dock { width: calc(100% - 16px); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); border-radius: 22px; }
+  .footer { padding-bottom: 110px; }
+  .footer-cta h2 { max-width: 12ch; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .story { height: auto; }
+  .js .story-pin { position: relative; height: auto; overflow: visible; }
+  .js .beat { position: relative; inset: auto; place-items: center; padding: 64px 24px; opacity: 1; }
+  .js .beat-time, .js .greetings, .js .story-count { display: none; }
+  .reveal { opacity: 1; transform: none; filter: none; }
+  .js [data-scrub] .w { color: inherit; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .card, .pill, .dock, .top-nav, .seg { -webkit-backdrop-filter: none; backdrop-filter: none; background-color: #111115; }
+}
+</style>
+
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4L19 7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.9 2.6 15.1 0 18M12 3c-2.6 2.9-2.6 15.1 0 18"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M4 18h16M6 18a6 6 0 0 1 12 0M12 9V7M10 7h4"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6M14 16h7M18 13l3 3-3 3"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5z"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 3l3 3-3 3M4 12v-2a4 4 0 0 1 4-4h12M7 21l-3-3 3-3M20 12v2a4 4 0 0 1-4 4H4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-keys" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M7 10h.01M11 10h.01M15 10h.01M7.5 14h9"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+</svg>
+
+<canvas class="fx" aria-hidden="true"></canvas>
+
+<main>
+  <section class="hero" id="welcome" aria-labelledby="heroTitle">
+    <a class="brand" href="#welcome"><i class="logo-mark" aria-hidden="true"></i>Amariya</a>
+    <nav class="top-nav" aria-label="On this page">
+      <a href="#call">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <button class="btn btn-dark btn-sm js-apply" type="button" data-program="founding">Apply</button>
+    </nav>
+    <button class="hero-orb js-talk" type="button" aria-label="Talk to Amariya"><span class="hero-orb-label">Tap to talk</span></button>
+    <h1 class="hero-title" id="heroTitle" data-split="in">Pick up every call. Without picking up the phone.</h1>
+    <div class="hero-foot">
+      <div class="hero-intro">
+        <p class="lede">An AI receptionist for hotels, restaurants, clinics and dental practices. She answers, books, and hands over to your team.</p>
+        <div class="hero-actions">
+          <button class="btn btn-dark js-talk" type="button"><svg aria-hidden="true"><use href="#i-mic"></use></svg>Talk to Amariya</button>
+          <a class="btn btn-ghost" href="#pricing">See pricing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="story" id="story" aria-label="What happens when the phone rings">
+    <div class="story-pin">
+      <div class="beat">
+        <p class="beat-time" aria-hidden="true" data-clock><span>9<span class="tick">:</span>47</span></p>
+        <h2 class="beat-line" data-split="scrub"><span data-clock-line>9:47 pm</span>. The phone rings mid check-in, mid service, mid treatment.</h2>
+      </div>
+      <div class="beat">
+        <ul class="greetings" aria-hidden="true">
+          <li>Hello</li><li>Hola</li><li>Bonjour</li><li>مرحبا</li><li>Hallo</li><li>Ciao</li><li>こんにちは</li><li>Olá</li>
+        </ul>
+        <h2 class="beat-line" data-split="scrub">She answers on the first ring, in the caller's language.</h2>
+      </div>
+      <div class="beat">
+        <h2 class="beat-line" data-split="scrub">The booking lands in your system. <em>Your team stays with the person in front of them.</em></h2>
+      </div>
+      <p class="story-count" aria-hidden="true"><span data-count>01</span> / 03<i><b></b></i></p>
+    </div>
+  </section>
+
+  <div class="content">
+    <section class="section" id="problem" aria-labelledby="problemTitle">
+      <div class="warm-glow" aria-hidden="true"><i></i></div>
+      <div class="section-head">
+        <hgroup>
+          <p class="eyebrow">The problem</p>
+          <h2 id="problemTitle" data-split="in">Your team can't be in two places at once.</h2>
+        </hgroup>
+        <p class="muted" data-scrub>Front desks are short of people, and the phone rings hardest when everyone is busy. Every figure here comes from a trade body or public data, and the one vendor figure is marked.</p>
+      </div>
+      <div class="facts">
+        <div class="card fact reveal"><b>65%</b><p>of US hotels reported staff shortages. Front desk was the second most-needed role.</p><cite><a href="https://www.hospitalitynet.org/news/4125946/65-of-surveyed-us-hotels-report-staffing-shortages">AHLA and Hireology, 2025</a></cite></div>
+        <div class="card fact reveal" style="--d:.08s"><b>28%</b><p>of medical practice leaders saw staff turnover rise in 2026.</p><cite><a href="https://www.mgma.com/mgma-stat/stabilized-but-not-solved-staff-turnover-in-2026">MGMA, 2026</a></cite></div>
+        <div class="card fact reveal" style="--d:.16s"><b>1 in 5</b><p>people in the US speak a language other than English at home.</p><cite><a href="https://cdn.www.census.gov/newsroom/press-releases/2023/language-at-home-acs-5-year.html">US Census Bureau</a></cite></div>
+        <div class="card fact reveal" style="--d:.24s"><b>68%</b><p>of restaurant calls arrive during the lunch and dinner rush.</p><cite><a href="https://www.maple.inc/blog/the-state-of-restaurant-phone-communication-insights-from-1-million-calls">Maple, 1.2M calls, vendor data</a></cite></div>
+      </div>
+    </section>
+
+    <section class="section" id="call" aria-labelledby="callTitle">
+      <div class="section-head">
+        <h2 id="callTitle" data-split="in">See how she handles a call.</h2>
+        <p class="muted" data-scrub>Four short calls play in turn: a hotel, a restaurant in Spanish, a clinic and a dental practice. Names and details are examples.</p>
+      </div>
+      <div class="card bento reveal">
+        <div class="call-demo" role="img" aria-label="An example call between a caller and Amariya">
+          <canvas class="call-field" aria-hidden="true"></canvas>
+          <div class="call-head"><span class="call-live"><i aria-hidden="true"></i>Live call</span><span class="call-meta" data-call-meta></span><span class="call-timer" data-call-timer>00:00</span></div>
+          <div class="call-thread" data-call-thread></div>
+        </div>
+        <div class="call-copy">
+          <h3>Every call ends with something done.</h3>
+          <p>A booking made, a question answered, or a message passed to your team with a short summary. She tells callers she is an AI in her first sentence.</p>
+          <button class="btn btn-dark js-talk" type="button"><svg aria-hidden="true"><use href="#i-mic"></use></svg>Talk to Amariya</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section features" id="features" aria-labelledby="featuresTitle">
+      <div class="feature-stage">
+        <div class="feature-pin">
+          <div class="fh-a">
+            <h2 id="featuresTitle" data-split="in">Everything your front desk does on the phone.</h2>
+          </div>
+          <div class="fh-b" aria-hidden="true">
+            <p class="eyebrow">What she handles</p>
+            <p class="fh-b-title">Everything your front desk does <em>on the phone.</em></p>
+          </div>
+          <p class="feature-lede muted">She books, answers, switches language and hands over, day and night, the same way every time.</p>
+          <ul class="orbit" id="orbit"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section golive" id="golive" aria-labelledby="goliveTitle">
+      <div class="section-head">
+        <h2 id="goliveTitle" data-split="in">Live in seven days, or your money back.</h2>
+        <p class="muted" data-scrub>We set her up for you. Your part is one call and a few test calls.</p>
+      </div>
+      <div class="setup-story" id="setupStory">
+        <div class="setup-pin">
+          <div class="globe-backdrop" aria-hidden="true"><div class="globe"><i class="blob blob-blue"></i><i class="blob blob-mint"></i></div></div>
+          <ol class="setup-steps" aria-label="The seven days">
+            <li><button type="button"><span class="ss-when">Day 1</span><span class="ss-title">A 20-minute call</span><span class="ss-more"><span><span class="ss-body">We learn your hours, prices, policies and the questions callers ask most.</span><span class="ss-bar"><i></i></span></span></span></button></li>
+            <li><button type="button"><span class="ss-when">Days 2 and 3</span><span class="ss-title">We build her</span><span class="ss-more"><span><span class="ss-body">Your knowledge, your tone, and a connection to your booking or practice system.</span><span class="ss-bar"><i></i></span></span></span></button></li>
+            <li><button type="button"><span class="ss-when">Days 4 and 5</span><span class="ss-title">You test her</span><span class="ss-more"><span><span class="ss-body">Call her yourself. Anything you would say differently, we change.</span><span class="ss-bar"><i></i></span></span></span></button></li>
+            <li><button type="button"><span class="ss-when">Day 6</span><span class="ss-title">Your line forwards</span><span class="ss-more"><span><span class="ss-body">Calls your team can't take go to Amariya. You choose when.</span><span class="ss-bar"><i></i></span></span></span></button></li>
+            <li><button type="button"><span class="ss-when">Day 7</span><span class="ss-title">She is live</span><span class="ss-more"><span><span class="ss-body">Answering real calls on your number. If she isn't, you get a full refund.</span><span class="ss-bar"><i></i></span></span></span></button></li>
+          </ol>
+          <div class="sketch-box" aria-hidden="true">
+            <div class="sketch">
+              <i class="sketch-grid"></i>
+              <i class="sketch-dim"></i>
+              <p class="sketch-label">Your setup<span class="rev">7-day plan</span><span class="rev">Live on your number</span></p>
+              <svg class="sketch-lines" viewBox="0 0 800 500" fill="none">
+                <defs>
+                  <linearGradient id="orbStroke" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3e7fd8"/><stop offset=".55" stop-color="#86d6c4"/><stop offset="1" stop-color="#e8622a"/></linearGradient>
+                  <linearGradient id="dayStroke" gradientUnits="userSpaceOnUse" x1="80" y1="0" x2="720" y2="0"><stop offset="0" stop-color="#3e7fd8"/><stop offset=".45" stop-color="#86d6c4"/><stop offset=".72" stop-color="#edd685"/><stop offset="1" stop-color="#e8622a"/></linearGradient>
+                </defs>
+              </svg>
+              <canvas class="sketch-orb"></canvas>
+              <span class="sketch-live"><i></i>Live</span>
+              <div class="trail"><i></i><i></i><i></i><i></i><i></i></div>
+              <i class="spark"></i>
+            </div>
+          </div>
+          <div class="setup-now" aria-hidden="true">
+            <div class="sn-segs"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+            <p class="sn-when"></p>
+            <p class="sn-title"></p>
+            <p class="sn-body"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing" aria-labelledby="pricingTitle">
+      <div class="section-head">
+        <hgroup>
+          <p class="eyebrow">Pricing</p>
+          <h2 id="pricingTitle" data-split="in">Pay once, or pay monthly.</h2>
+        </hgroup>
+        <p class="muted" data-scrub>The founding licence is for the first 30 businesses in each niche. When those seats are gone, Amariya is monthly only.</p>
+        <div class="seg" role="group" aria-label="Choose your business" id="priceTabs">
+          <button type="button" data-n="hospitality" aria-pressed="true">Hotels and restaurants</button>
+          <button type="button" data-n="clinics" aria-pressed="false">Clinics</button>
+          <button type="button" data-n="dental" aria-pressed="false">Dental</button>
+        </div>
+      </div>
+      <div class="plan-stage">
+        <div class="eclipse" aria-hidden="true"><div class="planet"><i class="rim-light"></i></div></div>
+        <div class="plan-grid">
+          <article class="card plan recommended reveal">
+            <span class="plan-badge">Founding licence</span>
+            <h3>Yours for life</h3>
+            <p class="plan-for">For the first 30 <span data-who>hotels and restaurants</span>.</p>
+            <p class="price"><span data-price>$2,500</span><small>once</small></p>
+            <div class="seats"><div class="dots off" id="dots" aria-hidden="true"></div><p class="seat-label"><b>30</b> of 30 seats open. The founding price ends when all 30 are taken.</p></div>
+            <div class="promises">
+              <p class="promise"><img data-icon="shield" alt="">Live in 7 days, or a full refund.</p>
+              <p class="promise"><img data-icon="repeat" alt="">Then 7 days to change your mind, for any reason.</p>
+            </div>
+            <ul data-list="founding"></ul>
+            <button class="btn btn-dark btn-block js-apply" type="button" data-program="founding">Apply for a founding licence</button>
+          </article>
+          <article class="card plan reveal" style="--d:.08s">
+            <h3>Starter</h3>
+            <p class="plan-for">One location</p>
+            <p class="price">$299<small>/ month</small></p>
+            <ul data-list="starter"></ul>
+            <button class="btn btn-ghost btn-block js-apply" type="button" data-program="starter">Apply for Starter</button>
+          </article>
+          <article class="card plan reveal" style="--d:.16s">
+            <h3>Professional</h3>
+            <p class="plan-for">Up to 3 locations</p>
+            <p class="price">$799<small>/ month</small></p>
+            <ul data-list="professional"></ul>
+            <button class="btn btn-ghost btn-block js-apply" type="button" data-program="professional">Apply for Professional</button>
+          </article>
+          <article class="card plan reveal" style="--d:.24s">
+            <h3>Enterprise</h3>
+            <p class="plan-for">Groups and chains</p>
+            <p class="price">Custom</p>
+            <ul data-list="enterprise"></ul>
+            <button class="btn btn-ghost btn-block js-apply" type="button" data-program="enterprise">Apply for Enterprise</button>
+          </article>
+        </div>
+        <p class="pricing-note">Live means Amariya answers calls on your business number. The 7 days start once your licence is signed and we have your setup details, and refunds are paid in full. For scale, a median US receptionist earns $38,010 a year before benefits (<a href="https://www.bls.gov/ooh/office-and-administrative-support/receptionists.htm">BLS, 2025</a>).</p>
+      </div>
+    </section>
+
+    <section class="section" id="faq" aria-labelledby="faqTitle">
+      <div class="section-head">
+        <h2 id="faqTitle" data-split="in">Straight answers</h2>
+        <p class="muted" data-scrub>The short answers. She can go into detail if you ask her.</p>
+      </div>
+      <div class="faq-list" id="qs"></div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-cta">
+    <h2 data-split="in">Thirty founding seats per niche.</h2>
+    <p class="muted">When they are gone, Amariya is monthly only.</p>
+    <button class="btn btn-dark js-apply" type="button" data-program="founding">Apply for a founding licence</button>
+    <ol class="path">
+      <li><span><b>Apply</b> in 3 minutes</span></li>
+      <li><span><b>Call</b> for 20 minutes</span></li>
+      <li><span><b>Invoice</b>, no surprises</span></li>
+      <li><span><b>Live</b> within 7 days</span></li>
+    </ol>
+  </div>
+  <p class="wordmark" aria-hidden="true">Amariya</p>
+  <div class="footer-meta">
+    <p>Amariya, an AI receptionist by Legit Design Studio · © 2026</p>
+    <nav aria-label="Amariya for your business"><a href="https://amariya.legitdesign.studio/hotels">Hotels</a><a href="https://amariya.legitdesign.studio/clinics">Clinics</a><a href="https://amariya.legitdesign.studio/dental">Dental</a></nav>
+  </div>
+</footer>
+
+<div class="dock" id="dock" role="region" aria-label="Talk to Amariya" data-state="idle" data-mode="voice">
+  <div class="dock-bar">
+    <button class="dock-orb js-talk" id="dockOrb" type="button" aria-label="Talk to Amariya"><span class="orb orb-sm"></span></button>
+    <div class="dock-body">
+      <p class="dock-status"><span id="dockStatus">Amariya is ready to talk</span><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></p>
+      <p class="dock-caption" id="dockCaption" aria-live="polite">Press the orb and say hello.</p>
+      <form class="dock-form" id="dockForm"><input id="dockInput" type="text" placeholder="Type a message" aria-label="Message to Amariya" autocomplete="off"></form>
+    </div>
+    <div class="dock-actions">
+      <button class="icon-btn" id="dockMic" type="button" aria-label="Talk to Amariya"><svg class="ico-mic" aria-hidden="true"><use href="#i-mic"></use></svg><svg class="ico-end" aria-hidden="true"><use href="#i-x"></use></svg></button>
+      <button class="icon-btn" id="dockKeys" type="button" aria-label="Type instead"><svg aria-hidden="true"><use href="#i-keys"></use></svg></button>
+    </div>
+  </div>
+</div>
+
+<dialog class="apply" id="apply" aria-labelledby="applyTitle">
+  <form class="apply-in" id="applyForm" novalidate>
+    <div class="apply-top">
+      <h2 id="applyTitle">Apply</h2>
+      <div class="steps" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+      <button class="icon-btn" type="button" id="applyClose" aria-label="Close the application"><svg aria-hidden="true"><use href="#i-x"></use></svg></button>
+    </div>
+    <p class="note" id="stepNote">Step 1 of 3. Your business.</p>
+    <div class="fields" data-step="1">
+      <div class="field"><label for="program">Program</label><select id="program" name="program"><option value="founding">Founding licence</option><option value="starter">Starter, $299 a month</option><option value="professional">Professional, $799 a month</option><option value="enterprise">Enterprise</option></select></div>
+      <div class="two">
+        <div class="field"><label for="kind">Business type</label><select id="kind" name="kind"><option value="hotel">Hotel</option><option value="restaurant">Restaurant</option><option value="clinic">Clinic</option><option value="dental">Dental practice</option></select></div>
+        <div class="field"><label for="locations">Locations</label><input id="locations" name="locations" type="number" min="1" value="1" inputmode="numeric"></div>
+      </div>
+      <div class="field"><label for="business">Business name</label><input id="business" name="business" autocomplete="organization" required><span class="err" data-for="business"></span></div>
+    </div>
+    <div class="fields" data-step="2" hidden>
+      <div class="field"><label for="calls">Calls per month</label><select id="calls" name="calls"><option>Under 300</option><option selected>300 to 1,000</option><option>1,000 to 3,000</option><option>More than 3,000</option></select></div>
+      <fieldset class="field"><legend>When do calls go unanswered?</legend><div class="checks"><label><input type="checkbox" name="missed" value="busy">Busy hours</label><label><input type="checkbox" name="missed" value="after">After hours</label><label><input type="checkbox" name="missed" value="weekend">Weekends</label><label><input type="checkbox" name="missed" value="breaks">Breaks</label></div></fieldset>
+      <div class="field"><label for="software">Booking or practice software (optional)</label><input id="software" name="software" autocomplete="off"></div>
+    </div>
+    <div class="fields" data-step="3" hidden>
+      <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required><span class="err" data-for="name"></span></div>
+      <div class="two">
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required><span class="err" data-for="email"></span></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required><span class="err" data-for="phone"></span></div>
+      </div>
+      <div class="field"><label for="country">Country</label><input id="country" name="country" autocomplete="country-name"></div>
+    </div>
+    <div class="fields" data-step="4" hidden>
+      <h2 id="doneTitle">Thank you.</h2>
+      <p class="muted" id="doneText"></p>
+      <button class="btn btn-dark" type="button" id="doneClose">Back to the page</button>
+    </div>
+    <div class="apply-actions" id="applyActions">
+      <button class="link" type="button" id="back" hidden>Back</button>
+      <span></span>
+      <button class="btn btn-dark" type="submit" id="next">Continue</button>
+    </div>
+  </form>
+</dialog>
+
+<!--LENIS-->
+<script id="main">
+'use strict'
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
+const $ = (s, el = document) => el.querySelector(s)
+const $$ = (s, el = document) => [...el.querySelectorAll(s)]
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const lerp = (a, b, t) => a + (b - a) * t
+const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t) }
+let time = 0
+
+// ---------- Copy ----------
+const PILLS = [
+  ['cal', 'Bookings', 'Rooms, tables, consultations and check-ups, booked straight into your system.'],
+  ['globe', '30+ languages', 'She answers in the caller’s language and books in yours.'],
+  ['bell', 'Questions', 'Hours, prices, parking and policies, answered from your own details.'],
+  ['hand', 'Hand-offs', 'A transfer to your team, or a message with a short summary.'],
+  ['moon', 'After hours', 'Nights, weekends and holidays, answered the same way.'],
+]
+const LISTS = {
+  founding: ['Professional features, for the life of the licence', '500 call minutes a month, extra minutes at cost', 'Done-for-you setup', 'One location per licence'],
+  starter: ['24/7 call answering', 'Bookings and FAQs', '5 languages', '500 calls a month'],
+  professional: ['Everything in Starter', 'Books into your software', '30+ languages', 'Upsells and analytics', '2,500 calls a month'],
+  enterprise: ['Everything in Professional', 'Multi-location setup', 'Custom voice', 'Dedicated success manager', 'Unlimited calls'],
+}
+const OFFER = { hospitality: ['$2,500', 'hotels and restaurants'], clinics: ['$3,500', 'clinics'], dental: ['$3,000', 'dental practices'] }
+const FAQ = [
+  ['Will callers know they are talking to an AI?', 'Yes. She introduces herself as Amariya, the AI receptionist, in her first sentence. EU law has required this since August 2026, and it is how we would want it anyway.'],
+  ['What happens when a caller wants a person?', 'She transfers the call to your team, or takes a message with a short summary when no one is free.'],
+  ['Which systems does she book into?', 'We connect her to your booking or practice software during setup. If your system has no connection, she takes the booking details and sends them to your team straight away.'],
+  ['What does live in 7 days mean?', 'Amariya answering real calls on your business number within 7 days of your signed licence and setup details. If she is not, you get a full refund. After she goes live, you still have 7 days to ask for a refund for any reason.'],
+  ['What does lifetime mean?', 'Your founding licence does not expire. It covers one location and 500 call minutes a month. Extra minutes are billed at cost, and unused minutes do not roll over.'],
+  ['Which languages does she speak?', 'More than 30. She answers in the caller’s language and books in yours.'],
+]
+const CALLS = [
+  { meta: 'Harbour House · 11:48 pm', done: 'Late arrival noted · Breakfast 7:30', lines: [['a', 'Good evening, Harbour House. I’m Amariya, the hotel’s AI receptionist.'], ['g', 'Our flight is delayed. Can we still check in after midnight?'], ['a', 'Of course. I’ve noted a late arrival and told the night team.'], ['g', 'Could you hold breakfast for two as well?'], ['a', 'Done. Seven thirty in the garden room.']] },
+  { meta: 'Sora Dining Room · 7:12 pm', done: 'Mesa reservada · viernes 20:30', lines: [['a', 'Hello, Sora Dining Room. I’m Amariya, the AI host.'], ['g', '¿Tienen mesa para cuatro el viernes?'], ['a', 'Sí, a las ocho y media junto a la ventana. ¿A nombre de quién?'], ['g', 'Lucía Ortega, por favor.']] },
+  { meta: 'Northside Clinic · 6:05 pm', done: 'Consultation booked · Tue 16:15', lines: [['a', 'Hello, Northside Clinic. I’m Amariya, the clinic’s AI receptionist.'], ['g', 'I’d like a consultation about laser hair removal.'], ['a', 'Dr. Malik has Tuesday at 4:15 or Thursday at 11. Which suits you?'], ['g', 'Tuesday, please.']] },
+  { meta: 'Linden Dental · 7:58 am', done: 'Urgent visit · Today 09:10', lines: [['a', 'Good morning, Linden Dental. I’m Amariya, the practice’s AI receptionist.'], ['g', 'I cracked a tooth last night and it really hurts.'], ['a', 'I’m sorry. I can see you at 9:10 today, and I’ve flagged it as urgent.'], ['g', 'Thank you.']] },
+]
+
+// ---------- Content the motion below reads (icons are filled in by the module at the end) ----------
+$('#orbit').innerHTML = PILLS.map(([ic, t, d]) => `<li class="orbit-slot"><div class="pill" tabindex="0"><img class="pill-ico" data-icon="${ic}" alt=""><h3>${t}</h3><p>${d}</p></div></li>`).join('')
+for (const ul of $$('[data-list]')) ul.innerHTML = LISTS[ul.dataset.list].map((t) => `<li><img data-icon="check" alt="">${t}</li>`).join('')
+$('#qs').innerHTML = FAQ.map(([q, a]) => `<details class="card reveal"><summary>${q}<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>${a}</p></details>`).join('')
+$('#dots').innerHTML = Array.from({ length: 30 }, (_, i) => `<i style="--i:${i}"></i>`).join('')
+$$('#priceTabs button').forEach((b) => b.addEventListener('click', () => {
+  $$('#priceTabs button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)))
+  const [price, who] = OFFER[b.dataset.n]
+  $('[data-price]').textContent = price; $('[data-who]').textContent = who
+}))
+
+// ---------- The story opens at the visitor's own time ----------
+{
+  const d = new Date(), twelve = (new Intl.DateTimeFormat(undefined, { hour: 'numeric' }).resolvedOptions().hourCycle || 'h12').startsWith('h1')
+  const h = twelve ? ((d.getHours() + 11) % 12) + 1 : d.getHours(), m = String(d.getMinutes()).padStart(2, '0')
+  $('[data-clock]').innerHTML = `<span>${h}<span class="tick">:</span>${m}</span>`
+  $('[data-clock-line]').textContent = twelve ? `${h}:${m} ${d.getHours() < 12 ? 'am' : 'pm'}` : `${String(h).padStart(2, '0')}:${m}`
+}
+
+// ---------- Text that resolves like a live transcript ----------
+function splitText(el) {
+  const label = el.textContent.replace(/\s+/g, ' ').trim()
+  const visual = document.createElement('span')
+  visual.setAttribute('aria-hidden', 'true')
+  visual.append(...el.childNodes)
+  const walk = (node) => [...node.childNodes].forEach((child) => {
+    if (child.nodeType === Node.TEXT_NODE) {
+      const frag = document.createDocumentFragment()
+      for (const ch of child.textContent) {
+        if (/\s/.test(ch)) { frag.append(' '); continue }
+        const s = document.createElement('span'); s.className = 'ch'; s.textContent = ch
+        s.style.setProperty('--r', (Math.random() * 0.62).toFixed(3)); frag.append(s)
+      }
+      child.replaceWith(frag)
+    } else if (child.nodeType === Node.ELEMENT_NODE) walk(child)
+  })
+  walk(visual)
+  const sr = document.createElement('span'); sr.className = 'sr-only'; sr.textContent = label
+  el.append(sr, visual)
+}
+if (!reducedMotion) {
+  $$('[data-split]').forEach(splitText)
+  const heroTitle = $('.hero-title'), show = () => heroTitle.classList.add('is-in')
+  ;(document.fonts?.ready || Promise.resolve()).then(() => setTimeout(show, 120)); setTimeout(show, 1500)
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (!e.isIntersecting) return; e.target.classList.add('is-in'); io.unobserve(e.target) }), { rootMargin: '0px 0px -18% 0px' })
+  $$('[data-split="in"]').filter((el) => el !== heroTitle).forEach((el) => io.observe(el))
+  const rio = new IntersectionObserver((entries) => entries.forEach((e) => { if (!e.isIntersecting) return; e.target.classList.add('in'); rio.unobserve(e.target) }), { rootMargin: '0px 0px -10% 0px' })
+  $$('.reveal').forEach((el) => rio.observe(el))
+  new IntersectionObserver(([e], o) => { if (e.isIntersecting) { $('#dots').classList.remove('off'); o.disconnect() } }, { rootMargin: '0px 0px -25% 0px' }).observe($('.plan.recommended'))
+} else { $$('.reveal').forEach((el) => el.classList.add('in')); $('#dots').classList.remove('off') }
+
+// ---------- Particle sphere (WebGL): the original Amariya orb ----------
+const VERT = `
+precision highp float;
+attribute vec3 aPos;
+attribute vec3 aColor;
+attribute vec4 aAlt;
+attribute vec2 aMisc;
+uniform float uTime, uRot, uTilt, uPoint, uLevel, uWave, uField, uRing, uWaveSpan;
+uniform float uConnect, uThink, uListen, uSpeak, uAlpha, uBright;
+uniform vec2 uCenter, uScale, uFieldSpan;
+varying vec3 vColor;
+varying float vAlpha;
+vec3 rotY(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(c * p.x + s * p.z, p.y, -s * p.x + c * p.z); }
+vec3 rotX(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(p.x, c * p.y - s * p.z, s * p.y + c * p.z); }
+void main() {
+  float seed = aMisc.x;
+  vec3 p = aPos;
+  float n = sin(dot(p, vec3(4.1, 3.3, 2.7)) + uTime * .8 + seed * 6.2831) * .5 + .5;
+  float r = 1. + (n - .5) * .03;
+  r += uLevel * (.05 + n * .2);
+  r += uSpeak * uLevel * .09 * sin(p.y * 12. - uTime * 7.);
+  r += uListen * .035 * sin(p.y * 7. + uTime * 3. + seed * 2.);
+  r += uThink * .03 * sin(uTime * 5. + seed * 40.);
+  r *= 1. - uConnect * .16 * (.6 + .4 * sin(uTime * 5. + seed * 6.2831));
+  vec3 sphere = rotX(rotY(p * r, uRot), uTilt);
+  float wx = aAlt.x;
+  float env = exp(-wx * wx * 2.2);
+  float amp = (.1 + .32 * env) * (.75 + uLevel * 1.8);
+  float wy = sin(wx * 7. - uTime * 2.3) * amp + sin(wx * 19. + uTime * 3.7) * .05 * env;
+  vec3 wave = vec3(wx * uWaveSpan, wy * (aAlt.y * 2. - 1.), (aAlt.y - .5) * .4);
+  float ang = atan(p.z, p.x) + uTime * .06;
+  float rr = 1.55 + (seed - .5) * .34 + sin(ang * 3. + uTime * .5) * .03;
+  vec3 ring = rotX(vec3(cos(ang) * rr, (aAlt.y - .5) * .05, sin(ang) * rr), 1.2 + uTilt * .4);
+  vec3 field = vec3(aAlt.z * uFieldSpan.x, aAlt.w * uFieldSpan.y, aMisc.y);
+  field.xy += vec2(sin(uTime * .15 + seed * 30.), cos(uTime * .12 + seed * 20.)) * .06;
+  vec3 pos = mix(sphere, wave, uWave);
+  pos = mix(pos, ring, uRing);
+  pos = mix(pos, field, uField);
+  float persp = 1. / (1. - pos.z * .22);
+  gl_Position = vec4(uCenter + pos.xy * persp * uScale, 0., 1.);
+  float front = clamp(pos.z * .5 + .5, 0., 1.);
+  float edge = 1. - abs(sphere.z);
+  float shaped = (1. - uWave) * (1. - uField) * (1. - uRing);
+  float rim = mix(1., mix(.55, 1.45, edge * edge), shaped);
+  vColor = aColor * uBright * (.9 + uLevel * .45) * mix(1., 1.15, edge * shaped);
+  vAlpha = uAlpha * rim * mix(.2, 1., front) * mix(1., .75 + .25 * sin(uTime * 2. + seed * 50.), uField);
+  gl_PointSize = max(1.2, uPoint * persp * (1. + uLevel * .35));
+}`
+const FRAG = `
+precision mediump float;
+varying vec3 vColor;
+varying float vAlpha;
+void main() {
+  vec2 c = gl_PointCoord - .5;
+  float d = length(c);
+  if (d > .5) discard;
+  float a = vAlpha * smoothstep(.5, .15, d);
+  gl_FragColor = vec4(vColor * a, a);
+}`
+// Deep blues above, mint and pale gold at the equator, burnt orange below, with a scatter of stray colours
+const PALETTE = {
+  blue: [[0.16, 0.36, 0.68], [0.22, 0.45, 0.78], [0.33, 0.57, 0.86], [0.14, 0.3, 0.58]],
+  mint: [[0.53, 0.84, 0.77], [0.45, 0.75, 0.8]],
+  gold: [[0.93, 0.83, 0.5], [0.97, 0.72, 0.35]],
+  orange: [[0.87, 0.37, 0.12], [0.93, 0.47, 0.18], [0.78, 0.26, 0.1]],
+}
+const pick = (a) => a[(Math.random() * a.length) | 0]
+function colorFor(y) {
+  const t = y + (Math.random() - 0.5) * 0.6, r = Math.random()
+  let c
+  if (t > 0.15) c = r < 0.88 ? pick(PALETTE.blue) : r < 0.95 ? pick(PALETTE.mint) : pick(PALETTE.gold)
+  else if (t > -0.3) c = r < 0.42 ? pick(PALETTE.mint) : r < 0.62 ? pick(PALETTE.gold) : r < 0.82 ? pick(PALETTE.blue) : pick(PALETTE.orange)
+  else c = r < 0.86 ? pick(PALETTE.orange) : r < 0.94 ? pick(PALETTE.mint) : pick(PALETTE.gold)
+  const k = 0.78 + Math.random() * 0.32
+  return [c[0] * k, c[1] * k, c[2] * k]
+}
+function buildPoints(count) {
+  const data = new Float32Array(count * 12)
+  for (let i = 0; i < count; i++) {
+    const y = Math.random() * 2 - 1, s = Math.sqrt(1 - y * y), a = Math.random() * Math.PI * 2, [r, g, b] = colorFor(y)
+    data.set([s * Math.cos(a), y, s * Math.sin(a), r, g, b, Math.random() * 2 - 1, Math.random(), Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random(), Math.random() * 2 - 1], i * 12)
+  }
+  return data
+}
+const UNIFORMS = ['uTime', 'uRot', 'uTilt', 'uPoint', 'uLevel', 'uWave', 'uField', 'uRing', 'uWaveSpan', 'uConnect', 'uThink', 'uListen', 'uSpeak', 'uAlpha', 'uBright', 'uCenter', 'uScale', 'uFieldSpan']
+class ParticleOrb {
+  constructor(canvas, count) {
+    const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: true, powerPreference: 'high-performance' })
+    if (!gl) throw new Error('WebGL unavailable')
+    const shader = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s }
+    const prog = gl.createProgram()
+    gl.attachShader(prog, shader(gl.VERTEX_SHADER, VERT)); gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FRAG)); gl.linkProgram(prog)
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog))
+    gl.useProgram(prog)
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, buildPoints(count), gl.STATIC_DRAW)
+    const attr = (name, size, offset) => { const loc = gl.getAttribLocation(prog, name); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 48, offset * 4) }
+    attr('aPos', 3, 0); attr('aColor', 3, 3); attr('aAlt', 4, 6); attr('aMisc', 2, 10)
+    this.u = {}; UNIFORMS.forEach((n) => (this.u[n] = gl.getUniformLocation(prog, n)))
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.clearColor(0, 0, 0, 0)
+    Object.assign(this, { gl, canvas, count, dpr: 1 }); this.resize()
+  }
+  resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2), w = Math.max(1, Math.round(this.canvas.clientWidth * dpr)), h = Math.max(1, Math.round(this.canvas.clientHeight * dpr))
+    if (w !== this.canvas.width || h !== this.canvas.height) { this.canvas.width = w; this.canvas.height = h }
+    this.dpr = dpr; this.gl.viewport(0, 0, w, h)
+  }
+  draw(p) {
+    const { gl, u } = this
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    gl.uniform1f(u.uTime, p.time); gl.uniform1f(u.uRot, p.rot); gl.uniform1f(u.uTilt, p.tilt); gl.uniform1f(u.uPoint, p.point * this.dpr); gl.uniform1f(u.uLevel, p.level)
+    gl.uniform1f(u.uWave, p.wave || 0); gl.uniform1f(u.uField, p.field || 0); gl.uniform1f(u.uRing, p.ring || 0); gl.uniform1f(u.uWaveSpan, p.waveSpan || 1)
+    gl.uniform2f(u.uFieldSpan, p.fieldSpan?.[0] || 1, p.fieldSpan?.[1] || 1)
+    const st = p.states || {}
+    gl.uniform1f(u.uConnect, st.connecting || 0); gl.uniform1f(u.uThink, st.thinking || 0); gl.uniform1f(u.uListen, st.listening || 0); gl.uniform1f(u.uSpeak, st.speaking || 0)
+    gl.uniform1f(u.uAlpha, p.alpha); gl.uniform1f(u.uBright, 1)
+    gl.uniform2f(u.uCenter, p.center[0], p.center[1]); gl.uniform2f(u.uScale, p.scale[0], p.scale[1])
+    gl.drawArrays(gl.POINTS, 0, this.count)
+  }
+}
+const pointer = { x: 0, y: 0, sx: 0, sy: 0 }
+addEventListener('pointermove', (e) => { pointer.x = e.clientX / innerWidth - 0.5; pointer.y = e.clientY / innerHeight - 0.5 }, { passive: true })
+
+// ---------- Scenes: what the particle field becomes in each section ----------
+const fxCanvas = $('.fx'), heroOrb = $('.hero-orb'), hero = $('#welcome'), story = $('#story')
+const beats = $$('.beat'), beatTime = $('.beat-time'), greetings = $$('.greetings li'), storyCount = $('.story-count'), countEl = $('[data-count]')
+const WINDOWS = [[0, 0.28], [0.28, 0.68], [0.68, 1.01]]
+const beatVis = [0, 0, 0]
+const SCENES = [
+  { el: $('#problem'), field: 1, alpha: 0.3 },
+  { el: $('#call'), field: 1, alpha: 0.22 },
+  { el: $('#features'), custom: () => featureSphere() },
+  { el: $('#golive'), field: 1, alpha: 0.18 },
+  { el: $('#pricing'), field: 1, alpha: 0.35 },
+  { el: $('#faq'), field: 1, alpha: 0.4 },
+  { el: $('.footer'), anchor: $('.wordmark'), r: 0.17, alpha: 1 },
+]
+const view = { cx: innerWidth / 2, cy: innerHeight * 0.45, radius: 300, wave: 0, ring: 0, field: 0, alpha: 0 }
+let storyP = 0, rot = 0, lastCount = '', sceneTarget = null
+function storyProgress() { const r = story.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? clamp(-r.top / span) : 0 }
+function updateStory(p) {
+  beats.forEach((beat, i) => {
+    const [a, b] = WINDOWS[i]
+    const out = i < beats.length - 1 ? 1 - smooth(b - 0.06, b + 0.01, p) : 1 - smooth(0.96, 1, p)
+    const vis = smooth(a - (i ? 0.03 : 0.08), a + 0.05, p) * out
+    beatVis[i] = vis
+    beat.style.setProperty('--vis', vis.toFixed(3))
+    beat.style.setProperty('--bp', clamp((p - a) / ((b - a) * 0.6)).toFixed(3))
+  })
+  beatTime.style.setProperty('--to', (1 - smooth(0.2, 0.3, p)).toFixed(3))
+  beatTime.style.setProperty('--ts', (1.14 - 0.14 * smooth(0, 0.26, p)).toFixed(4))
+  storyCount.style.setProperty('--sp', p.toFixed(3))
+  storyCount.style.opacity = (1 - smooth(0.95, 1, p)).toFixed(3)
+  const label = `0${p < WINDOWS[1][0] ? 1 : p < WINDOWS[2][0] ? 2 : 3}`
+  if (label !== lastCount) countEl.textContent = lastCount = label
+}
+// Languages leave the orb, one at a time, while the second beat is on screen; each one pulses the orb
+const GREET_SLOTS = [[1.75, -0.3], [-1.25, -1.1], [1.25, -1.1], [-1.75, -0.3]]
+const greetState = greetings.map(() => ({ t: -1, sx: 0, sy: 0, w: 0 }))
+let greetNext = 0, greetIdx = 0, emit = 0
+function updateGreetings(dt, active) {
+  const vw = innerWidth
+  if (active && time >= greetNext) {
+    const i = greetIdx % greetings.length, [sx, sy] = GREET_SLOTS[greetIdx % GREET_SLOTS.length]
+    Object.assign(greetState[i], { t: 0, sx, sy, w: greetings[i].offsetWidth })
+    greetIdx++; greetNext = time + 1.05; emit = 1
+  }
+  if (!active) greetNext = Math.min(greetNext, time + 0.3)
+  const R = Math.max(60, view.radius)
+  greetings.forEach((li, i) => {
+    const g = greetState[i]
+    if (g.t < 0) { if (li.style.opacity !== '0') li.style.opacity = '0'; return }
+    g.t += dt / (active ? 2.1 : 0.5)
+    if (g.t >= 1) { g.t = -1; li.style.opacity = '0'; return }
+    const t = g.t, out = 1 - Math.pow(1 - clamp(t / 0.5), 3), reach = R * (0.06 + 0.94 * out + 0.16 * clamp((t - 0.5) / 0.5)), half = g.w / 2 + 16
+    const x = clamp(g.sx * reach, -vw / 2 + half, vw / 2 - half), y = g.sy * reach
+    const blur = (1 - smooth(0, 0.35, t)) * 10 + smooth(0.72, 1, t) * 4
+    li.style.opacity = (smooth(0, 0.3, t) * (1 - smooth(0.64, 1, t))).toFixed(3)
+    li.style.filter = blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : 'none'
+    li.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${(0.5 + 0.5 * out).toFixed(3)})`
+  })
+}
+function currentScene() {
+  const mid = innerHeight * 0.5
+  if (story.getBoundingClientRect().bottom > mid) return 'opening'
+  for (const s of SCENES) { const r = s.el.getBoundingClientRect(); if (r.top <= mid && r.bottom >= mid) return s }
+  return sceneTarget
+}
+let fieldGL = null
+function drawField(dt) {
+  const vw = innerWidth, vh = innerHeight, minSide = Math.min(vw, vh), scene = currentScene(), opening = scene === 'opening' || !scene
+  const sr = story.getBoundingClientRect()
+  if (sr.bottom > 0 && sr.top < vh) {
+    const goal = reducedMotion ? 0 : storyProgress()
+    storyP += (goal - storyP) * Math.min(1, dt * 7)
+    if (Math.abs(goal - storyP) > 0.35) storyP = goal
+    if (!reducedMotion) { updateStory(storyP); updateGreetings(dt, beatVis[1] > 0.55) }
+  }
+  let target
+  if (opening) {
+    // The orb glides from its place in the hero to the centre of the story
+    const or = heroOrb.getBoundingClientRect(), hand = smooth(0, hero.offsetHeight * 0.7, scrollY), rectR = or.width / 2
+    target = { cx: lerp(or.left + rectR, vw / 2, hand), cy: lerp(or.top + or.height / 2, vh * 0.38, hand), radius: lerp(rectR, minSide * 0.24, hand),
+      wave: smooth(0.06, 0.15, storyP) * (1 - smooth(0.2, 0.28, storyP)), field: smooth(0.68, 0.82, storyP), ring: 0, alpha: 1 }
+  } else {
+    sceneTarget = scene
+    const a = scene.anchor?.getBoundingClientRect(), c = scene.custom?.()
+    target = c ? { ...c, wave: 0, field: 0, ring: 0 } : {
+      cx: a ? a.left + a.width / 2 : vw / 2, cy: a ? a.top + a.height / 2 : vh / 2, radius: minSide * (scene.r || 0.3) * (vw < 760 ? 1.15 : 1),
+      wave: 0, field: scene.field || 0, ring: 0, alpha: scene.alpha * (vw < 760 ? 0.8 : 1) }
+  }
+  const k = Math.min(1, dt * (opening ? 12 : 2.2)), kPos = opening ? k : Math.min(1, dt * 5), kAlpha = Math.min(k, dt * 1.6)
+  if (reducedMotion) Object.assign(view, target)
+  else for (const key in target) view[key] += (target[key] - view[key]) * (key === 'alpha' ? kAlpha : key === 'cx' || key === 'cy' || key === 'radius' ? kPos : k)
+  emit = Math.max(0, emit - dt * 1.6)
+  const lvl = Math.max(level, emit * emit * 0.45)
+  pointer.sx += (pointer.x - pointer.sx) * Math.min(1, dt * 2.5); pointer.sy += (pointer.y - pointer.sy) * Math.min(1, dt * 2.5)
+  rot += dt * (0.09 + lvl * 0.6)
+  const cr = fxCanvas.getBoundingClientRect(), radius = Math.max(40, view.radius)
+  fieldGL.resize()
+  fieldGL.draw({ time, level: lvl, states, rot: rot + pointer.sx * 0.35, tilt: 0.28 + pointer.sy * 0.14, point: 1.4 * clamp(radius / 380, 0.8, 1.15),
+    wave: view.wave, field: view.field, ring: view.ring, waveSpan: (vw / 2 / radius) * 0.94, fieldSpan: [vw / 2 / radius, vh / 2 / radius], alpha: view.alpha,
+    center: [((view.cx - cr.left) / cr.width) * 2 - 1, 1 - ((view.cy - cr.top) / cr.height) * 2], scale: [(radius / cr.width) * 2, (radius / cr.height) * 2] })
+}
+
+// ---------- Scroll transitions: words light up, blocks rise, glows drift ----------
+const scrubs = reducedMotion ? [] : $$('[data-scrub]').map((el) => {
+  const words = el.textContent.trim().split(/\s+/).map((w) => Object.assign(document.createElement('span'), { className: 'w', textContent: w }))
+  el.replaceChildren(...words.flatMap((w, i) => (i ? [' ', w] : [w])))
+  return { el, words, lit: -1 }
+})
+const risers = reducedMotion ? [] : $$('.facts, .bento, .plan-grid, .faq-list, .footer-cta')
+const glows = reducedMotion ? [] : $$('.hero, .section, .footer')
+function updateScrollFx() {
+  const vh = innerHeight
+  for (const s of scrubs) {
+    const r = s.el.getBoundingClientRect()
+    if (r.bottom < 0 || r.top > vh) continue
+    const lit = Math.round(clamp((vh * 0.92 - r.top) / (vh * 0.5)) * s.words.length)
+    if (lit === s.lit) continue
+    s.words.forEach((w, i) => w.classList.toggle('on', i < lit)); s.lit = lit
+  }
+  for (const el of risers) {
+    const r = el.getBoundingClientRect()
+    if (r.bottom < -vh * 0.2 || r.top > vh * 1.2) continue
+    const e = 1 - Math.pow(1 - clamp((vh - r.top) / (vh * 0.75)), 3)
+    el.style.transform = e > 0.999 ? '' : `translate3d(0, ${((1 - e) * 110).toFixed(1)}px, 0) scale(${(0.94 + 0.06 * e).toFixed(4)})`
+  }
+  for (const el of glows) {
+    const r = el.getBoundingClientRect()
+    if (r.bottom < -200 || r.top > vh + 200) continue
+    el.style.setProperty('--gy', `${((0.5 - (vh - r.top) / (vh + r.height)) * 120).toFixed(1)}px`)
+  }
+}
+
+// ---------- The problem: the warm light spreads down the section as you scroll ----------
+const problemEl = $('#problem'), problemHead = $('#problem .section-head'), warmBlob = $('.warm-glow i')
+function updateWarmGlow() {
+  const vh = innerHeight, r = problemEl.getBoundingClientRect()
+  if (r.bottom < -100 || r.top > vh + 100) return
+  const t = clamp((vh * 0.3 - r.top) / Math.max(1, r.height - vh * 0.7)), e = t * t * (3 - 2 * t)
+  const y = lerp(problemHead.offsetTop + 10, r.height * 0.5, e), k = lerp(1, Math.max(2.4, (r.height * 1.05) / warmBlob.offsetHeight), e)
+  warmBlob.style.transform = `translate(-50%, -50%) translate3d(0, ${(y - warmBlob.offsetTop).toFixed(1)}px, 0) scale(${k.toFixed(3)})`
+  warmBlob.style.opacity = lerp(1, 0.34, e).toFixed(3)
+}
+
+// ---------- What she handles: one pinned transition (after mdx.so) ----------
+// At first the heading sits on the sphere and the pills are spread wide; then the heading
+// gives way to a smaller one in the corner, the paragraph appears, and the pills gather round the sphere.
+const featuresEl = $('#features'), stage = $('.feature-stage'), pin = $('.feature-pin'), fhA = $('.fh-a'), fhB = $('.fh-b'), lede = $('.feature-lede'), orbitEl = $('.orbit'), slots = $$('.orbit-slot')
+const PILL_A = [[0.14, 0.15], [0.86, 0.2], [0.08, 0.72], [0.93, 0.66], [0.27, 0.86]]
+const PILL_ANGLE = [-90, -18, 198, 54, 126]
+const wideScreen = matchMedia('(min-width: 761px)')
+let stageLive = false, stageE = 0
+function setStageLive() {
+  stageLive = !reducedMotion && wideScreen.matches
+  featuresEl.classList.toggle('orbit-live', stageLive)
+  if (!stageLive) [fhA, fhB, lede, ...slots].forEach((el) => ['transform', 'opacity', 'filter'].forEach((k) => (el.style[k] = '')))
+}
+setStageLive(); wideScreen.addEventListener?.('change', setStageLive)
+function stageGeometry() {
+  const r = pin.getBoundingClientRect(), base = Math.min(innerHeight, innerWidth * 0.62), R = lerp(0.3, 0.21, stageE) * base
+  return { r, W: r.width, H: r.height, cx: r.width / 2, cy: lerp(0.5, 0.545, stageE) * r.height, R, gap: Math.max(28, R * 0.2) }
+}
+function featureSphere() {
+  if (stageLive) { const g = stageGeometry(); return { cx: g.r.left + g.cx, cy: g.r.top + g.cy, radius: g.R, alpha: 1 } }
+  const o = orbitEl.getBoundingClientRect()
+  return { cx: o.left + o.width / 2, cy: o.top + o.height / 2, radius: Math.min(innerWidth, innerHeight) * 0.34, alpha: 0.45 }
+}
+// How far out along a direction a box of half-size hw x hh must sit to keep `target` clear of the centre
+function clearDistance(a, b, hw, hh, target) {
+  let lo = 0, hi = target + hw + hh
+  for (let n = 0; n < 24; n++) { const d = (lo + hi) / 2; if (Math.hypot(Math.max(0, d * a - hw), Math.max(0, d * b - hh)) < target) lo = d; else hi = d }
+  return hi
+}
+function updateFeatureStage() {
+  if (!stageLive) return
+  const vh = innerHeight, sr = stage.getBoundingClientRect()
+  if (sr.bottom < -80 || sr.top > vh + 80) return
+  const t = clamp((clamp(-sr.top / (sr.height - vh)) - 0.15) / 0.5)
+  stageE = t * t * (3 - 2 * t)
+  const e = stageE, g = stageGeometry(), aOut = clamp(e * 2.2)
+  fhA.style.transform = `translate(-50%, -50%) translate3d(0, ${(-e * 60).toFixed(1)}px, 0) scale(${(1 - 0.12 * e).toFixed(4)})`
+  fhA.style.opacity = (1 - aOut).toFixed(3)
+  fhA.style.filter = aOut > 0.02 ? `blur(${(aOut * 8).toFixed(1)}px)` : ''
+  const bIn = clamp((e - 0.5) / 0.45)
+  fhB.style.opacity = bIn.toFixed(3); fhB.style.transform = `translate3d(0, ${((1 - bIn) * 16).toFixed(1)}px, 0)`
+  const lIn = clamp((e - 0.55) / 0.4)
+  lede.style.opacity = lIn.toFixed(3); lede.style.transform = `translate3d(0, ${((1 - lIn) * 24).toFixed(1)}px, 0)`
+  const m = 1 - (1 - clamp(e / 0.85)) ** 3, vw = document.documentElement.clientWidth, breath = Math.sin(time * 0.9) * 4
+  slots.forEach((slot, i) => {
+    const w = slot.offsetWidth, h = slot.offsetHeight, pill = slot.firstElementChild
+    if (!slot._w || !pill.matches(':hover, :focus')) [slot._w, slot._h] = [w, h]
+    const [ax, ay] = PILL_A[i % PILL_A.length], th = (PILL_ANGLE[i % PILL_ANGLE.length] * Math.PI) / 180, ux = Math.cos(th), uy = Math.sin(th)
+    const d = clearDistance(Math.abs(ux), Math.abs(uy), slot._w / 2, slot._h / 2, g.R + g.gap) + breath
+    const bob = Math.sin(time * 0.9 + i * 1.7) * 6 * (1 - m)
+    const x = clamp(lerp(ax * vw, g.r.left + g.cx + ux * d, m), w / 2 + 16, vw - w / 2 - 16) - g.r.left
+    const y = clamp(lerp(ay * g.H, g.cy + uy * d, m), h / 2 + 16, g.H - h / 2 - 92) + bob
+    slot.style.transform = `translate3d(${(x - w / 2).toFixed(1)}px, ${(y - h / 2).toFixed(1)}px, 0)`
+    // The sphere lights the glass on the side facing it: blue from its top half, orange from its bottom
+    const vx = g.cx - x, vy = g.cy - y, len = Math.hypot(vx, vy) || 1, k = clamp(0.5 + (y - g.cy) / (g.R * 3))
+    pill.style.setProperty('--lx', `${(50 + (50 * vx) / len).toFixed(1)}%`)
+    pill.style.setProperty('--ly', `${(50 + (70 * vy) / len).toFixed(1)}%`)
+    pill.style.setProperty('--tint', `${Math.round(lerp(120, 255, k))} ${Math.round(lerp(160, 140, k))} ${Math.round(lerp(255, 70, k))}`)
+    pill.style.setProperty('--ta', (0.05 + 0.15 * m).toFixed(3))
+  })
+}
+
+// ---------- Live in seven days: her setup, drawn a day at a time (after the build story on legitdesign.studio) ----------
+// Scrolling plays it: day 1 writes up your details, days 2 and 3 draw Amariya fed by them and booking into your
+// system, days 4 and 5 test her and tick each detail off, day 6 forwards your line, and on day 7 the drawing comes alive.
+const setupStory = $('#setupStory'), setupBox = $('.sketch-box'), sketch = $('.sketch'), sketchSvg = $('.sketch-lines')
+const sketchDim = $('.sketch-dim'), [revPlan, revLive] = $$('.sketch-label .rev')
+const spark = $('.spark'), trail = $$('.trail i'), liveChip = $('.sketch-live'), setupOrbCanvas = $('.sketch-orb'), globeBlobs = $$('.blob')
+const SETUP = $$('.setup-steps li').map((li) => ({ button: $('button', li), bar: $('.ss-bar i', li), when: $('.ss-when', li).textContent, title: $('.ss-title', li).textContent, body: $('.ss-body', li).textContent }))
+const setupNow = { when: $('.sn-when'), title: $('.sn-title'), body: $('.sn-body'), segs: $$('.sn-segs b') }
+const ramp = (v, a, b) => clamp((v - a) / (b - a))
+const svgEl = (tag, attrs, text) => { const el = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in attrs) el.setAttribute(k, attrs[k]); if (text) el.textContent = text; return el }
+const roundRect = (x, y, w, h, r) => `M ${x + r} ${y} H ${x + w - r} Q ${x + w} ${y} ${x + w} ${y + r} V ${y + h - r} Q ${x + w} ${y + h} ${x + w - r} ${y + h} H ${x + r} Q ${x} ${y + h} ${x} ${y + h - r} V ${y + r} Q ${x} ${y} ${x + r} ${y} Z`
+const ring = (cx, cy, r) => `M ${cx - r} ${cy} A ${r} ${r} 0 1 1 ${cx + r} ${cy} A ${r} ${r} 0 1 1 ${cx - r} ${cy}`
+// The drawing, on an 800 x 500 stage: your details on the left, Amariya in the middle, your system on the right
+const CARD = { x: 80, y: 100, w: 160, h: 196 }, ROWS = [156, 190, 224, 258], TIMER = { x: 220, y: 121 }
+const HUB = { x: 400, y: 198 }, SYS = { x: 560, y: 118, w: 160, h: 160 }, RULER = { x: 80, y: 436, w: 640 }
+const STROKES = [], LABELS = []
+const stroke = (step, d, cls = '') => STROKES.push({ step, d, cls }) - 1
+// `live`: the label steps aside when she comes alive on day 7
+const label = (after, x, y, text, anchor = 'start', live = false) => LABELS.push({ after, x, y, text, anchor, live })
+// Day 1: the seven days ruled along the bottom, then the call, written up as a card of your details
+stroke(0, `M ${RULER.x} ${RULER.y} H ${RULER.x + RULER.w}`)
+const ticks = stroke(0, Array.from({ length: 8 }, (_, k) => `M ${(RULER.x + (k * RULER.w) / 7).toFixed(1)} ${RULER.y - 6} V ${RULER.y + 6}`).join(' '))
+for (let k = 1; k <= 7; k++) label(ticks, RULER.x + ((k - 0.5) * RULER.w) / 7, RULER.y + 24, `DAY ${k}`, 'middle')
+label(stroke(0, roundRect(CARD.x, CARD.y, CARD.w, CARD.h, 10)), CARD.x + 14, CARD.y + 26, 'YOUR DETAILS')
+stroke(0, ring(TIMER.x, TIMER.y, 9))
+stroke(0, `M ${TIMER.x} ${TIMER.y} L ${TIMER.x} ${TIMER.y - 9} A 9 9 0 0 1 ${TIMER.x + 7.8} ${TIMER.y + 4.5} Z`)
+stroke(0, `M ${CARD.x} ${CARD.y + 40} H ${CARD.x + CARD.w}`)
+ROWS.forEach((y, i) => label(stroke(0, roundRect(CARD.x + 14, y, 12, 12, 2)), CARD.x + 36, y + 11, ['HOURS', 'PRICES', 'POLICIES', 'QUESTIONS'][i]))
+// Days 2 and 3: Amariya at the centre, fed by your details and booking into your system
+stroke(1, `M ${HUB.x - 90} ${HUB.y} H ${HUB.x + 90}`, 'thin')
+stroke(1, `M ${HUB.x} ${HUB.y - 90} V ${HUB.y + 90}`, 'thin')
+stroke(1, ring(HUB.x, HUB.y, 88), 'thin')
+stroke(1, ring(HUB.x, HUB.y, 72), 'hub')
+const voice = Array.from({ length: 45 }, (_, i) => { const u = i / 44; return `${i ? 'L' : 'M'} ${HUB.x - 44 + i * 2} ${(HUB.y - Math.sin(u * Math.PI * 4) * 14 * Math.sin(u * Math.PI)).toFixed(1)}` }).join(' ')
+label(stroke(1, voice, 'wave'), HUB.x, HUB.y + 52, 'AMARIYA', 'middle', true)
+stroke(1, `M ${CARD.x + CARD.w} ${HUB.y} H ${HUB.x - 76}`)
+stroke(1, `M ${HUB.x - 84} ${HUB.y - 6} L ${HUB.x - 76} ${HUB.y} L ${HUB.x - 84} ${HUB.y + 6}`)
+label(stroke(1, roundRect(SYS.x, SYS.y, SYS.w, SYS.h, 10)), SYS.x + 14, SYS.y + 26, 'YOUR SYSTEM')
+stroke(1, `M ${SYS.x} ${SYS.y + 40} H ${SYS.x + SYS.w}`)
+stroke(1, [0, 1, 2, 3].map((r) => `M ${SYS.x + 20} ${SYS.y + 54 + r * 28} H ${SYS.x + 140}`).join(' '))
+stroke(1, [0, 1, 2, 3, 4].map((c) => `M ${SYS.x + 20 + c * 30} ${SYS.y + 54} V ${SYS.y + 138}`).join(' '))
+label(stroke(1, `M ${HUB.x + 76} ${HUB.y} H ${SYS.x - 8}`), (HUB.x + 76 + SYS.x - 8) / 2, HUB.y - 10, 'BOOKS', 'middle')
+stroke(1, `M ${SYS.x - 16} ${HUB.y - 6} L ${SYS.x - 8} ${HUB.y} L ${SYS.x - 16} ${HUB.y + 6}`)
+// Days 4 and 5: a test call, and each of your details ticked off as she gets it right
+stroke(2, roundRect(272, 42, 100, 36, 12))
+stroke(2, 'M 296 78 L 284 90 L 310 78')
+stroke(2, 'M 286 56 H 356 M 286 66 H 332')
+stroke(2, roundRect(428, 54, 100, 36, 12))
+stroke(2, 'M 450 90 L 442 102 L 466 90')
+stroke(2, 'M 442 68 H 512 M 442 78 H 486')
+ROWS.forEach((y) => stroke(2, `M ${CARD.x + 15} ${y + 6.5} L ${CARD.x + 19.5} ${y + 11} L ${CARD.x + 30} ${y - 2}`, 'tick'))
+// Day 6: the calls your team can't take forward to her
+label(stroke(3, roundRect(CARD.x, 354, CARD.w, 44, 22)), CARD.x + CARD.w / 2, 381, 'YOUR NUMBER', 'middle')
+label(stroke(3, `M ${CARD.x + CARD.w} 376 H ${HUB.x} V ${HUB.y + 82}`), (CARD.x + CARD.w + HUB.x) / 2, 366, 'WHEN BUSY', 'middle')
+stroke(3, `M ${HUB.x - 6} ${HUB.y + 90} L ${HUB.x} ${HUB.y + 82} L ${HUB.x + 6} ${HUB.y + 90}`)
+// When each day draws (day 7 has no lines: the drawing comes alive instead), and how far along the ruler the days
+// have got; day 1 starts filling once the ruler is drawn
+const DRAW_AT = [[0.14, 0.82], [1.08, 1.84], [2.08, 2.74], [3.08, 3.6]]
+const DAYS_AT = [[0, 0], [0.82, 1], [1.08, 1], [1.84, 3], [2.08, 3], [2.74, 5], [3.08, 5], [3.6, 6], [4.04, 6], [4.4, 7]]
+let setupLive = false, setupInView = false, setupOn = false, setupT = -1, setupActive = -1, setupCell = null, setupProgress = null, setupOrb = null
+function buildSketch() {
+  setupCell = svgEl('rect', { x: SYS.x + 51, y: SYS.y + 83, width: 28, height: 26, rx: 3, class: 'cell' })
+  sketchSvg.append(setupCell)
+  for (const s of STROKES) { s.el = svgEl('path', { d: s.d, pathLength: 1, class: s.cls }); sketchSvg.append(s.el) }
+  setupProgress = svgEl('line', { x1: RULER.x, y1: RULER.y, x2: RULER.x, y2: RULER.y, class: 'progress' })
+  sketchSvg.append(setupProgress)
+  for (const l of LABELS) { l.el = svgEl('text', { x: l.x, y: l.y, 'text-anchor': l.anchor }, l.text); sketchSvg.append(l.el) }
+  for (const s of STROKES) { s.len = s.el.getTotalLength(); s.a = s.el.getPointAtLength(0); s.b = s.el.getPointAtLength(s.len) }
+  // Each day's window is shared out by length, so the light keeps an even pace
+  DRAW_AT.forEach(([from, to], step) => {
+    const list = STROKES.filter((s) => s.step === step), total = list.reduce((sum, s) => sum + Math.max(40, s.len), 0)
+    let at = from
+    for (const s of list) { s.from = at; at += ((to - from) * Math.max(40, s.len)) / total; s.to = at }
+  })
+  for (const l of LABELS) { l.from = STROKES[l.after].to; l.to = l.from + 0.05 }
+  DAYS_AT[0][0] = STROKES[ticks].to
+  new ResizeObserver(() => sketch.style.setProperty('--s', (setupBox.clientWidth / 800).toFixed(4))).observe(setupBox)
+}
+function daysAt(t) {
+  for (let i = 1; i < DAYS_AT.length; i++) {
+    const [t0, d0] = DAYS_AT[i - 1], [t1, d1] = DAYS_AT[i]
+    if (t < t1) return t <= t0 ? d0 : lerp(d0, d1, (t - t0) / (t1 - t0))
+  }
+  return 7
+}
+// The pen is a point of light: bright while it draws, dimmer as it glides to the next line, with particles trailing
+function placeSpark(t) {
+  const shown = ramp(t, 0.1, 0.16) * (1 - ramp(t, 4.14, 4.24))
+  spark.style.opacity = shown.toFixed(3)
+  if (!shown) { trail.forEach((d) => (d.style.opacity = '0')); return }
+  let i = STROKES.findIndex((s) => t < s.to)
+  if (i < 0) i = STROKES.length - 1
+  const s = STROKES[i], prev = STROKES[i - 1], drawing = t >= s.from && t < s.to
+  let pt, along = 0, size = 0.7
+  if (t >= s.from) { along = s.len * clamp((t - s.from) / (s.to - s.from)); pt = s.el.getPointAtLength(along); if (drawing) size = 1 }
+  else { const k = prev ? smooth(prev.to, s.from, t) : 1; pt = prev ? { x: lerp(prev.b.x, s.a.x, k), y: lerp(prev.b.y, s.a.y, k) } : s.a }
+  // After the last line it flies into the circle and becomes her
+  const fly = smooth(4.02, 4.16, t)
+  if (fly > 0) { pt = { x: lerp(pt.x, HUB.x, fly), y: lerp(pt.y, HUB.y, fly) }; size = lerp(size, 2.4, fly) }
+  spark.style.transform = `translate3d(${pt.x.toFixed(1)}px, ${pt.y.toFixed(1)}px, 0) scale(${size.toFixed(3)})`
+  trail.forEach((d, k) => {
+    const back = along - (k + 1) * 8
+    if (!drawing || back < 0) { d.style.opacity = '0'; return }
+    const q = s.el.getPointAtLength(back)
+    d.style.opacity = ((0.75 - k * 0.14) * shown).toFixed(3)
+    d.style.transform = `translate3d(${q.x.toFixed(1)}px, ${q.y.toFixed(1)}px, 0) scale(${(1 - k * 0.15).toFixed(3)})`
+  })
+}
+function renderSetup(t) {
+  const live = ramp(t, 4.04, 4.3), leave = 1 - ramp(t, 4.06, 4.22)
+  sketchDim.style.opacity = live.toFixed(3)
+  for (const s of STROKES) {
+    const p = clamp((t - s.from) / (s.to - s.from))
+    const o = p > 0.002 ? (s.cls === 'wave' ? leave : s.cls === 'thin' ? 1 - 0.6 * live : 1) : 0
+    if (p !== s.p) { s.p = p; s.el.style.strokeDashoffset = (1 - p).toFixed(4) }
+    if (o !== s.o) { s.o = o; s.el.style.opacity = o.toFixed(3) }
+  }
+  for (const l of LABELS) { const o = ramp(t, l.from, l.to) * (l.live ? leave : 1); if (o !== l.o) { l.o = o; l.el.style.opacity = o.toFixed(3) } }
+  placeSpark(t)
+  // Day 7: the light reaches her, the stage dims and she comes alive in the circle; then a booking lands in your system
+  const orb = ramp(t, 4.12, 4.4), chip = ramp(t, 4.3, 4.42), booked = ramp(t, 4.5, 4.62)
+  setupOn = orb > 0
+  setupOrbCanvas.style.opacity = orb.toFixed(3); setupOrbCanvas.style.transform = `scale(${(0.8 + 0.2 * orb).toFixed(3)})`
+  liveChip.style.opacity = chip.toFixed(3); liveChip.style.transform = `translate3d(0, ${((1 - chip) * 8).toFixed(1)}px, 0)`
+  revLive.style.opacity = chip.toFixed(3); revPlan.style.opacity = (1 - chip).toFixed(3)
+  setupCell.style.opacity = (0.85 * booked).toFixed(3); setupCell.style.transform = `scale(${(0.5 + 0.5 * booked).toFixed(3)})`
+  const days = daysAt(t)
+  setupProgress.setAttribute('x2', (RULER.x + (days / 7) * RULER.w).toFixed(1)); setupProgress.style.opacity = days > 0.01 ? '1' : '0'
+  globeBlobs.forEach((b, i) => (b.style.translate = `0 ${((i ? -1 : 1) * (t / SETUP.length - 0.5) * 120).toFixed(1)}px`))
+  // The steps: the current one opens, with its progress (a still page shows them all, none current)
+  if (!setupLive) return
+  const active = Math.min(SETUP.length - 1, Math.floor(t))
+  if (active !== setupActive) {
+    setupActive = active
+    SETUP.forEach((s, i) => (i === active ? s.button.setAttribute('aria-current', 'step') : s.button.removeAttribute('aria-current')))
+    setupNow.when.textContent = SETUP[active].when; setupNow.title.textContent = SETUP[active].title; setupNow.body.textContent = SETUP[active].body
+  }
+  SETUP[active].bar.style.setProperty('--p', clamp(t - active).toFixed(3))
+  setupNow.segs.forEach((b, i) => (b.style.transform = `scaleX(${clamp(t - i).toFixed(3)})`))
+}
+function updateSetup() {
+  if (!setupLive) return
+  const vh = innerHeight, r = setupStory.getBoundingClientRect()
+  setupInView = r.bottom > 0 && r.top < vh
+  if (!setupInView) return
+  const t = clamp((vh * 0.25 - r.top) / Math.max(1, r.height - vh * 0.75)) * SETUP.length
+  if (Math.abs(t - setupT) < 0.0004) return
+  setupT = t; renderSetup(t)
+}
+function drawSetupOrb(dt) {
+  if (!setupOrb || !setupOn) return
+  setupOrb.rot += dt * 0.3
+  setupOrb.gl.resize()
+  setupOrb.gl.draw({ time, level: 0.1 + 0.08 * Math.sin(time * 2.4), rot: setupOrb.rot, tilt: 0.3, point: 1.3, alpha: 1, center: [0, 0], scale: [0.8, 0.8] })
+}
+setupLive = !reducedMotion
+setupStory.classList.add(setupLive ? 'setup-live' : 'setup-still')
+buildSketch()
+renderSetup(setupLive ? 0 : SETUP.length)
+// Picking a day scrolls to the moment its drawing is done
+if (setupLive) SETUP.forEach((s, i) => s.button.addEventListener('click', () => {
+  const r = setupStory.getBoundingClientRect(), span = r.height - innerHeight * 0.75
+  const y = r.top + scrollY - innerHeight * 0.25 + (span * Math.min(i + 0.9, SETUP.length - 0.3)) / SETUP.length
+  if (lenis) lenis.scrollTo(y, { duration: 1.4 }); else scrollTo({ top: y, behavior: 'smooth' })
+}))
+
+// ---------- Pricing: the planet rises; its rim lights up behind the founding licence ----------
+const planStage = $('.plan-stage'), planet = $('.planet'), founding = $('.plan.recommended')
+function updateEclipse() {
+  const vh = innerHeight, r = planStage.getBoundingClientRect()
+  if (r.bottom < -200 || r.top > vh + 200) return
+  const e = reducedMotion ? 1 : 1 - Math.pow(1 - clamp((vh - r.top) / (vh * 0.9)), 3)
+  planet.style.setProperty('--rise', `${((1 - e) * 180).toFixed(1)}px`)
+  planet.style.setProperty('--glow', e.toFixed(3))
+  const c = founding.getBoundingClientRect(), pr = planet.getBoundingClientRect()
+  planet.style.setProperty('--hx', `${Math.round(c.left + c.width / 2 - pr.left)}px`)
+}
+
+// ---------- The footer wordmark drifts as you scroll ----------
+const wordmark = $('.wordmark')
+function updateDrift() {
+  const vh = innerHeight, r = wordmark.parentElement.getBoundingClientRect()
+  if (r.bottom < -200 || r.top > vh + 200) return
+  wordmark.style.setProperty('--py', `${((0.5 - (vh - r.top) / (vh + r.height)) * 90).toFixed(1)}px`)
+}
+
+// ---------- The live call: lines arrive after a typing pause, replies stream in, ripples cross the dots ----------
+const callCard = $('.call-demo'), callThread = $('[data-call-thread]'), callMeta = $('[data-call-meta]'), callTimer = $('[data-call-timer]'), callCanvas = $('.call-field'), callCtx = callCanvas.getContext('2d')
+const ripples = []
+let callVisible = false, callStart = performance.now(), dots = [], fieldSize = { w: 0, h: 0, dpr: 1 }
+function layoutDots() {
+  const r = callCanvas.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2)
+  if (!r.width || (r.width === fieldSize.w && r.height === fieldSize.h && dpr === fieldSize.dpr)) return
+  fieldSize = { w: r.width, h: r.height, dpr }
+  callCanvas.width = Math.round(r.width * dpr); callCanvas.height = Math.round(r.height * dpr)
+  dots = []
+  const gap = 22
+  for (let y = gap / 2; y < r.height; y += gap) for (let x = gap / 2; x < r.width; x += gap) {
+    const c = colorFor(1 - (y / r.height) * 2).map((v) => Math.min(255, Math.round(v * 255)))
+    dots.push({ x: x + (Math.random() - 0.5) * 5, y: y + (Math.random() - 0.5) * 5, c: c.join(','), a: 0.16 + Math.random() * 0.26, ph: Math.random() * 6.28 })
+  }
+}
+function drawDots(t) {
+  const { w, h, dpr } = fieldSize
+  if (!w) return
+  callCtx.setTransform(dpr, 0, 0, dpr, 0, 0); callCtx.clearRect(0, 0, w, h)
+  while (ripples.length && t - ripples[0].t0 > 2.6) ripples.shift()
+  for (const d of dots) {
+    let dx = 0, dy = 0, glow = 0
+    for (const rp of ripples) {
+      const age = t - rp.t0, vx = d.x - rp.x, vy = d.y - rp.y, dist = Math.hypot(vx, vy) || 1
+      const band = Math.exp(-((dist - age * 280) ** 2) / 1100) * (1 - age / 2.6)
+      dx += (vx / dist) * band * 6; dy += (vy / dist) * band * 6; glow += band
+    }
+    const a = Math.min(1, d.a * (0.7 + 0.3 * Math.sin(t * 1.3 + d.ph)) + glow * 0.85), size = 1.6 + glow * 1.8
+    callCtx.fillStyle = `rgba(${d.c},${a.toFixed(3)})`
+    callCtx.fillRect(d.x + dx - size / 2, d.y + dy - size / 2, size, size)
+  }
+}
+function ripple(el, who) {
+  const c = callCanvas.getBoundingClientRect(), r = el.getBoundingClientRect()
+  const x = who === 'g' ? r.left - c.left + 24 : who === 'a' ? r.right - c.left - 24 : r.left - c.left + r.width / 2
+  ripples.push({ x, y: r.top - c.top + r.height / 2, t0: time })
+}
+const wait = (ms) => new Promise((res) => setTimeout(res, ms))
+async function whenVisible() { while (!callVisible || document.hidden) await wait(250) }
+function node(cls, text) { const d = document.createElement('div'); d.className = cls; d.dir = 'auto'; if (text) d.textContent = text; return d }
+async function playCall(call) {
+  callThread.classList.remove('out'); callThread.replaceChildren(); callMeta.textContent = call.meta; callStart = performance.now()
+  for (const [who, text] of call.lines) {
+    await whenVisible()
+    const typing = node(`mini-bubble ${who} typing enter`)
+    typing.append(document.createElement('i'), document.createElement('i'), document.createElement('i'))
+    callThread.append(typing)
+    await wait(who === 'a' ? 1200 : 800)
+    const bubble = node(`mini-bubble ${who} enter`, who === 'a' ? '' : text)
+    typing.replaceWith(bubble); ripple(bubble, who)
+    if (who === 'a') {
+      const words = text.split(' ').map((w) => Object.assign(document.createElement('span'), { className: 'w', textContent: w }))
+      words.forEach((s, i) => bubble.append(s, i < words.length - 1 ? ' ' : ''))
+      for (const s of words) { s.classList.add('on'); await wait(75) }
+    }
+    await wait(900 + text.length * 22)
+  }
+  const done = node('call-done enter')
+  done.innerHTML = '<svg aria-hidden="true"><use href="#i-check"></use></svg>'
+  done.append(Object.assign(document.createElement('span'), { textContent: call.done, dir: 'auto' }))
+  callThread.append(done); ripple(done, 'done')
+  await wait(3000); callThread.classList.add('out'); await wait(650)
+}
+async function runCalls() { for (let i = 0; ; i++) { await whenVisible(); await playCall(CALLS[i % CALLS.length]) } }
+function updateCallTimer() {
+  const s = Math.floor((performance.now() - callStart) / 1000), label = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+  if (callTimer.textContent !== label) callTimer.textContent = label
+}
+new IntersectionObserver(([e]) => { callVisible = e.isIntersecting; if (callVisible) layoutDots() }, { threshold: 0.2 }).observe(callCard)
+addEventListener('resize', layoutDots, { passive: true })
+if (!reducedMotion) runCalls()
+else { const c = CALLS[0]; callMeta.textContent = c.meta; c.lines.forEach(([who, text]) => callThread.append(node(`mini-bubble ${who}`, text))); callThread.append(node('call-done', c.done)) }
+
+// ---------- A light that follows the cursor on cards ----------
+if (matchMedia('(hover: hover)').matches) document.addEventListener('pointermove', (e) => {
+  const card = e.target.closest?.('.card'); if (!card) return
+  const r = card.getBoundingClientRect(); card.style.setProperty('--mx', `${e.clientX - r.left}px`); card.style.setProperty('--my', `${e.clientY - r.top}px`)
+}, { passive: true })
+
+// ---------- The particle field, the small orb in the dock, smooth scrolling and the loop ----------
+let mini = null, lenis = null
+const states = { connecting: 0, listening: 0, thinking: 0, speaking: 0 }
+let level = 0
+function createGL() {
+  try { fieldGL = new ParticleOrb(fxCanvas, innerWidth < 700 ? 11000 : 26000) } catch (err) { console.warn('Particle field disabled', err.message); return }
+  const host = $('.dock .orb-sm'), canvas = document.createElement('canvas')
+  canvas.setAttribute('aria-hidden', 'true'); host.append(canvas)
+  try { mini = { host, gl: new ParticleOrb(canvas, 1400), rot: Math.random() * 6 } } catch { canvas.remove() }
+  try { setupOrb = { gl: new ParticleOrb(setupOrbCanvas, 5000), rot: 1 } } catch { setupOrb = null }
+}
+function drawMini(dt) {
+  if (!mini) return
+  mini.rot += dt * 0.25
+  mini.gl.resize()
+  mini.gl.draw({ time, level, states, rot: mini.rot, tilt: 0.3, point: 1.15, alpha: 1, center: [0, 0], scale: [0.8, 0.8] })
+}
+let last = performance.now()
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt
+  lenis?.raf(now)
+  for (const k in states) states[k] += ((vstate === k ? 1 : 0) - states[k]) * Math.min(1, dt * 4)
+  level += (convoLevel() - level) * Math.min(1, dt * 10)
+  dock.style.setProperty('--level', level.toFixed(3))
+  updateScrollFx(); updateWarmGlow(); updateFeatureStage(); updateSetup(); updateEclipse(); updateDrift()
+  if (fieldGL) drawField(dt)
+  drawMini(dt)
+  if (setupInView) drawSetupOrb(dt)
+  if (callVisible) { drawDots(time); updateCallTimer() }
+  requestAnimationFrame(frame)
+}
+function stillFrames() {
+  const still = () => { if (fieldGL) drawField(0.016); drawMini(0); drawSetupOrb(0); updateEclipse(); if (callVisible) { layoutDots(); drawDots(2) } }
+  still(); addEventListener('resize', still); addEventListener('scroll', still, { passive: true })
+}
+function boot() {
+  createGL()
+  if (window.Lenis && !reducedMotion && !matchMedia('(pointer: coarse)').matches) lenis = new window.Lenis({ lerp: 0.09, smoothWheel: true, autoRaf: false })
+  if (reducedMotion) stillFrames()
+  else requestAnimationFrame((now) => { last = now; frame(now) })
+}
+if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 500 }); else setTimeout(boot, 120)
+
+// ---------- Amariya, for real: voice and text through the ElevenLabs agent ----------
+const dock = $('#dock')
+const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
+const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here also receives each application as JSON
+const IDLE = ['Amariya is ready to talk', 'Press the orb and say hello.']
+const greeting = (part) => `Good ${part}, I’m Amariya, an AI receptionist. I answer the phones for hotels, restaurants, clinics and dental practices. What kind of business do you run?`
+const contextFor = () => 'Your name is Amariya; always call yourself Amariya. The visitor is on the main Amariya page, which covers hotels, restaurants, clinics and dental practices. There are two ways to buy. First, the founding licence, paid once: $2,500 for hotels and restaurants, $3,500 for clinics, $3,000 for dental practices, for the first 30 businesses in each niche. It includes Professional features for life, 500 call minutes a month (extra minutes at cost, unused minutes do not roll over), done-for-you setup and one location per licence. She goes live within 7 days or the money is refunded in full, and after she goes live there are 7 more days to ask for a refund for any reason. Second, monthly plans: Starter at $299 a month (one location, 500 calls, bookings and FAQs, 5 languages), Professional at $799 a month (up to 3 locations, 2,500 calls, books into their software, 30+ languages, upsells and analytics) and Enterprise, priced on request (multi-location, custom voice, a dedicated success manager, unlimited calls). Do not state cancellation or minimum-term terms; say the team confirms terms on the call. Never give medical or clinical advice; clinical questions are for the clinic’s own team. Make no claims about HIPAA or GDPR. To apply, collect the visitor’s name, business name, email, phone and a good time for a 20-minute call; call fill_demo_form with what you have, then submit_demo_request. The team follows up to arrange the call, then sends an invoice. Profile fields: hotel_name is the business name, business_type is hotel, restaurant, clinic or dental, rooms is rooms, practitioners or chairs, monthly_calls is calls per month. Sections you can show with navigate_to_section: top, story, problem, demo, features, setup, pricing, questions.'
+let vstate = 'idle', convo = null, convoMode = null, sdk = null
+const PROFILE = {}, APPLICATION = {}
+const loadSdk = () => sdk || (sdk = import('https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/+esm').then((m) => m.Conversation, (e) => { sdk = null; throw e }))
+addEventListener('load', () => setTimeout(() => loadSdk().catch(() => {}), 1500), { once: true })
+const clean = (t) => String(t || '').replace(/\[[^\]]*\]/g, '').replace(/\s+/g, ' ').trim()
+function setDock(state, status, text) {
+  vstate = state; dock.dataset.state = state; dock.classList.toggle('in-call', !!convo)
+  if (state === 'idle' && status === undefined) [status, text] = IDLE
+  if (status != null) $('#dockStatus').textContent = status
+  if (text != null) $('#dockCaption').textContent = text
+  const label = convo ? 'End the conversation' : 'Talk to Amariya'
+  $('#dockMic').setAttribute('aria-label', label); $('#dockOrb').setAttribute('aria-label', label)
+}
+function visitVars() {
+  let returning = false
+  try { returning = !!localStorage.getItem('amariya_visited'); localStorage.setItem('amariya_visited', '1') } catch {}
+  const h = new Date().getHours()
+  return { time_of_day: h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening', visitor_status: returning ? 'returning' : 'new', visitor_device: matchMedia('(max-width: 734px), (pointer: coarse)').matches ? 'mobile' : 'desktop' }
+}
+async function startConvo(mode, opener) {
+  if (convo) { if (opener) send(opener); return }
+  if (vstate === 'connecting') return
+  convoMode = mode; dock.dataset.mode = mode === 'text' ? 'text' : 'voice'
+  setDock('connecting', 'Connecting', mode === 'voice' ? 'Allow the microphone to talk with Amariya.' : 'Opening the chat…')
+  try {
+    if (mode === 'voice') (await navigator.mediaDevices.getUserMedia({ audio: true })).getTracks().forEach((t) => t.stop())
+    const Conversation = await loadSdk(), vars = visitVars()
+    let timedOut = false, timer
+    const session = Conversation.startSession({
+      agentId: AGENT_ID,
+      ...(mode === 'voice' ? { connectionType: 'webrtc' } : { textOnly: true }),
+      dynamicVariables: vars,
+      overrides: { agent: { firstMessage: greeting(vars.time_of_day) } },
+      clientTools: TOOLS,
+      onConnect: () => { if (!timedOut) setDock('thinking', 'Amariya is joining', '…') },
+      onDisconnect: () => { if (!timedOut) endUi() },
+      onError: (err) => console.error(err),
+      onModeChange: ({ mode: m }) => { if (!timedOut && convoMode === 'voice' && convo) setDock(m === 'speaking' ? 'speaking' : 'listening', m === 'speaking' ? 'Amariya is speaking' : 'Listening') },
+      onMessage: (msg) => {
+        const user = msg.role === 'user' || msg.source === 'user', text = clean(msg.message)
+        if (!text || timedOut) return
+        if (convoMode === 'text') setDock(user ? 'thinking' : 'chat', user ? 'Amariya is typing' : 'Amariya', user ? 'You: ' + text : text)
+        else $('#dockCaption').textContent = user ? 'You: ' + text : text
+      },
+    })
+    // A session that connects after the 15 s limit is ended, so no orphan session stays open
+    session.then((c) => { if (timedOut) c.endSession().catch(() => {}) }, () => {})
+    try { convo = await Promise.race([session, new Promise((_, reject) => { timer = setTimeout(() => { timedOut = true; reject(new Error('Connection timed out')) }, 15000) })]) } finally { clearTimeout(timer) }
+    setDock(vstate === 'connecting' ? 'thinking' : vstate)
+    convo.sendContextualUpdate(contextFor())
+    if (opener) send(opener)
+    if (mode === 'text') $('#dockInput').focus({ preventScroll: true })
+  } catch (err) {
+    console.error(err); convo = null
+    if (err?.name === 'NotAllowedError' && mode === 'voice') { convoMode = null; vstate = 'idle'; return startConvo('text', opener) }
+    convoMode = null; dock.dataset.mode = 'voice'; setDock('idle', 'Couldn’t connect', 'Please try again in a moment.')
+  }
+}
+function send(text) { convo.sendUserMessage(text); setDock(convoMode === 'text' ? 'thinking' : vstate, convoMode === 'text' ? 'Amariya is typing' : null, 'You: ' + text) }
+async function endConvo() { const c = convo; convo = null; endUi(); try { await c?.endSession() } catch {} }
+function endUi() { if (!convoMode) return; convo = null; convoMode = null; dock.dataset.mode = 'voice'; setDock('idle', IDLE[0], 'Thanks for talking. Tap the orb to pick it back up.') }
+function convoLevel() {
+  if (!convo || convoMode !== 'voice') return 0
+  try { return Math.min(1, (vstate === 'speaking' ? convo.getOutputVolume() : vstate === 'listening' ? convo.getInputVolume() * .8 : 0) * 1.8) } catch { return 0 }
+}
+const talk = () => (convo ? endConvo() : startConvo('voice'))
+
+// The agent drives the page through these client tools (names kept from the previous site so the agent needs no changes)
+const SECTIONS = { top: '#welcome', home: '#welcome', hero: '#welcome', story: '#story', problem: '#problem', demo: '#call', how: '#call', call: '#call', features: '#features', setup: '#golive', days: '#golive', golive: '#golive', pricing: '#pricing', plans: '#pricing', plan: '#pricing', offer: '#pricing', licence: '#pricing', license: '#pricing', apply: '#pricing', contact: '#pricing', faq: '#faq', questions: '#faq' }
+function showSection(key) {
+  const sel = SECTIONS[key]
+  if (!sel) return false
+  const el = $(sel)
+  const behavior = reducedMotion ? 'auto' : 'smooth'
+  if (sel === '#welcome') { if (lenis) lenis.scrollTo(0, { duration: 1.4, force: true }); else scrollTo({ top: 0, behavior }) }
+  else if (lenis) lenis.scrollTo(el, { duration: 1.4, force: true })
+  else el.scrollIntoView({ behavior })
+  return true
+}
+const FEATURE = { bookings: 0, integrations: 0, multilingual: 1, answering: 2, guest_requests: 3, after_hours: 4 }
+const money = (n) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+const missing = (a) => ['name', 'hotel_name', 'email'].filter((k) => !String(a[k] || '').trim())
+async function sendApplication(data) {
+  if (!APPLY_WEBHOOK) return false
+  try { await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); return true } catch (e) { console.error(e); return false }
+}
+function prefill() {
+  for (const [key, sel] of [['hotel_name', '#business'], ['name', '#name'], ['email', '#email'], ['phone', '#phone']]) {
+    const el = $(sel); if (APPLICATION[key] && !el.value.trim()) el.value = APPLICATION[key]
+  }
+  const kind = String(APPLICATION.business_type || '').toLowerCase()
+  if ($$('#kind option').some((o) => o.value === kind)) $('#kind').value = kind
+}
+const TOOLS = {
+  navigate_to_section: ({ section } = {}) => (showSection(String(section || '').toLowerCase()) ? `Now showing ${section}.` : 'Unknown section. Use one of: top, story, problem, demo, features, setup, pricing, questions.'),
+  update_hotel_profile: (p = {}) => { Object.assign(PROFILE, p); const names = Object.keys(p); return names.length ? `Noted: ${names.join(', ')}.` : 'Nothing to note.' },
+  get_roi_estimate: () => {
+    const calls = Number(String(PROFILE.monthly_calls || '').replace(/[^\d.]/g, ''))
+    if (!calls) return 'Ask how many calls they get a month, then call update_business_profile with monthly_calls.'
+    const missed = Math.round(calls * .25), booked = Math.round(missed * .3)
+    return `A rough estimate, not a promise: with about ${calls} calls a month, a busy front desk misses around ${missed}. If 3 in 10 of those become bookings, that is about ${booked} more a month, around ${money(booked * 220)} at a ${money(220)} average, and about ${Math.round(calls * 4 / 60)} staff hours freed.`
+  },
+  highlight_feature: ({ feature } = {}) => {
+    const i = FEATURE[String(feature || '').toLowerCase()]
+    if (i === undefined) return 'Unknown feature. Use: answering, bookings, multilingual, guest_requests, after_hours, integrations.'
+    showSection('features')
+    const p = $$('#orbit .pill')[i]; p?.classList.add('spot'); setTimeout(() => p?.classList.remove('spot'), 5000)
+    return `Highlighting ${$('h3', p)?.textContent.trim()}.`
+  },
+  recommend_plan: () => {
+    const type = String(PROFILE.business_type || '').trim().toLowerCase(), tab = /^(clinic|aesth)/.test(type) ? 'clinics' : /^dent/.test(type) ? 'dental' : /^(hotel|restaurant)/.test(type) ? 'hospitality' : null
+    if (tab) $(`#priceTabs [data-n="${tab}"]`).click()
+    showSection('pricing')
+    const [price, who] = OFFER[$('#priceTabs [aria-pressed="true"]').dataset.n]
+    return `Two ways to pay: the founding licence at ${price} once for the first 30 ${who}, or monthly plans from $299. Showing pricing now.`
+  },
+  fill_demo_form: (p = {}) => {
+    Object.assign(APPLICATION, p)
+    if (dlg.open) prefill()
+    const miss = missing(APPLICATION)
+    setDock(vstate, null, `Application: ${[APPLICATION.name, APPLICATION.hotel_name].filter(Boolean).join(', ') || 'started'}`)
+    return `Noted: ${Object.keys(p).join(', ') || 'nothing'}.` + (miss.length ? ` Still needed: ${miss.join(', ')}.` : ' Everything needed is in.')
+  },
+  submit_demo_request: async () => {
+    const miss = missing(APPLICATION)
+    if (miss.length) return `Cannot submit yet. Missing: ${miss.join(', ')}.`
+    const data = { ...APPLICATION, source: 'voice', page: location.href, at: new Date().toISOString() }
+    await sendApplication(data)
+    setDock(vstate, null, `Application received for ${data.hotel_name}.`)
+    return `Application recorded for ${data.name} (${data.email}). Tell them the team will follow up to arrange the 20-minute call.`
+  },
+}
+TOOLS.update_business_profile = TOOLS.update_hotel_profile
+
+$$('.js-talk').forEach((b) => b.addEventListener('click', talk))
+$('#dockMic').addEventListener('click', talk)
+$('#dockKeys').addEventListener('click', () => { if (!convo) return startConvo('text'); dock.dataset.mode = 'text'; $('#dockInput').focus({ preventScroll: true }) })
+$('#dockForm').addEventListener('submit', (e) => {
+  e.preventDefault()
+  const v = $('#dockInput').value.trim(); if (!v) return
+  $('#dockInput').value = ''
+  convo ? send(v) : startConvo('text', v)
+})
+$('#dockInput').addEventListener('input', () => { try { convo?.sendUserActivity() } catch {} })
+$$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+  const t = $(a.getAttribute('href')); if (!t || !lenis) return
+  e.preventDefault(); lenis.scrollTo(t, { duration: 1.4 })
+}))
+
+// ---------- The application: three short steps ----------
+const dlg = $('#apply'), form = $('#applyForm')
+let step = 1
+const NOTES = ['Step 1 of 3. Your business.', 'Step 2 of 3. Your calls.', 'Step 3 of 3. How we reach you.']
+function go(n) {
+  step = n
+  $$('[data-step]', form).forEach((el) => (el.hidden = +el.dataset.step !== n))
+  $$('.steps i', form).forEach((el, i) => el.classList.toggle('on', i < Math.min(n, 3)))
+  $('#stepNote').hidden = n > 3; $('#applyActions').hidden = n > 3
+  if (n <= 3) $('#stepNote').textContent = NOTES[n - 1]
+  $('#back').hidden = n === 1 || n > 3
+  $('#next').textContent = n === 3 ? 'Send application' : 'Continue'
+  $(`[data-step="${n}"] input, [data-step="${n}"] select, [data-step="${n}"] button`, form)?.focus()
+}
+function check(n) {
+  const rules = { 1: { business: (v) => (v.trim() ? '' : 'Add your business name.') }, 3: { name: (v) => (v.trim() ? '' : 'Add your name.'), email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Add an email we can reach you at.'), phone: (v) => (v.replace(/[^\d]/g, '').length >= 7 ? '' : 'Add a phone number with the area code.') } }[n] || {}
+  let ok = true
+  for (const [id, rule] of Object.entries(rules)) {
+    const msg = rule($('#' + id).value)
+    $(`.err[data-for="${id}"]`).textContent = msg; $('#' + id).setAttribute('aria-invalid', String(!!msg))
+    if (msg && ok) { $('#' + id).focus(); ok = false }
+  }
+  return ok
+}
+$$('.js-apply').forEach((b) => b.addEventListener('click', () => { $('#program').value = b.dataset.program || 'founding'; prefill(); dlg.showModal(); go(1); lenis?.stop() }))
+dlg.addEventListener('close', () => lenis?.start())
+form.addEventListener('submit', (e) => {
+  e.preventDefault()
+  if (!check(step)) return
+  if (step < 3) return go(step + 1)
+  const data = Object.fromEntries(new FormData(form))
+  sendApplication({ ...data, source: 'form', page: location.href, at: new Date().toISOString() })
+  $('#doneTitle').textContent = `Thank you, ${data.name.trim().split(' ')[0]}.`
+  $('#doneText').textContent = `We will email ${data.email.trim()} to book your 20-minute call.`
+  go(4)
+})
+$('#back').addEventListener('click', () => go(step - 1))
+for (const id of ['#applyClose', '#doneClose']) $(id).addEventListener('click', () => dlg.close())
+dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close() })
+</script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { SVGLoader } from 'three/addons/loaders/SVGLoader.js'
+
+// Premium 3D icons: each line icon becomes polished silver wire, rendered once into an image
+const cache = new Map()
+let kit = null
+function icon3d(id) {
+  if (cache.has(id)) return cache.get(id)
+  let url = ''
+  try {
+    if (!kit) {
+      const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
+      r.setPixelRatio(1); r.setSize(160, 160, false); r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.15
+      const s = new THREE.Scene(), sun = new THREE.DirectionalLight('#ffffff', 1.4)
+      s.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture
+      sun.position.set(-4, 6, 8); s.add(sun)
+      const cam = new THREE.PerspectiveCamera(26, 1, 1, 200); cam.position.set(0, 0, 60)
+      kit = { r, s, cam, mat: new THREE.MeshStandardMaterial({ color: '#dfe4ea', metalness: 1, roughness: 0.22, envMapIntensity: 1.4 }) }
+    }
+    const { r, s, cam, mat } = kit, g = new THREE.Group(), R = 1.5
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">${document.getElementById('i-' + id).innerHTML}</svg>`
+    for (const path of new SVGLoader().parse(svg).paths) for (const sub of path.subPaths) {
+      const pts = []
+      for (const p of sub.getPoints(16)) { const v = new THREE.Vector3(p.x - 12, 12 - p.y, 0); if (!pts.length || v.distanceTo(pts[pts.length - 1]) > 0.02) pts.push(v) }
+      const closed = pts.length > 2 && pts[0].distanceTo(pts[pts.length - 1]) < 0.05
+      if (closed) pts.pop()
+      if (pts.length < 2 || (pts.length === 2 && pts[0].distanceTo(pts[1]) < 0.3)) { const dot = new THREE.Mesh(new THREE.SphereGeometry(R * 1.1, 16, 12), mat); dot.position.copy(pts[0]); g.add(dot); continue }
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, closed, 'catmullrom', 0.05), Math.max(12, pts.length * 4), R, 12, closed), mat))
+      if (!closed) for (const p of [pts[0], pts[pts.length - 1]]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(R, 16, 12), mat); cap.position.copy(p); g.add(cap) }
+    }
+    g.rotation.set(-0.42, 0.55, 0); s.add(g)
+    r.render(s, cam)
+    url = r.domElement.toDataURL('image/png')
+    s.remove(g); g.traverse((o) => o.geometry?.dispose())
+  } catch (err) { console.warn('3D icon unavailable', id, err.message) }
+  cache.set(id, url)
+  return url
+}
+for (const img of document.querySelectorAll('img[data-icon]')) { const url = icon3d(img.dataset.icon); if (url) img.src = url }
+// The icons are drawn once, so the renderer can let go of its GPU context
+if (kit) { kit.r.dispose(); kit.r.forceContextLoss() }
+</script>

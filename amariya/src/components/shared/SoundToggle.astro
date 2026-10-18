@@ -1,0 +1,21 @@
+---
+interface Props {
+  hideLabel?: boolean;
+  label?: string;
+  class?: string;
+}
+const { hideLabel = false, label = 'Sound', class: className } = Astro.props;
+---
+<button type="button" class:list={['sound-toggle', className]} data-sound-toggle aria-pressed="false">
+  <slot />
+  <span class:list={[{ 'sr-only': hideLabel }]}>{label}</span>
+</button>
+
+<script>
+  import '../../scripts/sound';
+</script>
+
+<style>
+  :where(.sound-toggle) { display: inline-flex; align-items: center; gap: 8px; min-height: var(--target); min-width: var(--target); justify-content: center; font-size: var(--card-size); font-weight: 500; color: var(--color-text-secondary); }
+  :where(.sound-toggle:hover, .sound-toggle[aria-pressed="true"]) { color: var(--color-text-primary); }
+</style>

@@ -1,0 +1,174 @@
+---
+// 05 · Your clinic (#profile): what she should know (the profile form, field names from the agent contract)
+// and THE ACCOUNT, a footnoted ledger computed by the page, never by the model; then the payback detour.
+import { content } from '../../../data/content/clinics';
+
+const { profile, clinic, roi, sides, chapters, offer } = content;
+const ch = chapters[5];
+const a = clinic.account;
+const rows: { key: string; label: string }[] = [
+  { key: 'calls', label: a.calls },
+  { key: 'recovered', label: a.recovered },
+  { key: 'hours', label: a.hours },
+  { key: 'out', label: a.outOfHours },
+  { key: 'payback', label: a.payback },
+];
+const chipId = (name: string, i: number) => `p-${name}-${i}`;
+---
+<section id={ch.id} class="ch ch-clinic" data-chapter={ch.id} data-section="profile" data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="profile-title">
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+
+  <header class="ch-head her">
+    <p class="eyebrow mono">{ch.point} · {clinic.title}</p>
+    <h2 id="profile-title">{profile.title[0]}<b>{profile.title[1]}</b>{profile.title[2]}</h2>
+    <p class="lede">{profile.hint}</p>
+  </header>
+
+  <div class="her side" data-side="her">
+    <h3 class="side-label">{sides.her} <span class="side-sub">{clinic.herHeading}</span></h3>
+    <ol class="margin-notes" data-margin-notes aria-label="Amariya’s notes" role="list"></ol>
+    <div class="clinic-anchor" data-orb-anchor></div>
+
+    <form class="profile" data-profile novalidate>
+      <div class="field" data-field="hotel_name">
+        <label class="field-label mono" for="p-hotel_name">{profile.labels.hotel_name}</label>
+        <input id="p-hotel_name" name="hotel_name" type="text" autocomplete="organization" placeholder={profile.placeholders.hotel_name} maxlength="80" />
+        <span class="noted mono" data-noted aria-hidden="true">{clinic.noted}</span>
+      </div>
+
+      <fieldset class="field chips" name="hotel_type" data-field="hotel_type">
+        <legend class="field-label mono">{profile.labels.hotel_type}</legend>
+        <div class="chip-row">
+          {profile.typeOptions.map((o, i) => (
+            <label class="chip" data-chip-value={o} for={chipId('hotel_type', i)}>
+              <input id={chipId('hotel_type', i)} type="radio" name="hotel_type" value={o} /><span>{o}</span>
+            </label>
+          ))}
+        </div>
+        <span class="noted mono" data-noted aria-hidden="true">{clinic.noted}</span>
+      </fieldset>
+
+      <div class="field-pair">
+        <div class="field" data-field="rooms">
+          <label class="field-label mono" for="p-rooms">{profile.labels.rooms}</label>
+          <div class="stepper">
+            <button type="button" data-step="-1" data-step-for="p-rooms" aria-label={`One fewer: ${profile.labels.rooms}`}>−</button>
+            <input id="p-rooms" name="rooms" type="number" inputmode="numeric" min="1" max="500" step="1" placeholder={profile.placeholders.rooms} />
+            <button type="button" data-step="1" data-step-for="p-rooms" aria-label={`One more: ${profile.labels.rooms}`}>+</button>
+          </div>
+          <span class="noted mono" data-noted aria-hidden="true">{clinic.noted}</span>
+        </div>
+
+        <div class="field" data-field="monthly_calls">
+          <label class="field-label mono" for="p-monthly_calls">{profile.labels.monthly_calls}</label>
+          <div class="stepper">
+            <button type="button" data-step="-50" data-step-for="p-monthly_calls" aria-label={`50 fewer: ${profile.labels.monthly_calls}`}>−</button>
+            <input id="p-monthly_calls" name="monthly_calls" type="number" inputmode="numeric" min="0" max="100000" step="10" placeholder={profile.placeholders.monthly_calls} />
+            <button type="button" data-step="50" data-step-for="p-monthly_calls" aria-label={`50 more: ${profile.labels.monthly_calls}`}>+</button>
+          </div>
+          <input class="calls-slider" type="range" min="0" max="5000" step="50" value="0" data-calls-slider aria-label={profile.labels.monthly_calls} />
+          <span class="noted mono" data-noted aria-hidden="true">{clinic.noted}</span>
+        </div>
+      </div>
+
+      <fieldset class="field chips" name="languages" data-field="languages">
+        <legend class="field-label mono">{profile.labels.languages}</legend>
+        <div class="chip-row">
+          {clinic.languageChips.map((o, i) => (
+            <label class="chip" data-chip-value={o} for={chipId('languages', i)}>
+              <input id={chipId('languages', i)} type="checkbox" name="languages" value={o} /><span>{o}</span>
+            </label>
+          ))}
+        </div>
+        <label class="field-label field-other mono" for="p-languages-other">{clinic.other}</label>
+        <input id="p-languages-other" name="languages_other" type="text" autocomplete="off" placeholder={profile.placeholders.languages} />
+        <span class="noted mono" data-noted aria-hidden="true">{clinic.noted}</span>
+      </fieldset>
+
+      <fieldset class="field chips" name="pain_points" data-field="pain_points">
+        <legend class="field-label mono">{profile.labels.pain_points}</legend>
+        <div class="chip-row">
+          {clinic.challengeChips.map((o, i) => (
+            <label class="chip" data-chip-value={o} for={chipId('pain_points', i)}>
+              <input id={chipId('pain_points', i)} type="checkbox" name="pain_points" value={o} /><span>{o}</span>
+            </label>
+          ))}
+        </div>
+        <label class="field-label field-other mono" for="p-pain-other">{clinic.other}</label>
+        <input id="p-pain-other" name="pain_points_other" type="text" autocomplete="off" placeholder={profile.placeholders.pain_points} />
+        <span class="noted mono" data-noted aria-hidden="true">{clinic.noted}</span>
+      </fieldset>
+
+      <div class="field-pair">
+        <div class="field" data-field="opens">
+          <label class="field-label mono" for="p-opens">{clinic.hours.opens.label}</label>
+          <input id="p-opens" name="opens" type="time" value={clinic.hours.defaults.opens} step="900" />
+        </div>
+        <div class="field" data-field="closes">
+          <label class="field-label mono" for="p-closes">{clinic.hours.closes.label}</label>
+          <input id="p-closes" name="closes" type="time" value={clinic.hours.defaults.closes} step="900" />
+        </div>
+      </div>
+
+      <div class="field" data-field="avg_value" data-lens-text="medical">
+        <label class="field-label mono" for="p-avg">{clinic.avgValue.label}</label>
+        <input id="p-avg" name="avg_value" type="number" inputmode="decimal" min="0" max="100000" step="1" placeholder={clinic.avgValue.placeholder} aria-describedby="p-avg-hint" />
+        <p class="field-hint" id="p-avg-hint">{clinic.avgValue.hint}</p>
+      </div>
+    </form>
+  </div>
+
+  <div class="team side" data-side="team">
+    <h3 class="side-label">{sides.team} <span class="side-sub">{clinic.teamHeading}</span></h3>
+
+    <section class="account" aria-labelledby="account-title" data-account data-ask="The account: what your clinic gets back">
+      <h4 class="mono rule-label" id="account-title">THE ACCOUNT</h4>
+      <dl class="ledger">
+        <div class="row row-revenue" data-row="revenue">
+          <dt class="mono">{a.revenue}</dt>
+          <dd>
+            <span class="readout" data-readout aria-hidden="true"></span>
+            <span class="sr-only" data-roi="revenue"></span>
+            <span class="needs" data-roi-needs hidden>{a.medicalNeedsValue}</span>
+          </dd>
+        </div>
+        {rows.map((r) => (
+          <div class="row" data-row={r.key}>
+            <dt class="mono">{r.label}</dt>
+            <dd data-roi={r.key}></dd>
+          </div>
+        ))}
+        <div class="row row-minutes" data-row="minutes">
+          <dt class="mono">{a.minutes}</dt>
+          <dd>
+            <span data-roi="minutes"></span>
+            <span class="meter" data-minutes-meter aria-hidden="true" hidden>
+              <i class="meter-rule"></i>
+              <i class="meter-mark meter-included" data-meter="included"><span class="mono">500</span></i>
+              <i class="meter-mark meter-missed" data-meter="missed"><span class="mono" data-meter-label="missed"></span></i>
+              <i class="meter-mark meter-every" data-meter="every"><span class="mono" data-meter-label="every"></span></i>
+            </span>
+            <span class="included mono">{a.included}</span>
+          </dd>
+        </div>
+      </dl>
+      <p class="account-note" data-roi-note>{roi.note}</p>
+      <p class="basis" data-roi-basis></p>
+      <p class="footnote mono">{a.footnote}</p>
+    </section>
+
+    <figure class="detour" data-detour hidden>
+      <div class="detour-chart" data-line-detour data-points="[]" aria-hidden="true">
+        <svg class="detour-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path class="detour-threshold" data-detour-threshold d="M0 50H100" />
+          <path class="detour-curve" data-detour-curve d="" />
+        </svg>
+        <span class="detour-label mono" data-detour-threshold-label>{clinic.curve.threshold}</span>
+        <span class="detour-ring" data-detour-ring hidden><span class="mono" data-detour-day></span></span>
+        <span class="detour-axis detour-axis-0 mono">DAY 0</span>
+        <span class="detour-axis detour-axis-30 mono">DAY 30</span>
+      </div>
+      <figcaption class="detour-text" data-detour-text>{clinic.curve.text(null, offer.priceLabel)}</figcaption>
+    </figure>
+  </div>
+</section>

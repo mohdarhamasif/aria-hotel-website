@@ -1,0 +1,59 @@
+---
+// The hour margin: nav 'The day'. Desktop (≥ 1100 px): a 96 px column fixed on the left, the brand at its head,
+// one link per chapter time placed where that chapter sits on the sheet (measured on resize by ui.ts), ten-minute
+// ticks between them, the NOW stamp at the visitor's time, Sound and Pause motion at its foot.
+// Below 1100 px the same nav is a sticky 56 px header (brand, menu) over a 56 px time strip: the visitor's time
+// large on the left, the hour links in a scrolling row, the Now link on the right. Without JS it is a plain list.
+import SoundToggle from '../../../components/shared/SoundToggle.astro';
+import MotionToggle from '../../../components/shared/MotionToggle.astro';
+import Switcher from '../../../components/shared/Switcher.astro';
+import { content } from '../../../data/content/dental';
+import { brand } from '../../../data/content/shared';
+import { given } from '../../../data/content/types';
+
+const { ruler, hero, chapters, neverDoes } = content;
+// 'What she never does' is on the sheet only once the owner has confirmed a line
+const hasNever = neverDoes.lines.some((l) => given(l) !== null);
+const marks = chapters.filter((c) => c.id !== 'never' || hasNever);
+---
+<nav class="ruler" aria-label={ruler.label} data-ruler>
+  <div class="ruler-head">
+    <a class="ruler-brand" href="/">{brand}</a>
+    <details class="ruler-menu" data-ruler-menu>
+      <summary class="ruler-menu-btn"><svg class="glyph" aria-hidden="true"><use href="#g-menu" /></svg><span>Menu</span></summary>
+      <div class="ruler-menu-sheet">
+        <Switcher current="dental" variant="tabs" class="index-tabs" />
+        <div class="ruler-menu-row">
+          <SoundToggle class="ruler-btn"><svg class="glyph" aria-hidden="true"><use href="#g-speaker" /></svg></SoundToggle>
+          <MotionToggle class="ruler-btn"><svg class="glyph g-pause" aria-hidden="true"><use href="#g-pause" /></svg><svg class="glyph g-play" aria-hidden="true"><use href="#g-play" /></svg></MotionToggle>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="ruler-strip">
+    <p class="ruler-clock" aria-hidden="true"><time data-clock>{hero.staticTime}</time></p>
+    <div class="ruler-scale" data-ruler-scale>
+      <span class="ruler-ticks" data-ruler-ticks aria-hidden="true"></span>
+      <ol class="ruler-marks" role="list">
+        {marks.map((c) => (
+          <li class="ruler-mark" data-mark={c.id}>
+            <a href={`#${c.id}`} data-ruler-link={c.id} data-time={c.time} data-title={c.title}>
+              <span class="ruler-hm">{c.time}</span><span class="sr-only">, {c.title}</span>
+              {c.id === 'faq' && <svg class="glyph ruler-moon" aria-hidden="true"><use href="#g-moon" /></svg>}
+            </a>
+          </li>
+        ))}
+      </ol>
+      <a class="ruler-now" href="#now" data-now-link>
+        <span class="ruler-now-label">{ruler.now}</span>
+        <time class="ruler-now-time" data-now-stamp>{hero.staticTime}</time>
+      </a>
+    </div>
+  </div>
+
+  <div class="ruler-foot">
+    <SoundToggle class="ruler-btn"><svg class="glyph" aria-hidden="true"><use href="#g-speaker" /></svg></SoundToggle>
+    <MotionToggle class="ruler-btn"><svg class="glyph g-pause" aria-hidden="true"><use href="#g-pause" /></svg><svg class="glyph g-play" aria-hidden="true"><use href="#g-play" /></svg></MotionToggle>
+  </div>
+</nav>

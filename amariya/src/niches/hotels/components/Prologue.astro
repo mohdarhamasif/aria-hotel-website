@@ -1,0 +1,76 @@
+---
+// NOW · the prologue (#welcome): the house as it is right now where the visitor is. A live eyebrow with the
+// four scenario chips, the H1 on the drawing's ground line (64 % of the viewport), the lantern at the lobby
+// desk inside its hour ring, and the basement band: the lede and the actions left, the offer, the honest
+// ledger and the guarantee right.
+import { content } from '../../../data/content/hotels';
+import { ledgerCounts } from '../../../scripts/apply/adapter';
+import OrbRoot from '../../../components/shared/OrbRoot.astro';
+import NightDial from './NightDial.astro';
+import Icons from './Icons.astro';
+
+const c = content.chapters[0];
+const p = content.prologue;
+const { open } = ledgerCounts('hotels');
+const [before, after] = p.lead('\u0000').split('\u0000');
+const [price, ...offer] = p.offerLine(open).split(' · ');
+const parts = (s: string) => s.split(/(\d[\d:.,]*\d|\d)/);
+const first = content.scenarios[0];
+---
+<section
+  id={c.id}
+  class="chapter prologue"
+  data-chapter={c.id}
+  data-section="welcome"
+  data-hour={c.hour}
+  data-room={c.room}
+  data-span={c.span}
+  style={`--span: ${c.span}`}
+  aria-labelledby={`${c.id}-title`}
+>
+  <div class="pro-title">
+    <p class="welcome-back" data-welcome hidden></p>
+    <div class="pro-eyebrow">
+      {before}<time class="pro-now" data-now>{p.staticTime}</time>{after}{' '}
+      <details class="scenario" data-scenario>
+        <summary><span data-scenario-label>{first.inline}</span><span class="scenario-caret" aria-hidden="true"></span><span class="sr-only"> — {p.chooseLabel}</span></summary>
+        <fieldset class="chips">
+          <legend class="chips-legend">{p.chooseLabel}</legend>
+          {content.scenarios.map((s) => (
+            <label class="chip">
+              <input type="radio" name="scenario" value={s.id} data-chip-value={s.hotelType} />
+              <span>{s.label}</span>
+            </label>
+          ))}
+        </fieldset>
+      </details>{p.end}
+    </div>
+    <h1 id={`${c.id}-title`} class="pro-h1"><span class="gilt" data-gilt>{p.h1}</span></h1>
+  </div>
+
+  <div class="seat" data-seat>
+    <OrbRoot kind="champagne" />
+    <p class="coaster" data-coaster aria-hidden="true">{p.coaster}</p>
+  </div>
+  <NightDial variant="glass" />
+
+  <div class="basement">
+    <div class="pro-actions">
+      <p class="pro-lede">{p.lede}</p>
+      <div class="pro-buttons">
+        <a class="fob" href="#register"><span class="fob-hole" aria-hidden="true"></span><span>{p.primary}</span></a>
+        <button type="button" class="ring-btn" data-orb-talk><Icons name="bell" /><span>{p.ring}</span></button>
+      </div>
+      <p class="pro-links">
+        <button type="button" class="text-link" data-orb-type>{p.write}</button>
+        <a class="text-link" href="#house">{p.look}</a>
+      </p>
+    </div>
+    <div class="pro-offer">
+      <p class="pro-price">{parts(price).map((s, i) => (i % 2 ? <span class="n">{s}</span> : s))}</p>
+      <ul class="pro-terms" role="list">
+        {offer.map((line) => <li>{parts(line).map((s, i) => (i % 2 ? <span class="n">{s}</span> : s))}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>

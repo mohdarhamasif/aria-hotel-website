@@ -1,0 +1,64 @@
+---
+import { niches, type NicheSlug } from '../../data/niches';
+
+interface Props {
+  /** The page's niche (aria-current), or null on the front door */
+  current: NicheSlug | null;
+  variant?: 'pills' | 'menu' | 'tabs' | 'inline';
+  /** The menu variant's button text, e.g. 'For hotels & restaurants' */
+  summary?: string;
+  /** The nav's name; a second copy on the same page (the footer's) takes its own, so landmarks stay unique */
+  label?: string;
+  class?: string;
+}
+const { current, variant = 'pills', summary, label = 'Industries', class: className } = Astro.props;
+const links = niches.map((n) => ({ href: `/${n.slug}`, label: n.label, current: n.slug === current }));
+---
+<nav class:list={['switcher', `switcher--${variant}`, className]} aria-label={label}>
+  {variant === 'menu' ? (
+    <details class="switcher-menu">
+      <summary>{summary ?? links.find((l) => l.current)?.label ?? 'Industries'}</summary>
+      <ul role="list" class="switcher-list">
+        {links.map((l) => <li><a href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a></li>)}
+      </ul>
+    </details>
+  ) : (
+    <ul role="list" class="switcher-list">
+      {links.map((l) => <li><a href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a></li>)}
+    </ul>
+  )}
+</nav>
+
+<script>
+  // The menu closes on Escape and on a click elsewhere
+  for (const menu of document.querySelectorAll<HTMLDetailsElement>('.switcher-menu')) {
+    menu.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary')?.focus(); }
+    });
+    document.addEventListener('click', (e) => { if (menu.open && !menu.contains(e.target as Node)) menu.open = false; });
+  }
+</script>
+
+<style>
+  /* Structural only, inside :where() so niche CSS always wins */
+  :where(.switcher-list) { display: flex; gap: 2px; margin: 0; padding: 0; list-style: none; }
+  :where(.switcher a, .switcher summary) {
+    display: inline-flex; align-items: center; min-height: var(--target); padding: 0 14px;
+    font-size: var(--card-size); font-weight: 500; color: var(--color-text-secondary); text-decoration: none; white-space: nowrap; cursor: pointer;
+  }
+  :where(.switcher a:hover, .switcher a[aria-current="page"]) { color: var(--color-text-primary); }
+  :where(.switcher--pills .switcher-list) { padding: 4px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--color-border); }
+  :where(.switcher--pills a) { border-radius: 999px; }
+  :where(.switcher--pills a[aria-current="page"]) { background: var(--color-bg-raised); }
+  :where(.switcher--tabs a[aria-current="page"]) { box-shadow: inset 0 -2px 0 var(--color-accent-text); }
+  :where(.switcher--inline .switcher-list) { flex-wrap: wrap; gap: 0 4px; }
+  :where(.switcher--inline a) { padding-inline: 8px; }
+  :where(.switcher-menu) { position: relative; }
+  :where(.switcher-menu summary) { list-style: none; }
+  :where(.switcher-menu summary::-webkit-details-marker) { display: none; }
+  :where(.switcher-menu summary)::after { content: ""; width: 7px; height: 7px; margin-left: 10px; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: translateY(-2px) rotate(45deg); }
+  :where(.switcher-menu[open] .switcher-list) {
+    position: absolute; top: 100%; right: 0; z-index: var(--z-chrome); flex-direction: column; min-width: 100%; padding: 6px;
+    background: var(--color-bg-surface); border-radius: 12px; box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+</style>

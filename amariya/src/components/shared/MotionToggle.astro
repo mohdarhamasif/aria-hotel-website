@@ -1,0 +1,21 @@
+---
+interface Props {
+  /** Keep the words for screen readers only (a custom glyph goes in the slot) */
+  hideLabel?: boolean;
+  class?: string;
+}
+const { hideLabel = false, class: className } = Astro.props;
+---
+<button type="button" class:list={['motion-toggle', className]} data-orb-pause aria-pressed="false">
+  <slot />
+  <span class:list={[{ 'sr-only': hideLabel }]} data-motion-label>Pause motion</span>
+</button>
+
+<script>
+  import '../../scripts/motion/prefs';
+</script>
+
+<style>
+  :where(.motion-toggle) { display: inline-flex; align-items: center; gap: 8px; min-height: var(--target); min-width: var(--target); justify-content: center; font-size: var(--card-size); font-weight: 500; color: var(--color-text-secondary); }
+  :where(.motion-toggle:hover) { color: var(--color-text-primary); }
+</style>

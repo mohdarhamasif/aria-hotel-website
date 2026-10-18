@@ -1,0 +1,40 @@
+---
+// 19:00, the sheet closes (footer #close): the closing lines, one final 'Talk to Amariya', the blind-embossed
+// 'Amariya' wordmark (Ranade, sized to the sheet by ui.ts's fit) with the pearl's last recess on its baseline,
+// the index tabs, the legal links once the owner supplies them, and the credits with the build year.
+import Switcher from '../../../components/shared/Switcher.astro';
+import { content } from '../../../data/content/dental';
+import { brand } from '../../../data/content/shared';
+import { given } from '../../../data/content/types';
+
+const { close, footer, legal, chapters } = content;
+const ch = chapters.find((c) => c.id === 'close')!;
+const [before, emph, after] = footer.title;
+const links = (['privacy', 'terms', 'recording'] as const).flatMap((k) => {
+  const href = given(legal[k]);
+  return href ? [{ href, label: legal.labels[k] }] : [];
+});
+const year = new Date().getFullYear();
+---
+<footer id="close" class="close-foot sheet-grid" data-chapter="close" data-section="footer" data-time={ch.time} aria-labelledby="close-title">
+  <div class="close-text c-text">
+    <p class="ch-time" aria-hidden="true"><span>{ch.time}</span></p>
+    <h2 id="close-title" class="close-title">{before}<em>{emph}</em>{after}</h2>
+    <p class="close-lines ink">{close.lines.map((l) => <span>{l}</span>)}</p>
+    <button type="button" class="btn btn-primary close-talk" data-orb-talk><svg class="glyph" aria-hidden="true"><use href="#g-handset" /></svg>{close.talk}</button>
+  </div>
+
+  <p class="wordmark c-all" aria-hidden="true" data-wordmark>
+    <span class="wordmark-text" data-wordmark-text>{brand}</span><span class="wordmark-slot" data-slot="close" data-time={ch.time} data-anchor></span>
+  </p>
+
+  <div class="close-meta c-all">
+    <Switcher current="dental" variant="tabs" label="Industries, footer" class="index-tabs foot-tabs" />
+    {links.length > 0 && (
+      <ul class="legal" role="list">
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    )}
+    <p class="credits">{close.credits(year)}</p>
+  </div>
+</footer>

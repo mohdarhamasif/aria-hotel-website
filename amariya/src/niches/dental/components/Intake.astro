@@ -1,0 +1,86 @@
+---
+// 08:40, Your practice (#profile): the practice-type chips, the intake slip (the agent's six field names on
+// rose-gold baselines) and THE TALLY in the phone lane, where the pearl rests on its corner like a paperweight.
+// Figures stay blank baselines until there is input (presenter.ts computes them; never a dash).
+import { content } from '../../../data/content/dental';
+
+const { profile, practiceTypes, intake, tally, chapters } = content;
+const ch = chapters.find((c) => c.id === 'profile')!;
+const L = profile.labels;
+const P = profile.placeholders;
+const rows = [
+  { key: 'calls', label: tally.calls },
+  { key: 'missed', label: tally.missed },
+  { key: 'recovered', label: tally.recovered },
+  { key: 'revenue', label: tally.revenue },
+  { key: 'hours', label: tally.hours },
+];
+---
+<section id="profile" class="ch intake sheet-grid" data-chapter="profile" data-section="profile" data-time={ch.time} aria-labelledby="profile-title">
+  <div class="chairs c-chairs" data-chairs="08:40-09:10" aria-hidden="true"></div>
+
+  <header class="ch-head c-text">
+    <p class="ch-time" aria-hidden="true"><span>{ch.time}</span></p>
+    <h2 id="profile-title" class="ch-title"><span class="sr-only">{ch.time}, </span>{ch.title}</h2>
+    <p class="intake-line ink" data-intake-line>{intake.title}</p>
+  </header>
+
+  <form class="slip c-text" data-profile autocomplete="on" novalidate>
+    <fieldset class="chips" name="hotel_type" data-field="hotel_type">
+      <legend class="slip-label">{intake.chipsLabel}</legend>
+      <div class="chip-row">
+        {practiceTypes.map((t) => (
+          <label class="chip" data-chip-value={t.hotelType} data-type={t.id}>
+            <input type="radio" name="hotel_type" value={t.hotelType} class="sr-only" />
+            <span>{t.chip}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+
+    <div class="slip-rows">
+      <label class="slip-row ink" data-field="hotel_name">
+        <span class="slip-label">{L.hotel_name}</span>
+        <input name="hotel_name" type="text" autocomplete="organization" placeholder={P.hotel_name} />
+      </label>
+      <label class="slip-row slip-row-short ink" data-field="rooms">
+        <span class="slip-label">{L.rooms}</span>
+        <input name="rooms" type="number" inputmode="numeric" min="1" max="999" step="1" placeholder={P.rooms} />
+      </label>
+      <label class="slip-row slip-row-short ink" data-field="monthly_calls">
+        <span class="slip-label">{L.monthly_calls}</span>
+        <input name="monthly_calls" type="number" inputmode="numeric" min="1" step="1" placeholder={P.monthly_calls} />
+      </label>
+      <label class="slip-row ink" data-field="languages">
+        <span class="slip-label">{L.languages}</span>
+        <input name="languages" type="text" placeholder={P.languages} />
+      </label>
+      <label class="slip-row ink" data-field="pain_points">
+        <span class="slip-label">{L.pain_points}</span>
+        <input name="pain_points" type="text" placeholder={P.pain_points} />
+      </label>
+    </div>
+    <p class="slip-hint">{profile.hint}</p>
+    <p class="footnote">{intake.footnote}</p>
+  </form>
+
+  <aside class="tally c-lane" aria-labelledby="tally-title" data-tally>
+    <h3 id="tally-title" class="tally-title">{tally.title}</h3>
+    <dl class="tally-rows">
+      {rows.map((r) => (
+        <div class="tally-row" data-tally-row={r.key}>
+          <dt>{r.label}</dt>
+          <dd><span class="sr-only" data-tally-sr={r.key}></span><span class="figure" aria-hidden="true" data-tally={r.key}></span></dd>
+        </div>
+      ))}
+    </dl>
+    <p class="tally-line" data-tally-payback></p>
+    <p class="tally-line" data-tally-minutes></p>
+    <p class="tally-note" data-tally-note>{content.roi.note}</p>
+    <p class="tally-basis" data-tally-basis></p>
+    <p class="tally-estimate">{tally.estimate}</p>
+  </aside>
+  <div class="recess-cell c-track">
+    <span class="recess anchor-recess" data-slot="tally" data-time={ch.time} data-anchor aria-hidden="true"></span>
+  </div>
+</section>

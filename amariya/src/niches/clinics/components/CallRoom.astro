@@ -1,0 +1,76 @@
+---
+// 02 · On the line (#call): the calls, the selected transcript laid down the line at its timestamps
+// (the caller in Supreme, Amariya always in the serif), 'Read it' with the old timings, a range input that
+// mirrors the playhead, and what lands on the team's side. Recordings play only when content declares them.
+import { content } from '../../../data/content/clinics';
+import { callLength, peaks } from '../lens';
+
+const { calls, callRoom, callsNote, sides, chapters, line } = content;
+const ch = chapters[2];
+const first = calls.find((c) => !c.lens || c.lens === 'aesthetic') ?? calls[0];
+const length = callLength(first.lines);
+const label = (who: 'g' | 'a') => (who === 'g' ? callRoom.caller : callRoom.her);
+const who = (c: (typeof calls)[number]) => c.meta.split(' · ')[0];
+---
+<section id={ch.id} class="ch ch-call" data-chapter={ch.id} data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="call-title" data-call-room>
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+
+  <header class="ch-head her">
+    <p class="eyebrow mono">{ch.point} · {ch.title}</p>
+    <h2 id="call-title">{callRoom.title}</h2>
+    <p class="lede">{typeof callRoom.lede === 'string' ? callRoom.lede : <><span data-lens-text="medical">{callRoom.lede.medical}</span><span data-lens-text="aesthetic">{callRoom.lede.aesthetic}</span></>}</p>
+  </header>
+
+  <div class="her side" data-side="her">
+    <h3 class="side-label">{sides.her}</h3>
+    <ol class="margin-notes" data-margin-notes aria-label="Amariya’s notes" role="list"></ol>
+    <div class="call-anchor" data-orb-anchor></div>
+
+    <ul class="calls" role="list" aria-label="Calls">
+      {calls.map((c) => (
+        <li data-lens-text={c.lens}>
+          <button type="button" class="call-pick" data-call={c.id} aria-pressed={c.id === first.id ? 'true' : 'false'}>
+            <span class="call-who mono">{who(c)} · {c.time}{c.lines[0]?.lang && <> · <span lang={c.lines[0].lang}>{c.meta.split(' · ').pop()}</span></>}</span>
+            <span class="call-title">{c.title}</span>
+            <span class="call-done mono">{c.done}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+
+    <div class="call-player">
+      <div class="call-controls">
+        <button type="button" class="btn btn-ghost btn-sm" data-call-read hidden>{callRoom.read}</button>
+        {first.audio && <button type="button" class="btn btn-ghost btn-sm" data-call-play>{callRoom.play}</button>}
+        <button type="button" class="btn-link mono" data-call-next hidden>{callRoom.next}</button>
+        <label class="call-scrub">
+          <span class="call-scrub-label mono">{callRoom.scrub}</span>
+          <input type="range" data-call-scrub min="0" max={length} step="1" value={length} aria-valuetext={`${length} seconds of ${length}`} />
+        </label>
+      </div>
+
+      <div class="call-wave" data-line-wave data-peaks={JSON.stringify(peaks(first.lines))} data-played="1" aria-hidden="true">
+        <svg class="call-wave-fallback" data-wave-fallback viewBox="0 0 100 100" preserveAspectRatio="none"><path class="wave-unplayed" /><path class="wave-played" /></svg>
+      </div>
+
+      <ol class="transcript" data-call-transcript aria-label={`Transcript: ${first.title}`} style={`--caller:"${callRoom.caller}";--her:"${callRoom.her}"`}>
+        {first.lines.map((l, i) => (
+          <li data-who={l.who} data-at={l.at} data-state="in" data-static={i === 0 ? '' : undefined} lang={l.lang} dir={l.dir ?? 'auto'}>
+            <span class="sr-only">{label(l.who)}, {l.at}: </span>{l.text}{l.gloss && <span class="gloss" lang="en" dir="ltr">{l.gloss}</span>}
+          </li>
+        ))}
+        <li data-done data-state="in" dir="auto">{first.done}</li>
+      </ol>
+      <p class="call-note mono">{callsNote}</p>
+    </div>
+  </div>
+
+  <div class="team side" data-side="team">
+    <h3 class="side-label">{sides.team} <span class="side-sub">{callRoom.lands}</span></h3>
+    <p class="call-lands" data-call-lands>{first.lands}</p>
+    <div class="slip call-slip" data-call-slip hidden>
+      <p class="slip-stamp mono">{line.handoffPrefix} · <span data-call-slip-topic></span></p>
+      <p class="slip-text" data-call-slip-text></p>
+    </div>
+  </div>
+</section>

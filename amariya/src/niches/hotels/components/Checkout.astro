@@ -1,0 +1,45 @@
+---
+// XII · Checkout (footer): the street at sunrise and the engraved brass plate beside the door. The closing line,
+// a last Ring for Amariya, and the meta row: © year (at build), Amariya AI, Voice powered by ElevenLabs, the legal
+// links once the owner confirms them, and the other two Amariya pages.
+import { content } from '../../../data/content/hotels';
+import { given } from '../../../data/content/types';
+import { company } from '../../../data/content/shared';
+import Icons from './Icons.astro';
+
+const c = content.chapters.find((x) => x.id === 'checkout')!;
+const { footer, checkout, legal } = content;
+const year = new Date().getFullYear();
+const links = (['privacy', 'terms', 'recording'] as const).flatMap((k) => {
+  const href = given(legal[k]);
+  return href ? [{ href, label: legal.labels[k] }] : [];
+});
+const [alsoLead] = checkout.also.split('clinics');
+---
+<footer
+  id={c.id}
+  class="chapter checkout"
+  data-chapter={c.id}
+  data-section="footer"
+  data-hour={c.hour}
+  data-room={c.room}
+  data-span={c.span}
+  style={`--span: ${c.span}`}
+  aria-labelledby={`${c.id}-title`}
+>
+  <div class="log checkout-log">
+    <p class="running-head" aria-hidden="true">{checkout.eyebrow}</p>
+    <h2 id={`${c.id}-title`} class="checkout-title" tabindex="-1">{footer.title[0]}<b>{footer.title[1]}</b>{footer.title[2]}</h2>
+    <div class="brass-plate" aria-hidden="true"><span>{checkout.plate}</span></div>
+    <p class="checkout-line">{footer.line}</p>
+    <button type="button" class="ring-btn" data-orb-talk><Icons name="bell" /><span>{footer.cta}</span></button>
+  </div>
+  <div class="checkout-meta">
+    <p>© <span class="n">{year}</span> {company}</p>
+    <p>{checkout.poweredBy}</p>
+    {links.length > 0 && (
+      <ul class="checkout-legal" role="list">{links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+    )}
+    <p>{alsoLead}<a href="/clinics">clinics</a> · <a href="/dental">dental</a></p>
+  </div>
+</footer>

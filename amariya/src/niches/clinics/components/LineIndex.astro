@@ -1,0 +1,55 @@
+---
+// The line in miniature (≥ 1100 px): a 28 px strip at the right edge with ten ticks, a bracket for the viewport
+// and a nav of the ten points; dragging the strip scrubs the page. Below 1100 px, 'Index' in the bar opens the
+// same list as a sheet together with the lens, Sound, Pause motion and the industries.
+import Switcher from '../../../components/shared/Switcher.astro';
+import SoundToggle from '../../../components/shared/SoundToggle.astro';
+import MotionToggle from '../../../components/shared/MotionToggle.astro';
+import { content } from '../../../data/content/clinics';
+
+const { chapters, lens, topBar } = content;
+const n = chapters.length;
+---
+<nav class="index" data-index aria-label="Points on the line">
+  <svg class="index-line" data-index-line viewBox="0 0 28 1000" preserveAspectRatio="none" aria-hidden="true">
+    <path data-index-path d={`M${chapters.map((c, i) => `${(c.split * 28).toFixed(1)} ${(i * 1000) / n} ${(c.split * 28).toFixed(1)} ${((i + 1) * 1000) / n}`).join(' L')}`} />
+    <path class="index-view" data-index-view d="M4 0H0V60H4M24 0H28V60H24" />
+  </svg>
+  <ol role="list">
+    {chapters.map((c, i) => (
+      <li style={`--at:${(i + 0.5) / n}`} data-index-item={c.id}>
+        <a href={`#${c.id}`} data-index-link={c.id}>
+          <span class="index-num">{c.point}</span>
+          <span class="index-label">{c.title}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<dialog class="index-sheet" data-index-sheet aria-labelledby="index-sheet-title">
+  <form method="dialog" class="index-sheet-head">
+    <h2 id="index-sheet-title">{topBar.index}</h2>
+    <button value="close" class="index-sheet-close">
+      <svg class="glyph" aria-hidden="true"><use href="#g-close" /></svg>
+      <span class="sr-only">Close</span>
+    </button>
+  </form>
+  <div class="index-sheet-controls">
+    <MotionToggle class="sheet-control" />
+    <SoundToggle class="sheet-control" />
+    <div class="lens" role="group" aria-label={lens.label.replace(/:$/, '')}>
+      <span class="lens-label" aria-hidden="true">{lens.label}</span>
+      <button type="button" data-lens-set="medical" aria-pressed="false">{lens.labels.medical}</button>
+      <button type="button" data-lens-set="aesthetic" aria-pressed="true">{lens.labels.aesthetic}</button>
+    </div>
+  </div>
+  <nav aria-label="Points on the line (sheet)">
+    <ol role="list" class="index-sheet-list">
+      {chapters.map((c) => (
+        <li><a href={`#${c.id}`} data-index-link={c.id}><span class="index-num">{c.point}</span> {c.title}</a></li>
+      ))}
+    </ol>
+  </nav>
+  <Switcher current="clinics" variant="inline" class="index-sheet-switcher" />
+</dialog>

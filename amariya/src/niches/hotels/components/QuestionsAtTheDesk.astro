@@ -1,0 +1,37 @@
+---
+// XI · Questions at the desk (#faq): four tabs of native details/summary items. Without JavaScript every group
+// shows under its own heading; ui.ts turns the headings into a tablist (roving tabindex). Every answer ends with
+// 'Ask Amariya this'. Answers the owner has not confirmed (Pending) are left out.
+import { content } from '../../../data/content/hotels';
+import { given } from '../../../data/content/types';
+import LogEntry from './LogEntry.astro';
+
+const chapter = content.chapters.find((c) => c.id === 'faq')!;
+const tabs = content.faqTabs
+  .map((t) => ({ ...t, items: t.items.flatMap((it) => { const a = given(it.a); return a ? [{ q: it.q, a }] : []; }) }))
+  .filter((t) => t.items.length);
+---
+<LogEntry chapter={chapter}>
+  <div class="faq" data-faq>
+    <p class="faq-title">{content.faqIntro.title}</p>
+    <div class="faq-tabs" role="tablist" aria-label={content.faqIntro.title} data-faq-tabs hidden>
+      {tabs.map((t, i) => (
+        <button type="button" role="tab" class="faq-tab" id={`faq-tab-${t.id}`} aria-controls={`faq-panel-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-faq-tab={t.id}>{t.label}</button>
+      ))}
+    </div>
+    {tabs.map((t) => (
+      <div class="faq-panel" id={`faq-panel-${t.id}`} data-faq-panel={t.id}>
+        <h3 class="faq-h">{t.label}</h3>
+        {t.items.map((it) => (
+          <details class="faq-item">
+            <summary>{it.q}</summary>
+            <div class="faq-a">
+              <p>{it.a}</p>
+              <button type="button" class="text-link ask" data-ask={it.q}>{content.askThis}</button>
+            </div>
+          </details>
+        ))}
+      </div>
+    ))}
+  </div>
+</LogEntry>

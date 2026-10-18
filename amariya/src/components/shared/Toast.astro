@@ -1,0 +1,43 @@
+---
+// Short notes for the visitor from voice.note() (no microphone, a refused connection), shown for 2.8 s.
+// A polite status region, so screen readers hear each note once. Structural CSS only, every selector inside :where().
+---
+<div class="toast" role="status" data-toast data-voice-ui></div>
+
+<script>
+  import { voice } from '../../scripts/voice/bridge';
+
+  const SHOW_MS = 2800;
+  const toast = document.querySelector<HTMLElement>('[data-toast]');
+  if (toast) {
+    let hideTimer = 0;
+    let clearTimer = 0;
+    voice.on('note', ({ text }) => {
+      clearTimeout(hideTimer);
+      clearTimeout(clearTimer);
+      toast.textContent = '';
+      toast.dataset.show = '';
+      // A fresh change, so the same note twice is announced twice
+      window.setTimeout(() => { toast.textContent = text; }, 40);
+      hideTimer = window.setTimeout(() => {
+        delete toast.dataset.show;
+        clearTimer = window.setTimeout(() => { toast.textContent = ''; }, 400);
+      }, SHOW_MS);
+    });
+  }
+</script>
+
+<style is:global>
+  :where([data-toast]) {
+    position: fixed; z-index: var(--z-toast); left: 50%; top: calc(var(--bar-h, 0px) + 12px); translate: -50% -8px;
+    width: max-content; max-width: min(560px, calc(100vw - 32px)); padding: 12px 18px; border-radius: 12px;
+    background: var(--color-bg-raised); color: var(--color-text-primary); box-shadow: inset 0 0 0 1px var(--color-border);
+    font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); text-align: center;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity var(--dur-control) var(--ease-out), translate var(--dur-control) var(--ease-out), visibility 0s linear var(--dur-control);
+  }
+  :where([data-toast][data-show]) { opacity: 1; visibility: visible; translate: -50% 0; transition-delay: 0s; }
+  @media (prefers-reduced-motion: reduce) {
+    :where([data-toast]) { transition: none; }
+  }
+</style>

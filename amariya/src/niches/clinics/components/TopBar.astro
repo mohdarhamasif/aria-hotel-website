@@ -1,0 +1,71 @@
+---
+// The top bar is the conversation console: brand, industries, the state glyph where the line meets the bar
+// with the live caption, the local time (the call timer during a call), the lens, Notes, Sound, Pause and Apply.
+import Switcher from '../../../components/shared/Switcher.astro';
+import SoundToggle from '../../../components/shared/SoundToggle.astro';
+import MotionToggle from '../../../components/shared/MotionToggle.astro';
+import Dock from '../../../components/shared/Dock.astro';
+import { content } from '../../../data/content/clinics';
+
+const { topBar, lens, voice, signoff } = content;
+const status = voice.dock.status;
+---
+<header class="bar" data-bar>
+  <a class="bar-brand" href="/">{topBar.brandLabel}</a>
+  <Switcher current="clinics" variant="menu" summary={topBar.menu} class="bar-switcher" />
+
+  <span
+    class="bar-glyph"
+    data-state-glyph
+    aria-hidden="true"
+    data-l-idle={status.idle}
+    data-l-connecting={status.connecting}
+    data-l-listening={status.listening}
+    data-l-thinking={status.thinking}
+    data-l-speaking={status.speaking}
+    data-l-muted={voice.dock.muted}
+  >
+    <svg viewBox="0 0 20 20">
+      <circle class="sg-ring" cx="10" cy="10" r="7.5" />
+      <circle class="sg-dash" cx="10" cy="10" r="7.5" />
+      <circle class="sg-dot" cx="10" cy="10" r="2.4" />
+      <path class="sg-half" d="M10 2.5a7.5 7.5 0 0 1 0 15z" />
+      <circle class="sg-fill" cx="10" cy="10" r="7.5" />
+      <path class="sg-bar" d="M4.2 15.8 15.8 4.2" />
+    </svg>
+  </span>
+
+  <Dock copy={voice.dock} variant="inline" industry="clinics">
+    <svg slot="icon-talk" class="glyph" aria-hidden="true"><use href="#g-mic" /></svg>
+    <svg slot="icon-write" class="glyph" aria-hidden="true"><use href="#g-type" /></svg>
+    <svg slot="icon-log" class="glyph" aria-hidden="true"><use href="#g-notes" /></svg>
+    <svg slot="icon-mute" class="glyph" aria-hidden="true"><use href="#g-mute" /></svg>
+    <svg slot="icon-switch" class="glyph" aria-hidden="true"><use href="#g-switch" /></svg>
+    <svg slot="icon-end" class="glyph" aria-hidden="true"><use href="#g-close" /></svg>
+  </Dock>
+
+  <time class="bar-clock" data-bar-clock>14:32</time>
+
+  <div class="lens lens-bar" role="group" aria-label={lens.label.replace(/:$/, '')}>
+    <span class="lens-label" aria-hidden="true">{lens.label}</span>
+    <button type="button" data-lens-set="medical" aria-pressed="false">{lens.labels.medical}</button>
+    <button type="button" data-lens-set="aesthetic" aria-pressed="true">{lens.labels.aesthetic}</button>
+  </div>
+
+  <button type="button" class="bar-take" data-take-notes hidden>{signoff.notes}</button>
+
+  <SoundToggle hideLabel class="bar-icon">
+    <svg class="glyph" aria-hidden="true"><use href="#g-sound" /></svg>
+  </SoundToggle>
+  <MotionToggle hideLabel class="bar-icon">
+    <svg class="glyph" aria-hidden="true"><use href="#g-pause" /></svg>
+  </MotionToggle>
+
+  <a class="bar-apply" href="#apply">{topBar.apply}<i class="arrow" aria-hidden="true"></i></a>
+  <button type="button" class="bar-index" data-index-open aria-haspopup="dialog">
+    <svg class="glyph" aria-hidden="true"><use href="#g-index" /></svg>
+    <span>{topBar.index}</span>
+  </button>
+
+  <p class="sr-only" role="status" data-line-status></p>
+</header>

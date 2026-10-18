@@ -1,0 +1,62 @@
+---
+// I · 18:00 · Your house (#house): the property card. The six agent field names, the niche's labels; the type
+// is a fieldset of real radio inputs set as engraved tabs. Every change rebuilds the house, gilds the name,
+// prefills the registration card and updates the teaser (ui.ts / presenter.ts).
+import { content } from '../../../data/content/hotels';
+import LogEntry from './LogEntry.astro';
+
+const chapter = content.chapters.find((c) => c.id === 'house')!;
+const { profile, propertyCard, handover } = content;
+const L = profile.labels, P = profile.placeholders;
+---
+<LogEntry chapter={chapter}>
+  <form class="panel card" data-profile method="dialog" aria-label={propertyCard.eyebrow}>
+    <div class="canopy">
+      <p class="eyebrow">{propertyCard.eyebrow}</p>
+      <p class="canopy-name" data-canopy>{handover.defaultName}</p>
+      <p class="welcome-back" data-welcome hidden></p>
+      <button type="button" class="text-link forget" data-forget hidden>{propertyCard.forget}</button>
+    </div>
+    <p class="panel-hint">{profile.hint}</p>
+
+    <div class="field">
+      <label for="p-hotel_name">{L.hotel_name}</label>
+      <input id="p-hotel_name" name="hotel_name" type="text" autocomplete="organization" placeholder={P.hotel_name} />
+    </div>
+
+    <fieldset class="field type-tabs">
+      <legend>{L.hotel_type}</legend>
+      <div class="tabs-row">
+        {profile.typeOptions.map((t) => (
+          <label class="type-tab"><input type="radio" name="hotel_type" value={t} /><span>{t}</span></label>
+        ))}
+      </div>
+    </fieldset>
+
+    <div class="field-pair">
+      <div class="field">
+        <label for="p-rooms" data-rooms-label data-rooms={L.rooms} data-tables={propertyCard.tablesLabel}>{L.rooms}</label>
+        <input id="p-rooms" name="rooms" type="text" inputmode="numeric" autocomplete="off" placeholder={P.rooms} />
+      </div>
+      <div class="field">
+        <label for="p-monthly_calls">{L.monthly_calls}</label>
+        <input id="p-monthly_calls" name="monthly_calls" type="text" inputmode="numeric" autocomplete="off" placeholder={P.monthly_calls} />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="p-languages">{L.languages}</label>
+      <input id="p-languages" name="languages" type="text" autocomplete="off" placeholder={P.languages} />
+    </div>
+
+    <div class="field">
+      <label for="p-pain_points">{L.pain_points}</label>
+      <textarea id="p-pain_points" name="pain_points" rows="2" placeholder={P.pain_points}></textarea>
+    </div>
+
+    <p class="teaser" data-teaser hidden>
+      <span data-teaser-text></span>
+      <a class="text-link" href="#handover">{propertyCard.teaserLink}</a>
+    </p>
+  </form>
+</LogEntry>

@@ -1,0 +1,26 @@
+---
+import type { OrbKind } from '../../data/niches';
+
+interface Props {
+  kind: OrbKind;
+  /** fixed: drawn on the page's .stage-canvas; inline: on its own canvas inside the root */
+  canvas?: 'fixed' | 'inline';
+  label?: string;
+  class?: string;
+  style?: string;
+}
+const { kind, canvas = 'fixed', label = 'Amariya. Press Enter to talk. Drag or use the arrow keys to turn her.', class: className, style } = Astro.props;
+---
+<div class:list={['orb', className]} style={style} data-orb={kind} data-orb-canvas={canvas} data-state="idle" tabindex="0" role="button" aria-label={label} aria-describedby="orb-help">
+  <div class="orb-fallback" aria-hidden="true"></div>
+  {canvas === 'inline' && <canvas class="orb-canvas" aria-hidden="true"></canvas>}
+  <slot />
+  <p class="sr-only" role="status" data-orb-status></p>
+</div>
+<p id="orb-help" class="sr-only">Press Enter or Space to talk with Amariya, and again to end the conversation. Drag her or use the arrow keys to turn her; Home sets her straight.</p>
+
+<script>
+  // The talk controls work at once; Three.js loads once the page is idle (see boot.ts)
+  import { boot } from '../../scripts/orb/boot';
+  boot();
+</script>

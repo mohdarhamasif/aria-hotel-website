@@ -1,0 +1,69 @@
+---
+// 07:45, Now (#welcome): the top of the sheet. The headline, the offer as one entry and the pearl in her cradle are
+// in the first screen; the call story runs on the phone rows below them. On desktop the inner screen is pinned for
+// 220svh and scroll writes the three beats (ui.ts); on phones, under reduced motion and without JS the three beats
+// stand as written entries. The HTML is the 07:45 scene; ui.ts switches to the visitor's own time band.
+import OrbRoot from '../../../components/shared/OrbRoot.astro';
+import { content } from '../../../data/content/dental';
+import { ledgerCounts } from '../../../scripts/apply/adapter';
+
+const { hero, scenes, beats, greetings } = content;
+const open = ledgerCounts('dental').open;
+// The static moment is 7:45 am: 'Before the doors open'
+const scene = scenes.find((s) => s.from === '06:00') ?? scenes[0];
+const [before, emph, after] = hero.title;
+---
+<section id="welcome" class="ch story" data-chapter="welcome" data-section="welcome" data-time="07:45" aria-labelledby="welcome-title" data-story>
+  <div class="story-pin sheet-grid" data-story-pin>
+    <div class="chairs c-chairs" data-chairs="07:45-08:40" aria-hidden="true"></div>
+
+    <div class="hero-text c-text">
+      <h1 id="welcome-title" class="hero-title">{before}<em>{emph}</em>{after}</h1>
+      <p class="hero-lede">{hero.lede}</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary hero-apply" href="#apply" data-go="apply">{hero.apply}</a>
+        <a class="read-on" href="#profile" data-go="profile">{hero.readOn}</a>
+      </div>
+      <p class="offer-entry ink"><span class="entry-tick" aria-hidden="true"></span>{hero.offerEntry(open)}</p>
+    </div>
+
+    <div class="hero-lane c-lanewide" data-hero-lane>
+      <div class="cradle" data-slot="now" data-time="07:45" data-anchor data-cradle>
+        <svg class="setting-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle cx="50" cy="50" r="49.5" pathLength="1" /></svg>
+        <span class="halo" aria-hidden="true"></span>
+        <OrbRoot kind="pearl" label="Amariya. Press to talk; drag to roll her, lift her into a gap, or use the arrow keys." />
+        <ol class="greet-float" role="list" aria-hidden="true" data-greet-float>
+          {greetings.map((g) => <li lang={g.lang} dir={g.dir}>{g.text}</li>)}
+        </ol>
+      </div>
+      <div class="talk-labels" data-talk-labels>
+        <button type="button" class="talk-btn" data-orb-talk data-hero-talk>{hero.talk.idle}</button>
+        <button type="button" class="type-link" data-orb-type>{hero.type}</button>
+      </div>
+      <div class="booked" aria-hidden="true" data-booked>
+        <svg class="booked-line" preserveAspectRatio="none" viewBox="0 0 2 100" focusable="false"><path d="M1 0V100" pathLength="1" /></svg>
+        <span class="booked-slot"><span class="mini-pearl"></span></span>
+        <span class="booked-label"><svg class="glyph" aria-hidden="true"><use href="#g-tick" /></svg><span data-booked-label>{scene.booked.label}</span></span>
+      </div>
+      <span class="hero-track-slot" data-hero-track aria-hidden="true"></span>
+    </div>
+
+    <p class="numeral c-text" aria-hidden="true"><span data-numeral>7:45</span></p>
+    <ol class="phone-rows c-text" role="list" aria-label={beats.label} data-phone-rows>
+      <li class="phone-row ink" data-beat="1">
+        <p class="row-head"><time class="row-time" data-story-time>{hero.staticTime}</time><span class="row-scene" data-story-scene>{scene.name}</span></p>
+        <p class="row-text" data-story-line>{scene.line(hero.staticTime)}</p>
+      </li>
+      <li class="phone-row ink" data-beat="2">
+        <p class="row-text">{beats.greeting}</p>
+        <p class="greet-line">
+          {greetings.map((g, i) => <><span lang={g.lang} dir={g.dir}>{g.text}</span>{i < greetings.length - 1 && <span aria-hidden="true"> · </span>}</>)}
+        </p>
+      </li>
+      <li class="phone-row ink" data-beat="3">
+        <p class="row-text">{beats.booked} <span class="booked-inline"><svg class="glyph" aria-hidden="true"><use href="#g-tick" /></svg><span data-booked-text lang={scene.booked.lang}>{scene.booked.label}</span></span></p>
+        <p class="row-clause ink" data-clause>{beats.closing.day}</p>
+      </li>
+    </ol>
+  </div>
+</section>

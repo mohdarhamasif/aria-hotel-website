@@ -1,0 +1,21 @@
+---
+// The top of the day sheet: appointment-book index tabs for the three practices' sites (the current one pulled
+// forward), 'DAY SHEET', today's date (written by ui.ts from the visitor's clock) and the practice-name line that
+// Amariya or the visitor writes into from the intake slip. A 1 px perforation closes it.
+import Switcher from '../../../components/shared/Switcher.astro';
+import { content } from '../../../data/content/dental';
+
+const { header } = content;
+---
+<header class="sheet-head sheet-grid" data-sheet-head>
+  <Switcher current="dental" variant="tabs" class="index-tabs head-tabs" />
+  <div class="sheet-head-row">
+    <p class="sheet-kind">{header.sheet}</p>
+    <p class="sheet-date"><time data-date>Today</time></p>
+    <p class="sheet-practice">
+      <span class="sr-only">Practice: </span>
+      <span class="sheet-practice-name" data-practice-name data-placeholder={header.practicePlaceholder} data-empty>{header.practicePlaceholder}</span>
+    </p>
+  </div>
+  <div class="perforation" aria-hidden="true"></div>
+</header>

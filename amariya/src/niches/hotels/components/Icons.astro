@@ -1,0 +1,36 @@
+---
+// The Night Log's one glyph set: 24 px grid, 1.25 px stroke, square caps, drawn in currentColor.
+// <Icons name="bell" /> renders one glyph (aria-hidden; the button beside it carries the words).
+const ICONS = {
+  /** Desk bell: ring */
+  bell: 'M4 19.5h16 M5.5 17h13 M6 16.5a6 6 0 0 1 12 0 M12 10.5V8.5 M10.25 8h3.5',
+  /** Pen nib: write */
+  nib: 'M12 3.5l4 6.5-4 10.5-4-10.5z M12 13.5V9.5',
+  /** Receiver down: end */
+  end: 'M3.5 14.5c3-3.75 14-3.75 17 0l-1.75 2.75-3.5-1.25v-2.25c-2.25-.75-4.25-.75-6.5 0V16l-3.5 1.25z',
+  /** Message slip: log */
+  slip: 'M6 3.5h12v17H6z M9 8h6 M9 11.5h6 M9 15h3.5',
+  /** Struck bell: mute */
+  mute: 'M4 19.5h16 M5.5 17h13 M6 16.5a6 6 0 0 1 12 0 M12 10.5V8.5 M4 4l16 16',
+  key: 'M3.5 12a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0z M10.5 12h10 M17.5 12v3 M20.5 12v2.25',
+  handset: 'M7 4.5l2.5 4-2 2a10 10 0 0 0 6 6l2-2 4 2.5-1.5 3c-7.5 0-14-6.5-14-14z',
+  crescent: 'M15 4.5a8 8 0 1 0 4.75 12.25A6.75 6.75 0 0 1 15 4.5z',
+  cloche: 'M3 19.5h18 M4.5 17h15 M5.5 16.5a6.5 6.5 0 0 1 13 0 M11 8.5h2',
+  flute: 'M9 3.5h6l-.5 6.25a2.5 2.5 0 0 1-5 0z M12 12.25v7.5 M9 20h6',
+  taxi: 'M4 17v-3.5L6 9h12l2 4.5V17z M7 17v2 M17 17v2 M10 6.5h4 M6.5 14h2 M15.5 14h2',
+  ledger: 'M5.5 4h11a2 2 0 0 1 2 2v14h-11a2 2 0 0 1-2-2z M5.5 18a2 2 0 0 1 2-2h11 M9 8h6 M9 11h6',
+  /** Door hanger: Pause motion */
+  hanger: 'M7 3.5h10v17H7z M9.75 8a2.25 2.25 0 1 0 4.5 0a2.25 2.25 0 1 0-4.5 0z M12 10.25v1.75 M10.5 15v3 M13.5 15v3',
+  speaker: 'M4 9.5h3.5L12 6v12l-4.5-3.5H4z M15.5 9.5a3.5 3.5 0 0 1 0 5 M18 7a7 7 0 0 1 0 10',
+  /** Three-bar equaliser: Sound */
+  eq: 'M7 17.5v-6 M12 17.5v-11 M17 17.5v-4',
+} as const;
+type IconName = keyof typeof ICONS;
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+---
+<svg class:list={['icon', className]} viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="square"><path d={ICONS[name]} /></svg>

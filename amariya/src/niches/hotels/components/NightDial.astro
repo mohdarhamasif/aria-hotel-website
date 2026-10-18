@@ -1,0 +1,104 @@
+---
+// The lantern's hour ring: 18:00 to 07:45 (825 minutes) engraved over 330°, a 30° clasp at the top.
+// variant 'glass': the bezel around the glass in the prologue and the lobby (decorative, aria-hidden; the
+//   slider lives in the cornice), positioned by ring.ts from --ox/--oy/--or.
+// variant 'cornice': the Night Dial, the top arc seen through a 240×64 window under a fixed index. It is the
+//   page's nav[aria-label='The night']: a role=slider, the Night index button and an ordered list of hour links
+//   that work without JavaScript.
+import { content } from '../../../data/content/hotels';
+
+interface Props {
+  variant: 'glass' | 'cornice';
+}
+const { variant } = Astro.props;
+
+const SPAN = 825;
+const angle = (m: number) => 15 + m * 0.4;
+const rad = (deg: number) => (deg * Math.PI) / 180;
+const f = (n: number) => +n.toFixed(2);
+const pt = (cx: number, cy: number, r: number, a: number) => [f(cx + r * Math.sin(rad(a))), f(cy - r * Math.cos(rad(a)))];
+const arc = (cx: number, cy: number, r: number, a1: number, a2: number) => {
+  const [x1, y1] = pt(cx, cy, r, a1), [x2, y2] = pt(cx, cy, r, a2);
+  return `M${x1} ${y1}A${r} ${r} 0 ${a2 - a1 > 180 ? 1 : 0} 1 ${x2} ${y2}`;
+};
+const hourLabel = (m: number) => String((18 + m / 60) % 24).padStart(2, '0');
+
+// Quarter-hour ticks (56), every fourth an hour; numerals on the hours
+const ticks = Array.from({ length: SPAN / 15 + 1 }, (_, q) => ({ q, m: q * 15, hour: q % 4 === 0 }));
+
+const glass = variant === 'glass';
+const cx = glass ? 0 : 120, cy = glass ? 0 : 334;
+const R = glass ? { out: 130, tickQ: 126, tickH: 121, num: 114.5, inner: 108 } : { out: 320, tickQ: 314, tickH: 309, num: 300.5, inner: 0 };
+const upright = (a: number) => (glass && a > 90 && a < 270 ? a + 180 : a);
+// The glass's numerals are HTML placed over the drawing (percentages of its 270-unit box), so they keep the label size
+// however large the lantern is drawn; SVG text would scale with it (to 6 px on a phone)
+const pct = (u: number) => f(((u + 135) / 270) * 100);
+
+// The hour links and the slider's starting value (JavaScript replaces it with the visitor's hour)
+const ofRest = (c: (typeof content.chapters)[number]) => c.restaurant;
+const clocked = content.chapters.filter((c) => c.minutes !== null);
+const first = clocked[0];
+const startText = content.ring.valueText('6:00 pm', first.room, first.summary.toLowerCase(), 1, clocked.length);
+const hourText = (c: (typeof content.chapters)[number]) => (c.hour === 'now' ? content.ring.now : c.hour || '');
+---
+{glass ? (
+  <div class="ring-glass" data-ring="glass" aria-hidden="true">
+    <svg viewBox="-135 -135 270 270" focusable="false">
+      <path class="ring-band" d={`${arc(cx, cy, R.out, 15, 345)} ${arc(cx, cy, R.inner, 15, 345)}`} />
+      <path class="ring-clasp" d={arc(cx, cy, 119, -13, 13)} />
+      <circle class="ring-pin" cx="-25" cy="-117" r="2.2" /><circle class="ring-pin" cx="25" cy="-117" r="2.2" />
+      <g class="ring-scale">
+        {ticks.map((t) => {
+          const a = angle(t.m), [x1, y1] = pt(cx, cy, R.out - 1, a), [x2, y2] = pt(cx, cy, t.hour ? R.tickH : R.tickQ, a);
+          return <line class:list={['ring-tick', { 'ring-tick--h': t.hour }]} data-q={t.q} x1={x1} y1={y1} x2={x2} y2={y2} />;
+        })}
+      </g>
+      <g class="ring-now" data-ring-now hidden><line x1="0" y1="-103.5" x2="0" y2="-110" /><circle cx="0" cy="-101" r="2" /></g>
+      <g class="ring-needle" data-ring-needle hidden><line x1="0" y1="-96" x2="0" y2="-134" /><path d="M0-143l3.2 4.4L0-134.2l-3.2-4.4z" /></g>
+      <g class="ring-hand" data-ring-hand><line x1="0" y1="-105" x2="0" y2="-133" /><circle cx="0" cy="-119" r="3.6" /><path d="M-3-138h6l-3 4z" /></g>
+      <circle class="ring-hit" data-ring-hit cx="0" cy="0" r="119" />
+    </svg>
+    {ticks.filter((t) => t.hour).map((t) => {
+      const a = angle(t.m), [x, y] = pt(cx, cy, R.num, a);
+      return <span class="ring-num" style={`left: ${pct(x)}%; top: ${pct(y)}%; rotate: ${f(upright(a))}deg`}>{hourLabel(t.m)}</span>;
+    })}
+  </div>
+) : (
+  <nav class="dial" aria-label={content.ring.label} data-dial>
+    <div class="dial-window" role="slider" tabindex="0" aria-label={content.ring.label} aria-orientation="horizontal" aria-valuemin="0" aria-valuemax={SPAN} aria-valuenow="0" aria-valuetext={startText} data-ring="cornice" data-ring-slider data-ring-hit>
+      <svg viewBox="0 0 240 64" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        <g class="ring-scale" data-ring-scale transform={`rotate(${-angle(0)} ${cx} ${cy})`}>
+          <path class="ring-band" d={arc(cx, cy, R.out, 15, 345)} />
+          <path class="ring-clasp" d={arc(cx, cy, R.out, -9, 9)} />
+          {ticks.map((t) => {
+            const a = angle(t.m), [x1, y1] = pt(cx, cy, R.out, a), [x2, y2] = pt(cx, cy, t.hour ? R.tickH : R.tickQ, a);
+            return <line class:list={['ring-tick', { 'ring-tick--h': t.hour }]} data-q={t.q} x1={x1} y1={y1} x2={x2} y2={y2} />;
+          })}
+          {ticks.filter((t) => t.hour).map((t) => {
+            const a = angle(t.m), [x, y] = pt(cx, cy, R.num, a);
+            return <text class="ring-num" x={x} y={y} transform={`rotate(${f(a)} ${x} ${y})`} text-anchor="middle" dominant-baseline="central">{hourLabel(t.m)}</text>;
+          })}
+          <g class="ring-now" data-ring-now hidden><circle cx={cx} cy={cy - R.out - 4} r="2" /></g>
+          <g class="ring-needle" data-ring-needle hidden><line x1={cx} y1={cy - R.out + 22} x2={cx} y2={cy - R.out + 3} /><path d={`M${cx} ${cy - R.out - 7}l3.2 4.4-3.2 4.4-3.2-4.4z`} /></g>
+        </g>
+        <path class="dial-index" d="M114.5 3h11L120 10.5z" />
+        <path class="dial-chevron" data-needle-edge="left" d="M13 15l-5 5 5 5" hidden />
+        <path class="dial-chevron" data-needle-edge="right" d="M227 15l5 5-5 5" hidden />
+      </svg>
+      <span class="dial-readout" aria-hidden="true"><span class="dial-time" data-ring-time>18:00</span><span class="dial-room" data-ring-room> · {first.room}</span></span>
+    </div>
+    <button type="button" class="dial-chip" data-index-open aria-haspopup="dialog" aria-controls="night-index">
+      <span class="dial-time" data-ring-time>18:00</span><span class="dial-caret" aria-hidden="true"></span><span class="sr-only"> — {content.nightIndex.open}</span>
+    </button>
+    <ol class="dial-hours" role="list">
+      {content.chapters.map((c) => (
+        <li>
+          <a href={`#${c.id}`}>
+            {hourText(c) && <span class="dial-hours-time">{hourText(c)} · </span>}
+            {ofRest(c) ? (<><span data-variant="hotel">{c.room}</span><span data-variant="restaurant">{ofRest(c)!.room}</span></>) : <span>{c.hour ? c.room : c.title}</span>}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

@@ -1,0 +1,43 @@
+---
+// 08 · Questions (#faq): two groups by side, native details/summary, 'Ask Amariya' on each.
+// An answer the owner has not confirmed is Pending: the question is left out until it has one.
+import { content } from '../../../data/content/clinics';
+import { given } from '../../../data/content/types';
+
+const { faqTabs, faqTitle, askThis, chapters, questionsGroups } = content;
+const ch = chapters[8];
+const groups = faqTabs.map((tab, i) => ({
+  id: tab.id,
+  title: i === 0 ? questionsGroups.her : questionsGroups.team,
+  side: i === 0 ? 'her' : 'team',
+  items: tab.items.flatMap((it) => {
+    const a = given(it.a);
+    return a ? [{ q: it.q, a }] : [];
+  }),
+}));
+---
+<section id={ch.id} class="ch ch-faq" data-chapter={ch.id} data-section="faq" data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="faq-title">
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+
+  <header class="ch-head her">
+    <p class="eyebrow mono">{ch.point} · {ch.title}</p>
+    <h2 id="faq-title">{faqTitle[0]}<b>{faqTitle[1]}</b>{faqTitle[2]}</h2>
+  </header>
+
+  {groups.map((g) => (
+    <div class:list={[g.side, 'side', 'faq-group']} data-side={g.side}>
+      <h3 class="side-label">{g.title}</h3>
+      {g.side === 'her' && <ol class="margin-notes" data-margin-notes aria-label="Amariya’s notes" role="list"></ol>}
+      {g.side === 'her' && <div class="faq-anchor" data-orb-anchor></div>}
+      {g.items.map((it) => (
+        <details class="faq" data-ask={it.q} data-faq>
+          <summary>{it.q}</summary>
+          <div class="faq-a">
+            <p>{it.a}</p>
+            <button type="button" class="btn-link mono" data-ask-this>{askThis}</button>
+          </div>
+        </details>
+      ))}
+    </div>
+  ))}
+</section>

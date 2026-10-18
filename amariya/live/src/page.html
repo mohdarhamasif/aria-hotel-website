@@ -1,0 +1,1391 @@
+<title>Amariya Redesign</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bona+Nova:wght@400&display=swap">
+<style>
+/*FONTS*/
+/* Layout: one calm stage per screen over a fixed 3D model of the customer's own building; glass only where Amariya speaks, acts or sells */
+:root {
+  --font-body: "Supreme", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-brand: "Ranade", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --h1: 72px; --h1-lh: 1.05; --h1-ls: -.012em;
+  --h2: 29px; --h2-lh: 1.14; --h2-ls: -.01em;
+  --h3: 18px; --h3-lh: 1.3;
+  --lead: 19px; --lead-lh: 1.5;
+  --body: 16px; --body-lh: 1.5;
+  --card: 14px; --small: 13px; --eyebrow: 12px; --label: 11px;
+  --stat: 34px;
+  --pad: 48px;
+
+  /* Hotels & restaurants: Forest & Champagne, at night */
+  --font-display: "Bona Nova", Georgia, "Times New Roman", serif;
+  --ds: 1.08;
+  --bg: #101d14;
+  --text: #f8f7f4;
+  --muted: rgba(248, 247, 244, .72);
+  --faint: rgba(248, 247, 244, .58);
+  --accent: #d8c08d;
+  --button: #bba16a;
+  --button-text: #101d14;
+  --button-shadow: rgba(187, 161, 106, .24);
+  --line: rgba(248, 247, 244, .14);
+  --scrim: rgba(16, 29, 20, .86);
+  --title-shadow: 0 2px 36px rgba(6, 12, 8, .7);
+  --glass-fill: rgba(13, 24, 17, .46);
+  --glass-sheen: rgba(255, 248, 230, .13);
+  --glass-sheen-2: rgba(255, 248, 230, .05);
+  --glass-top: rgba(255, 248, 230, .22);
+  --glass-rim: rgba(255, 240, 210, .46);
+  --glass-rim-2: rgba(255, 240, 210, .1);
+  --glass-shadow: 0 18px 50px rgba(0, 0, 0, .42);
+  --glass-hi: rgba(255, 236, 200, .12);
+  --seg-on: rgba(255, 248, 230, .13);
+  --chip-bg: rgba(216, 192, 141, .15);
+  --chip-text: #e9d5a8;
+  --dot: #d8c08d;
+  --ring: linear-gradient(160deg, #f3e3b5, #bba16a 58%, #6f5a2c);
+  --mini-orb: radial-gradient(circle at 34% 30%, #fff8e6 0, #e7cf95 30%, #b8954f 68%, #5d4920 100%);
+  color-scheme: dark;
+}
+/* Clinics: Ink & Porcelain, daylight */
+:root[data-niche="clinics"] {
+  --font-display: "Ranade", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --ds: 1;
+  --bg: #f5f7f9;
+  --text: #101f2e;
+  --muted: rgba(16, 31, 46, .74);
+  --faint: rgba(16, 31, 46, .64);
+  --accent: #3b5979;
+  --button: #2f445b;
+  --button-text: #ffffff;
+  --button-shadow: rgba(47, 68, 91, .22);
+  --line: rgba(16, 31, 46, .12);
+  --scrim: rgba(245, 247, 249, .9);
+  --title-shadow: 0 1px 28px rgba(245, 247, 249, .9);
+  --glass-fill: rgba(255, 255, 255, .5);
+  --glass-sheen: rgba(255, 255, 255, .75);
+  --glass-sheen-2: rgba(255, 255, 255, .35);
+  --glass-top: rgba(255, 255, 255, .95);
+  --glass-rim: rgba(255, 255, 255, 1);
+  --glass-rim-2: rgba(255, 255, 255, .45);
+  --glass-shadow: 0 18px 50px rgba(30, 55, 85, .12), 0 2px 8px rgba(30, 55, 85, .06);
+  --glass-hi: rgba(255, 255, 255, .7);
+  --seg-on: rgba(255, 255, 255, .95);
+  --chip-bg: rgba(59, 89, 121, .1);
+  --chip-text: #2f445b;
+  --dot: #3b5979;
+  --ring: linear-gradient(160deg, #a9c8ea, #588cc0 55%, #2f445b);
+  --mini-orb: radial-gradient(circle at 34% 30%, #ffffff 0, #eef3f9 32%, #b9cfe6 70%, #6f95bf 100%);
+  color-scheme: light;
+}
+/* Dental: Rosé & Pearl, morning */
+:root[data-niche="dental"] {
+  --font-display: "Boska", Georgia, "Times New Roman", serif;
+  --ds: 1;
+  --bg: #fbf5f5;
+  --text: #2c1818;
+  --muted: rgba(44, 24, 24, .74);
+  --faint: rgba(44, 24, 24, .64);
+  --accent: #7d424e;
+  --button: #7d424e;
+  --button-text: #ffffff;
+  --button-shadow: rgba(125, 66, 78, .22);
+  --line: rgba(44, 24, 24, .12);
+  --scrim: rgba(251, 245, 245, .9);
+  --title-shadow: 0 1px 28px rgba(251, 245, 245, .9);
+  --glass-fill: rgba(255, 255, 255, .5);
+  --glass-sheen: rgba(255, 255, 255, .75);
+  --glass-sheen-2: rgba(255, 255, 255, .35);
+  --glass-top: rgba(255, 255, 255, .95);
+  --glass-rim: rgba(255, 255, 255, 1);
+  --glass-rim-2: rgba(255, 255, 255, .45);
+  --glass-shadow: 0 18px 50px rgba(110, 50, 50, .1), 0 2px 8px rgba(110, 50, 50, .05);
+  --glass-hi: rgba(255, 255, 255, .7);
+  --seg-on: rgba(255, 255, 255, .95);
+  --chip-bg: rgba(125, 66, 78, .09);
+  --chip-text: #7d424e;
+  --dot: #d09e83;
+  --ring: linear-gradient(160deg, #f4d6cf, #d09e83 55%, #7d424e);
+  --mini-orb: radial-gradient(circle at 34% 30%, #ffffff 0, #fbeeed 32%, #e6c3bd 70%, #b98379 100%);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 400 var(--body)/var(--body-lh) var(--font-body);
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  transition: background-color .6s var(--ease), color .6s var(--ease);
+}
+h1, h2, h3, p, ul { margin: 0; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; }
+em { font-style: normal; color: var(--accent); }
+button, input { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.eyebrow { font-size: var(--eyebrow); line-height: 1.33; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: calc(var(--pad) - 16px); }
+.w { display: inline-block; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+.i3d { width: 34px; height: 34px; flex: none; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .22)); }
+.i3d.sm { width: 24px; height: 24px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .18)); }
+
+#world { position: fixed; inset: 0; width: 100%; height: 100vh; display: block; z-index: 0; touch-action: pan-y; opacity: 0; transition: opacity .9s var(--ease); }
+#world[data-ready] { opacity: 1; }
+main { position: relative; z-index: 1; pointer-events: none; transition: opacity .42s var(--ease); }
+main a, main button, main input, main details, .glass { pointer-events: auto; }
+.switching #world, .switching main { opacity: 0; }
+
+/* Glass: a sheen across the top, a bright rim where the light catches the edge, a blur of the world behind */
+.glass {
+  position: relative; isolation: isolate;
+  background: linear-gradient(160deg, var(--glass-sheen), transparent 42%, transparent 64%, var(--glass-sheen-2)), var(--glass-fill);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5); backdrop-filter: blur(22px) saturate(1.5);
+  box-shadow: inset 0 1px 0 var(--glass-top), var(--glass-shadow);
+}
+.glass::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(170deg, var(--glass-rim), var(--glass-rim-2) 32%, transparent 62%, var(--glass-rim-2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.live::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(380px circle at var(--mx, 25%) var(--my, 0%), var(--glass-hi), transparent 62%);
+}
+
+/* Nav */
+.nav {
+  position: fixed; left: 0; right: 0; top: 0; z-index: 40; pointer-events: none;
+  padding-top: calc(20px + env(safe-area-inset-top, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.nav-in { max-width: 1440px; margin: 0 auto; padding-inline: calc(var(--pad) - 16px); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { pointer-events: auto; display: inline-flex; align-items: center; gap: 10px; font: 400 var(--h3)/1 var(--font-brand); letter-spacing: -.01em; cursor: pointer; background: none; border: 0; padding: 4px 0; }
+.ring { width: 20px; height: 20px; border-radius: 50%; background: var(--ring); -webkit-mask: radial-gradient(circle, transparent 7.2px, #000 7.9px); mask: radial-gradient(circle, transparent 7.2px, #000 7.9px); }
+.seg { pointer-events: auto; display: flex; gap: 2px; padding: 4px; border-radius: 999px; }
+.seg a { padding: 8px 14px; border-radius: 999px; font-size: var(--small); line-height: 1.2; color: var(--muted); white-space: nowrap; transition: color .3s, background-color .3s, box-shadow .3s; }
+.seg a:hover { color: var(--text); }
+.seg a[aria-current="page"] { color: var(--text); background: var(--seg-on); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+.short { display: none; }
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.sound { pointer-events: auto; display: inline-flex; align-items: center; gap: 9px; height: 40px; padding: 0 16px 0 15px; border: 0; border-radius: 999px; font-size: var(--small); color: var(--muted); cursor: pointer; transition: color .3s; }
+.sound:hover, .sound[aria-pressed="true"] { color: var(--text); }
+.eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+.eq i { width: 2px; height: 5px; border-radius: 1px; background: currentColor; }
+.sound[aria-pressed="true"] .eq i { animation: eq .9s var(--ease) infinite alternate; }
+.eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.6s; } .eq i:nth-child(4) { animation-delay: -.15s; }
+@keyframes eq { from { height: 3px; } to { height: 14px; } }
+
+/* Hero */
+.hero { position: relative; height: 100vh; height: 100svh; min-height: 600px; }
+.hero h1 {
+  position: absolute; left: 50%; top: var(--orb-y, 46%); transform: translate(-50%, -50%);
+  width: min(1040px, 100%); text-align: center; text-shadow: var(--title-shadow);
+  font-size: calc(var(--h1) * var(--ds) * var(--fit, 1)); line-height: var(--h1-lh); letter-spacing: var(--h1-ls);
+}
+.hero h1 .w { animation: rise 1.2s var(--ease) both; animation-delay: calc(.25s + var(--i) * 70ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(.4em); filter: blur(10px); } }
+@keyframes fade { from { opacity: 0; } }
+.tap {
+  position: absolute; left: 50%; top: var(--tap-y, 74%); transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 18px 0 15px; border: 0; border-radius: 999px;
+  font-size: var(--card); font-weight: 500; cursor: pointer; animation: fade 1s 1s var(--ease) both;
+}
+.tap i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: ping 2.4s var(--ease) infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 var(--accent); } 70%, 100% { box-shadow: 0 0 0 9px transparent; } }
+.hero-foot { position: absolute; left: 0; right: 0; bottom: 112px; }
+.hero-foot .wrap { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; }
+.hero-copy { max-width: 440px; display: grid; gap: 22px; animation: fade 1.2s .7s var(--ease) both; }
+.lead { font-size: var(--lead); line-height: var(--lead-lh); color: var(--muted); }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+.note { font-size: var(--small); line-height: 1.5; color: var(--faint); }
+.cue { display: inline-flex; align-items: center; gap: 14px; padding: 8px 0; border: 0; background: none; font-size: var(--small); font-weight: 500; color: var(--muted); cursor: pointer; animation: fade 1s 1.2s var(--ease) both; }
+.cue i { width: 1px; height: 40px; background: linear-gradient(var(--text), transparent); transform-origin: top; animation: drip 2.4s var(--ease) infinite; }
+@keyframes drip { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 52px; padding: 0 24px 0 20px;
+  border: 0; border-radius: 999px; font-size: var(--body); font-weight: 500; cursor: pointer;
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(.98); }
+.btn-primary { background: var(--button); color: var(--button-text); box-shadow: 0 12px 30px var(--button-shadow), inset 0 1px 0 rgba(255, 255, 255, .28); }
+.btn-wide { width: 100%; }
+
+/* The night, room by room */
+.story { position: relative; height: 520vh; }
+.pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+.beat { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .55s var(--ease); }
+.beat.on { opacity: 1; }
+.call { position: absolute; right: calc(var(--pad) - 16px); top: 50%; transform: translateY(-46%); width: 420px; padding: 28px; border-radius: 26px; display: grid; gap: 14px; }
+.beat.on .call { pointer-events: auto; }
+.meta { display: flex; align-items: baseline; gap: 14px; }
+.time { font: 400 calc(var(--h3) * var(--ds))/1 var(--font-display); color: var(--accent); font-variant-numeric: tabular-nums; }
+.place { font-size: var(--eyebrow); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
+.beat h2 { font-size: calc(var(--h2) * var(--ds)); line-height: var(--h2-lh); letter-spacing: var(--h2-ls); }
+.beat .w { opacity: .12; filter: blur(5px); transition: opacity .8s var(--ease), filter .8s var(--ease); }
+.beat.on .w { opacity: 1; filter: none; transition-delay: calc(.1s + var(--i) * 40ms); }
+.convo { display: grid; gap: 12px; margin-top: 4px; padding-top: 18px; border-top: 1px solid var(--line); }
+.convo > * { opacity: 0; transform: translateY(10px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.beat.on .convo > * { opacity: 1; transform: none; }
+.beat.on .convo > :nth-child(1) { transition-delay: .5s; }
+.beat.on .convo > :nth-child(2) { transition-delay: .8s; }
+.beat.on .convo > :nth-child(3) { transition-delay: 1.4s; }
+.beat.on .convo > :nth-child(4) { transition-delay: 2s; }
+.example { font-size: var(--small); line-height: 1.5; color: var(--faint); }
+.who { font-size: var(--label); line-height: 1.4; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
+.said { font-size: var(--card); line-height: 1.5; color: var(--muted); }
+.reply { display: grid; grid-template-columns: 22px 1fr; gap: 10px; font-size: var(--card); line-height: 1.5; }
+.mini { width: 22px; height: 22px; border-radius: 50%; background: var(--mini-orb); margin-top: 1px; }
+.chip { justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 30px; padding: 5px 12px 5px 10px; border-radius: 999px; background: var(--chip-bg); color: var(--chip-text); font-size: var(--small); font-weight: 500; line-height: 1.3; }
+.chip svg { width: 15px; height: 15px; }
+.beat.closing h2 { position: absolute; left: 50%; top: 18%; transform: translateX(-50%); width: min(760px, 100%); text-align: center; text-shadow: var(--title-shadow); }
+.progress { position: absolute; left: calc(var(--pad) - 16px); bottom: calc(40px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 8px; font-size: var(--label); font-weight: 500; letter-spacing: .08em; color: var(--faint); font-variant-numeric: tabular-nums; opacity: 0; transition: opacity .5s var(--ease); }
+.progress.show { opacity: 1; }
+.progress b { color: var(--text); font-weight: 500; }
+.progress i { position: relative; width: 120px; height: 1px; margin-left: 10px; background: var(--line); }
+.progress i::after { content: ""; position: absolute; inset: 0; background: var(--text); transform: scaleX(var(--p, .33)); transform-origin: left; transition: transform .6s var(--ease); }
+
+/* What she does: pills circle the orb */
+.does { position: relative; height: 100vh; height: 100svh; min-height: 640px; }
+.does-head { padding-top: 112px; }
+.does-head .wrap { display: flex; justify-content: space-between; align-items: flex-start; gap: 48px; }
+.does h2 { max-width: 430px; margin-top: 10px; font-size: calc(var(--h2) * var(--ds)); line-height: var(--h2-lh); letter-spacing: var(--h2-ls); }
+.does .lede { max-width: 380px; font-size: var(--lead); line-height: var(--lead-lh); color: var(--muted); }
+.orbit { position: fixed; left: 0; top: 0; z-index: 2; width: 0; height: 0; margin: 0; padding: 0; list-style: none; opacity: 0; visibility: hidden; }
+.pill { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 20px 0 10px; border-radius: 999px; white-space: nowrap; font-size: var(--body); will-change: transform; transition: box-shadow .5s var(--ease); }
+.pill.spot { box-shadow: inset 0 1px 0 var(--glass-top), 0 0 0 1px var(--accent), 0 14px 40px var(--button-shadow); }
+
+/* Founding licence */
+.offer { position: relative; min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding-block: 120px; }
+.licence { width: min(500px, 100%); padding: 32px; border-radius: 28px; display: grid; gap: 18px; }
+.price { display: flex; align-items: baseline; gap: 10px; margin-top: 2px; }
+.price span { font: 400 calc(var(--stat) * var(--ds))/1.1 var(--font-display); letter-spacing: -.01em; }
+.price small { font-size: var(--body); color: var(--muted); }
+.for { color: var(--muted); margin-top: -10px; }
+.seats { display: grid; gap: 10px; padding-block: 18px; border-block: 1px solid var(--line); }
+.dots { display: grid; grid-template-columns: repeat(15, 9px); justify-content: space-between; row-gap: 8px; }
+.dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--dot); }
+.seat-label { font-size: var(--small); color: var(--muted); }
+.seat-label b { color: var(--text); font-weight: 500; }
+.incl { list-style: none; padding: 0; display: grid; gap: 10px; }
+.incl li { display: flex; align-items: center; gap: 10px; font-size: var(--card); line-height: 1.5; }
+.guarantee { display: flex; align-items: center; gap: 10px; font-size: var(--card); font-weight: 500; }
+.licence .note { text-align: center; margin-top: -4px; }
+
+/* Questions */
+.faq { position: relative; padding-block: 120px 40px; }
+.faq-in { max-width: 760px; margin: 0 auto; display: grid; gap: 12px; }
+.faq .eyebrow, .faq h2 { text-align: center; }
+.faq h2 { margin: 10px 0 34px; font-size: calc(var(--h2) * var(--ds)); line-height: var(--h2-lh); letter-spacing: var(--h2-ls); }
+details { border-radius: 20px; }
+summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; cursor: pointer; font: 400 calc(var(--h3) * var(--ds))/var(--h3-lh) var(--font-display); }
+summary::-webkit-details-marker { display: none; }
+summary svg { transition: transform .4s var(--ease); }
+details[open] summary svg { transform: rotate(45deg); }
+details p { padding: 0 24px 22px; max-width: 64ch; color: var(--muted); }
+.foot { position: relative; padding-block: 56px 132px; }
+.foot .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 28px; border-top: 1px solid var(--line); font-size: var(--small); color: var(--faint); }
+.foot .brand { color: var(--text); }
+
+/* The dock: Amariya, always one tap away */
+.dock {
+  position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 50; transform: translateX(-50%);
+  width: min(540px, calc(100% - 32px)); border-radius: 26px; animation: dockIn 1s .9s var(--ease) both;
+}
+@keyframes dockIn { from { opacity: 0; transform: translate(-50%, 18px); } }
+.dock[data-state="listening"], .dock[data-state="speaking"] { box-shadow: inset 0 1px 0 var(--glass-top), var(--glass-shadow), 0 0 0 1px var(--accent); }
+.dock-bar { display: flex; align-items: center; gap: 12px; padding: 9px 10px 9px 11px; }
+.dock-orb { width: 42px; height: 42px; flex: none; border: 0; border-radius: 50%; background: var(--mini-orb); cursor: pointer; box-shadow: inset 0 -4px 10px rgba(0, 0, 0, .16); transform: scale(calc(1 + var(--level, 0) * .14)); }
+.dock-body { flex: 1; min-width: 0; }
+.dock-status { display: flex; align-items: center; gap: 10px; font-size: var(--label); line-height: 1.4; letter-spacing: .12em; text-transform: uppercase; font-weight: 500; color: var(--faint); }
+.dock[data-state="listening"] .dock-status, .dock[data-state="speaking"] .dock-status { color: var(--accent); }
+#dockStatus { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock-caption { font-size: var(--small); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wave { display: none; align-items: center; gap: 3px; height: 12px; }
+.dock[data-state="listening"] .wave, .dock[data-state="speaking"] .wave { display: inline-flex; }
+.wave i { width: 3px; border-radius: 2px; background: currentColor; height: calc(3px + var(--level, 0) * 9px * var(--k)); }
+.wave i:nth-child(1) { --k: .5; } .wave i:nth-child(2) { --k: .85; } .wave i:nth-child(3) { --k: 1; } .wave i:nth-child(4) { --k: .7; } .wave i:nth-child(5) { --k: .4; }
+.dock-form { display: none; margin-top: 6px; }
+.dock[data-mode="text"] .dock-form { display: block; }
+.dock-form input { width: 100%; height: 34px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: transparent; font-size: var(--small); }
+.dock-actions { display: flex; gap: 6px; }
+.icon-btn { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; transition: background-color .2s; }
+.icon-btn:hover { background: var(--seg-on); }
+.ico-end, .dock.in-call .ico-mic { display: none; }
+.dock.in-call .ico-end { display: block; }
+.dock[data-state="connecting"] .dock-orb { animation: breathe 1.1s ease-in-out infinite alternate; }
+@keyframes breathe { to { transform: scale(.9); opacity: .65; } }
+
+@media (max-width: 1068px) {
+  :root { --h1: 56px; --h1-lh: 1.07; --h1-ls: -.006em; --h2: 28px; --pad: 32px; }
+  .call { width: 380px; }
+}
+@media (max-width: 734px) {
+  :root { --h1: 40px; --h1-lh: 1.1; --h1-ls: 0em; --h2: 26px; --h2-lh: 1.15; --lead: 17px; --stat: 30px; --pad: 16px; }
+  .long { display: none; } .short { display: inline; }
+  .seg a { padding: 7px 9px; }
+  .nav-in { gap: 8px; }
+  .sound { width: 36px; height: 36px; padding: 0; justify-content: center; }
+  .sound-label { display: none; }
+  .hero { min-height: 480px; }
+  .hero-foot { bottom: 100px; }
+  .hero-foot .wrap { display: block; }
+  .hero-copy { max-width: none; gap: 16px; }
+  .ctas .btn { flex: 1; padding-inline: 14px; }
+  .tap, .cue, .progress { display: none; }
+  .call { left: 0; right: 0; width: auto; top: auto; bottom: 96px; transform: none; padding: 20px; gap: 12px; }
+  .convo { padding-top: 14px; gap: 10px; }
+  .beat.closing h2 { top: 14%; }
+  .does-head { padding-top: 92px; }
+  .does-head .wrap { display: grid; gap: 12px; }
+  .orbit { position: absolute; inset: auto 0 100px 0; width: auto; height: auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; opacity: 1; visibility: visible; }
+  .pill { position: static; height: 42px; padding: 0 14px 0 6px; gap: 8px; font-size: var(--card); }
+  .pill .i3d { width: 28px; height: 28px; }
+  .licence { padding: 24px; }
+  .dots { grid-template-columns: repeat(15, 8px); }
+  .dots i { width: 8px; height: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+  <symbol id="i-keys" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M7 10h.01M11 10h.01M15 10h.01M7.5 14h9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4L19 7"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="i-dine" viewBox="0 0 24 24"><path d="M7 3v7a2 2 0 0 0 2 2v9M11 3v7a2 2 0 0 1-2 2M7 3v4M11 3v4M17 21V3c-1.8 1.2-3 3.8-3 7h3"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.9 2.6 15.1 0 18M12 3c-2.6 2.9-2.6 15.1 0 18"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M4 18h16M6 18a6 6 0 0 1 12 0M12 9V7M10 7h4"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6M14 16h7M18 13l3 3-3 3"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 3l3 3-3 3M4 12v-2a4 4 0 0 1 4-4h12M7 21l-3-3 3-3M20 12v2a4 4 0 0 1-4 4H4"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h14l-3-3M20 16H6l3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+</svg>
+
+<canvas id="world" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <div class="nav-in">
+    <button class="brand" id="brand" type="button"><i class="ring" aria-hidden="true"></i>Amariya</button>
+    <div class="nav-right">
+      <button class="sound glass" id="sound" type="button" aria-pressed="false" aria-label="Play music"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">Music</span></button>
+      <nav class="seg glass" aria-label="Choose your business">
+        <a href="/hotels" data-n="hotels"><span class="long">Hotels &amp; restaurants</span><span class="short">Hotels</span></a>
+        <a href="/clinics" data-n="clinics">Clinics</a>
+        <a href="/dental" data-n="dental">Dental</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-label="Introduction">
+    <h1 id="h1"></h1>
+    <button class="tap glass" id="tap" type="button"><i aria-hidden="true"></i>Tap to talk</button>
+    <div class="hero-foot">
+      <div class="wrap">
+        <div class="hero-copy">
+          <p class="lead" id="lead"></p>
+          <div class="ctas">
+            <button class="btn btn-primary" id="talk" type="button"><svg aria-hidden="true"><use href="#i-mic"></use></svg>Talk to Amariya</button>
+            <button class="btn glass" id="chat" type="button"><svg aria-hidden="true"><use href="#i-keys"></use></svg>Chat by text</button>
+          </div>
+          <p class="note">About 3 minutes · switch to typing any time</p>
+        </div>
+        <button class="cue" id="cue" type="button">Scroll to explore<i aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="story" id="story" aria-label="A scripted example">
+    <div class="pin" id="pin">
+      <div id="beats"></div>
+      <p class="progress" id="progress"><b id="pnum">01</b>/ 03<i aria-hidden="true"></i></p>
+    </div>
+  </section>
+
+  <section class="does" id="does" aria-labelledby="doesTitle">
+    <div class="does-head">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow">What she does</p>
+          <h2 id="doesTitle"></h2>
+        </div>
+        <p class="lede" id="doesLede"></p>
+      </div>
+    </div>
+    <ul class="orbit" id="orbit" aria-label="What Amariya handles"></ul>
+  </section>
+
+  <section class="offer" id="offer" aria-label="Founding licence">
+    <div class="licence glass live">
+      <p class="eyebrow">Founding licence</p>
+      <p class="price"><span id="price"></span><small>once</small></p>
+      <p class="for" id="offerFor"></p>
+      <div class="seats">
+        <div class="dots" id="dots" aria-hidden="true"></div>
+        <p class="seat-label"><b>30</b> of 30 open</p>
+      </div>
+      <ul class="incl" id="incl"></ul>
+      <p class="guarantee"><img class="i3d sm" id="guaranteeIcon" alt="">Live in 7 days or your money back.</p>
+      <button class="btn btn-primary btn-wide" id="apply" type="button">Apply for a founding licence</button>
+      <p class="note">Apply in a short chat with Amariya. We follow up to arrange a 20-minute call, then send the invoice.</p>
+    </div>
+  </section>
+
+  <section class="faq" aria-labelledby="faqTitle">
+    <div class="faq-in">
+      <p class="eyebrow">Questions</p>
+      <h2 id="faqTitle">What people <em>ask us</em></h2>
+      <div class="faq-in" id="qs"></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap">
+      <span class="brand"><i class="ring" aria-hidden="true"></i>Amariya</span>
+      <span>AI receptionist by Legit Design Studio · © 2026</span>
+    </div>
+  </footer>
+</main>
+
+<div class="dock glass" id="dock" data-state="idle" data-mode="voice">
+  <div class="dock-bar">
+    <button class="dock-orb" id="dockOrb" type="button" aria-label="Talk to Amariya"></button>
+    <div class="dock-body">
+      <p class="dock-status"><span id="dockStatus">Amariya is ready to talk</span><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></p>
+      <p class="dock-caption" id="dockCaption" aria-live="polite">Press the orb and say hello.</p>
+      <form class="dock-form" id="dockForm"><input id="dockInput" type="text" placeholder="Type a message" aria-label="Message to Amariya" autocomplete="off"></form>
+    </div>
+    <div class="dock-actions">
+      <button class="icon-btn" id="dockMic" type="button" aria-label="Talk to Amariya"><svg class="ico-mic" aria-hidden="true"><use href="#i-mic"></use></svg><svg class="ico-end" aria-hidden="true"><use href="#i-x"></use></svg></button>
+      <button class="icon-btn" id="dockKeys" type="button" aria-label="Type instead"><svg aria-hidden="true"><use href="#i-keys"></use></svg></button>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three'
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { SVGLoader } from 'three/addons/loaders/SVGLoader.js'
+
+const $ = (s) => document.querySelector(s)
+const $$ = (s) => [...document.querySelectorAll(s)]
+const root = document.documentElement
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+const NICHES = ['hotels', 'clinics', 'dental']
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t) }
+const icon = (id) => `<svg aria-hidden="true"><use href="#i-${id}"></use></svg>`
+const words = (segs) => { let i = 0; return segs.map(([s, a]) => { const w = s.split(' ').map((x) => `<span class="w" style="--i:${i++}">${x}</span>`).join(' '); return a ? `<em>${w}</em>` : w }).join(' ') }
+function seeded(s) { return () => { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 } }
+
+// ---------- Copy ----------
+const HANDOFF = 'Amariya hands the call to your team, or takes a message with a short summary when no one is free.'
+const SETUP = ['How long does setup take?', 'About a week, and we do it for you. If Amariya isn’t live in 7 days, you get your money back.']
+const INCL = ['Professional features for life', '500 call minutes a month, extra at cost', 'Done-for-you setup', 'One location per licence']
+const C = {
+  hotels: {
+    h1: [['Every call'], ['tonight,', 1], ['answered.']],
+    lead: 'Amariya is the AI receptionist for hotels and restaurants. She picks up every call, day and night, books rooms and tables straight into your system and speaks your guests’ language.',
+    stops: [
+      { time: '19:40', place: 'Front desk', line: 'A guest’s flight lands late. Amariya moves the check-in and tells the night team.', who: 'Guest, calling from the airport', said: 'Our flight was delayed. Can we still check in tonight?', reply: 'Of course. I’ve noted an 11:30 pm arrival and told the night team.', chip: 'Late arrival · Room 214' },
+      { time: '21:15', place: 'Restaurant', line: 'A table for four, asked for in Spanish and booked in Spanish.', who: 'Caller', said: '¿Tienen mesa para cuatro a las nueve y media?', reply: 'Sí, tenemos la mesa doce a las 21:30. ¿A nombre de quién?', chip: 'Booked · Table 12 · 21:30' },
+      { time: '02:10', place: 'Guest rooms', line: 'At two in the morning a guest still gets a warm voice, and housekeeping gets a note.', who: 'Guest, Room 308', said: 'Is the pool open early tomorrow?', reply: 'From 6:30. I’ll ask housekeeping to bring fresh towels first thing.', chip: 'Note for housekeeping · Room 308' },
+    ],
+    closing: [['The booking lands in your system.'], ['Your team stays with the guests in front of them.', 1]],
+    doesH2: [['Everything your front desk does'], ['on the phone', 1]],
+    doesLede: 'Amariya handles the calls, the questions and the bookings, and hands off to your team the moment a human touch matters.',
+    pills: [['cal', 'Direct bookings'], ['dine', 'Table reservations'], ['globe', '30+ languages'], ['bell', 'Guest questions'], ['hand', 'Hands off to your team'], ['link', 'Books into your system']],
+    price: '$2,500', offerFor: 'A lifetime licence for the first 30 hotels and restaurants.',
+    faq: [['What happens when a guest needs a real person?', HANDOFF], ['Which languages does she speak?', 'More than 30. She answers in the caller’s language and books in yours.'], SETUP],
+    greeting: 'Good evening, you’re through to the front desk. How can I help?',
+    chatReply: 'Happy to help. Is this about a room or a table?',
+  },
+  clinics: {
+    h1: [['The phone is hers.'], ['The patient is yours.', 1]],
+    lead: 'Amariya answers every call, books consultations and appointments, sends deposit links and speaks your patients’ language. Anything clinical goes to your team, with a summary.',
+    stops: [
+      { time: '08:05', place: 'Reception', line: 'The phones open before the front desk does.', who: 'New patient', said: 'Can I book a consultation about my knee?', reply: 'Dr. Hale has Thursday at 10:40. Shall I book it for you?', chip: 'Consultation · Thu 10:40' },
+      { time: '11:20', place: 'Consulting room', line: 'Mid-consultation, nobody has to leave the room to answer the phone.', who: 'Patient', said: 'Do I need to fast before my blood test?', reply: 'I’ve passed your question to the nurse. She’ll call you back today.', chip: 'Passed to the nurse · with a summary' },
+      { time: '19:30', place: 'After hours', line: 'After hours, she still books, reschedules and takes deposits.', who: 'Aesthetics patient', said: 'I need to move my filler appointment.', reply: 'Done. Tuesday at 4 pm, and your deposit carries over.', chip: 'Rescheduled · Tue 16:00' },
+    ],
+    closing: [['The booking lands in your system.'], ['Your team stays with the patient in front of them.', 1]],
+    doesH2: [['Everything your reception does'], ['on the phone', 1]],
+    doesLede: 'Amariya books, reschedules and answers the everyday questions. Anything clinical goes straight to your team.',
+    pills: [['cal', 'Books consultations'], ['card', 'Deposit links'], ['globe', '30+ languages'], ['shield', 'No medical advice'], ['hand', 'Hands off with a summary'], ['link', 'Books into your system']],
+    price: '$3,500', offerFor: 'A lifetime licence for the first 30 clinics.',
+    faq: [['Does she give medical advice?', 'No. Anything clinical, such as symptoms, medication or results, goes to your team with a summary.'], ['What happens when a patient needs a real person?', HANDOFF], SETUP],
+    greeting: 'Hello, you’re through to the clinic. How can I help you today?',
+    chatReply: 'Happy to help. Would you like to book, move or ask about an appointment?',
+  },
+  dental: {
+    h1: [['A front desk that'], ['never', 1], ['misses a patient.']],
+    lead: 'Amariya is the AI receptionist for dental practices. She answers every call, books check-ups and urgent visits, moves appointments and speaks your patients’ language.',
+    stops: [
+      { time: '08:40', place: 'Reception', line: 'A toothache at 8:40 gets the first free slot of the day.', who: 'New patient', said: 'I’ve cracked a tooth and it really hurts.', reply: 'We have an urgent slot at 9:10 with Dr. Patel. Can you make it?', chip: 'Urgent visit · 09:10' },
+      { time: '11:02', place: 'Surgery 1', line: 'Chair one is mid-crown. A cleaning moves without anyone waiting on hold.', who: 'Existing patient', said: 'Can I move my cleaning to next week?', reply: 'Of course. Would Wednesday at 3:20 pm work?', chip: 'Moved · Wed 15:20' },
+      { time: '12:20', place: 'Surgery 2', line: 'Lunchtime, in Spanish.', who: 'Parent', said: '¿Pueden ver a mi hijo esta semana?', reply: 'Sí, el jueves a las 4. ¿Cuántos años tiene?', chip: 'Booked · Thu 16:00 · Child check-up' },
+    ],
+    closing: [['The booking lands in your system.'], ['Your team stays with the patient in the chair.', 1]],
+    doesH2: [['Everything your front desk does'], ['on the phone', 1]],
+    doesLede: 'Amariya fills the day, moves appointments and answers the everyday questions, and hands off to your team when a call needs a person.',
+    pills: [['clock', 'Urgent visits first'], ['repeat', 'Recalls and cleanings'], ['globe', '30+ languages'], ['swap', 'Moves appointments'], ['hand', 'Hands off with a summary'], ['link', 'Books into your system']],
+    price: '$3,000', offerFor: 'A lifetime licence for the first 30 dental practices.',
+    faq: [['Can she handle urgent calls?', 'Yes. She offers the first free urgent slot and passes anything she can’t book to your team straight away.'], ['What happens when a patient needs a real person?', HANDOFF], SETUP],
+    greeting: 'Hello, you’re through to the practice. How can I help?',
+    chatReply: 'Happy to help. Is it a check-up, a cleaning or something urgent?',
+  },
+}
+
+// ---------- Music: a short generative piece per niche, played with Web Audio; silent until the visitor turns it on ----------
+const Music = (() => {
+  const hz = (m) => 440 * 2 ** ((m - 69) / 12), rnd = Math.random, pick = (a) => a[(rnd() * a.length) | 0]
+  let ctx, out, dry, verb, timer = 0, on = false, piece = 'hotels', next = 0, bar = 0, duckTo = 1
+  function setup() {
+    ctx = new (window.AudioContext || window.webkitAudioContext)()
+    out = ctx.createGain(); out.gain.value = 0
+    const hp = ctx.createBiquadFilter(), comp = ctx.createDynamicsCompressor()
+    hp.type = 'highpass'; hp.frequency.value = 40
+    comp.threshold.value = -22; comp.ratio.value = 2.5; comp.attack.value = .02; comp.release.value = .4
+    out.connect(hp); hp.connect(comp); comp.connect(ctx.destination)
+    const len = Math.floor(ctx.sampleRate * 3.6), ir = ctx.createBuffer(2, len, ctx.sampleRate)
+    for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (rnd() * 2 - 1) * (1 - i / len) ** 2.8 }
+    verb = ctx.createConvolver(); verb.buffer = ir
+    const wet = ctx.createGain(); wet.gain.value = .55; verb.connect(wet); wet.connect(out)
+    dry = ctx.createGain(); dry.gain.value = .8; dry.connect(out)
+  }
+  const send = (node, rev = true) => { node.connect(dry); if (rev) node.connect(verb) }
+  function tone(type, f, t, peak, attack, decay, rev = true) {
+    const o = ctx.createOscillator(), a = ctx.createGain()
+    o.type = type; o.frequency.value = f
+    a.gain.setValueAtTime(0, t); a.gain.linearRampToValueAtTime(peak, t + attack); a.gain.exponentialRampToValueAtTime(.0001, t + attack + decay)
+    o.connect(a); send(a, rev); o.start(t); o.stop(t + attack + decay + .05)
+  }
+  function epiano(m, t, v, len = 2.6) { // two-operator FM, the classic electric-piano bell
+    const f = hz(m), c = ctx.createOscillator(), mo = ctx.createOscillator(), mg = ctx.createGain(), a = ctx.createGain()
+    c.frequency.value = f; mo.frequency.value = f
+    mg.gain.setValueAtTime(f * 1.5 * v, t); mg.gain.exponentialRampToValueAtTime(f * .06, t + 1.2)
+    mo.connect(mg); mg.connect(c.frequency)
+    a.gain.setValueAtTime(0, t); a.gain.linearRampToValueAtTime(v * .12, t + .006); a.gain.exponentialRampToValueAtTime(v * .04, t + .8); a.gain.exponentialRampToValueAtTime(.0001, t + len)
+    c.connect(a); send(a); c.start(t); mo.start(t); c.stop(t + len + .05); mo.stop(t + len + .05)
+  }
+  function pad(ms, t, len, v, type, cut) {
+    const lp = ctx.createBiquadFilter(), a = ctx.createGain()
+    lp.type = 'lowpass'; lp.frequency.value = cut
+    a.gain.setValueAtTime(0, t); a.gain.linearRampToValueAtTime(v, t + len * .4); a.gain.setValueAtTime(v, t + len * .75); a.gain.linearRampToValueAtTime(0, t + len + 1.5)
+    lp.connect(a); send(a)
+    for (const m of ms) for (const d of [-7, 7]) { const o = ctx.createOscillator(); o.type = type; o.frequency.value = hz(m); o.detune.value = d; o.connect(lp); o.start(t); o.stop(t + len + 1.6) }
+  }
+  const bass = (m, t, v, len) => tone('sine', hz(m), t, v, .02, len, false)
+  const bell = (m, t, v) => [[1, 1, 3.4], [2.76, .25, 1.5], [5.4, .1, .8]].forEach(([r, g, d]) => tone('sine', hz(m) * r, t, v * g * .09, .004, d))
+  const pluck = (m, t, v) => [[1, 1, 1.3], [2, .14, .5], [4, .1, .18]].forEach(([r, g, d]) => tone(r === 1 ? 'triangle' : 'sine', hz(m) * r, t, v * g * .1, .003, d))
+  const PIECES = {
+    // hotels: a late-night lounge, electric piano over a walking root and fifth, a few melody notes
+    hotels: { bpm: 64, per: 1, chords: [[50, [54, 57, 61, 64]], [47, [57, 61, 62, 66]], [52, [55, 59, 62, 66]], [45, [55, 59, 61, 66]]], play(t, b, [root, ch], q) {
+      ch.forEach((m, i) => epiano(m, t + i * .02 + rnd() * .01, .5 + rnd() * .2))
+      if (rnd() < .65) { const at = t + q * (rnd() < .5 ? 1.5 : 2.5); ch.forEach((m, i) => epiano(m, at + i * .015, .28 + rnd() * .1, 1.6)) }
+      bass(root - 12, t, .13, q * 1.8); bass(root - 5, t + q * 2, .09, q * 1.6)
+      pad(ch, t, q * 4, .012, 'sine', 650)
+      for (let k = 0; k < 4; k++) if (rnd() < .28) epiano(pick([66, 69, 71, 73, 74, 76]), t + q * (k + (rnd() < .5 ? .5 : 0)), .4 + rnd() * .2, 2)
+    } },
+    // clinics: daylight, a slow open pad with sparse bells
+    clinics: { bpm: 56, per: 2, chords: [[48, [64, 67, 71, 74]], [45, [60, 64, 67, 71]], [41, [57, 60, 64, 67]], [43, [59, 62, 64, 69]]], play(t, b, [root, ch], q) {
+      if (b % 2 === 0) { pad(ch, t, q * 8, .022, 'triangle', 1200); bass(root - 12, t, .1, q * 7) }
+      for (let k = 0; k < 4; k++) if (rnd() < .35) bell(pick([72, 74, 76, 79, 81, 84]), t + q * k + rnd() * .25, .6 + rnd() * .3)
+    } },
+    // dental: morning, soft plucked arpeggios over a warm pad
+    dental: { bpm: 72, per: 1, chords: [[41, [57, 60, 64, 69]], [50, [53, 57, 60, 64]], [46, [62, 65, 69, 74]], [48, [64, 67, 69, 72]]], play(t, b, [root, ch], q) {
+      pad(ch, t, q * 4, .014, 'sine', 900); bass(root - 12, t, .11, q * 2.5)
+      ;[ch[0], ch[1], ch[2], ch[3], ch[2] + 12, ch[3], ch[2], ch[1]].forEach((m, k) => { if (rnd() < .88) pluck(m, t + k * q / 2 + rnd() * .012, .55 + (k % 2 ? 0 : .2) + rnd() * .1) })
+    } },
+  }
+  function tick() {
+    while (next < ctx.currentTime + .7) {
+      const p = PIECES[piece], q = 60 / p.bpm
+      p.play(next, bar, p.chords[Math.floor(bar / p.per) % p.chords.length], q)
+      next += q * 4; bar++
+    }
+  }
+  const level = () => (on ? .55 * duckTo : 0)
+  return {
+    toggle() {
+      if (!ctx) setup()
+      on = !on
+      if (on) { ctx.resume(); next = Math.max(next, ctx.currentTime + .12); tick(); timer = setInterval(tick, 200) } else clearInterval(timer)
+      out.gain.setTargetAtTime(level(), ctx.currentTime, on ? .9 : .3)
+      return on
+    },
+    set(n) { if (n !== piece) { piece = n; bar = 0 } },
+    duck(x) { duckTo = x; if (ctx) out.gain.setTargetAtTime(level(), ctx.currentTime, .5) },
+    visible(v) { if (ctx && on) v ? ctx.resume() : ctx.suspend() },
+  }
+})()
+const soundBtn = $('#sound')
+soundBtn.addEventListener('click', () => { const on = Music.toggle(); soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.setAttribute('aria-label', on ? 'Pause music' : 'Play music') })
+document.addEventListener('visibilitychange', () => Music.visible(!document.hidden))
+
+// ---------- Page ----------
+const META = (() => { try { return JSON.parse($('#site-meta').textContent) } catch { return {} } })() // titles and descriptions, written by the site build
+let niche = 'hotels', beats = [], pills = []
+const dock = $('#dock'), orbitEl = $('#orbit'), pin = $('#pin'), progress = $('#progress')
+function render(n) {
+  const c = C[n]
+  root.dataset.niche = n
+  $$('.seg a').forEach((a) => (a.dataset.n === n ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')))
+  $('#h1').innerHTML = words(c.h1)
+  $('#lead').textContent = c.lead
+  $('#beats').innerHTML = c.stops.map((s) => `<article class="beat"><div class="call glass live"><p class="meta"><span class="time">${s.time}</span><span class="place">${s.place}</span></p><h2>${words([[s.line]])}</h2><div class="convo"><p class="who">${s.who}</p><p class="said">“${s.said}”</p><p class="reply"><i class="mini" aria-hidden="true"></i><span>${s.reply}</span></p><p class="chip">${icon('check')}<span>${s.chip}</span></p><p class="example">A scripted example. Names and times are examples.</p></div></div></article>`).join('') + `<article class="beat closing"><h2>${words(c.closing)}</h2></article>`
+  $('#doesTitle').innerHTML = words(c.doesH2)
+  $('#doesLede').textContent = c.doesLede
+  orbitEl.innerHTML = c.pills.map(([ic, t]) => `<li class="pill glass"><img class="i3d" src="${icon3d(ic, n)}" alt=""><span>${t}</span></li>`).join('')
+  $('#price').textContent = c.price
+  $('#offerFor').textContent = c.offerFor
+  $('#incl').innerHTML = INCL.map((t) => `<li><img class="i3d sm" src="${icon3d('check', n)}" alt=""><span>${t}</span></li>`).join('')
+  $('#dots').innerHTML = '<i></i>'.repeat(30)
+  $('#qs').innerHTML = c.faq.map(([q, a]) => `<details class="glass"><summary>${q}${icon('plus')}</summary><p>${a}</p></details>`).join('')
+  beats = $$('.beat'); pills = $$('.pill')
+  pin._live = pin._cur = progress._show = undefined
+  $('#guaranteeIcon').src = icon3d('shield', n)
+  const meta = META[n]
+  if (meta) { document.title = meta.title; $('meta[name="description"]')?.setAttribute('content', meta.desc) }
+  if (convo) convo.sendContextualUpdate(contextFor(n))
+  else { dock.dataset.mode = 'voice'; setDock('idle') }
+}
+
+// ---------- Amariya, for real: voice and text through the ElevenLabs agent ----------
+const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
+const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here also receives each application as JSON
+const IDLE = ['Amariya is ready to talk', 'Press the orb and say hello.']
+const WHO = { hotels: 'hotels and restaurants', clinics: 'clinics', dental: 'dental practices' }
+const SPEAK = {
+  hotels: 'talk about guests, rooms and tables',
+  clinics: 'talk about patients, consultations and appointments, including aesthetic treatments. Never give medical advice or recommend any treatment; clinical questions are for the clinic’s own team',
+  dental: 'talk about patients, check-ups, cleanings and urgent visits. Never give clinical advice; urgent dental problems go to the practice team',
+}
+// Until each niche has its own agent, the page briefs the shared one: who the visitor is, and today's offer
+const contextFor = (n) => `Your name is Amariya; always call yourself Amariya. The visitor is on the Amariya site for ${WHO[n]}, so ${SPEAK[n]}. Amariya is now sold as a founding licence, not a monthly plan: ${C[n].price} once, for the first 30 ${WHO[n]}. It includes Professional features for life, 500 call minutes a month (extra minutes at cost, no rollover), done-for-you setup and one location per licence, and it is live in 7 days or the money is refunded. Never quote monthly plans or the old Starter, Professional or Enterprise prices. To apply, collect the visitor’s name, business name, email, phone and a good time for a 20-minute call; call fill_demo_form with what you have, then submit_demo_request. The team follows up to arrange the call, then sends an invoice. Profile fields: hotel_name is the business name, rooms is rooms, practitioners or chairs, monthly_calls is calls per month. Sections you can show with navigate_to_section: top, story, features, licence, questions.`
+const GREET = {
+  hotels: (part) => `Good ${part}, I’m Amariya. I answer the phones for hotels and restaurants, day and night. What’s your place called?`,
+  clinics: () => 'Hello, I’m Amariya. I answer the phones for clinics, so your team can stay with their patients. What’s your clinic called?',
+  dental: () => 'Hi, I’m Amariya. I look after the phones for dental practices. What’s the name of your practice?',
+}
+let voice = 'idle', convo = null, convoMode = null, sdk = null
+const PROFILE = {}, APPLICATION = {}
+const loadSdk = () => sdk || (sdk = import('https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/+esm').then((m) => m.Conversation))
+addEventListener('load', () => setTimeout(() => loadSdk().catch(() => (sdk = null)), 1500), { once: true })
+const clean = (t) => String(t || '').replace(/\[[^\]]*\]/g, '').replace(/\s+/g, ' ').trim()
+function setDock(state, status, text) {
+  voice = state; dock.dataset.state = state; dock.classList.toggle('in-call', !!convo)
+  if (state === 'idle' && status === undefined) [status, text] = IDLE
+  if (status != null) $('#dockStatus').textContent = status
+  if (text != null) $('#dockCaption').textContent = text
+  $('#dockMic').setAttribute('aria-label', convo ? 'End the conversation' : 'Talk to Amariya')
+  Music.duck(convo ? .3 : 1)
+}
+function visitVars() {
+  let returning = false
+  try { returning = !!localStorage.getItem('amariya_visited'); localStorage.setItem('amariya_visited', '1') } catch {}
+  const h = new Date().getHours()
+  return { time_of_day: h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening', visitor_status: returning ? 'returning' : 'new', visitor_device: matchMedia('(max-width: 734px), (pointer: coarse)').matches ? 'mobile' : 'desktop' }
+}
+async function startConvo(mode, opener) {
+  if (convo) { if (opener) send(opener); return }
+  if (voice === 'connecting') return
+  convoMode = mode; dock.dataset.mode = mode === 'text' ? 'text' : 'voice'
+  setDock('connecting', 'Connecting', mode === 'voice' ? 'Allow the microphone to talk with Amariya.' : 'Opening the chat…')
+  try {
+    if (mode === 'voice') (await navigator.mediaDevices.getUserMedia({ audio: true })).getTracks().forEach((t) => t.stop())
+    const Conversation = await loadSdk(), vars = visitVars()
+    convo = await Conversation.startSession({
+      agentId: AGENT_ID,
+      ...(mode === 'voice' ? { connectionType: 'webrtc' } : { textOnly: true }),
+      dynamicVariables: vars,
+      overrides: { agent: { firstMessage: GREET[niche](vars.time_of_day) } },
+      clientTools: TOOLS,
+      onConnect: () => setDock('thinking', 'Amariya is joining', '…'),
+      onDisconnect: endUi,
+      onError: (err) => console.error(err),
+      onModeChange: ({ mode: m }) => { if (convoMode === 'voice' && convo) setDock(m === 'speaking' ? 'speaking' : 'listening', m === 'speaking' ? 'Amariya is speaking' : 'Listening') },
+      onMessage: (msg) => {
+        const user = msg.role === 'user' || msg.source === 'user', text = clean(msg.message)
+        if (!text) return
+        if (convoMode === 'text') setDock(user ? 'thinking' : 'chat', user ? 'Amariya is typing' : 'Amariya', user ? 'You: ' + text : text)
+        else $('#dockCaption').textContent = user ? 'You: ' + text : text
+      },
+    })
+    setDock(voice === 'connecting' ? 'thinking' : voice)
+    convo.sendContextualUpdate(contextFor(niche))
+    if (opener) send(opener)
+    if (mode === 'text') $('#dockInput').focus({ preventScroll: true })
+  } catch (err) {
+    console.error(err); convo = null
+    if (err?.name === 'NotAllowedError' && mode === 'voice') { convoMode = null; voice = 'idle'; return startConvo('text', opener) }
+    convoMode = null; dock.dataset.mode = 'voice'; setDock('idle', 'Couldn’t connect', 'Please try again in a moment.')
+  }
+}
+function send(text) { convo.sendUserMessage(text); setDock(convoMode === 'text' ? 'thinking' : voice, convoMode === 'text' ? 'Amariya is typing' : null, 'You: ' + text) }
+async function endConvo() { const c = convo; convo = null; endUi(); try { await c?.endSession() } catch {} }
+function endUi() { if (!convoMode) return; convo = null; convoMode = null; dock.dataset.mode = 'voice'; setDock('idle', IDLE[0], 'Thanks for talking. Tap the orb to pick it back up.') }
+function convoLevel() {
+  if (!convo || convoMode !== 'voice') return 0
+  try { return Math.min(1, (voice === 'speaking' ? convo.getOutputVolume() : voice === 'listening' ? convo.getInputVolume() * .8 : 0) * 1.8) } catch { return 0 }
+}
+const talk = () => (convo ? endConvo() : startConvo('voice'))
+
+// The agent drives the page through these client tools (names kept from the previous site so the agent needs no changes)
+const SECTIONS = { top: 'top', home: 'top', hero: 'top', story: 'story', demo: 'story', how: 'story', features: 'does', profile: 'offer', roi: 'offer', pricing: 'offer', plans: 'offer', plan: 'offer', offer: 'offer', licence: 'offer', license: 'offer', apply: 'offer', contact: 'offer', faq: 'faq', questions: 'faq' }
+function showSection(key) {
+  const id = SECTIONS[key]
+  if (!id) return false
+  scrollToY(id === 'top' ? 0 : id === 'story' ? L.s0 + 2 : id === 'does' ? L.d : id === 'offer' ? L.o : $('.faq').getBoundingClientRect().top + scrollY - 80)
+  return true
+}
+const FEATURE = { bookings: [0, 0, 3], answering: [3, 4, 4], multilingual: [2, 2, 2], guest_requests: [3, 3, 0], upsells: [0, 1, 1], integrations: [5, 5, 5] }
+const money = (n) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+const missing = (a) => ['name', 'hotel_name', 'email'].filter((k) => !String(a[k] || '').trim())
+const TOOLS = {
+  navigate_to_section: ({ section } = {}) => (showSection(String(section || '').toLowerCase()) ? `Now showing ${section}.` : 'Unknown section. Use one of: top, story, features, licence, questions.'),
+  update_hotel_profile: (p = {}) => { Object.assign(PROFILE, p); const names = Object.keys(p); return names.length ? `Noted: ${names.join(', ')}.` : 'Nothing to note.' },
+  get_roi_estimate: () => {
+    const calls = Number(String(PROFILE.monthly_calls || '').replace(/[^\d.]/g, ''))
+    if (!calls) return 'Ask how many calls they get a month, then call update_business_profile with monthly_calls.'
+    const missed = Math.round(calls * .25), booked = Math.round(missed * .3)
+    return `A rough estimate, not a promise: with about ${calls} calls a month, a busy front desk misses around ${missed}. If 3 in 10 of those become bookings, that is about ${booked} more a month, around ${money(booked * 220)} at a ${money(220)} average, and about ${Math.round(calls * 4 / 60)} staff hours freed.`
+  },
+  highlight_feature: ({ feature } = {}) => {
+    const i = FEATURE[String(feature || '').toLowerCase()]?.[NICHES.indexOf(niche)]
+    if (i === undefined) return 'Unknown feature. Use: answering, bookings, multilingual, guest_requests, upsells, integrations.'
+    showSection('features')
+    const p = pills[i]; p?.classList.add('spot'); setTimeout(() => p?.classList.remove('spot'), 5000)
+    return `Highlighting ${p?.textContent.trim()}.`
+  },
+  recommend_plan: () => { showSection('licence'); return `There is one offer: the founding licence, ${C[niche].price} once. Showing it now.` },
+  fill_demo_form: (p = {}) => {
+    Object.assign(APPLICATION, p)
+    const miss = missing(APPLICATION)
+    setDock(voice, null, `Application: ${[APPLICATION.name, APPLICATION.hotel_name].filter(Boolean).join(', ') || 'started'}`)
+    return `Noted: ${Object.keys(p).join(', ') || 'nothing'}.` + (miss.length ? ` Still needed: ${miss.join(', ')}.` : ' Everything needed is in.')
+  },
+  submit_demo_request: async () => {
+    const miss = missing(APPLICATION)
+    if (miss.length) return `Cannot submit yet. Missing: ${miss.join(', ')}.`
+    const data = { ...APPLICATION, niche, licence: C[niche].price, page: location.href, at: new Date().toISOString() }
+    if (APPLY_WEBHOOK) { try { await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }) } catch (e) { console.error(e) } }
+    setDock(voice, null, `Application received for ${data.hotel_name}.`)
+    return `Application recorded for ${data.name} (${data.email}). Tell them the team will follow up to arrange the 20-minute call.`
+  },
+}
+TOOLS.update_business_profile = TOOLS.update_hotel_profile
+
+for (const id of ['#talk', '#tap', '#dockOrb', '#dockMic']) $(id).addEventListener('click', talk)
+$('#chat').addEventListener('click', () => startConvo('text'))
+$('#dockKeys').addEventListener('click', () => { if (!convo) return startConvo('text'); dock.dataset.mode = 'text'; $('#dockInput').focus({ preventScroll: true }) })
+$('#dockForm').addEventListener('submit', (e) => {
+  e.preventDefault()
+  const v = $('#dockInput').value.trim(); if (!v) return
+  $('#dockInput').value = ''
+  convo ? send(v) : startConvo('text', v)
+})
+$('#dockInput').addEventListener('input', () => { try { convo?.sendUserActivity() } catch {} })
+$('#apply').addEventListener('click', () => startConvo('text', 'I’d like to apply for a founding licence.'))
+$('#brand').addEventListener('click', () => scrollToY(0))
+$('#cue').addEventListener('click', () => scrollToY(L.s0 + 2))
+
+// ---------- The 3D world: a model of the customer's own building ----------
+const canvas = $('#world')
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' })
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5))
+renderer.outputColorSpace = THREE.SRGBColorSpace
+renderer.toneMapping = THREE.ACESFilmicToneMapping
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, .1, 300)
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture
+
+function radial(stops, size = 128) {
+  const c = document.createElement('canvas'); c.width = c.height = size
+  const x = c.getContext('2d'), g = x.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+  stops.forEach(([o, col]) => g.addColorStop(o, col)); x.fillStyle = g; x.fillRect(0, 0, size, size)
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t
+}
+const glowTex = radial([[0, 'rgba(255,255,255,1)'], [.22, 'rgba(255,255,255,.45)'], [1, 'rgba(255,255,255,0)']])
+const dotTex = radial([[0, 'rgba(255,255,255,1)'], [.45, 'rgba(255,255,255,.5)'], [1, 'rgba(255,255,255,0)']], 32)
+
+// Premium 3D icons: each line icon becomes polished wire in the niche's material, rendered once per niche and cached
+const ICON_MAT = {
+  hotels: () => new THREE.MeshStandardMaterial({ color: '#e4c582', metalness: 1, roughness: .24, envMapIntensity: 1.35 }),
+  clinics: () => new THREE.MeshPhysicalMaterial({ color: '#2f4a68', roughness: .2, clearcoat: 1, clearcoatRoughness: .06, envMapIntensity: 1.25 }),
+  dental: () => new THREE.MeshStandardMaterial({ color: '#deaa94', metalness: 1, roughness: .26, envMapIntensity: 1.35 }),
+}
+const iconCache = new Map()
+let iconKit = null
+function icon3d(id, n) {
+  const key = n + ':' + id
+  if (iconCache.has(key)) return iconCache.get(key)
+  if (!iconKit) {
+    const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
+    r.setPixelRatio(1); r.setSize(160, 160, false); r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.1
+    const s = new THREE.Scene(), sun = new THREE.DirectionalLight('#ffffff', 1.4)
+    s.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), .04).texture
+    sun.position.set(-4, 6, 8); s.add(sun)
+    const cam = new THREE.PerspectiveCamera(26, 1, 1, 200); cam.position.set(0, 0, 62)
+    iconKit = { r, s, cam }
+  }
+  const { r, s, cam } = iconKit, g = new THREE.Group(), mat = ICON_MAT[n](), R = 1.5
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">${$('#i-' + id).innerHTML}</svg>`
+  for (const path of new SVGLoader().parse(svg).paths) for (const sub of path.subPaths) {
+    const pts = []
+    for (const p of sub.getPoints(16)) { const v = new THREE.Vector3(p.x - 12, 12 - p.y, 0); if (!pts.length || v.distanceTo(pts[pts.length - 1]) > .02) pts.push(v) }
+    const closed = pts.length > 2 && pts[0].distanceTo(pts[pts.length - 1]) < .05
+    if (closed) pts.pop()
+    if (pts.length < 2 || (pts.length === 2 && pts[0].distanceTo(pts[1]) < .3)) { const dot = new THREE.Mesh(new THREE.SphereGeometry(R * 1.1, 16, 12), mat); dot.position.copy(pts[0]); g.add(dot); continue }
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, closed, 'catmullrom', .05), Math.max(12, pts.length * 4), R, 12, closed), mat))
+    if (!closed) for (const p of [pts[0], pts[pts.length - 1]]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(R, 16, 12), mat); cap.position.copy(p); g.add(cap) }
+  }
+  g.rotation.set(-.42, .55, 0); s.add(g)
+  r.render(s, cam)
+  const url = r.domElement.toDataURL('image/png')
+  s.remove(g); g.traverse((o) => o.geometry?.dispose()); mat.dispose()
+  iconCache.set(key, url)
+  return url
+}
+
+const W = 6.4, D = 5, H = 3.2, T = .14, XS = [-W, 0, W], ZB = -D / 2 + T
+const PAL = {
+  hotels: { dark: true, exposure: 1.25, bg: '#101d14', sky: '#030805', fog: [32, 84], floor: '#1a2c20', wall: '#15241a', slab: '#1b2f22', furn: '#22382a', fabric: '#2a4434', fabric2: '#b79b62', wood: '#3b3226', linen: '#d8d0bc', metal: '#c8a96a', rug: '#1d3125', lamp: '#ffd79c', window: '#0a1520', edge: '#d8c08d', edgeA: .26, halo: '#e9c98a', haloA: .16 },
+  clinics: { dark: false, exposure: 1.08, bg: '#f5f7f9', sky: '#fdfeff', fog: [36, 92], floor: '#e7edf2', wall: '#f7f9fb', slab: '#eef2f6', furn: '#fbfcfd', fabric: '#2f445b', fabric2: '#b3c6da', wood: '#d9cbb8', linen: '#ffffff', metal: '#a5b6c8', rug: '#dfe7ee', lamp: '#fff3df', window: '#d6e4f2', plant: '#91a798', edge: '#2f445b', edgeA: .13, ground: '#dde5ee', shadow: '#2c3e52', dust: '#86a3c2', halo: '#a9c4e4', haloA: .26 },
+  dental: { dark: false, exposure: 1.08, bg: '#fbf5f5', sky: '#fffefe', fog: [36, 92], floor: '#f2e6e3', wall: '#fcf6f5', slab: '#f6eceb', furn: '#fefbfa', fabric: '#c48d86', fabric2: '#ead0ca', wood: '#dcc6b5', linen: '#ffffff', metal: '#d09e83', rug: '#eedfdb', lamp: '#fff1e6', window: '#f1dfdb', plant: '#9dad95', edge: '#7d424e', edgeA: .13, ground: '#efe0dc', shadow: '#5b3232', dust: '#cf9d92', halo: '#efc6bf', haloA: .3 },
+}
+let world, P, M, EM, orb, spinner, hit, orbMat, halo, sparks
+
+function skyTex() {
+  const c = document.createElement('canvas'); c.width = 2; c.height = 256
+  const x = c.getContext('2d'), g = x.createLinearGradient(0, 0, 0, 256)
+  g.addColorStop(0, P.sky); g.addColorStop(.5, P.bg); g.addColorStop(1, P.bg)
+  x.fillStyle = g; x.fillRect(0, 0, 2, 256)
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t
+}
+function mats() {
+  const env = P.dark ? .3 : .7
+  const S = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: .82, metalness: 0, envMapIntensity: env, ...o })
+  const B = (color) => new THREE.MeshBasicMaterial({ color, toneMapped: false })
+  const metal = S(P.metal, { metalness: .9, roughness: .3, envMapIntensity: 1.2 })
+  return {
+    floor: S(P.floor, { roughness: .92 }), wall: S(P.wall), slab: S(P.slab), furn: S(P.furn, { roughness: .55 }),
+    fabric: S(P.fabric, { roughness: .95 }), fabric2: S(P.fabric2, { roughness: .95 }), wood: S(P.wood, { roughness: .65 }),
+    linen: S(P.linen, { roughness: .95 }), plant: S(P.plant || '#8ea595', { roughness: .9 }), rug: S(P.rug, { roughness: 1 }),
+    metal, frame: P.dark ? metal : S(P.furn, { roughness: .5 }), pane: B(P.window), emit: B(P.lamp),
+    top: P.dark ? S(P.linen, { roughness: .9 }) : S(P.wood, { roughness: .65 }),
+  }
+}
+function mesh(geo, m, x, y, z, o = {}) {
+  const me = new THREE.Mesh(geo, m), g = o.g || world
+  me.position.set(x, y, z)
+  if (o.rx) me.rotation.x = o.rx
+  if (o.ry) me.rotation.y = o.ry
+  me.castShadow = !P.dark && o.cast !== false; me.receiveShadow = !P.dark
+  g.add(me)
+  if (o.edge) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), EM); e.position.copy(me.position); e.rotation.copy(me.rotation); g.add(e) }
+  return me
+}
+const box = (w, h, d, x, y, z, m, o = {}) => mesh(o.r ? new RoundedBoxGeometry(w, h, d, 2, Math.min(o.r, w / 2 - .002, h / 2 - .002, d / 2 - .002)) : new THREE.BoxGeometry(w, h, d), m, x, y + h / 2, z, o)
+const cyl = (rt, rb, h, x, y, z, m, o = {}) => mesh(new THREE.CylinderGeometry(rt, rb, h, o.seg || 28), m, x, y + h / 2, z, o)
+const ball = (r, x, y, z, m, o = {}) => mesh(new THREE.SphereGeometry(r, 28, 18), m, x, y, z, o)
+function group(x, z, ry = 0) { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; world.add(g); return g }
+function glow(x, y, z, size, opacity) {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: P.lamp, transparent: true, opacity: P.dark ? opacity : opacity * .3, depthWrite: false, blending: P.dark ? THREE.AdditiveBlending : THREE.NormalBlending }))
+  s.position.set(x, y, z); s.scale.setScalar(size); world.add(s)
+}
+function roomLight(x, intensity) { if (!P.dark) return; const l = new THREE.PointLight(P.lamp, intensity, 9, 2); l.position.set(x, H - .5, .3); world.add(l) }
+
+function chair(x, z, ry, seat = M.fabric) {
+  const g = group(x, z, ry)
+  box(.46, .07, .46, 0, .44, 0, seat, { r: .03, g }); box(.46, .46, .06, 0, .51, -.2, seat, { r: .03, g })
+  for (const [a, b] of [[-.19, -.19], [.19, -.19], [-.19, .19], [.19, .19]]) cyl(.015, .015, .44, a, 0, b, M.metal, { g, seg: 8 })
+}
+function armchair(x, z, ry) {
+  const g = group(x, z, ry)
+  box(.86, .38, .8, 0, 0, 0, M.fabric, { r: .1, g }); box(.86, .52, .18, 0, .3, -.31, M.fabric, { r: .08, g })
+  box(.16, .26, .8, -.35, .3, 0, M.fabric, { r: .07, g }); box(.16, .26, .8, .35, .3, 0, M.fabric, { r: .07, g })
+}
+function table(x, z, r) { cyl(r, r, .04, x, .72, z, M.top); cyl(.035, .035, .72, x, 0, z, M.metal, { seg: 12 }); cyl(.22, .22, .02, x, 0, z, M.metal) }
+function plant(x, z, s = 1) {
+  cyl(.2 * s, .16 * s, .42 * s, x, 0, z, M.furn)
+  for (const [a, b, c, r] of [[0, .8, 0, .32], [-.17, .66, .08, .22], [.18, .7, -.06, .24], [.04, 1.02, .05, .22]]) ball(r * s, x + a * s, b * s, z + c * s, M.plant)
+}
+function pendant(x, z, drop) {
+  cyl(.006, .006, drop, x, H - drop, z, M.metal, { seg: 6, cast: false })
+  cyl(.06, .2, .2, x, H - drop - .2, z, M.metal, { seg: 24 })
+  ball(.07, x, H - drop - .2, z, M.emit, { cast: false })
+  glow(x, H - drop - .28, z, 1.1, .5)
+}
+function windowPane(x, y, w, h) {
+  const z = ZB + .012
+  box(w, h, .02, x, y, z, M.pane, { cast: false })
+  for (const [bw, bh, bx, by] of [[w + .08, .05, x, y - .04], [w + .08, .05, x, y + h], [.05, h, x - w / 2, y], [.05, h, x + w / 2, y], [.035, h, x, y]]) box(bw, bh, .05, bx, by, z + .02, M.frame, { cast: false })
+}
+function reception(cx, deskX, chairsSide) {
+  box(4.4, .012, 2.8, cx, 0, .1, M.rug, { cast: false })
+  box(2.6, 1.0, .7, cx + deskX, 0, -1.35, M.furn, { r: .08 }); box(2.72, .05, .82, cx + deskX, 1.0, -1.35, M.wood, { r: .02 })
+  windowPane(cx - deskX * 1.9, 1.0, 1.6, 1.5)
+  for (const z of [-.9, -.25, .4]) chair(cx + chairsSide * 2.75, z, -chairsSide * Math.PI / 2)
+  plant(cx - chairsSide * 2.6, -1.75, 1.1)
+}
+
+const ROOMS = {
+  hotels: [
+    (cx) => { // front desk
+      box(4.6, .012, 3, cx, 0, .1, M.rug, { cast: false })
+      box(2.8, 1.0, .72, cx, 0, -1.3, M.furn, { r: .05 }); box(3.0, .05, .9, cx, 1.0, -1.3, M.metal, { r: .02 })
+      mesh(new THREE.SphereGeometry(.1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), M.metal, cx + .95, 1.06, -1.15); cyl(.12, .12, .015, cx + .95, 1.05, -1.15, M.metal)
+      for (let r = 0; r < 3; r++) for (let c = 0; c < 6; c++) box(.12, .16, .02, cx - .9 + c * .36, 1.5 + r * .34, ZB + .02, M.metal, { cast: false })
+      armchair(cx - 2.1, .9, .5); armchair(cx + 2.1, .9, -.5)
+      pendant(cx - .8, -1.3, .8); pendant(cx + .8, -1.3, .8)
+      roomLight(cx, 10)
+    },
+    (cx) => { // restaurant
+      box(5.4, .44, .6, cx, 0, ZB + .32, M.fabric, { r: .06 }); box(5.4, .6, .16, cx, .44, ZB + .1, M.fabric, { r: .06 })
+      for (const x of [-1.8, 0, 1.8]) { table(cx + x, -1.15, .36); chair(cx + x, -.55, Math.PI); pendant(cx + x, -1.15, 1.05); cyl(.02, .02, .08, cx + x, .76, -1.15, M.emit, { cast: false }); glow(cx + x, .86, -1.15, .5, .6) }
+      for (const x of [-1.2, 1.2]) { table(cx + x, 1.1, .42); chair(cx + x - .55, 1.1, Math.PI / 2); chair(cx + x + .55, 1.1, -Math.PI / 2) }
+      roomLight(cx, 8)
+    },
+    (cx) => { // guest room
+      const bx = cx - 1.0
+      box(2.3, 1.2, .1, bx, 0, ZB + .05, M.fabric, { r: .04 })
+      box(2.0, .3, 2.2, bx, 0, ZB + 1.2, M.furn, { r: .04 }); box(1.94, .2, 2.12, bx, .3, ZB + 1.21, M.linen, { r: .08 })
+      box(1.98, .05, 1.1, bx, .5, ZB + 1.7, M.fabric2, { r: .025 })
+      box(.68, .15, .36, bx - .48, .5, ZB + .38, M.linen, { r: .07 }); box(.68, .15, .36, bx + .48, .5, ZB + .38, M.linen, { r: .07 })
+      for (const s of [-1, 1]) { box(.44, .5, .4, bx + s * 1.42, 0, ZB + .3, M.furn, { r: .03 }); cyl(.05, .07, .26, bx + s * 1.42, .5, ZB + .3, M.metal); cyl(.12, .17, .2, bx + s * 1.42, .76, ZB + .3, M.emit, { cast: false }); glow(bx + s * 1.42, .9, ZB + .3, 1.0, .55) }
+      windowPane(cx + 1.9, .9, 1.3, 1.6)
+      armchair(cx + 2.1, .7, -.7)
+      roomLight(cx, 7)
+    },
+  ],
+  clinics: [
+    (cx) => reception(cx, .9, -1),
+    (cx) => { // consulting room
+      box(1.6, .05, .8, cx - 1.7, .72, -1.3, M.wood, { r: .02 }); box(.06, .72, .7, cx - 2.45, 0, -1.3, M.wood); box(.06, .72, .7, cx - .95, 0, -1.3, M.wood)
+      box(.5, .32, .03, cx - 1.7, .82, -1.58, M.fabric); cyl(.02, .02, .08, cx - 1.7, .76, -1.58, M.metal, { seg: 8 })
+      chair(cx - 1.7, -2.0, 0); chair(cx - 2.05, -.55, Math.PI); chair(cx - 1.35, -.55, Math.PI)
+      box(.7, .6, 1.9, cx + 1.9, 0, -1.0, M.furn, { r: .04 }); box(.72, .12, 1.9, cx + 1.9, .6, -1.0, M.fabric2, { r: .05 }); box(.72, .1, .65, cx + 1.9, .74, -1.75, M.fabric2, { r: .04, rx: .5 })
+      windowPane(cx, 1.15, 1.5, 1.3)
+    },
+    (cx) => { // after-hours lounge
+      box(2.4, .4, .9, cx - 1.0, 0, ZB + .55, M.fabric, { r: .1 }); box(2.4, .5, .22, cx - 1.0, .3, ZB + .16, M.fabric, { r: .09 })
+      box(.22, .3, .9, cx - 2.11, .3, ZB + .55, M.fabric, { r: .08 }); box(.22, .3, .9, cx + .11, .3, ZB + .55, M.fabric, { r: .08 })
+      cyl(.45, .45, .04, cx - 1.0, .4, -.6, M.wood); cyl(.04, .04, .4, cx - 1.0, 0, -.6, M.metal, { seg: 12 })
+      cyl(.15, .15, .02, cx + .7, 0, ZB + .4, M.metal); cyl(.012, .012, 1.5, cx + .7, 0, ZB + .4, M.metal, { seg: 6 }); cyl(.1, .18, .22, cx + .7, 1.5, ZB + .4, M.emit, { cast: false })
+      windowPane(cx + 1.8, .7, 1.5, 1.9)
+      plant(cx + 2.6, .9, 1.25)
+    },
+  ],
+  dental: [
+    (cx) => reception(cx, -.9, 1),
+    (cx) => dentalRoom(cx, 1),
+    (cx) => dentalRoom(cx, -1),
+  ],
+}
+function dentalChair(x, z, ry) {
+  const g = group(x, z, ry)
+  cyl(.24, .3, .3, 0, 0, 0, M.furn, { g }); cyl(.08, .08, .26, 0, .3, 0, M.metal, { g })
+  box(.62, .14, .78, 0, .54, .05, M.fabric, { r: .06, g })
+  box(.6, .12, .9, 0, .62, -.68, M.fabric, { r: .06, g, rx: .5 })
+  box(.34, .1, .3, 0, .93, -1.18, M.fabric, { r: .05, g, rx: .5 })
+  box(.54, .12, .7, 0, .43, .68, M.fabric, { r: .06, g, rx: .32 })
+  box(.08, .05, .5, .36, .78, -.05, M.furn, { r: .02, g })
+}
+function dentalRoom(cx, f) {
+  dentalChair(cx - 1.25 * f, -.6, .35 * f)
+  cyl(.022, .022, .95, cx - 1.05 * f, H - .95, -.4, M.metal, { cast: false, seg: 8 })
+  box(.46, .07, .26, cx - 1.05 * f, H - 1.02, -.4, M.furn, { r: .03 }); box(.3, .015, .14, cx - 1.05 * f, H - 1.035, -.4, M.emit, { cast: false })
+  box(2.2, .86, .58, cx + 1.3 * f, 0, ZB + .3, M.furn, { r: .03 }); box(2.26, .04, .62, cx + 1.3 * f, .86, ZB + .31, M.wood, { r: .015 })
+  cyl(.16, .14, .03, cx + 1.0 * f, .9, ZB + .32, M.metal)
+  box(2.2, .6, .34, cx + 1.3 * f, 1.75, ZB + .17, M.furn, { r: .03 })
+  cyl(.2, .2, .06, cx - .3 * f, .5, .3, M.fabric); cyl(.03, .03, .5, cx - .3 * f, 0, .3, M.metal, { seg: 8 })
+  windowPane(cx - 1.2 * f, 1.25, 1.2, 1.2)
+}
+function hotelUpper() {
+  const y0 = H + .22, fh = 2.5, w = W * 3 + T, d = D - .4, z0 = -.2, rnd = seeded(7)
+  box(w, fh * 2, d, 0, y0, z0, M.wall, { edge: true, cast: false })
+  box(w + .06, .08, d + .06, 0, y0 + fh - .04, z0, M.metal, { cast: false })
+  box(w + .2, .26, d + .2, 0, y0 + fh * 2, z0, M.slab, { edge: true, cast: false })
+  const zf = z0 + d / 2 + .006, cols = 14
+  for (let f = 0; f < 2; f++) for (let c = 0; c < cols; c++) {
+    const x = -w / 2 + .75 + c * ((w - 1.5) / (cols - 1)), lit = rnd() < .45
+    const m = lit ? new THREE.MeshBasicMaterial({ color: new THREE.Color(P.lamp).multiplyScalar(.14 + rnd() * .24), toneMapped: false }) : M.pane
+    mesh(new THREE.PlaneGeometry(.72, 1.25), m, x, y0 + 1.2 + f * fh, zf, { cast: false })
+  }
+  const city = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: P.halo, transparent: true, opacity: .1, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }))
+  city.position.set(0, 2, -40); city.scale.set(90, 26, 1); world.add(city)
+}
+function points(n, spread, size, color, opacity, fog) {
+  const pos = new Float32Array(n * 3), spd = new Float32Array(n), rnd = seeded(5)
+  for (let i = 0; i < n; i++) { spread(pos, i, rnd); spd[i] = .04 + rnd() * .08 }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+  const p = new THREE.Points(g, new THREE.PointsMaterial({ size, map: dotTex, color, transparent: true, opacity, depthWrite: false, fog }))
+  world.add(p); return { p, spd }
+}
+// Each niche has its own orb. Hotels: a glass of light half-filled with champagne, bubbles rising to the surface.
+// Clinics: a glazed porcelain sphere with one ink line wound pole to pole; a blue pulse runs along it.
+// Dental: a nacre pearl whose orient shifts as it turns.
+const CHAMPAGNE_VS = `
+uniform float uTime, uLevel, uScale, uPR, uSize;
+uniform vec3 uTop, uBottom, uRim;
+attribute float aRand, aKind;
+varying vec3 vColor;
+varying float vAlpha;
+void main() {
+  vec3 p = position;
+  float fill = .1 + .03 * sin(position.x * 5. + uTime * 1.2) + .02 * sin(position.z * 4. - uTime * .9);
+  if (aKind > 1.5) p.y = -.8 + mod(p.y + .8 + uTime * (.07 + aRand * .09), fill + .8);
+  float liquid = step(p.y, fill);
+  float w = sin(p.x * 3.1 + uTime * .7) * sin(p.y * 2.7 + uTime * .55) * sin(p.z * 3.3 + uTime * .6);
+  p *= 1. + w * .025 + uLevel * (.05 + .05 * sin(uTime * 9. + aRand * 6.2831));
+  vec4 mv = modelViewMatrix * vec4(p, 1.);
+  gl_Position = projectionMatrix * mv;
+  float rim = 1. - abs(dot(normalize(normalMatrix * normalize(position)), normalize(-mv.xyz)));
+  vec3 gold = mix(uBottom, uTop, smoothstep(-.95, .2, position.y));
+  vColor = mix(mix(uRim, gold, liquid), uRim, pow(rim, 3.) * .4);
+  float surface = aKind < .5 ? exp(-pow((position.y - fill) * 28., 2.)) : 0.;
+  if (aKind > 1.5) vAlpha = .95 * (1. - smoothstep(fill - .12, fill, p.y));
+  else if (aKind > .5) vAlpha = .36 * liquid;
+  else vAlpha = mix(.03 + .38 * pow(rim, 2.), .3 + .7 * pow(rim, 1.2), liquid) + surface * 1.2;
+  gl_PointSize = uSize * uScale * uPR * (aKind > 1.5 ? 1.6 : .6 + aRand * .8 + surface * .6) / -mv.z;
+}`
+const CHAMPAGNE_FS = `
+uniform float uAlpha;
+varying vec3 vColor;
+varying float vAlpha;
+void main() {
+  float d = length(gl_PointCoord - .5);
+  if (d > .5) discard;
+  gl_FragColor = vec4(vColor, smoothstep(.5, .15, d) * vAlpha * uAlpha);
+  #include <colorspace_fragment>
+}`
+const SOLID_VS = `
+uniform float uTime, uLevel;
+varying vec3 vN;
+varying vec3 vV;
+varying vec3 vP;
+void main() {
+  vP = position;
+  vec3 p = position * (1. + uLevel * .018 * sin(uTime * 9. + position.y * 6.));
+  vec4 mv = modelViewMatrix * vec4(p, 1.);
+  vN = normalize(normalMatrix * normal);
+  vV = -mv.xyz;
+  gl_Position = projectionMatrix * mv;
+}`
+const PORCELAIN_FS = `
+uniform float uTime, uLevel;
+uniform vec3 uBase, uInk, uGlow;
+varying vec3 vN;
+varying vec3 vV;
+varying vec3 vP;
+void main() {
+  vec3 n = normalize(vN), v = normalize(vV), l = normalize(vec3(-.45, .75, .55));
+  float ndv = clamp(dot(n, v), 0., 1.);
+  vec3 col = uBase * (.82 + .22 * clamp((dot(n, l) + .55) / 1.55, 0., 1.));
+  vec3 r = reflect(-v, n);
+  col += .1 * smoothstep(.3, .75, r.y) - .05 * smoothstep(.05, -.4, r.y);
+  vec3 axis = normalize(vec3(.28, 1., .12)), e1 = normalize(cross(axis, vec3(0., 0., 1.))), e2 = cross(axis, e1);
+  float d = abs(dot(vP, axis));
+  float line = 1. - smoothstep(.006, .006 + fwidth(d) * 1.5, d);
+  float gap = mod(atan(dot(vP, e2), dot(vP, e1)) - uTime * (.35 + uLevel * 2.2) + 3.14159, 6.28318) - 3.14159;
+  float pulse = exp(-gap * gap * (gap > 0. ? 30. : 3.));
+  col = mix(col, uInk, line * .85);
+  col = mix(col, uGlow * 1.25, line * pulse * (.65 + .35 * uLevel));
+  float nh = max(dot(n, normalize(l + v)), 0.);
+  col += pow(nh, 120.) * .8 + pow(nh, 16.) * .08;
+  col = mix(col, vec3(1.), pow(1. - ndv, 4.) * .2);
+  gl_FragColor = vec4(col, 1.);
+  #include <colorspace_fragment>
+}`
+const PEARL_FS = `
+uniform float uTime, uLevel;
+uniform vec3 uBase, uRose;
+varying vec3 vN;
+varying vec3 vV;
+varying vec3 vP;
+vec3 orient(float t) { // nacre's soft colours only: rose, peach, lilac, a breath of mint
+  t = fract(t);
+  vec3 rose = vec3(.96, .8, .8), peach = vec3(.98, .88, .8), lilac = vec3(.88, .85, .96), mint = vec3(.86, .94, .91);
+  return t < .25 ? mix(rose, peach, t * 4.) : t < .5 ? mix(peach, lilac, (t - .25) * 4.) : t < .75 ? mix(lilac, mint, (t - .5) * 4.) : mix(mint, rose, (t - .75) * 4.);
+}
+void main() {
+  vec3 n = normalize(vN), v = normalize(vV), l = normalize(vec3(-.45, .75, .55));
+  float ndv = clamp(dot(n, v), 0., 1.);
+  vec3 col = uBase * (.76 + .28 * clamp((dot(n, l) + .5) / 1.5, 0., 1.));
+  float bands = sin(vP.y * 7. + sin(vP.x * 4. + uTime * .25) * 1.5 + sin(vP.z * 3.5 - uTime * .2) + uTime * .1);
+  col *= mix(vec3(1.), orient((1. - ndv) * .9 + bands * .06 + uLevel * .2), .25 + .5 * pow(1. - ndv, 1.5));
+  col += .07 * smoothstep(.3, .8, reflect(-v, n).y);
+  float nh = max(dot(n, normalize(l + v)), 0.);
+  col += pow(nh, 60.) * .55 + pow(nh, 8.) * .06;
+  col = mix(col, uRose, pow(1. - ndv, 2.5) * .22);
+  gl_FragColor = vec4(col, 1.);
+  #include <colorspace_fragment>
+}`
+function buildOrb(n) {
+  orb = new THREE.Group(); world.add(orb); halo = null
+  const col = (c) => ({ value: new THREE.Color(c) })
+  if (n === 'hotels') {
+    const small = innerWidth < 735, S = small ? 5200 : 7600, I = small ? 1100 : 1600, B = small ? 80 : 120, N = S + I + B, r = seeded(9), ga = Math.PI * (3 - Math.sqrt(5))
+    const pos = new Float32Array(N * 3), rand = new Float32Array(N), kind = new Float32Array(N)
+    for (let i = 0; i < N; i++) {
+      if (i < S) { const y = 1 - (i + .5) * 2 / S, rad = Math.sqrt(1 - y * y), th = ga * i, j = 1 - r() * .012; pos.set([Math.cos(th) * rad * j, y * j, Math.sin(th) * rad * j], i * 3) }
+      else { const u = r() * 2 - 1, th = r() * Math.PI * 2, rad = Math.sqrt(1 - u * u), d = Math.cbrt(r()) * (i < S + I ? .92 : .55); pos.set([Math.cos(th) * rad * d, u * d, Math.sin(th) * rad * d], i * 3); kind[i] = i < S + I ? 1 : 2 }
+      rand[i] = r()
+    }
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aRand', new THREE.BufferAttribute(rand, 1)); g.setAttribute('aKind', new THREE.BufferAttribute(kind, 1))
+    orbMat = new THREE.ShaderMaterial({
+      vertexShader: CHAMPAGNE_VS, fragmentShader: CHAMPAGNE_FS, transparent: true, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending,
+      uniforms: { uTime: { value: 0 }, uLevel: { value: 0 }, uScale: { value: 1 }, uPR: { value: renderer.getPixelRatio() }, uSize: { value: 26 }, uAlpha: { value: 1 }, uTop: col('#f7e9c4'), uBottom: col('#b38a3a'), uRim: col('#fff6df') },
+    })
+    spinner = new THREE.Points(g, orbMat); orb.add(spinner)
+    hit = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16), new THREE.MeshBasicMaterial({ visible: false })); orb.add(hit)
+    halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: P.halo, transparent: true, opacity: P.haloA, depthWrite: false, blending: THREE.AdditiveBlending }))
+    halo.scale.setScalar(3.6); orb.add(halo)
+    orb.add(new THREE.PointLight(P.lamp, 5, 7, 2))
+    return
+  }
+  orbMat = new THREE.ShaderMaterial({
+    vertexShader: SOLID_VS, fragmentShader: n === 'clinics' ? PORCELAIN_FS : PEARL_FS, toneMapped: false,
+    uniforms: n === 'clinics'
+      ? { uTime: { value: 0 }, uLevel: { value: 0 }, uBase: col('#f6f8fa'), uInk: col('#2f445b'), uGlow: col('#588cc0') }
+      : { uTime: { value: 0 }, uLevel: { value: 0 }, uBase: col('#f8eeeb'), uRose: col('#d9a39a') },
+  })
+  spinner = new THREE.Mesh(new THREE.SphereGeometry(1, 128, 96), orbMat); spinner.rotation.set(n === 'clinics' ? .35 : .2, 0, n === 'clinics' ? -.15 : .3)
+  orb.add(spinner); hit = spinner
+}
+function buildWorld(n) {
+  if (world) { scene.remove(world); world.traverse((o) => { o.geometry?.dispose(); const m = o.material; if (m) (Array.isArray(m) ? m : [m]).forEach((x) => x.dispose()) }) }
+  P = PAL[n]; world = new THREE.Group(); scene.add(world); M = mats()
+  EM = new THREE.LineBasicMaterial({ color: P.edge, transparent: true, opacity: P.edgeA, depthWrite: false })
+  scene.background?.dispose?.(); scene.background = skyTex()
+  scene.fog = new THREE.Fog(P.bg, P.fog[0], P.fog[1])
+  renderer.toneMappingExposure = P.exposure
+  renderer.shadowMap.enabled = !P.dark
+  if (P.dark) {
+    world.add(new THREE.HemisphereLight('#7f9a8c', '#08100b', .6))
+    const moon = new THREE.DirectionalLight('#a9c0cf', .5); moon.position.set(-12, 20, 14); world.add(moon)
+    world.add(new THREE.Mesh(new THREE.PlaneGeometry(400, 400).rotateX(-Math.PI / 2).translate(0, -.4, 0), new THREE.MeshStandardMaterial({ color: P.bg, roughness: 1, envMapIntensity: 0 })))
+  } else {
+    world.add(new THREE.HemisphereLight('#ffffff', P.ground, 1.6))
+    const sun = new THREE.DirectionalLight('#ffffff', 2.6); sun.position.set(-8, 14, 13); sun.castShadow = true
+    sun.shadow.mapSize.set(innerWidth < 735 ? 1024 : 2048, innerWidth < 735 ? 512 : 1024); Object.assign(sun.shadow.camera, { left: -15, right: 15, top: 9, bottom: -9, near: 2, far: 50 })
+    sun.shadow.camera.updateProjectionMatrix(); sun.shadow.bias = -.0005; sun.shadow.normalBias = .03
+    world.add(sun)
+    const catcher = new THREE.Mesh(new THREE.PlaneGeometry(400, 400).rotateX(-Math.PI / 2).translate(0, -.4, 0), new THREE.ShadowMaterial({ color: P.shadow, opacity: .09 }))
+    catcher.receiveShadow = true; world.add(catcher)
+  }
+  // the model: base, back wall, side walls; the roof is lifted off so you can look in, except at the hotel
+  box(W * 3 + 1.2, .4, D + 1.6, 0, -.4, .4, M.floor, { edge: true })
+  box(W * 3 + T, H, T, 0, 0, -D / 2 + T / 2, M.wall, { edge: true })
+  for (const x of [-1.5, -.5, .5, 1.5]) box(T, H, D, x * W, 0, 0, M.wall, { edge: true })
+  ROOMS[n].forEach((fn, i) => fn(XS[i]))
+  if (P.dark) {
+    box(W * 3 + T, .22, D, 0, H, 0, M.slab, { edge: true, cast: false })
+    hotelUpper()
+    sparks = points(1100, (a, i, r) => { const th = Math.PI + r() * Math.PI, el = .02 + Math.pow(r(), 1.6) * .55; a.set([Math.cos(th) * Math.cos(el) * 95, Math.sin(el) * 95, Math.sin(th) * Math.cos(el) * 95], i * 3) }, .2, '#f4e9cc', .8, false)
+    sparks.kind = 'stars'
+  } else {
+    sparks = points(220, (a, i, r) => a.set([(r() - .5) * W * 3, .2 + r() * 2.8, -D / 2 + .3 + r() * (D - .2)], i * 3), .028, P.dust, .6, true)
+    sparks.kind = 'dust'
+  }
+  buildOrb(n)
+}
+
+// ---------- The camera's path: hero, three rooms, the pull-back, the pills, the licence ----------
+const look = new THREE.Vector3(), tmp = new THREE.Vector3()
+let K, camC, lookC, orbC, orbScale = 1
+function setKeys(n) {
+  // the hero looks past the building's left end, so the copy sits on open ground and the model stays whole on the right
+  const hero = n === 'hotels' ? { cam: [-6, 4.5, 36], look: [-6, 4.5, 0], orb: [-6, 4.85, 16], s: 2.7 } : { cam: [-5, 7.5, 30], look: [-5, 3.2, 0], orb: [-5, 5.4, 14], s: 2.15 }
+  const room = (cx) => ({ cam: [cx + .2, 1.9, 5.7], look: [cx + .95, 1.45, -1.6], orb: [cx + .12, 1.72, .55], s: .5 })
+  K = [hero, room(XS[0]), room(XS[1]), room(XS[2]),
+    { cam: [1.5, 7, 22], look: [0, 2.6, 0], orb: [0, 4.6, 7], s: 1.1 },
+    { cam: [0, 6.8, 25], look: [0, 5.0, 0], orb: [0, 5.15, 11], s: 1.65 },
+    { cam: [-2.5, 12, 34], look: [0, 3.2, 0], orb: [5.8, 7.6, 6], s: .9 }]
+  const v = (a) => new THREE.Vector3(...a), curve = (key) => new THREE.CatmullRomCurve3(K.map((k) => v(k[key])), false, 'centripetal')
+  camC = curve('cam'); lookC = curve('look'); orbC = curve('orb')
+}
+let px = 0, py = 0
+function pose(t) {
+  const u = clamp(t / (K.length - 1), 0, 1), a = innerWidth / innerHeight, phone = a < .8, k = phone ? 1.7 : a < 1.25 ? 1.3 : 1
+  camC.getPoint(u, camera.position); lookC.getPoint(u, look); orbC.getPoint(u, orb.position)
+  camera.position.sub(look).multiplyScalar(k).add(look)
+  if (phone) { const dx = orb.position.x - look.x; look.x += dx; camera.position.x += dx } // on a phone the orb stays centred
+  camera.position.x += px * .3; camera.position.y += py * .15
+  camera.lookAt(look)
+  if (phone) camera.rotateX(-.1) // and sits higher, clear of the copy at the bottom
+  const w = 1 - smooth(0, .7, t) // on short screens the hero lifts the orb and headline clear of the intro copy
+  if (fit.pitch) camera.rotateX(-fit.pitch * w)
+  camera.updateMatrixWorld()
+  const i = Math.min(Math.floor(t), K.length - 2), f = smooth(0, 1, t - i)
+  orbScale = (K[i].s + (K[i + 1].s - K[i].s) * f) * (a < .8 ? 1.3 : 1) * (1 - (1 - fit.scale) * w)
+}
+function orbScreen() {
+  tmp.copy(orb.position).project(camera)
+  const dist = camera.position.distanceTo(orb.position)
+  return { x: (tmp.x + 1) / 2 * innerWidth, y: (1 - tmp.y) / 2 * innerHeight, r: orb.scale.x / (dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) * innerHeight / 2 }
+}
+let fit = { pitch: 0, scale: 1 }
+function heroFit() {
+  fit = { pitch: 0, scale: 1 }
+  const hero = $('.hero'), h1 = $('#h1'), keep = [px, py]
+  hero.style.setProperty('--fit', '1')
+  px = py = 0; pose(0); orb.scale.setScalar(orbScale); [px, py] = keep
+  const o = orbScreen(), top = $('.nav').getBoundingClientRect().bottom + 12, bottom = $('.hero-foot').offsetTop - 28
+  let h = h1.offsetHeight
+  if (h > bottom - top) { const f = Math.max(.6, (bottom - top) / h); hero.style.setProperty('--fit', f.toFixed(3)); h *= f }
+  const want = Math.min(o.y, bottom - h / 2)
+  if (want < o.y) fit.pitch = Math.atan2((o.y - want) * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), innerHeight / 2)
+  fit.scale = Math.min(1, (bottom - top + 60) / (2 * o.r))
+}
+function heroAlign() {
+  const keep = [px, py]; px = py = 0
+  pose(0); orb.scale.setScalar(orbScale)
+  const o = orbScreen(), hero = $('.hero'); [px, py] = keep
+  hero.style.setProperty('--orb-y', o.y.toFixed(1) + 'px'); hero.style.setProperty('--tap-y', (o.y + o.r + 28).toFixed(1) + 'px')
+}
+
+// ---------- Scroll to camera time ----------
+let L = { s0: 1, s1: 2, d: 3, o: 4 }
+function measure() {
+  const vh = innerHeight, top = (el) => el.getBoundingClientRect().top + scrollY, st = $('#story'), d = $('#does'), o = $('#offer')
+  L = { s0: top(st), s1: top(st) + st.offsetHeight - vh, d: top(d) + d.offsetHeight / 2 - vh / 2, o: top(o) + o.offsetHeight / 2 - vh / 2 }
+}
+function targetT(y) {
+  if (y <= L.s0) return y / Math.max(1, L.s0)
+  if (y <= L.s1) { const u = Math.min((y - L.s0) / Math.max(1, L.s1 - L.s0) * 3, 2.9999), i = Math.floor(u); return 1 + i + smooth(.3, .8, u - i) }
+  if (y <= L.d) return 4 + (y - L.s1) / Math.max(1, L.d - L.s1)
+  if (y <= L.o) return 5 + (y - L.d) / Math.max(1, L.o - L.d)
+  return 6
+}
+function storyUI(t) {
+  beats.forEach((el, b) => { const on = Math.abs(t - (1 + b)) < .45; if (el._on !== on) { el._on = on; el.classList.toggle('on', on) } })
+  const live = t > .55 && t < 4.45; if (pin._live !== live) { pin._live = live; pin.classList.toggle('live', live) }
+  const cur = clamp(Math.round(t) - 1, 0, 2); if (pin._cur !== cur) { pin._cur = cur; $('#pnum').textContent = '0' + (cur + 1); progress.style.setProperty('--p', ((cur + 1) / 3).toFixed(3)) }
+  const show = t > .55 && t < 3.5; if (progress._show !== show) { progress._show = show; progress.classList.toggle('show', show) }
+}
+let orbitLive = true, spin = 0
+function orbitUI(t, dt) {
+  if (!orbitLive) return
+  const vis = clamp(1 - Math.abs(t - 5) * 1.8, 0, 1)
+  orbitEl.style.opacity = vis.toFixed(3); orbitEl.style.visibility = vis < .02 ? 'hidden' : 'visible'
+  if (vis < .02) return
+  if (!reduce) spin += dt * .05
+  const o = orbScreen(), rx = o.r + 170, ry = o.r + 64
+  orbitEl.style.transform = `translate(${o.x.toFixed(1)}px, ${o.y.toFixed(1)}px)`
+  pills.forEach((p, i) => {
+    const a = -Math.PI / 2 + (i / pills.length) * Math.PI * 2 + spin, d = (Math.sin(a) + 1) / 2
+    p.style.transform = `translate(-50%, -50%) translate(${(Math.cos(a) * rx).toFixed(1)}px, ${(Math.sin(a) * ry).toFixed(1)}px) scale(${(.94 + d * .06).toFixed(3)})`
+    p.style.opacity = (.8 + d * .2).toFixed(3)
+  })
+}
+
+// ---------- Pointer: parallax, glass highlights, turn the orb, tap to talk ----------
+addEventListener('pointermove', (e) => {
+  px = e.clientX / innerWidth * 2 - 1; py = -(e.clientY / innerHeight * 2 - 1)
+  const el = e.target.closest?.('.live')
+  if (el) { const r = el.getBoundingClientRect(); el.style.setProperty('--mx', (e.clientX - r.left).toFixed(0) + 'px'); el.style.setProperty('--my', (e.clientY - r.top).toFixed(0) + 'px') }
+}, { passive: true })
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2()
+let drag = null, yawVel = 0
+const hitOrb = (e) => { ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight * 2 - 1)); ray.setFromCamera(ndc, camera); return ray.intersectObject(hit, false).length > 0 }
+canvas.addEventListener('pointerdown', (e) => { if (!hitOrb(e)) return; drag = { x: e.clientX, moved: 0 }; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing' })
+canvas.addEventListener('pointermove', (e) => {
+  if (!drag) { canvas.style.cursor = hitOrb(e) ? 'grab' : ''; return }
+  const dx = e.clientX - drag.x; drag.x = e.clientX; drag.moved += Math.abs(dx); spinner.rotation.y += dx * .012; yawVel = dx * .5
+})
+canvas.addEventListener('pointerup', () => { if (drag && drag.moved < 6) talk(); drag = null; canvas.style.cursor = '' })
+
+// ---------- Smooth scroll ----------
+const lenis = !reduce && window.Lenis ? new window.Lenis({ lerp: .085, wheelMultiplier: .9 }) : null
+function scrollToY(y, smooth = true) { if (lenis) lenis.scrollTo(y, { immediate: !smooth }); else scrollTo({ top: y, behavior: smooth && !reduce ? 'smooth' : 'auto' }) }
+
+// ---------- Switching niche ----------
+function resize() {
+  renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix()
+  orbitLive = innerWidth > 734
+  if (!orbitLive) { orbitEl.removeAttribute('style'); pills.forEach((p) => p.removeAttribute('style')) }
+  measure(); heroFit(); heroAlign()
+}
+addEventListener('resize', resize)
+let tCur = 0
+function go(n, first) {
+  if (!NICHES.includes(n)) n = 'hotels'
+  if (n === niche && !first) return
+  const apply = () => { niche = n; Music.set(n); render(n); buildWorld(n); setKeys(n); resize(); scrollToY(0, false); tCur = 0 }
+  if (first || reduce) return apply()
+  root.classList.add('switching')
+  setTimeout(() => { apply(); requestAnimationFrame(() => root.classList.remove('switching')) }, 420)
+}
+const fromPath = () => { const p = location.pathname.split('/')[1]; return NICHES.includes(p) ? p : root.dataset.niche || 'hotels' }
+$$('.seg a').forEach((a) => a.addEventListener('click', (e) => {
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+  e.preventDefault()
+  if (a.dataset.n !== niche) { history.pushState(null, '', '/' + a.dataset.n); go(a.dataset.n) }
+}))
+addEventListener('popstate', () => go(fromPath()))
+
+// ---------- Frame ----------
+let last = performance.now(), level = 0
+function frame(now) {
+  requestAnimationFrame(frame)
+  const dt = Math.min((now - last) / 1000, .05); last = now
+  if (document.hidden) return
+  lenis?.raf(now)
+  const time = now / 1000
+  const tt = targetT(scrollY)
+  tCur = reduce ? tt : tCur + (tt - tCur) * (1 - Math.exp(-dt * 4.5))
+  pose(tCur)
+  const target = convoLevel()
+  level += (target - level) * Math.min(1, dt * 10)
+  dock.style.setProperty('--level', Math.max(0, level).toFixed(3))
+  orb.scale.setScalar(orbScale * (1 + (reduce ? 0 : Math.sin(time * 1.25) * .012) + level * .06))
+  if (!reduce) {
+    orb.position.y += Math.sin(time * .9) * .03 * orbScale
+    spinner.rotation.y += (.08 + yawVel) * dt; yawVel *= Math.pow(.05, dt)
+    if (sparks.kind === 'stars') sparks.p.rotation.y = Math.sin(time * .02) * .02
+    else {
+      const a = sparks.p.geometry.attributes.position
+      for (let i = 0; i < a.count; i++) { let y = a.getY(i) + sparks.spd[i] * dt; if (y > 3.05) y = .2; a.setY(i, y) }
+      a.needsUpdate = true
+    }
+  }
+  orbMat.uniforms.uTime.value = reduce ? 0 : time
+  orbMat.uniforms.uLevel.value = level
+  if (orbMat.uniforms.uScale) orbMat.uniforms.uScale.value = orb.scale.x
+  if (halo) halo.material.opacity = P.haloA * (1 + level * 1.2)
+  renderer.render(scene, camera)
+  if (!canvas.dataset.ready) canvas.dataset.ready = '1'
+  storyUI(tCur); orbitUI(tCur, dt)
+}
+go(fromPath(), true)
+requestAnimationFrame(frame)
+</script>

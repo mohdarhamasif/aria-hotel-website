@@ -1,0 +1,324 @@
+---
+// The conversation log (contract 12): a drawer on the right on desktop, a bottom sheet on phones (the composer stays
+// above the keyboard). Every entry has the speaker, the visitor's local time to the second and dir=auto.
+// It opens by itself for text conversations with the composer focused; the dock's Log button toggles it; Esc closes.
+// After a call: the end line, 'Continue by writing', a rating card and 'Print this conversation'.
+// Structural CSS only, every selector inside :where(). Named slots: icon-close, icon-send.
+import type { TranscriptCopy } from '../../data/content/types';
+
+interface Props {
+  copy: TranscriptCopy;
+}
+const { copy } = Astro.props;
+// The niche's words for the page script, with the copy functions resolved around {tokens}
+const words = { you: copy.you, her: copy.her, noMic: copy.noMic, thanks: copy.feedback.thanks, ended: copy.ended, summary: copy.summary('{duration}', '{ended}') };
+// The agent's activity lines in the niche's words (read by tools.ts)
+const activity = {
+  profile: copy.activity.profile('{summary}'),
+  roi: copy.activity.roi,
+  founding: copy.activity.founding,
+  groups: copy.activity.groups,
+  filled: copy.activity.filled,
+  sent: copy.activity.sent,
+};
+---
+<section class="log" id="voice-log" data-log data-voice-ui aria-labelledby="log-title" data-copy={JSON.stringify(words)} data-activity={JSON.stringify(activity)} hidden>
+  <header class="log-head">
+    <h2 id="log-title" class="log-title">{copy.title}</h2>
+    <button type="button" class="log-btn log-close" data-log-close><slot name="icon-close" /><span>{copy.close}</span></button>
+  </header>
+  <ol class="log-thread" data-log-thread aria-live="polite" data-lenis-prevent role="list"></ol>
+  <div class="log-after">
+    <div class="log-feedback" data-log-feedback hidden>
+      <p class="log-feedback-q" id="log-feedback-q">{copy.feedback.question}</p>
+      <div class="log-feedback-actions" role="group" aria-labelledby="log-feedback-q" data-log-rate>
+        <button type="button" class="log-btn" value="like">{copy.feedback.like}</button>
+        <button type="button" class="log-btn" value="dislike">{copy.feedback.dislike}</button>
+      </div>
+      <p class="log-feedback-thanks" role="status" data-log-thanks></p>
+    </div>
+    <div class="log-tools">
+      <button type="button" class="log-btn log-continue" data-log-continue hidden>{copy.continueWriting}</button>
+      <button type="button" class="log-btn log-print" data-log-print>{copy.print}</button>
+    </div>
+  </div>
+  <form class="log-form" data-log-form>
+    <label class="sr-only" for="log-msg">{copy.placeholder}</label>
+    <input id="log-msg" name="msg" type="text" autocomplete="off" enterkeyhint="send" placeholder={copy.placeholder} />
+    <button type="submit" class="log-btn log-send"><slot name="icon-send" /><span>{copy.send}</span></button>
+  </form>
+</section>
+
+<script>
+  import { voice } from '../../scripts/voice/bridge';
+  import { feedback, isContinuation, resume } from '../../scripts/voice/session';
+
+  interface Words { you: string; her: string; noMic: string; thanks: string; ended: Record<'user' | 'agent' | 'error', string>; summary: string }
+
+  const log = document.querySelector<HTMLElement>('[data-log]');
+  if (log) wire(log);
+
+  function wire(log: HTMLElement) {
+    const words = JSON.parse(log.dataset.copy || '{}') as Words;
+    const thread = log.querySelector<HTMLOListElement>('[data-log-thread]')!;
+    const form = log.querySelector<HTMLFormElement>('[data-log-form]')!;
+    const input = form.elements.namedItem('msg') as HTMLInputElement;
+    const rating = log.querySelector<HTMLElement>('[data-log-feedback]')!;
+    const rate = rating.querySelector<HTMLElement>('[data-log-rate]')!;
+    const thanks = rating.querySelector<HTMLElement>('[data-log-thanks]')!;
+    const more = log.querySelector<HTMLButtonElement>('[data-log-continue]')!;
+    const clock = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    let spoke = false;
+    let prev = voice.state;
+
+    const scrollEnd = () => { thread.scrollTop = thread.scrollHeight; };
+
+    /* ---------- Open and close ---------- */
+
+    function setOpen(open: boolean, focusComposer = false) {
+      if (open !== !log.hidden) {
+        log.hidden = !open;
+        document.querySelectorAll('[data-dock-log]').forEach((b) => b.setAttribute('aria-expanded', String(open)));
+        if (open) {
+          fit();
+          scrollEnd();
+        } else if (log.contains(document.activeElement)) {
+          // Focus goes back to the control that opens it again
+          [...document.querySelectorAll<HTMLElement>('[data-dock-log], [data-dock-talk]')].find((b) => !b.hidden && b.getClientRects().length)?.focus();
+        }
+      }
+      if (open && focusComposer) input.focus({ preventScroll: true });
+    }
+
+    // The composer above the phone keyboard
+    const vv = window.visualViewport;
+    function fit() {
+      if (!vv || log.hidden) return;
+      log.style.setProperty('--log-kb', `${Math.max(0, Math.round(innerHeight - vv.height - vv.offsetTop))}px`);
+      log.style.setProperty('--log-vh', `${Math.round(vv.height)}px`);
+    }
+    vv?.addEventListener('resize', fit);
+    vv?.addEventListener('scroll', fit);
+
+    /* ---------- Entries ---------- */
+
+    function entry(who: 'user' | 'agent' | 'activity', text: string, at = Date.now()) {
+      const li = document.createElement('li');
+      li.dataset.who = who;
+      li.dir = 'auto';
+      if (who !== 'activity') {
+        const name = document.createElement('span');
+        name.className = 'log-who';
+        name.textContent = who === 'user' ? words.you : words.her;
+        li.append(name, ' ');
+      }
+      const d = new Date(at);
+      const time = document.createElement('time');
+      time.dateTime = d.toISOString();
+      time.textContent = clock.format(d);
+      const p = document.createElement('p');
+      p.className = 'log-text';
+      p.dir = 'auto';
+      p.textContent = text;
+      li.append(time, ' ', p);
+      // Her activity goes above the typing dots
+      thread.insertBefore(li, who === 'activity' ? thread.querySelector('[data-who="typing"]') : null);
+      scrollEnd();
+      return li;
+    }
+
+    function typing(on: boolean) {
+      const dots = thread.querySelector('[data-who="typing"]');
+      if (!on) return dots?.remove();
+      if (dots) return;
+      const li = document.createElement('li');
+      li.dataset.who = 'typing';
+      li.setAttribute('aria-hidden', 'true');
+      li.innerHTML = '<span class="log-dots"><i></i><i></i><i></i></span>';
+      thread.append(li);
+      scrollEnd();
+    }
+
+    /** '3 min 12 s' */
+    const duration = (s: number) => (s >= 60 ? `${Math.floor(s / 60)} min ${s % 60} s` : `${s} s`);
+
+    /* ---------- The conversation ---------- */
+
+    voice.on('state', ({ state, mode }) => {
+      if (prev === 'idle' && state === 'connecting') {
+        // A new conversation starts a new log; writing on after a call keeps it
+        if (!isContinuation()) {
+          thread.replaceChildren();
+          spoke = false;
+        }
+        rating.hidden = true;
+        more.hidden = true;
+        if (mode === 'text') setOpen(true, true);
+      }
+      if (state === 'idle') typing(false);
+      prev = state;
+    });
+    voice.on('mode', ({ mode }) => {
+      if (mode !== 'text' || voice.state === 'idle') return;
+      // Changing to text while still connecting means the microphone could not start
+      if (voice.state === 'connecting') entry('activity', words.noMic);
+      setOpen(true, true);
+    });
+    voice.on('message', ({ role, text, time }) => {
+      typing(false);
+      entry(role, text, time);
+      if (role === 'agent') spoke = true;
+    });
+    voice.on('activity', ({ text }) => entry('activity', text));
+    voice.on('typing', ({ on }) => typing(on));
+    voice.on('ended', ({ reason, duration: s }) => {
+      typing(false);
+      entry('activity', words.summary.replace('{duration}', duration(s)).replace('{ended}', words.ended[reason])).dataset.end = '';
+      more.hidden = false;
+      if (spoke) {
+        rating.hidden = false;
+        rate.hidden = false;
+        thanks.textContent = '';
+      }
+    });
+
+    /* ---------- Controls ---------- */
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as Element | null;
+      if (target?.closest?.('[data-dock-log]')) setOpen(log.hidden);
+      // Write while a call is live: the composer (a new text conversation starts through boot.ts when idle)
+      else if (target?.closest?.('[data-orb-type], [data-dock-write]') && voice.state !== 'idle') setOpen(true, true);
+    });
+    log.querySelector('[data-log-close]')!.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || log.hidden || document.querySelector('dialog[open]')) return;
+      setOpen(false);
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      voice.sendText(text);
+    });
+    input.addEventListener('input', () => voice.sendActivity());
+
+    more.addEventListener('click', () => {
+      more.hidden = true;
+      resume();
+      setOpen(true, true);
+    });
+
+    rate.addEventListener('click', (e) => {
+      const button = (e.target as Element | null)?.closest<HTMLButtonElement>('button[value]');
+      if (!button) return;
+      void feedback(button.value === 'like');
+      rate.hidden = true;
+      thanks.textContent = words.thanks;
+    });
+
+    // Print only the conversation (the global print sheet hides the voice UI)
+    log.querySelector('[data-log-print]')!.addEventListener('click', () => {
+      const root = document.documentElement;
+      root.dataset.print = 'log';
+      log.removeAttribute('data-voice-ui');
+      addEventListener('afterprint', () => {
+        delete root.dataset.print;
+        log.setAttribute('data-voice-ui', '');
+      }, { once: true });
+      window.print();
+    });
+  }
+</script>
+
+<style is:global>
+  /* Structure only; the niche skin owns the look. Every selector is wrapped in :where() (zero specificity). */
+  :where([data-log]) {
+    position: fixed; z-index: var(--z-chrome);
+    inset: var(--bar-h, 0px) 0 var(--dock-h, 0px) auto; width: min(420px, 100%);
+    display: flex; flex-direction: column;
+    background: var(--color-bg-surface); color: var(--color-text-primary);
+    border-left: 1px solid var(--color-border);
+    transition: translate var(--dur-control) var(--ease-out), opacity var(--dur-control) var(--ease-out);
+  }
+  @starting-style {
+    :where([data-log]) { translate: 24px 0; opacity: 0; }
+  }
+  :where([data-log] .log-head) { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 20px; border-bottom: 1px solid var(--color-border); }
+  :where([data-log] .log-title) { font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); }
+
+  :where([data-log] .log-thread) {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+    display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 16px 20px; list-style: none;
+  }
+  :where([data-log] .log-thread > li) { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; max-width: 92%; }
+  :where([data-log] .log-thread > li[data-who="user"]) { align-self: flex-end; justify-content: flex-end; }
+  :where([data-log] .log-who) { font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+  /* Times in a face with tabular figures (Supreme has none): the display face here, Azeret Mono on clinics */
+  :where([data-log] .log-thread time) { font: 400 var(--label-size)/var(--label-lh) var(--font-display); font-variant-numeric: lining-nums tabular-nums; color: var(--color-text-tertiary); }
+  :where([data-log] .log-text) { flex-basis: 100%; margin-top: 4px; padding: 10px 14px; border-radius: 14px; background: var(--color-bg-raised); overflow-wrap: anywhere; }
+  :where([data-log] .log-thread > li[data-who="user"] .log-text) { background: var(--color-bg-accent-subtle); color: var(--color-accent-text-on-subtle); }
+  :where([data-log] .log-thread > li[data-who="activity"]) { align-self: stretch; max-width: none; flex-direction: row-reverse; justify-content: space-between; gap: 4px 12px; font-size: var(--small-size); line-height: var(--small-lh); letter-spacing: var(--small-ls); color: var(--color-text-secondary); }
+  :where([data-log] .log-thread > li[data-who="activity"] .log-text) { flex: 1 1 0; margin: 0; padding: 0; border-radius: 0; background: none; }
+  :where([data-log] .log-thread > li[data-end]) { padding-top: 12px; border-top: 1px solid var(--color-border); }
+  :where([data-log] .log-dots) { display: inline-flex; gap: 4px; padding: 14px 16px; border-radius: 14px; background: var(--color-bg-raised); }
+  :where([data-log] .log-dots i) { width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-secondary); animation: voice-log-dot 1.2s var(--ease-light) infinite; }
+  :where([data-log] .log-dots i:nth-child(2)) { animation-delay: .15s; }
+  :where([data-log] .log-dots i:nth-child(3)) { animation-delay: .3s; }
+  @keyframes voice-log-dot { 0%, 70%, 100% { opacity: .3; } 35% { opacity: 1; } }
+
+  :where([data-log] .log-after) { flex: none; display: grid; gap: 8px; padding: 0 20px 12px; }
+  :where([data-log] .log-after:has(> :not([hidden]))) { padding-top: 12px; border-top: 1px solid var(--color-border); }
+  :where([data-log] .log-feedback) { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; color: var(--color-text-secondary); }
+  :where([data-log] .log-feedback-actions) { display: flex; gap: 6px; }
+  :where([data-log] .log-tools) { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  :where([data-log] .log-btn) {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-width: var(--target); min-height: var(--target); padding: 0 14px; border-radius: 999px;
+    font-size: var(--card-size); font-weight: 500; white-space: nowrap; color: var(--color-text-primary);
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
+  }
+  :where([data-log] .log-btn:hover) { box-shadow: inset 0 0 0 1px var(--color-text-primary); }
+  :where([data-log] .log-btn svg) { flex: none; width: 18px; height: 18px; }
+  :where([data-log] .log-close) { box-shadow: none; }
+
+  :where([data-log] .log-form) { flex: none; display: flex; gap: 8px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--color-border); }
+  :where([data-log] .log-form input) {
+    flex: 1 1 auto; min-width: 0; min-height: var(--target); padding: 0 14px; border-radius: 12px;
+    border: 1px solid var(--color-border-strong); background: var(--color-bg-page); color: var(--color-text-primary);
+  }
+  :where([data-log] .log-form input)::placeholder { color: var(--color-text-tertiary); opacity: 1; }
+  :where([data-log] .log-send) { background: var(--color-accent-solid); color: var(--color-accent-ink); box-shadow: none; }
+  :where([data-log] .log-send:hover) { background: var(--color-accent-solid-hover); box-shadow: none; }
+
+  /* Phones: a bottom sheet over the dock, kept above the keyboard */
+  @media (max-width: 734px) {
+    :where([data-log]) {
+      inset: auto 0 max(var(--dock-h, 0px), var(--log-kb, 0px)) 0; width: 100%;
+      height: min(78svh, calc(var(--log-vh, 100svh) + var(--log-kb, 0px) - max(var(--dock-h, 0px), var(--log-kb, 0px)) - 8px));
+      border-left: 0; border-top: 1px solid var(--color-border); border-radius: 20px 20px 0 0;
+    }
+    @starting-style {
+      :where([data-log]) { translate: 0 24px; }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :where([data-log]) { transition: none; }
+    :where([data-log] .log-dots i) { animation: none; opacity: .7; }
+  }
+
+  /* 'Print this conversation': only the log, all of it */
+  @media print {
+    :where(html[data-print="log"] body > :not([data-log])) { display: none !important; }
+    :where(html[data-print="log"] [data-log]) {
+      position: static !important; display: block !important; inset: auto !important; width: auto !important; height: auto !important;
+      border: 0 !important; box-shadow: none !important; translate: none !important;
+    }
+    :where(html[data-print="log"] [data-log] .log-thread) { display: block !important; overflow: visible !important; padding: 0 !important; }
+    :where(html[data-print="log"] [data-log] .log-thread > li) { max-width: none; margin-bottom: 10px; break-inside: avoid; }
+    :where(html[data-print="log"] [data-log] :is(button, form, .log-after, [data-who="typing"])) { display: none !important; }
+  }
+</style>

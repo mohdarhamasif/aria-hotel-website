@@ -1,0 +1,95 @@
+---
+// The brand front door: three doors, one per niche, each painted in its own palette.
+import Base from '../layouts/Base.astro';
+import { niches, SITE } from '../data/niches';
+
+const DOORS = {
+  hotels: { name: 'The Night Log', line: 'One night at your front desk, from the first dinner call to the morning handover.' },
+  clinics: { name: 'The Line', line: 'Every call answered, and every clinical question handed to your team.' },
+  dental: { name: 'First Available', line: 'Your day sheet, with every gap filled by a call she answered.' },
+} as const;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Organization', '@id': `${SITE}/#organization`, name: 'Amariya AI', url: `${SITE}/` },
+    { '@type': 'WebSite', '@id': `${SITE}/#website`, name: 'Amariya', url: `${SITE}/`, publisher: { '@id': `${SITE}/#organization` } },
+  ],
+};
+---
+<Base
+  title="Amariya · the AI receptionist that answers every call"
+  description="Amariya answers every call for hotels, restaurants, clinics and dental practices, day and night, in your callers’ own language."
+  theme="hospitality"
+  fonts={niches.map((n) => n.displayFont)}
+  canonical="/"
+  ogImage="/og/home.png"
+  ogAlt="Amariya answers the phone: three doors, for hotels and restaurants, clinics, and dental practices."
+  jsonLd={jsonLd}
+>
+  <main class="door-hall wrap">
+    <header class="hall-head">
+      <p class="hall-brand">Amariya</p>
+      <h1>Amariya answers the phone.</h1>
+      <p class="hall-lede">An AI receptionist that picks up every call, books what your callers ask for and hands the rest to your team. Choose your door.</p>
+    </header>
+    <ul class="doors" role="list">
+      {niches.map((n) => (
+        <li data-theme={n.theme}>
+          <a class="door" href={`/${n.slug}`}>
+            <span class="door-orb" data-kind={n.orb} aria-hidden="true"></span>
+            <span class="door-label">{n.label}</span>
+            <span class="door-name">{DOORS[n.slug].name}</span>
+            <span class="door-line">{DOORS[n.slug].line}</span>
+            <span class="door-palette">{n.palette}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+</Base>
+
+<style>
+  .door-hall { display: grid; align-content: center; gap: clamp(40px, 7vh, 72px); min-height: 100svh; padding-block: clamp(48px, 9vh, 112px); }
+  .hall-head { display: grid; justify-items: center; gap: 18px; text-align: center; }
+  .hall-brand { font: 500 var(--h3-size)/1 var(--font-brand); letter-spacing: -.01em; color: var(--color-accent-text); }
+  h1 { font: var(--h1-weight) var(--h1-size)/var(--h1-lh) var(--font-display); letter-spacing: var(--h1-ls); text-wrap: balance; }
+  .hall-lede { max-width: 34em; font-size: var(--lead-size); line-height: var(--lead-lh); color: var(--color-text-secondary); text-wrap: pretty; }
+
+  .doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 24px); margin: 0; padding: 0; list-style: none; }
+  .door {
+    position: relative; display: grid; grid-template-rows: auto 1fr auto auto auto; justify-items: center; gap: 10px; height: 100%;
+    min-height: clamp(380px, 56svh, 520px); padding: clamp(28px, 4vw, 44px) 24px 28px; text-align: center; text-decoration: none;
+    /* An arched doorway */
+    border-radius: 999px 999px 20px 20px;
+    background: var(--color-bg-page); color: var(--color-text-primary);
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
+    transition: transform var(--dur-entry) var(--ease-out), box-shadow var(--dur-control) var(--ease-out);
+  }
+  .door:hover { transform: translateY(-6px); box-shadow: inset 0 0 0 1px var(--color-accent-text); }
+  .door:focus-visible { outline-offset: 6px; }
+  .door-orb { width: clamp(96px, 12vw, 148px); aspect-ratio: 1; margin-top: clamp(12px, 3vh, 32px); border-radius: 50%; transition: transform var(--dur-light) var(--ease-settle); }
+  .door:hover .door-orb { transform: scale(1.06); }
+  .door-orb[data-kind="champagne"] {
+    background:
+      radial-gradient(circle at 50% 50%, var(--color-orb-core-hot) 0%, var(--color-orb-core) 16%, var(--color-orb-core-deep) 34%, transparent 46%),
+      radial-gradient(circle at 34% 26%, var(--color-orb-highlight) 0%, transparent 9%),
+      radial-gradient(circle at 50% 50%, var(--color-orb-glass) 0%, transparent 70.5%);
+    box-shadow: 0 0 60px 4px color-mix(in oklab, var(--color-orb-glow) 30%, transparent);
+  }
+  .door-orb[data-kind="porcelain"] { background: radial-gradient(circle at 50% 52%, var(--color-orb-glow) 0%, var(--color-orb-glow-hot) 26%, var(--color-orb-body) 62%, var(--color-orb-shade) 100%); }
+  .door-orb[data-kind="pearl"] { background: radial-gradient(circle at 36% 30%, var(--color-orb-highlight) 0%, var(--color-orb-body) 30%, var(--color-orb-sheen-listen) 72%, var(--color-orb-sheen) 100%); }
+  .door-label { align-self: end; font: 500 var(--eyebrow-size)/var(--eyebrow-lh) var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-accent-text); }
+  /* Each door in its own niche's display face and optical correction */
+  .door-name { font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); text-wrap: balance; }
+  .door-line { max-width: 22em; font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls); color: var(--color-text-secondary); text-wrap: pretty; }
+  .door-palette { margin-top: 8px; font-size: var(--small-size); letter-spacing: var(--small-ls); color: var(--color-text-tertiary); }
+
+  @media (max-width: 900px) {
+    .doors { grid-template-columns: minmax(0, 1fr); }
+    .door { min-height: 0; grid-template-rows: none; border-radius: 160px 160px 20px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .door, .door-orb { transition: none; }
+    .door:hover, .door:hover .door-orb { transform: none; }
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+// Sign-off (footer #signoff): the line comes down to the centre and becomes the baseline of the wordmark,
+// with the orb resting as its full stop. Legal links render only once the owner has given them.
+import Switcher from '../../../components/shared/Switcher.astro';
+import { content } from '../../../data/content/clinics';
+import { given } from '../../../data/content/types';
+import { company, poweredBy, brand } from '../../../data/content/shared';
+
+const { signoff, chapters, legal } = content;
+const ch = chapters[9];
+const year = new Date().getFullYear();
+const links = (['privacy', 'terms', 'recording'] as const).flatMap((k) => {
+  const href = given(legal[k]);
+  return href ? [{ href, label: legal.labels[k] }] : [];
+});
+---
+<footer id={ch.id} class="ch ch-signoff" data-chapter={ch.id} data-section="footer" data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="signoff-title">
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+
+  <div class="signoff-head">
+    <h2 id="signoff-title">{signoff.line}</h2>
+    <div class="signoff-actions">
+      <button type="button" class="btn btn-primary" data-orb-talk>
+        <svg class="glyph" aria-hidden="true"><use href="#g-mic" /></svg>{signoff.talk}
+      </button>
+      <a class="btn btn-ghost" href="#apply">{signoff.apply}<i class="arrow" aria-hidden="true"></i></a>
+      <button type="button" class="btn-link mono" data-take-notes>
+        <svg class="glyph" aria-hidden="true"><use href="#g-notes" /></svg>{signoff.notes}
+      </button>
+    </div>
+  </div>
+
+  <p class="wordmark" aria-hidden="true">
+    <span class="wordmark-text">{brand}</span><span class="wordmark-stop" data-orb-anchor></span>
+    <span class="wordmark-base" data-line-baseline></span>
+  </p>
+
+  <div class="signoff-meta">
+    <Switcher current="clinics" variant="inline" label="Industries, footer" class="signoff-switcher" />
+    <p class="mono">© {year} {company}</p>
+    <p class="mono">{poweredBy}</p>
+    {links.length > 0 && (
+      <ul class="legal" role="list">{links.map((l) => <li><a class="mono" href={l.href}>{l.label}</a></li>)}</ul>
+    )}
+  </div>
+</footer>

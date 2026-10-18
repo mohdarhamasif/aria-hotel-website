@@ -1,0 +1,84 @@
+---
+// 03 · What she takes (#features): the dial. Pinned for 210svh with motion; scrolling turns the orb through
+// six detents (70 % held, 30 % turning) and a six-tab tablist mirrors it. Without JS every item reads in turn.
+import { content } from '../../../data/content/clinics';
+import { detentProgress } from '../lens';
+
+const { dial, sides, chapters, features } = content;
+const ch = chapters[3];
+const n = dial.items.length;
+const L = (s: string | { medical: string; aesthetic: string }) => (typeof s === 'string' ? { one: s } : { medical: s.medical, aesthetic: s.aesthetic });
+---
+<section id={ch.id} class="ch ch-dial" data-chapter={ch.id} data-section="features" data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="features-title" data-dial>
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+  {dial.items.map((it, i) => <i class="sub" data-sub={`features:${it.key}`} style={`--f:${detentProgress(i, n)}`} aria-hidden="true"></i>)}
+
+  <div class="dial-stage" data-dial-stage>
+    <header class="ch-head her">
+      <p class="eyebrow mono">{ch.point} · {ch.title}</p>
+      <h2 id="features-title">{dial.title}</h2>
+      <p class="lede">{dial.lede}</p>
+    </header>
+
+    <div class="her side" data-side="her">
+      <h3 class="side-label">{sides.her}</h3>
+      <ol class="margin-notes" data-margin-notes aria-label="Amariya’s notes" role="list"></ol>
+
+      <div class="dial-tabs" role="tablist" aria-label={dial.title} data-dial-tabs hidden>
+        {dial.items.map((it, i) => {
+          const t = L(it.title);
+          return (
+            <button type="button" role="tab" id={`tab-${it.key}`} aria-controls={`feature-${it.key}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-dial-tab={it.key}>
+              <svg class="glyph" aria-hidden="true"><use href={`#g-${it.key}`} /></svg>
+              <span class="sr-only" data-tab-pos>Feature {i + 1} of {n}: </span>
+              <span class="tab-text">{'one' in t ? t.one : <><span data-lens-text="medical">{t.medical}</span><span data-lens-text="aesthetic">{t.aesthetic}</span></>}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div class="dial-items" data-dial-items>
+        {dial.items.map((it, i) => {
+          const t = L(it.title);
+          const [a, b] = it.sentences.map(L);
+          return (
+            <article class="dial-item" id={`feature-${it.key}`} data-feature={it.key} data-dial-item={it.key} data-ask={features[it.key].title} data-active={i === 0 ? '' : undefined} aria-labelledby={`feature-${it.key}-title`}>
+              <p class="dial-num mono" aria-hidden="true">
+                <svg class="glyph" aria-hidden="true"><use href={`#g-${it.key}`} /></svg>
+                <span data-dial-num>{String(i + 1).padStart(2, '0')}</span> / {String(n).padStart(2, '0')}
+              </p>
+              <h3 class="dial-title" id={`feature-${it.key}-title`}>{'one' in t ? t.one : <><span data-lens-text="medical">{t.medical}</span><span data-lens-text="aesthetic">{t.aesthetic}</span></>}</h3>
+              <p class="dial-copy">
+                {'one' in a ? a.one : <><span data-lens-text="medical">{a.medical}</span><span data-lens-text="aesthetic">{a.aesthetic}</span></>}{' '}
+                {'one' in b ? b.one : <><span data-lens-text="medical">{b.medical}</span><span data-lens-text="aesthetic">{b.aesthetic}</span></>}
+              </p>
+              <p class="proof mono">{it.proof}</p>
+              <p class="dial-actions">
+                {it.key === 'answering' && <a class="btn-link mono" href="#call" data-hear-call>{dial.hearCall}</a>}
+                <button type="button" class="btn-link mono" data-ask-this>Ask about this</button>
+              </p>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+
+    <div class="dial-anchor" data-orb-anchor data-line-loop>
+      <svg class="bezel" viewBox="-210 -210 420 420" aria-hidden="true">
+        {Array.from({ length: 6 }, (_, i) => {
+          const a = (i / 6) * 2 * Math.PI;
+          const s = Math.sin(a), c = -Math.cos(a);
+          return <line class="bezel-tick" x1={(s * 186).toFixed(1)} y1={(c * 186).toFixed(1)} x2={(s * 199).toFixed(1)} y2={(c * 199).toFixed(1)} />;
+        })}
+        <path class="bezel-notch" d="M-6 -205 L0 -195 L6 -205" />
+      </svg>
+    </div>
+
+    <div class="team side" data-side="team">
+      <h3 class="side-label">{sides.team}</h3>
+      <ul class="dial-team" role="list">
+        {dial.items.map((it, i) => <li data-dial-team={it.key} data-active={i === 0 ? '' : undefined}>{it.team}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>

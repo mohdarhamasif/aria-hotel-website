@@ -1,0 +1,48 @@
+---
+// The Night index: a native dialog styled as an in-room directory card. Every hour row (hour, room, one line,
+// aria-current on the hour in view), then the switcher, Sound, Pause motion, Ring and Write.
+import { content } from '../../../data/content/hotels';
+import Switcher from '../../../components/shared/Switcher.astro';
+import SoundToggle from '../../../components/shared/SoundToggle.astro';
+import MotionToggle from '../../../components/shared/MotionToggle.astro';
+import Icons from './Icons.astro';
+
+const { nightIndex, ring, voice } = content;
+const hourText = (h: string) => (h === 'now' ? ring.now : h);
+---
+<dialog id="night-index" class="index" data-index data-lenis-prevent aria-labelledby="index-title">
+  <div class="index-card">
+    <header class="index-head">
+      <p class="index-brand" aria-hidden="true">Amariya</p>
+      <h2 id="index-title" class="index-title">{nightIndex.title}</h2>
+      <p class="index-lede">{nightIndex.lede}</p>
+      <form method="dialog">
+        <button class="index-close" value="close" aria-label={nightIndex.close}><span aria-hidden="true">×</span></button>
+      </form>
+    </header>
+    <ol class="index-rows" role="list">
+      {content.chapters.map((c) => (
+        <li>
+          <a class="index-row" href={`#${c.id}`} data-index-link={c.id}>
+            <span class="index-hour">{hourText(c.hour)}</span>
+            <span class="index-room">
+              {c.restaurant ? (<><span data-variant="hotel">{c.room}</span><span data-variant="restaurant">{c.restaurant.room}</span></>) : (c.hour ? c.room : c.title)}
+            </span>
+            <span class="index-sum">
+              {c.restaurant ? (<><span data-variant="hotel">{c.summary}</span><span data-variant="restaurant">{c.restaurant.summary}</span></>) : c.summary}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+    <div class="index-tools">
+      <Switcher current="hotels" variant="inline" class="index-switcher" />
+      <div class="index-buttons">
+        <button type="button" class="index-tool" data-orb-talk><Icons name="bell" />{voice.dock.talk}</button>
+        <button type="button" class="index-tool" data-orb-type><Icons name="nib" />{voice.dock.write}</button>
+        <SoundToggle class="index-tool"><Icons name="eq" /></SoundToggle>
+        <MotionToggle class="index-tool"><Icons name="hanger" /></MotionToggle>
+      </div>
+    </div>
+  </div>
+</dialog>

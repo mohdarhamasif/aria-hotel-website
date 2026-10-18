@@ -1,0 +1,27 @@
+---
+// Take the notes: a letter of the conversation for the partner who wasn't on the call, written by the page
+// (profile, estimate, what she'd handle and hand off, her recommendation, the next step, the hand-off log and,
+// if wanted, the transcript). Print or save as PDF through print CSS, copy, or email; attached to the application.
+import { content } from '../../../data/content/clinics';
+
+const { letter } = content;
+---
+<dialog class="letter" data-letter aria-labelledby="letter-title">
+  <article class="letter-page">
+    <header class="letter-head">
+      <p class="mono">AMARIYA · CLINICS</p>
+      <h2 id="letter-title">{letter.title}</h2>
+      <p class="letter-intro">{letter.intro}</p>
+      <p class="mono" data-letter-date></p>
+    </header>
+    <div class="letter-body" data-letter-body></div>
+  </article>
+  <form method="dialog" class="letter-actions">
+    <label class="check"><input type="checkbox" data-letter-transcript checked /><span>{letter.sections.transcript}</span></label>
+    <button type="button" class="btn btn-primary btn-sm" data-letter-print>{letter.print}</button>
+    <button type="button" class="btn btn-ghost btn-sm" data-letter-copy>{letter.copy}</button>
+    <a class="btn btn-ghost btn-sm" data-letter-mail href="mailto:">{letter.mail}</a>
+    <button class="btn-link mono letter-close" value="close">Close</button>
+    <p class="sr-only" role="status" data-letter-status></p>
+  </form>
+</dialog>

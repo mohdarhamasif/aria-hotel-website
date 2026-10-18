@@ -1,0 +1,85 @@
+---
+// /dental, First Available: the practice's own day sheet, ruled in rose-gold from 07:45 to 19:00. The hour ruler is
+// the navigation, the chair columns are the team's day, the phone lane on the right is where the pearl lives.
+// P7's scene draws the pearl on the fixed canvas and moves her between the lane's recesses ([data-slot]); this page
+// lays out the sheet, the voice UI skinned as its foot rule, and ui.ts runs it.
+import Base from '../../layouts/Base.astro';
+import SkipLinks from '../../components/shared/SkipLinks.astro';
+import Dock from '../../components/shared/Dock.astro';
+import Transcript from '../../components/shared/Transcript.astro';
+import StartSheet from '../../components/shared/StartSheet.astro';
+import FollowNote from '../../components/shared/FollowNote.astro';
+import Toast from '../../components/shared/Toast.astro';
+import Glyphs from './components/Glyphs.astro';
+import HourRuler from './components/HourRuler.astro';
+import EdgeTab from './components/EdgeTab.astro';
+import SheetHeader from './components/SheetHeader.astro';
+import StoryRow from './components/StoryRow.astro';
+import Intake from './components/Intake.astro';
+import WorkingDay from './components/WorkingDay.astro';
+import NeverDoes from './components/NeverDoes.astro';
+import LicenceLine from './components/LicenceLine.astro';
+import ApplySlip from './components/ApplySlip.astro';
+import NotesColumn from './components/NotesColumn.astro';
+import Close from './components/Close.astro';
+import { content } from '../../data/content/dental';
+import { getNiche } from '../../data/niches';
+import './dental.css';
+
+const niche = getNiche('dental');
+---
+<Base title={content.seo.title} description={content.seo.description} theme={niche.theme} fonts={niche.fonts} canonical={niche.canonical} ogImage={niche.ogImage} ogAlt={content.seo.ogAlt} jsonLd={content.jsonLd()}>
+  <Fragment slot="head">
+    <script is:inline>
+      // Before first paint: entries wait to be inked and the intro plays only when motion is on (ui.ts takes over;
+      // if it never runs, dental.css shows everything after 3 s)
+      (function () {
+        var d = document.documentElement;
+        d.dataset.js = '';
+        if (d.dataset.motion === 'on') { d.dataset.ink = 'on'; d.dataset.intro = ''; }
+      })();
+    </script>
+  </Fragment>
+  <SkipLinks slot="skip" links={[{ href: '#profile', label: 'Skip to content' }]} />
+  <Glyphs />
+  <canvas class="stage-canvas" data-stage-canvas aria-hidden="true"></canvas>
+  <HourRuler />
+  <EdgeTab />
+
+  <div class="day-page" data-day>
+    <SheetHeader />
+    <main id="main" class="sheet" data-sheet>
+      <svg class="sheet-ink" data-trace aria-hidden="true" focusable="false"><path class="lane-string" data-string d="" /></svg>
+      <p class="now-line" id="now" data-now-line tabindex="-1"><span class="now-stamp"><span class="sr-only">{content.ruler.now}, </span><time data-now-time>{content.hero.staticTime}</time><span class="now-after" data-now-after></span></span></p>
+      <StoryRow />
+      <Intake />
+      <WorkingDay />
+      <NeverDoes />
+      <LicenceLine />
+      <ApplySlip />
+      <NotesColumn />
+      <p class="sr-only" role="status" data-pearl-live></p>
+    </main>
+    <Close />
+  </div>
+
+  <Dock copy={content.voice.dock} variant="bottom" industry="dental">
+    <svg slot="icon-talk" class="glyph" aria-hidden="true"><use href="#g-handset" /></svg>
+    <svg slot="icon-write" class="glyph" aria-hidden="true"><use href="#g-keyboard" /></svg>
+    <svg slot="icon-log" class="glyph" aria-hidden="true"><use href="#g-list" /></svg>
+    <svg slot="icon-mute" class="glyph" aria-hidden="true"><use href="#g-mic" /></svg>
+    <svg slot="icon-switch" class="glyph" aria-hidden="true"><use href="#g-switch" /></svg>
+    <svg slot="icon-end" class="glyph" aria-hidden="true"><use href="#g-end" /></svg>
+  </Dock>
+  <Transcript copy={content.transcript}>
+    <svg slot="icon-close" class="glyph" aria-hidden="true"><use href="#g-close" /></svg>
+    <svg slot="icon-send" class="glyph" aria-hidden="true"><use href="#g-send" /></svg>
+  </Transcript>
+  <StartSheet copy={content.voice.sheet} industry="dental" />
+  <FollowNote lead="" />
+  <Toast />
+</Base>
+
+<script>
+  import './ui';
+</script>

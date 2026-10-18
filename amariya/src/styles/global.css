@@ -1,0 +1,216 @@
+@import './tokens.css';
+
+/* Shared by all three niche pages. Niche CSS lives in src/niches/<niche>/<niche>.css and only uses --color-* roles. */
+
+/* ---------- Reset ---------- */
+/* In a layer, so it gives way to every unlayered rule, including the shared components' zero-specificity :where()
+   styles (the dock's buttons kept no padding while a plain `button` reset outranked them) */
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  img, svg, canvas, video { display: block; max-width: 100%; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  input, select, textarea { font: inherit; color: inherit; }
+  /* The body size (16 px) also stops phones zooming into a field */
+  input, select, textarea { font-size: var(--body-size); }
+  ol[role="list"], ul[role="list"] { list-style: none; padding: 0; }
+  /* Headings balance their lines; running text avoids a lone last word (the longhand, so no rule's nowrap is undone) */
+  h1, h2, h3, h4 { text-wrap-style: balance; }
+  p, li, dd, figcaption, blockquote { text-wrap-style: pretty; }
+}
+html { font-synthesis: none; }
+/* The type system has no italics, anywhere */
+em, i, cite, var, dfn, address { font-style: normal; }
+[hidden] { display: none !important; }
+
+/* ---------- Tokens that are not colours ---------- */
+:root {
+  /* Easing */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-light: cubic-bezier(.45, 0, .2, 1);
+  --ease-mech: cubic-bezier(.34, 1.32, .64, 1);
+  --ease-settle: cubic-bezier(.2, .7, .1, 1);
+  --ease-draw: cubic-bezier(.65, 0, .35, 1);
+  /* Durations: micro, controls, entries, light/camera, count-ups */
+  --dur-micro: 160ms;
+  --dur-control: 320ms;
+  --dur-entry: 560ms;
+  --dur-light: 1200ms;
+  --dur-count: 900ms;
+  /* Layers */
+  --z-stage: 0;
+  --z-content: 1;
+  --z-overlay: 2;
+  --z-grain: 20;
+  --z-follow: 29;
+  --z-chrome: 30;
+  --z-toast: 50;
+  /* Layout */
+  --gutter: clamp(16px, 4vw, 48px);
+  --max: 1280px;
+  --target: 44px;
+  /* Type: the client-approved scale (spec/typography.md; breakpoints 1068 / 734). Every font-size in src is one of these
+     tokens or a documented decorative one (npm run check:type). H1, H2 and stat are the niche's display face at its
+     optical correction (exact pixels per [data-theme] below); H3 to label are Supreme unless a niche rule says so. */
+  --h1-size: 72px; --h1-lh: 1.02; --h1-ls: -.005em; --h1-weight: 400;
+  --h2-size: 29px; --h2-lh: 1.15; --h2-ls: -.005em; --h2-weight: 400;
+  --h3-size: 18px; --h3-lh: 1.3;
+  --lead-size: 19px; --lead-lh: 1.5;
+  --body-size: 16px; --body-lh: 1.6;
+  --card-size: 14px; --card-lh: 1.5; --card-ls: .005em;
+  --small-size: 13px; --small-lh: 1.45; --small-ls: .01em;
+  /* Capitals */
+  --eyebrow-size: 12px; --eyebrow-lh: 1.3; --eyebrow-ls: .12em;
+  --kicker-size: 11px; --kicker-lh: 1.3; --kicker-ls: .14em;
+  --label-size: 11px; --label-lh: 1.3; --label-ls: .06em;
+  /* Prices and figures: display face, lining tabular figures */
+  --stat-size: 34px; --stat-lh: 1; --stat-ls: -.01em; --stat-weight: 400;
+}
+
+/* Each display face at its optical correction k (the geometric mean of its x-height and cap-height against Supreme), as
+   the brief's exact pixels rather than a runtime calc(). The rules after :root, in each width band, win on the page root
+   and also on the front door's per-niche doors. */
+[data-theme="hospitality"] {
+  /* Bona Nova, k 1.08 (one weight, 400) */
+  --font-display: var(--font-display-hospitality);
+  --h1-size: 78px; --h1-lh: 1.04; --h1-ls: -.01em; --h2-size: 31px; --stat-size: 37px;
+}
+[data-theme="clinics"] {
+  /* Source Serif 4 at its display optical size, k 1.06: 300 only from 40 px up. Kickers are Azeret Mono. */
+  --font-display: var(--font-display-clinics);
+  --h1-size: 76px; --h1-lh: 1.03; --h1-ls: -.015em; --h1-weight: 300; --h2-size: 31px; --stat-size: 36px;
+  --kicker-ls: .06em;
+}
+[data-theme="dental"] {
+  /* Boska, k 1.00: 400 for the H1 at 56 px and up, 500 for H2, the phone H1, figures, times and small caps */
+  --font-display: var(--font-display-dental);
+  --h1-size: 72px; --h1-lh: 1.02; --h1-ls: -.005em; --h2-size: 29px; --h2-ls: 0; --h2-weight: 500; --stat-size: 34px; --stat-weight: 500;
+}
+@media (max-width: 1068px) {
+  :root { --h1-size: 56px; --h1-ls: -.0025em; --h2-size: 28px; }
+  [data-theme="hospitality"] { --h1-size: 60px; --h1-ls: -.005em; --h2-size: 30px; }
+  [data-theme="clinics"] { --h1-size: 59px; --h1-ls: -.0075em; --h2-size: 30px; }
+  [data-theme="dental"] { --h1-size: 56px; --h1-ls: -.0025em; --h2-size: 28px; }
+}
+@media (max-width: 734px) {
+  :root { --h1-size: 40px; --h1-lh: 1.06; --h1-ls: 0; --h2-size: 26px; --h2-lh: 1.18; --lead-size: 17px; --stat-size: 30px; }
+  [data-theme="hospitality"] { --h1-size: 43px; --h1-lh: 1.08; --h1-ls: 0; --h2-size: 28px; --stat-size: 32px; }
+  [data-theme="clinics"] { --h1-size: 42px; --h1-lh: 1.07; --h1-ls: 0; --h2-size: 28px; --stat-size: 32px; }
+  [data-theme="dental"] { --h1-size: 40px; --h1-lh: 1.06; --h1-ls: 0; --h1-weight: 500; --h2-size: 26px; --stat-size: 30px; }
+}
+
+/* Fixed chrome: niche CSS sets --dock-h (bottom dock) and --bar-h (top bar) on :root */
+html { scroll-padding-top: var(--bar-h, 0px); scroll-padding-bottom: var(--dock-h, 0px); }
+body {
+  min-height: 100svh;
+  padding-bottom: var(--dock-h, 0px);
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font: 400 var(--body-size)/var(--body-lh) var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+/* Greetings in other scripts */
+:lang(ar), :lang(ur) { font-family: var(--font-arabic, serif); }
+:lang(ja) { font-family: var(--font-jp, sans-serif); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 3px; }
+.eyebrow { font: 500 var(--eyebrow-size)/var(--eyebrow-lh) var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-accent-text); }
+
+/* ---------- Buttons: one filled action per view ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 26px; border-radius: 999px;
+  font: 500 var(--body-size)/1 var(--font-body); text-decoration: none; white-space: nowrap;
+  transition: background-color var(--dur-control) var(--ease-out), box-shadow var(--dur-control) var(--ease-out), transform var(--dur-control) var(--ease-out);
+}
+.btn:active { transform: scale(.98); }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn-primary { background: var(--color-accent-solid); color: var(--color-accent-ink); }
+.btn-primary:hover { background: var(--color-accent-solid-hover); }
+.btn-ghost { color: var(--color-text-primary); box-shadow: inset 0 0 0 1px var(--color-border-strong); }
+.btn-ghost:hover { box-shadow: inset 0 0 0 1px var(--color-text-primary); }
+.btn-sm { min-height: var(--target); padding: 0 18px; font-size: var(--card-size); }
+
+/* Fields the agent is writing into, and the glow when she has */
+.filling { caret-color: var(--color-accent-text); }
+.flash { animation: field-flash 1.4s var(--ease-out); }
+@keyframes field-flash { from { box-shadow: 0 0 0 3px var(--color-focus-ring); } to { box-shadow: 0 0 0 3px transparent; } }
+
+/* ---------- The stage: one fixed WebGL canvas behind the page ---------- */
+.stage-canvas { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; z-index: var(--z-stage); pointer-events: none; }
+main, footer { position: relative; z-index: var(--z-content); }
+
+/* ---------- The orb root (one per page) ---------- */
+.orb {
+  position: relative; width: var(--orb); height: var(--orb); flex: none; border-radius: 50%;
+  cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.orb[data-grab="true"], .orb[data-carry="true"] { cursor: grabbing; }
+.orb:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 10px; }
+.orb-fallback { position: absolute; inset: 0; border-radius: 50%; transition: opacity var(--dur-light) var(--ease-out); }
+.orb.is-live .orb-fallback { opacity: 0; }
+/* Inline mode only: the canvas inside the root, padded per kind. Fixed mode draws on .stage-canvas instead. */
+.orb-canvas { max-width: none; position: absolute; left: 50%; top: 50%; width: calc(var(--orb) * var(--orb-pad, 1)); height: calc(var(--orb) * var(--orb-pad, 1)); transform: translate(-50%, -50%); opacity: 0; transition: opacity var(--dur-light) var(--ease-out); }
+.orb.is-live .orb-canvas { opacity: 1; }
+.orb[data-orb="champagne"] { --orb-pad: 1.7; }
+
+/* Champagne glass */
+.orb[data-orb="champagne"] .orb-fallback {
+  background:
+    radial-gradient(circle at 50% 50%, var(--color-orb-core-hot) 0%, var(--color-orb-core) 16%, var(--color-orb-core-deep) 34%, transparent 46%),
+    radial-gradient(circle at 34% 26%, var(--color-orb-highlight) 0%, transparent 9%),
+    radial-gradient(circle at 50% 50%, var(--color-orb-glass) 0%, transparent 70.5%);
+  box-shadow: 0 0 120px 10px color-mix(in oklab, var(--color-orb-glow) 35%, transparent);
+}
+/* Frosted porcelain */
+.orb[data-orb="porcelain"] .orb-fallback {
+  inset: 14%;
+  background: radial-gradient(circle at 50% 52%, var(--color-orb-glow) 0%, var(--color-orb-glow-hot) 26%, var(--color-orb-body) 62%, var(--color-orb-shade) 100%);
+}
+/* Rosé pearl */
+.orb[data-orb="pearl"] .orb-fallback {
+  inset: 16%;
+  background: radial-gradient(circle at 36% 30%, var(--color-orb-highlight) 0%, var(--color-orb-body) 30%, var(--color-orb-sheen-listen) 72%, var(--color-orb-sheen) 100%);
+}
+
+/* ---------- Grain (hospitality) ---------- */
+[data-theme="hospitality"] body::after {
+  content: ""; position: fixed; inset: 0; z-index: var(--z-grain); pointer-events: none; opacity: .06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-contrast: more) {
+  [data-theme="hospitality"] body::after { content: none; }
+}
+
+/* ---------- Smooth scrolling (Lenis) ---------- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* ---------- Motion ---------- */
+/* Pause motion: every CSS animation holds where it is, and nothing new eases in (a change lands at once); transitions
+   already running and script animations are held by motion/prefs.ts */
+html[data-motion="paused"] *,
+html[data-motion="paused"] *::before,
+html[data-motion="paused"] *::after { animation-play-state: paused !important; transition-duration: 0s !important; transition-delay: 0s !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+  .orb-canvas, .orb-fallback, .btn { transition: none; }
+  .flash { animation: none; box-shadow: 0 0 0 2px var(--color-focus-ring); }
+}
+
+/* ---------- Print ---------- */
+@media print {
+  .stage-canvas, [data-voice-ui], [data-orb-pause], [data-sound-toggle], .orb { display: none !important; }
+  [data-theme="hospitality"] body::after { content: none; }
+  body { padding-bottom: 0; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; }
+}

@@ -1,0 +1,155 @@
+---
+// The start sheet (contract 12): a native dialog shown once per page load before the first voice call (never for
+// text). session.ts opens it and starts on close with its returnValue ('voice' | 'text'); Esc or Close cancels and
+// it shows again next time. The mic test listens for 2 s on a 5-bar meter, then releases the microphone.
+// The privacy line renders only when the copy has one. Structural CSS only, every selector inside :where().
+import type { SheetCopy } from '../../scripts/voice/bridge';
+
+interface Props {
+  copy: SheetCopy;
+  industry: 'hotels' | 'clinics' | 'dental';
+}
+const { copy, industry } = Astro.props;
+---
+<dialog class="sheet" data-sheet data-voice-ui data-industry={industry} aria-labelledby="sheet-title">
+  <form method="dialog" class="sheet-form">
+    <h2 id="sheet-title" class="sheet-title">{copy.title}</h2>
+    <ol class="sheet-lines" role="list">
+      {copy.lines.map((l) => <li><b>{l.lead}</b> {l.rest}</li>)}
+    </ol>
+    <div class="sheet-mic">
+      <button type="button" class="sheet-btn sheet-mictest" data-sheet-mictest aria-describedby="sheet-mic-status">{copy.micTest}</button>
+      <span class="sheet-meter" data-sheet-meter aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      <p class="sheet-mic-status" id="sheet-mic-status" role="status" data-sheet-micstatus></p>
+    </div>
+    {copy.privacy && <p class="sheet-privacy">{copy.privacy}</p>}
+    <div class="sheet-actions">
+      <button class="sheet-btn sheet-start" value="voice" autofocus>{copy.start}</button>
+      <button class="sheet-btn sheet-type" value="text">{copy.type}</button>
+    </div>
+    <button class="sheet-btn sheet-close" value="cancel">{copy.close}</button>
+  </form>
+</dialog>
+
+<script>
+  const MIC: Record<string, string> = {
+    NotAllowedError: 'Microphone access is blocked. You can allow it in your browser’s site settings, or write instead.',
+    NotFoundError: 'No microphone was found. You can write instead.',
+    NotReadableError: 'Your microphone is busy in another app.',
+    SecurityError: 'The microphone can’t be used on this address. You can write instead.',
+  };
+  const HEARD = 'Your microphone is working.';
+  const SILENT = 'Nothing came through. Check your microphone, or write instead.';
+  const LISTENING = 'Listening… say a few words.';
+  const TEST_MS = 2000;
+
+  const sheet = document.querySelector<HTMLDialogElement>('dialog[data-sheet]');
+  if (sheet) wire(sheet);
+
+  function wire(sheet: HTMLDialogElement) {
+    const button = sheet.querySelector<HTMLButtonElement>('[data-sheet-mictest]')!;
+    const bars = [...sheet.querySelectorAll<HTMLElement>('[data-sheet-meter] i')];
+    const status = sheet.querySelector<HTMLElement>('[data-sheet-micstatus]')!;
+    let stop: ((report: boolean) => void) | null = null;
+
+    button.addEventListener('click', async () => {
+      if (stop) return;
+      if (!navigator.mediaDevices?.getUserMedia) {
+        status.textContent = MIC.SecurityError!;
+        return;
+      }
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (err) {
+        status.textContent = MIC[(err as DOMException | null)?.name ?? ''] ?? 'The microphone didn’t start. You can write instead.';
+        return;
+      }
+      if (!sheet.open) return stream.getTracks().forEach((t) => t.stop());
+
+      const ctx = new AudioContext();
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 1024;
+      ctx.createMediaStreamSource(stream).connect(analyser);
+      const samples = new Float32Array(analyser.fftSize);
+      const t0 = performance.now();
+      let peak = 0;
+      let raf = 0;
+      sheet.dataset.testing = '';
+      status.textContent = LISTENING;
+
+      const frame = () => {
+        analyser.getFloatTimeDomainData(samples);
+        let sum = 0;
+        for (const s of samples) sum += s * s;
+        // Speech sits around 0.02–0.15 RMS; scaled so a normal voice fills three or four bars
+        const level = Math.min(1, Math.sqrt(sum / samples.length) * 7);
+        peak = Math.max(peak, level);
+        bars.forEach((bar, i) => bar.toggleAttribute('data-on', level > (i + 0.5) / 5));
+        if (performance.now() - t0 < TEST_MS) raf = requestAnimationFrame(frame);
+        else stop?.(true);
+      };
+      stop = (report) => {
+        cancelAnimationFrame(raf);
+        stream.getTracks().forEach((t) => t.stop());
+        void ctx.close();
+        bars.forEach((bar) => bar.removeAttribute('data-on'));
+        delete sheet.dataset.testing;
+        stop = null;
+        if (report) status.textContent = peak > 0.12 ? HEARD : SILENT;
+      };
+      raf = requestAnimationFrame(frame);
+    });
+
+    // Closing (any way) releases the microphone before the call asks for it again
+    sheet.addEventListener('close', () => {
+      stop?.(false);
+      status.textContent = '';
+    });
+  }
+</script>
+
+<style is:global>
+  /* Structure only; the niche skin owns the look. Every selector is wrapped in :where() (zero specificity). */
+  :where(dialog[data-sheet]) {
+    width: min(480px, calc(100vw - 32px)); max-height: calc(100svh - 32px); overflow: auto; padding: 0;
+    border: 1px solid var(--color-border); border-radius: 20px;
+    background: var(--color-bg-surface); color: var(--color-text-primary);
+    opacity: 1; translate: 0 0;
+    transition: opacity var(--dur-control) var(--ease-out), translate var(--dur-entry) var(--ease-out);
+  }
+  :where(dialog[data-sheet])::backdrop { background: color-mix(in oklab, var(--color-bg-page) 70%, transparent); backdrop-filter: blur(4px); }
+  @starting-style {
+    :where(dialog[data-sheet][open]) { opacity: 0; translate: 0 16px; }
+  }
+  :where([data-sheet] .sheet-form) { display: grid; gap: 20px; padding: 28px; }
+  :where([data-sheet] .sheet-title) { font: var(--h2-weight) var(--h2-size)/var(--h2-lh) var(--font-display); letter-spacing: var(--h2-ls); padding-right: 72px; }
+  :where([data-sheet] .sheet-lines) { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; color: var(--color-text-secondary); }
+  :where([data-sheet] .sheet-lines b) { font-weight: 500; color: var(--color-text-primary); }
+  :where([data-sheet] .sheet-mic) { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+  :where([data-sheet] .sheet-meter) { display: inline-flex; align-items: flex-end; gap: 3px; height: 20px; }
+  :where([data-sheet] .sheet-meter i) { width: 4px; border-radius: 2px; background: var(--color-border-strong); transition: background-color 80ms linear; }
+  :where([data-sheet] .sheet-meter i:nth-child(1)) { height: 6px; }
+  :where([data-sheet] .sheet-meter i:nth-child(2)) { height: 9px; }
+  :where([data-sheet] .sheet-meter i:nth-child(3)) { height: 12px; }
+  :where([data-sheet] .sheet-meter i:nth-child(4)) { height: 16px; }
+  :where([data-sheet] .sheet-meter i:nth-child(5)) { height: 20px; }
+  :where([data-sheet] .sheet-meter i[data-on]) { background: var(--color-accent-text); }
+  :where([data-sheet] .sheet-mic-status) { flex-basis: 100%; font-size: var(--small-size); line-height: var(--small-lh); letter-spacing: var(--small-ls); color: var(--color-text-secondary); }
+  :where([data-sheet] .sheet-privacy) { font-size: var(--small-size); line-height: var(--small-lh); letter-spacing: var(--small-ls); color: var(--color-text-secondary); }
+  :where([data-sheet] .sheet-actions) { display: flex; flex-wrap: wrap; gap: 10px; }
+  :where([data-sheet] .sheet-btn) {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-width: var(--target); min-height: var(--target); padding: 0 18px; border-radius: 999px;
+    font-size: var(--card-size); font-weight: 500; white-space: nowrap; color: var(--color-text-primary);
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
+  }
+  :where([data-sheet] .sheet-btn:hover) { box-shadow: inset 0 0 0 1px var(--color-text-primary); }
+  :where([data-sheet] .sheet-start) { min-height: 52px; padding: 0 26px; background: var(--color-accent-solid); color: var(--color-accent-ink); box-shadow: none; }
+  :where([data-sheet] .sheet-start:hover) { background: var(--color-accent-solid-hover); box-shadow: none; }
+  :where([data-sheet] .sheet-type) { min-height: 52px; }
+  :where([data-sheet] .sheet-close) { position: absolute; top: 16px; right: 16px; box-shadow: none; }
+  @media (prefers-reduced-motion: reduce) {
+    :where(dialog[data-sheet]) { transition: none; }
+  }
+</style>

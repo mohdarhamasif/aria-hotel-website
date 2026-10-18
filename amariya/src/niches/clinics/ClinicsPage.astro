@@ -1,0 +1,73 @@
+---
+// /clinics — The Line. One steel hairline runs the length of the page: everything Amariya handles sits on its
+// left (above it on phones), everything the clinic's team does on its right (below). P5 draws the line and the
+// porcelain into svg[data-line] and the fixed stage canvas; this page lays out both sides of every chapter.
+import Base from '../../layouts/Base.astro';
+import SkipLinks from '../../components/shared/SkipLinks.astro';
+import Transcript from '../../components/shared/Transcript.astro';
+import StartSheet from '../../components/shared/StartSheet.astro';
+import FollowNote from '../../components/shared/FollowNote.astro';
+import Toast from '../../components/shared/Toast.astro';
+import Glyphs from './components/Glyphs.astro';
+import TopBar from './components/TopBar.astro';
+import LineIndex from './components/LineIndex.astro';
+import Intake from './components/Intake.astro';
+import Story from './components/Story.astro';
+import CallRoom from './components/CallRoom.astro';
+import Dial from './components/Dial.astro';
+import LineChapter from './components/LineChapter.astro';
+import Clinic from './components/Clinic.astro';
+import Licence from './components/Licence.astro';
+import Apply from './components/Apply.astro';
+import Questions from './components/Questions.astro';
+import SignOff from './components/SignOff.astro';
+import Letter from './components/Letter.astro';
+import { content } from '../../data/content/clinics';
+import { getNiche } from '../../data/niches';
+import './clinics.css';
+
+const niche = getNiche('clinics');
+---
+<Base title={content.seo.title} description={content.seo.description} theme={niche.theme} fonts={niche.fonts} canonical={niche.canonical} ogImage={niche.ogImage} ogAlt={content.seo.ogAlt} jsonLd={content.jsonLd()}>
+  <Fragment slot="head">
+    <script is:inline>
+      // The lens before first paint, so a visitor who reads as Medical never sees the Aesthetic wording flash
+      (function () {
+        var lens = 'aesthetic';
+        try { if (localStorage.getItem('amariya_lens') === 'medical') lens = 'medical'; } catch (e) {}
+        document.documentElement.dataset.lens = lens;
+      })();
+    </script>
+  </Fragment>
+  <SkipLinks slot="skip" links={[{ href: '#story', label: 'Skip to content' }, { href: '#apply', label: 'Skip to apply' }]} />
+  <Glyphs />
+  <canvas class="stage-canvas" data-stage-canvas aria-hidden="true"></canvas>
+  <TopBar />
+  <LineIndex />
+
+  <main id="main" data-main>
+    <svg class="line" data-line aria-hidden="true" focusable="false"></svg>
+    <Intake />
+    <Story />
+    <CallRoom />
+    <Dial />
+    <LineChapter />
+    <Clinic />
+    <Licence />
+    <Apply />
+    <Questions />
+  </main>
+  <SignOff />
+
+  <Transcript copy={content.transcript}>
+    <svg slot="icon-close" class="glyph" aria-hidden="true"><use href="#g-close" /></svg>
+  </Transcript>
+  <StartSheet copy={content.voice.sheet} industry="clinics" />
+  <FollowNote lead="" />
+  <Toast />
+  <Letter />
+</Base>
+
+<script>
+  import './ui';
+</script>

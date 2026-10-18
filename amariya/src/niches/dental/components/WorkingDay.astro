@@ -1,0 +1,109 @@
+---
+// 09:10–16:10, The working day (#features): six phone entries at their times while every chair is busy, each with
+// its feature key, its recess in the phone lane (an anchor the pearl rests in, open until the call is answered) and
+// its call slip (a real <ol>; the caller's first line is printed, the rest plays through playScript when the entry
+// opens). Between entries, open gaps hold calls that only a dropped pearl (or a tap) brings out.
+// Without JS every entry is open with its first line; ui.ts folds them and opens each one as the day reaches it.
+import { content } from '../../../data/content/dental';
+import { given, type NicheCall } from '../../../data/content/types';
+
+const { workingDay, features, calls, callsNote, chapters } = content;
+const ch = chapters.find((c) => c.id === 'features')!;
+const callOf = (id: string) => calls.find((c) => c.id === id) as NicheCall;
+const mins = (hm: string) => Number(hm.slice(0, 2)) * 60 + Number(hm.slice(3, 5));
+const entries = workingDay.entries;
+const used = new Set(entries.map((e) => e.call));
+// A gap holds a scripted call that falls between two entries and is not already one of them
+const gaps = calls.filter((c) => c.time && !used.has(c.id) && mins(c.time) > mins(entries[0].time) && mins(c.time) < mins(entries[entries.length - 1].time));
+type Row = { kind: 'entry'; e: (typeof entries)[number] } | { kind: 'gap'; c: NicheCall };
+const rows: Row[] = [];
+entries.forEach((e, i) => {
+  rows.push({ kind: 'entry', e });
+  const next = entries[i + 1];
+  if (next) gaps.filter((g) => mins(g.time!) > mins(e.time) && mins(g.time!) < mins(next.time)).forEach((c) => rows.push({ kind: 'gap', c }));
+});
+const withAudio = entries.filter((e) => callOf(e.call).audio);
+---
+<section id="features" class="ch workday sheet-grid" data-chapter="features" data-section="features" data-time={ch.time} aria-labelledby="features-title">
+  <div class="chairs c-chairs" data-chairs="09:10-16:40" aria-hidden="true"></div>
+
+  <header class="ch-head c-text">
+    <p class="ch-time" aria-hidden="true"><span>{ch.time}</span></p>
+    <h2 id="features-title" class="ch-title"><span class="sr-only">{ch.time}, </span>{workingDay.title}</h2>
+    <p class="ch-lede ink">{workingDay.lede}</p>
+    <p class="gap-hint"><span class="hint-fine">{workingDay.gapHint}</span><span class="hint-touch">{workingDay.tapHint}</span></p>
+    {withAudio.length > 0 && (
+      <div class="hear" data-hear-controls>
+        {withAudio.map((e) => {
+          const c = callOf(e.call);
+          return <button type="button" class="btn btn-ghost btn-sm" data-hear={c.id}><svg class="glyph" aria-hidden="true"><use href="#g-speaker" /></svg>{workingDay.hear}<span class="sr-only">: {e.title}</span><audio preload="none" src={c.audio!.src} data-audio={c.id}></audio></button>;
+        })}
+        <button type="button" class="btn btn-ghost btn-sm" data-sound-toggle aria-pressed="false">{workingDay.enableSound}</button>
+      </div>
+    )}
+  </header>
+
+  <ol class="day-rows c-all" role="list">
+    {rows.map((row) => {
+      if (row.kind === 'entry') {
+        const e = row.e;
+        const c = callOf(e.call);
+        const first = c.lines[0];
+        const claim = e.claim ? given(e.claim) : null;
+        return (
+          <li class="day-row entry sheet-grid" id={e.id} data-entry={e.id} data-feature={e.feature} data-time={e.time} data-call={c.id}>
+            <div class="entry-head c-text">
+              <p class="entry-time" aria-hidden="true"><span>{e.time}</span></p>
+              <p class="entry-feature">{features[e.feature].title}</p>
+              <h3 class="entry-title">
+                <button type="button" class="entry-toggle" aria-expanded="true" aria-controls={`${e.id}-panel`} data-entry-toggle>
+                  <span class="sr-only">{e.time}, </span>{e.title}
+                </button>
+              </h3>
+              <p class="entry-outcome" data-outcome><svg class="glyph" aria-hidden="true"><use href="#g-tick" /></svg><span>{e.outcome}</span></p>
+            </div>
+            <div class="entry-panel c-textlane" id={`${e.id}-panel`} data-entry-panel>
+              <div class="entry-body">
+                <p class="entry-desc">{e.desc}</p>
+                {claim && <p class="entry-claim">{claim}</p>}
+              </div>
+              <div class="call" data-call-slip>
+                <p class="call-meta"><span>{c.meta}</span><span class="call-timer" data-call-timer aria-hidden="true">00:00</span></p>
+                <ol class="call-lines" role="list" aria-label={`${c.title}. ${callsNote}`} data-call-lines style={`--lines:${c.lines.length + 1}`}>
+                  <li data-who={first.who} data-static data-state="in" dir={first.dir ?? 'auto'} lang={first.lang}><span class="sr-only" lang="en">{first.who === 'a' ? content.transcript.her : c.meta.split(' · ')[0]}: </span>{first.text}{first.gloss && <span class="gloss" lang="en">{first.gloss}</span>}</li>
+                </ol>
+                {c.slips && (
+                  <ul class="call-slips" role="list" data-call-slips>
+                    {c.slips.map((s) => <li><b>{s.stamp}</b> {s.text}</li>)}
+                  </ul>
+                )}
+              </div>
+            </div>
+            <div class="recess-cell c-track">
+              <button type="button" class="recess anchor-recess" tabindex="-1" aria-hidden="true" data-recess data-slot={e.id} data-time={e.time} data-anchor data-open><span class="set-pearl"></span></button>
+            </div>
+          </li>
+        );
+      }
+      const c = row.c;
+      const first = c.lines[0];
+      const id = `g-${c.time!.replace(':', '')}`;
+      return (
+        <li class="day-row gap sheet-grid" data-gap={id} data-time={c.time} data-call={c.id}>
+          <div class="call gap-call c-textlane" data-call-slip data-gap-call hidden>
+            <p class="entry-time gap-call-time" aria-hidden="true"><span>{c.time}</span></p>
+            <h3 class="entry-title gap-title">{c.title}</h3>
+            <p class="call-meta"><span>{c.meta}</span><span class="call-timer" data-call-timer aria-hidden="true">00:00</span></p>
+            <ol class="call-lines" role="list" aria-label={`${c.title}. ${callsNote}`} data-call-lines style={`--lines:${c.lines.length + 1}`}>
+              <li data-who={first.who} data-static data-state="in" dir={first.dir ?? 'auto'} lang={first.lang}><span class="sr-only" lang="en">{first.who === 'a' ? content.transcript.her : c.meta.split(' · ')[0]}: </span>{first.text}</li>
+            </ol>
+          </div>
+          <div class="recess-cell c-track">
+            <button type="button" class="recess gap-recess" data-recess data-slot={id} data-time={c.time} data-open aria-label={`${c.time}, ${c.title}. ${workingDay.tapHint}`}><span class="set-pearl" aria-hidden="true"></span></button>
+            <span class="gap-time" aria-hidden="true">{c.time}</span>
+          </div>
+        </li>
+      );
+    })}
+  </ol>
+</section>

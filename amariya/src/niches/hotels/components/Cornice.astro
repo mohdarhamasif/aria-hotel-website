@@ -1,0 +1,27 @@
+---
+// The cornice: 72 px (56 on phones) under a 1 px brass rule. Brand left; the Night Dial in the centre once the
+// ring has docked; the switcher, Sound, the Do Not Disturb hanger (Pause motion) and the key-fob tag right.
+// Phones: brand, the time chip (opens the Night index), a compact Apply fob and the hanger.
+import { content } from '../../../data/content/hotels';
+import { ledgerCounts } from '../../../scripts/apply/adapter';
+import Switcher from '../../../components/shared/Switcher.astro';
+import SoundToggle from '../../../components/shared/SoundToggle.astro';
+import MotionToggle from '../../../components/shared/MotionToggle.astro';
+import NightDial from './NightDial.astro';
+import Icons from './Icons.astro';
+
+const { open } = ledgerCounts('hotels');
+// 'Take a key · 30 open': the first half folds away (for sighted visitors only) when the cornice is narrow
+const [take, count] = content.keys.fob(open).split(' · ');
+---
+<header class="cornice">
+  <a class="brand" href="/">Amariya</a>
+  <NightDial variant="cornice" />
+  <div class="cornice-tools">
+    <Switcher current="hotels" variant="menu" summary="For hotels & restaurants" class="cornice-switcher" />
+    <SoundToggle class="cornice-sound"><Icons name="eq" /></SoundToggle>
+    <MotionToggle class="hanger"><span class="hanger-card" aria-hidden="true"><Icons name="hanger" /></span></MotionToggle>
+    <a class="fob-tag" href="#keys" data-fob><Icons name="key" /><span class="fob-take">{take} · </span><span>{count}</span></a>
+    <a class="fob-apply" href="#register">Apply</a>
+  </div>
+</header>

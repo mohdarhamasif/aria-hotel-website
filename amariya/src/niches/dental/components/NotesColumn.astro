@@ -1,0 +1,89 @@
+---
+// 18:30, After hours (#faq): the paper warms as the reading line crosses it (ui.ts), the 18:30 gap and the 23:10
+// entry play in the phone lane, and the notes column holds the questions in three tabs of native details/summary.
+// Without JS the three groups stand one after another; ui.ts turns them into keyboard-operable tabs.
+// An answer the owner has not confirmed yet is left out with its question. Every answer ends in 'Ask Amariya this'.
+import { content } from '../../../data/content/dental';
+import { given, type NicheCall } from '../../../data/content/types';
+
+const { notesColumn, faqTabs, askThis, calls, callsNote, chapters, workingDay } = content;
+const ch = chapters.find((c) => c.id === 'faq')!;
+const late = calls.find((c) => c.id === 'knocked-out') as NicheCall;
+// The after-close call: a gap at this chapter's own time
+const gap = calls.find((c) => c.time === ch.time) as NicheCall | undefined;
+const tabs = faqTabs
+  .map((t) => ({ ...t, items: t.items.flatMap((it) => { const a = given(it.a); return a ? [{ q: it.q, a }] : []; }) }))
+  .filter((t) => t.items.length);
+const first = late.lines[0];
+---
+<section id="faq" class="ch notes sheet-grid" data-chapter="faq" data-section="faq" data-time={ch.time} aria-labelledby="faq-title">
+  <div class="chairs c-chairs" data-chairs="18:30-19:00" aria-hidden="true"></div>
+
+  <header class="ch-head c-text">
+    <p class="ch-time" aria-hidden="true"><span>{ch.time}</span></p>
+    <h2 id="faq-title" class="ch-title"><span class="sr-only">{ch.time}, </span>{notesColumn.title}</h2>
+    <p class="ch-lede ink">{notesColumn.lede}</p>
+  </header>
+
+  {gap && (
+    <div class="lane-gap c-lane" data-gap={`g-${gap.time!.replace(':', '')}`} data-call={gap.id}>
+      <div class="call gap-call" data-call-slip data-gap-call hidden>
+        <p class="entry-time gap-call-time" aria-hidden="true"><span>{gap.time}</span></p>
+        <h3 class="entry-title gap-title">{gap.title}</h3>
+        <p class="call-meta"><span>{gap.meta}</span><span class="call-timer" data-call-timer aria-hidden="true">00:00</span></p>
+        <ol class="call-lines" role="list" aria-label={`${gap.title}. ${callsNote}`} data-call-lines style={`--lines:${gap.lines.length + 1}`}>
+          <li data-who={gap.lines[0].who} data-static data-state="in" dir={gap.lines[0].dir ?? 'auto'} lang={gap.lines[0].lang}><span class="sr-only" lang="en">{gap.lines[0].who === 'a' ? content.transcript.her : gap.meta.split(' · ')[0]}: </span>{gap.lines[0].text}{gap.lines[0].gloss && <span class="gloss" lang="en">{gap.lines[0].gloss}</span>}</li>
+        </ol>
+      </div>
+    </div>
+  )}
+  {gap && (
+    <div class="recess-cell c-track lane-gap-recess">
+      <button type="button" class="recess gap-recess" data-recess data-slot={`g-${gap.time!.replace(':', '')}`} data-time={gap.time} data-open aria-label={`${gap.time}, ${gap.title}. ${workingDay.tapHint}`}><span class="set-pearl" aria-hidden="true"></span></button>
+      <span class="gap-time" aria-hidden="true">{gap.time}</span>
+    </div>
+  )}
+
+  <article class="late entry c-lane" id="e-2310" data-entry="e-2310" data-time={late.time} data-call={late.id} aria-labelledby="late-title">
+    <p class="entry-time" aria-hidden="true"><span>{late.time}</span></p>
+    <h3 id="late-title" class="entry-title late-title"><span class="sr-only">{late.time}, </span>{late.title}</h3>
+    <p class="late-line">{notesColumn.lateCall}</p>
+    <div class="call" data-call-slip>
+      <p class="call-meta"><span>{late.meta}</span><span class="call-timer" data-call-timer aria-hidden="true">00:00</span></p>
+      <ol class="call-lines" role="list" aria-label={`${late.title}. ${callsNote}`} data-call-lines style={`--lines:${late.lines.length + 1}`}>
+        <li data-who={first.who} data-static data-state="in" dir={first.dir ?? 'auto'} lang={first.lang}><span class="sr-only" lang="en">{first.who === 'a' ? content.transcript.her : late.meta.split(' · ')[0]}: </span>{first.text}</li>
+      </ol>
+      {late.slips && (
+        <ul class="call-slips" role="list" data-call-slips>
+          {late.slips.map((s) => <li><b>{s.stamp}</b> {s.text}</li>)}
+        </ul>
+      )}
+      {late.lands && <p class="call-lands" data-call-lands>{late.lands}</p>}
+    </div>
+  </article>
+  <div class="recess-cell c-track late-recess">
+    <button type="button" class="recess anchor-recess" tabindex="-1" aria-hidden="true" data-recess data-slot="e-2310" data-time={late.time} data-anchor data-open><span class="set-pearl"></span></button>
+  </div>
+
+  <div class="faq c-text" data-faq-tabs>
+    <div class="faq-tabs" role="tablist" aria-label={notesColumn.title} data-tablist hidden>
+      {tabs.map((t, i) => (
+        <button type="button" role="tab" class="faq-tab" id={`faq-tab-${t.id}`} aria-controls={`faq-panel-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-tab={t.id}>{t.label}</button>
+      ))}
+    </div>
+    {tabs.map((t) => (
+      <section class="faq-panel" id={`faq-panel-${t.id}`} aria-labelledby={`faq-head-${t.id}`} data-panel={t.id}>
+        <h3 class="faq-head" id={`faq-head-${t.id}`}>{t.label}</h3>
+        {t.items.map((it) => (
+          <details class="note" data-ask={it.q}>
+            <summary class="note-q">{it.q}</summary>
+            <div class="note-a">
+              <p>{it.a}</p>
+              <button type="button" class="ask-this" data-ask-this>{askThis}<span class="sr-only">: {it.q}</span></button>
+            </div>
+          </details>
+        ))}
+      </section>
+    ))}
+  </div>
+</section>

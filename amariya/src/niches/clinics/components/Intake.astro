@@ -1,0 +1,99 @@
+---
+// 00 · Intake (#welcome): one split h1 across the line, the porcelain resting against it inside four brackets
+// on a printed 24-hour ring, the two ways to talk, and the ledger strip at the foot of the first screen.
+import OrbRoot from '../../../components/shared/OrbRoot.astro';
+import { content } from '../../../data/content/clinics';
+import { ledgerCounts } from '../../../scripts/apply/adapter';
+
+const { intake, lens, sides, chapters, builtFor } = content;
+const ch = chapters[0];
+const counts = ledgerCounts('clinics');
+const strip = intake.strip(counts);
+const lede = intake.lede;
+const hours = Array.from({ length: 24 }, (_, h) => h);
+// Noon at the top, 06 on the left and 18 on the right: the sun's own path across the page
+const angle = (h: number) => ((h - 12) / 24) * 2 * Math.PI;
+const at = (h: number, r: number) => [Math.sin(angle(h)) * r, -Math.cos(angle(h)) * r].map((v) => v.toFixed(2));
+---
+<section id={ch.id} class="ch ch-intake" data-chapter={ch.id} data-section="welcome" data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="welcome-title">
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+
+  <p class="side-label her intake-label-her" data-side-label="her">{sides.her}</p>
+  <p class="side-label team intake-label-team" data-side-label="team">{sides.team}</p>
+
+  <div class="her intake-eyebrow" data-side="her">
+    <span class="mono">{intake.eyebrow}</span>
+    <div class="lens lens-eyebrow" role="group" aria-label={lens.label.replace(/:$/, '')}>
+      <button type="button" data-lens-set="medical" aria-pressed="false">{lens.eyebrowLabels.medical}</button>
+      <button type="button" data-lens-set="aesthetic" aria-pressed="true">{lens.eyebrowLabels.aesthetic}</button>
+    </div>
+    <p class="sr-only">{builtFor.sr}</p>
+  </div>
+
+  <h1 id="welcome-title" class="intake-h1">
+    <span class="h1-her">{intake.h1.her[0]}<br /> {intake.h1.her[1]}</span>
+    <span class="h1-team" data-side="team">{intake.h1.team[0]}<br /> {intake.h1.team[1]}</span>
+  </h1>
+
+  <div class="intake-orb">
+  <div class="intake-anchor" data-orb-anchor>
+    <svg class="hour-ring" viewBox="-112 -112 224 224" aria-hidden="true">
+      <circle class="hr-circle" r="104" />
+      {hours.map((h) => {
+        const [x1, y1] = at(h, h % 6 === 0 ? 93 : 98);
+        const [x2, y2] = at(h, 104);
+        return <line class={h % 6 === 0 ? 'hr-tick hr-tick-major' : 'hr-tick'} x1={x1} y1={y1} x2={x2} y2={y2} />;
+      })}
+      <line class="hr-now" data-hour-now x1="0" y1="-109" x2="0" y2="-93" />
+    </svg>
+    {[0, 6, 12, 18].map((h) => {
+      const [x, y] = at(h, 88).map((v) => (Number(v) / 224).toFixed(4));
+      return <span class="hr-num" aria-hidden="true" style={`--hx: ${x}; --hy: ${y}`}>{String(h).padStart(2, '0')}</span>;
+    })}
+    <OrbRoot kind="porcelain" canvas="fixed" label="Amariya, press to talk. Drag or use the arrow keys to turn her." style="--orb: var(--orb-hero)">
+      <span class="brackets" aria-hidden="true"><i data-b="tl"></i><i data-b="tr"></i><i data-b="bl"></i><i data-b="br"></i></span>
+      <svg class="orb-ring" viewBox="-112 -112 224 224" aria-hidden="true">
+        <circle class="hr-circle" r="104" />
+        {hours.map((h) => {
+          const [x1, y1] = at(h, h % 6 === 0 ? 93 : 98);
+          const [x2, y2] = at(h, 104);
+          return <line class={h % 6 === 0 ? 'hr-tick hr-tick-major' : 'hr-tick'} x1={x1} y1={y1} x2={x2} y2={y2} />;
+        })}
+        <line class="hr-now" data-ring-hand x1="0" y1="-109" x2="0" y2="-93" />
+      </svg>
+    </OrbRoot>
+    <p id="orb-help-clinics" class="sr-only">Up and down arrows move her from point to point along the line. Shift and the right arrow push her against the line, and she hands the question to your team. End turns her over to show her mark. Escape sends her home.</p>
+  </div>
+    <p class="intake-hint mono" data-hint aria-hidden="true">{intake.hint}</p>
+    <button type="button" class="intake-push" data-push hidden>{intake.hintButton}</button>
+  </div>
+
+  <p class="her intake-lede" data-side="her">
+    {typeof lede === 'string' ? lede : <><span data-lens-text="medical">{lede.medical}</span><span data-lens-text="aesthetic">{lede.aesthetic}</span></>}
+  </p>
+  <div class="team intake-team" data-side="team">
+    <p>{intake.team}</p>
+    <div class="slip intake-slip" data-intake-slip hidden>
+      <p class="slip-stamp mono">{content.line.handoffPrefix} · CLINICAL</p>
+      <p class="slip-text">{intake.demoSlip}</p>
+    </div>
+  </div>
+
+  <div class="her intake-actions" data-side="her">
+    <button type="button" class="btn btn-primary" data-orb-talk>
+      <svg class="glyph" aria-hidden="true"><use href="#g-mic" /></svg>{intake.talk}
+    </button>
+    <button type="button" class="btn btn-ghost" data-orb-type>
+      <svg class="glyph" aria-hidden="true"><use href="#g-type" /></svg>{intake.text}
+    </button>
+  </div>
+  <p class="her intake-note" data-side="her">{intake.note.before}<a href="#call">{intake.note.link}</a></p>
+
+  <aside class="strip" aria-label="Founding licence">
+    <p class="strip-row mono">
+      {strip.map((s, i) => <span class:list={['strip-part', `strip-part-${i}`]}>{s}</span>)}
+      <a class="strip-apply" href="#apply">{intake.stripAction}</a>
+    </p>
+  </aside>
+  <a class="strip-hint mono" href="#pricing">{intake.shortHint}</a>
+</section>

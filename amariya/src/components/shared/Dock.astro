@@ -1,0 +1,248 @@
+---
+// The conversation dock (contract 12): the mini orb, status, printed state boxes, caption, call timer and controls.
+// Idle shows Talk and Write; a live call shows Log, Mute, Switch and End. Talk and Write start through the orb's
+// [data-orb-talk]/[data-orb-type] wiring (boot.ts); the log toggle belongs to Transcript.astro.
+// Structural CSS only, every selector inside :where() so the niche skin always wins. Niches can put their own
+// glyphs into the named slots icon-talk, icon-write, icon-log, icon-mute, icon-switch and icon-end.
+import type { DockCopy } from '../../scripts/voice/bridge';
+
+interface Props {
+  copy: DockCopy;
+  variant?: 'bottom' | 'inline' | 'top';
+  industry: 'hotels' | 'clinics' | 'dental';
+}
+const { copy, variant = 'bottom', industry } = Astro.props;
+// The words the page script swaps in
+const words = { status: copy.status, muted: copy.muted, yourTurn: copy.yourTurn, mute: copy.mute, unmute: copy.unmute, toText: copy.toText, toVoice: copy.toVoice };
+// The printed state boxes (decorative: the status line carries the same words)
+const boxes = [
+  { k: 'ring', label: copy.status.connecting },
+  { k: 'listen', label: copy.status.listening },
+  { k: 'think', label: copy.status.thinking },
+  { k: 'speak', label: 'Speaking' },
+  { k: 'mute', label: 'Muted' },
+];
+---
+<aside class="dock" data-dock data-voice-ui data-variant={variant} data-industry={industry} data-state="idle" data-mode="voice" data-tone="warm" data-muted="false" aria-label={copy.aria} data-copy={JSON.stringify(words)}>
+  <span class="dock-mini orb-mini" data-dock-mini aria-hidden="true"></span>
+  <div class="dock-text">
+    {copy.header && <p class="dock-header" aria-hidden="true">{copy.header}</p>}
+    <div class="dock-line">
+      <p class="dock-status" data-dock-status>{copy.status.idle}</p>
+      <span class="dock-states" data-dock-states aria-hidden="true">
+        {boxes.map((b) => (
+          <span class="dock-state" data-k={b.k} data-on="false">
+            <svg class="dock-box" viewBox="0 0 12 12" width="12" height="12" focusable="false"><rect x=".5" y=".5" width="11" height="11" rx="1.5" /><path d="M2.7 6.4 5 8.6l4.3-5" pathLength="1" /></svg>
+            {b.label}
+          </span>
+        ))}
+      </span>
+    </div>
+    <p class="dock-caption" data-dock-caption>{copy.captionIdle}</p>
+  </div>
+  <span class="dock-timer" data-dock-timer aria-hidden="true" hidden>00:00</span>
+  <div class="dock-actions">
+    <button type="button" class="dock-btn dock-talk" data-dock-talk data-orb-talk><slot name="icon-talk" /><span>{copy.talk}</span></button>
+    <button type="button" class="dock-btn dock-write" data-dock-write data-orb-type><slot name="icon-write" /><span>{copy.write}</span></button>
+    <button type="button" class="dock-btn dock-log" data-dock-log aria-expanded="false" aria-controls="voice-log" hidden><slot name="icon-log" /><span>{copy.log}</span></button>
+    <button type="button" class="dock-btn dock-mute" data-dock-mute aria-pressed="false" hidden><slot name="icon-mute" /><span data-dock-label>{copy.mute}</span></button>
+    <button type="button" class="dock-btn dock-switch" data-dock-switch hidden><slot name="icon-switch" /><span data-dock-label>{copy.toText}</span></button>
+    <button type="button" class="dock-btn dock-end" data-dock-end hidden><slot name="icon-end" /><span>{copy.end}</span></button>
+  </div>
+  <p class="sr-only" data-dock-live role="status"></p>
+</aside>
+
+<script>
+  import { voice, type VoiceMode, type VoiceState } from '../../scripts/voice/bridge';
+  import { switchMode } from '../../scripts/voice/session';
+  import { motion } from '../../scripts/motion/prefs';
+
+  interface Words { status: Record<VoiceState, string>; muted: string; yourTurn: string; mute: string; unmute: string; toText: string; toVoice: string }
+
+  const LIVE: VoiceState[] = ['listening', 'thinking', 'speaking'];
+  const ENDED = { user: 'You ended the call', agent: 'Amariya ended the call', error: 'The line dropped' };
+  const two = (n: number) => String(n).padStart(2, '0');
+  /** '3 minutes 12 seconds', for the one announcement at the end */
+  const spoken = (s: number) => {
+    const m = Math.floor(s / 60), r = s % 60;
+    const part = (n: number, unit: string) => `${n} ${unit}${n === 1 ? '' : 's'}`;
+    return m ? `${part(m, 'minute')}${r ? ` ${part(r, 'second')}` : ''}` : part(r, 'second');
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-dock]').forEach((dock) => {
+    const words = JSON.parse(dock.dataset.copy || '{}') as Words;
+    const $ = <T extends HTMLElement = HTMLElement>(s: string) => dock.querySelector<T>(s)!;
+    const status = $('[data-dock-status]'), caption = $('[data-dock-caption]'), timer = $('[data-dock-timer]'), live = $('[data-dock-live]');
+    const talk = $<HTMLButtonElement>('[data-dock-talk]'), write = $<HTMLButtonElement>('[data-dock-write]'), log = $<HTMLButtonElement>('[data-dock-log]');
+    const mute = $<HTMLButtonElement>('[data-dock-mute]'), swap = $<HTMLButtonElement>('[data-dock-switch]'), end = $<HTMLButtonElement>('[data-dock-end]');
+    const boxes = dock.querySelectorAll<HTMLElement>('[data-dock-states] [data-k]');
+    const actions = [talk, write, log, mute, swap, end];
+    let was = { state: voice.state, mode: voice.mode, muted: voice.muted };
+    let fresh = false;
+    let ticking = 0;
+    let swapping = 0;
+    let saying = 0;
+
+    /** The polite region: only milestones, never every listening/speaking turn */
+    function say(text: string) {
+      clearTimeout(saying);
+      live.textContent = '';
+      saying = window.setTimeout(() => { live.textContent = text; }, 60);
+    }
+
+    function tick() {
+      const at = voice.connectedAt;
+      const s = at ? Math.max(0, Math.floor((Date.now() - at) / 1000)) : 0;
+      const text = `${two(Math.floor(s / 60))}:${two(s % 60)}`;
+      if (timer.textContent !== text) timer.textContent = text;
+      timer.hidden = at === null || voice.state === 'idle';
+    }
+
+    function render(state: VoiceState, mode: VoiceMode, muted: boolean) {
+      const focused = actions.find((b) => b === document.activeElement);
+      dock.dataset.state = state;
+      dock.dataset.mode = mode;
+      dock.dataset.muted = String(muted);
+      status.textContent = muted && state === 'listening' ? words.muted : mode === 'text' && state === 'listening' ? words.yourTurn : words.status[state];
+      const on: Record<string, boolean> = { ring: state === 'connecting', listen: state === 'listening', think: state === 'thinking', speak: state === 'speaking', mute: muted && state !== 'idle' };
+      boxes.forEach((b) => { b.dataset.on = String(!!on[b.dataset.k ?? '']); });
+
+      const idle = state === 'idle', isLive = LIVE.includes(state);
+      talk.hidden = write.hidden = !idle;
+      end.hidden = idle;
+      log.hidden = !isLive;
+      swap.hidden = !isLive;
+      mute.hidden = !isLive || mode !== 'voice';
+      mute.setAttribute('aria-pressed', String(muted));
+      mute.querySelector('[data-dock-label]')!.textContent = muted ? words.unmute : words.mute;
+      swap.querySelector('[data-dock-label]')!.textContent = mode === 'voice' ? words.toText : words.toVoice;
+
+      // A control that just disappeared under the keyboard user's focus hands it to the next one
+      if (focused?.hidden) actions.find((b) => !b.hidden)?.focus();
+
+      if (idle) { clearInterval(ticking); ticking = 0; }
+      else if (!ticking) ticking = window.setInterval(tick, 250);
+      tick();
+    }
+
+    voice.on('state', ({ state, mode, muted }) => {
+      if (was.state === 'idle' && state === 'connecting') { fresh = true; say(words.status.connecting); }
+      if (state !== 'idle' && was.state !== 'idle' && muted !== was.muted) say(muted ? words.muted : 'Microphone on');
+      was = { state, mode, muted };
+      render(state, mode, muted);
+    });
+    voice.on('mode', ({ mode }) => {
+      if (voice.state !== 'idle' && mode !== was.mode) say(mode === 'text' ? 'Switched to writing' : 'Switched to voice');
+      was.mode = mode;
+      render(voice.state, mode, voice.muted);
+    });
+    voice.on('connected', () => {
+      if (fresh) say(voice.mode === 'text' ? 'Connected. You can write to Amariya now.' : 'Connected. Amariya is with you.');
+      fresh = false;
+      tick();
+    });
+    voice.on('ended', ({ reason, duration }) => say(`${ENDED[reason]}. ${spoken(duration)}.`));
+    voice.on('tone', ({ tone }) => { dock.dataset.tone = tone; });
+    voice.on('caption', ({ text, who }) => {
+      clearTimeout(swapping);
+      const show = () => {
+        caption.textContent = text;
+        caption.title = text;
+        caption.dataset.who = who;
+        caption.classList.remove('is-swapping');
+      };
+      if (!motion.allowed) return show();
+      caption.classList.add('is-swapping');
+      swapping = window.setTimeout(show, 120);
+    });
+
+    mute.addEventListener('click', () => voice.setMuted(!voice.muted));
+    swap.addEventListener('click', () => void switchMode(voice.mode === 'voice' ? 'text' : 'voice'));
+    end.addEventListener('click', () => voice.stop());
+
+    render(voice.state, voice.mode, voice.muted);
+  });
+</script>
+
+<style is:global>
+  /* Structure only; the niche skin owns the look. Every selector is wrapped in :where() (zero specificity). */
+  :where([data-dock]) {
+    display: flex; align-items: center; gap: 12px; min-width: 0;
+    color: var(--color-text-primary); font-size: var(--card-size); line-height: var(--card-lh); letter-spacing: var(--card-ls);
+  }
+  :where([data-dock][data-variant="bottom"]) {
+    position: fixed; inset: auto 0 0; z-index: var(--z-chrome);
+    height: var(--dock-h, 72px); padding: 0 var(--gutter) env(safe-area-inset-bottom, 0px);
+    background: var(--color-bg-surface); border-top: 1px solid var(--color-border);
+  }
+
+  /* The mini orb: a still of the page's orb, breathing with the voice level */
+  :where([data-dock] .dock-mini) {
+    flex: none; width: 32px; height: 32px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 36%, var(--color-text-primary), var(--color-accent-solid) 70%);
+    transform: scale(calc(1 + var(--amp, 0) * .14));
+  }
+  :where([data-dock][data-industry="hotels"] .dock-mini) {
+    background: radial-gradient(circle at 50% 50%, var(--color-orb-core-hot) 0%, var(--color-orb-core) 24%, var(--color-orb-core-deep) 48%, var(--color-orb-glass) 72%);
+  }
+  :where([data-dock][data-industry="clinics"] .dock-mini) {
+    background: radial-gradient(circle at 50% 52%, var(--color-orb-glow) 0%, var(--color-orb-glow-hot) 26%, var(--color-orb-body) 62%, var(--color-orb-shade) 100%);
+  }
+  :where([data-dock][data-industry="dental"] .dock-mini) {
+    background: radial-gradient(circle at 36% 30%, var(--color-orb-highlight) 0%, var(--color-orb-body) 30%, var(--color-orb-sheen-listen) 72%, var(--color-orb-sheen) 100%);
+  }
+
+  :where([data-dock] .dock-text) { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
+  :where([data-dock] .dock-header) { font: 500 var(--eyebrow-size)/var(--eyebrow-lh) var(--font-body); letter-spacing: var(--eyebrow-ls); text-transform: uppercase; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  :where([data-dock] .dock-line) { display: flex; align-items: center; gap: 16px; min-width: 0; }
+  :where([data-dock] .dock-status) { flex: none; font-weight: 500; white-space: nowrap; }
+  :where([data-dock] .dock-states) { display: flex; gap: 12px; min-width: 0; overflow: hidden; font: 500 var(--kicker-size)/var(--kicker-lh) var(--font-body); letter-spacing: var(--kicker-ls); text-transform: uppercase; color: var(--color-text-secondary); }
+  :where([data-dock] .dock-state) { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  :where([data-dock] .dock-box) { flex: none; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1; }
+  :where([data-dock] .dock-box path) { stroke: var(--color-accent-text); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 180ms var(--ease-draw); }
+  :where([data-dock] .dock-state[data-on="true"]) { color: var(--color-text-primary); }
+  :where([data-dock] .dock-state[data-on="true"] .dock-box path) { stroke-dashoffset: 0; }
+  :where([data-dock] .dock-caption) {
+    color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: opacity 120ms var(--ease-out);
+  }
+  :where([data-dock] .dock-caption.is-swapping) { opacity: 0; }
+  :where([data-dock] .dock-timer) { flex: none; font-variant-numeric: tabular-nums lining-nums; color: var(--color-text-secondary); }
+
+  :where([data-dock] .dock-actions) { flex: none; display: flex; align-items: center; gap: 6px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  :where([data-dock] .dock-btn) {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-width: var(--target); min-height: var(--target); padding: 0 14px; border-radius: 999px;
+    font-size: var(--card-size); font-weight: 500; white-space: nowrap; color: var(--color-text-primary);
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
+    transition: box-shadow var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+  }
+  :where([data-dock] .dock-btn:hover) { box-shadow: inset 0 0 0 1px var(--color-text-primary); }
+  :where([data-dock] .dock-btn svg) { flex: none; width: 18px; height: 18px; }
+  :where([data-dock] .dock-talk) { background: var(--color-accent-solid); color: var(--color-accent-ink); box-shadow: none; }
+  :where([data-dock] .dock-talk:hover) { background: var(--color-accent-solid-hover); box-shadow: none; }
+  :where([data-dock] .dock-mute[aria-pressed="true"]) { background: var(--color-bg-accent-subtle); color: var(--color-accent-text-on-subtle); }
+
+  @media (max-width: 1068px) {
+    :where([data-dock] .dock-states) { display: none; }
+  }
+  @media (max-width: 734px) {
+    :where([data-dock]) { gap: 8px; }
+    :where([data-dock] .dock-header), :where([data-dock] .dock-caption), :where([data-dock] .dock-timer) { display: none; }
+    :where([data-dock] .dock-actions) { gap: 4px; }
+    :where([data-dock] .dock-btn) { padding: 0 10px; }
+    /* A phone's bottom dock: the mini orb, the active state word with its tick, and the controls. The status line
+       would only run under the buttons; in a call the four controls are glyphs (their words stay for screen readers). */
+    :where([data-dock][data-variant="bottom"] .dock-status) { display: none; }
+    :where([data-dock][data-variant="bottom"] .dock-states) { display: flex; }
+    :where([data-dock][data-variant="bottom"] .dock-state[data-on="false"]) { display: none; }
+    :where([data-dock][data-variant="bottom"] :is(.dock-log, .dock-mute, .dock-switch, .dock-end)) { width: var(--target); padding: 0; }
+    :where([data-dock][data-variant="bottom"] :is(.dock-log, .dock-mute, .dock-switch, .dock-end) > span) {
+      position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :where([data-dock] .dock-mini) { transform: none; }
+    :where([data-dock] .dock-box path), :where([data-dock] .dock-caption), :where([data-dock] .dock-btn) { transition: none; }
+  }
+</style>

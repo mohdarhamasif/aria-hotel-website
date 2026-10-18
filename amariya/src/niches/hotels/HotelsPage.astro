@@ -1,0 +1,75 @@
+---
+// /hotels, The Night Log: one night at the visitor's own house, 18:00 to 07:45. The fixed canvas is the house
+// (P3's scene); the copy is ordinary DOM in reading order, in the log column over the scrim.
+import Base from '../../layouts/Base.astro';
+import SkipLinks from '../../components/shared/SkipLinks.astro';
+import Dock from '../../components/shared/Dock.astro';
+import Transcript from '../../components/shared/Transcript.astro';
+import StartSheet from '../../components/shared/StartSheet.astro';
+import FollowNote from '../../components/shared/FollowNote.astro';
+import Toast from '../../components/shared/Toast.astro';
+import Cornice from './components/Cornice.astro';
+import Prologue from './components/Prologue.astro';
+import PropertyCard from './components/PropertyCard.astro';
+import LogEntry from './components/LogEntry.astro';
+import Handover from './components/Handover.astro';
+import KeyRack from './components/KeyRack.astro';
+import Registration from './components/Registration.astro';
+import QuestionsAtTheDesk from './components/QuestionsAtTheDesk.astro';
+import Checkout from './components/Checkout.astro';
+import NightIndex from './components/NightIndex.astro';
+import Icons from './components/Icons.astro';
+import { content } from '../../data/content/hotels';
+import { getNiche } from '../../data/niches';
+import './hotels.css';
+
+const niche = getNiche('hotels');
+const ROOMS = ['restaurant', 'lobby', 'room-214', 'night-desk', 'back-office', 'room-507'];
+const entries = ROOMS.map((id) => content.chapters.find((c) => c.id === id)!);
+const followLead = content.follow.lead('', '').replace(/[\s·]+$/, '');
+---
+<Base title={content.seo.title} description={content.seo.description} theme={niche.theme} fonts={niche.fonts} canonical={niche.canonical} ogImage={niche.ogImage} ogAlt={content.seo.ogAlt} jsonLd={content.jsonLd()}>
+  <SkipLinks slot="skip" links={[{ href: '#house', label: 'Skip to the night' }, { href: '#register', label: 'Skip to registration' }]} />
+  <canvas class="stage-canvas" data-stage-canvas aria-hidden="true"></canvas>
+  <div class="scrim" aria-hidden="true"></div>
+  <svg class="annotation" aria-hidden="true" focusable="false" data-annotation-layer>
+    <path class="annotation-line" data-annotation-path pathLength="1" d="M0 0" />
+    <circle class="annotation-ring" data-annotation-ring cx="0" cy="0" r="5" />
+  </svg>
+  <p class="band-hour" aria-hidden="true" data-band-hour></p>
+  <p class="room-tag" aria-hidden="true" data-room-tag></p>
+  <div class="lights" aria-hidden="true"></div>
+
+  <Cornice />
+
+  <main id="main">
+    <Prologue />
+    <PropertyCard />
+    {entries.map((c) => <LogEntry chapter={c} />)}
+    <Handover />
+    <KeyRack />
+    <Registration />
+    <QuestionsAtTheDesk />
+  </main>
+  <Checkout />
+
+  <NightIndex />
+  <Dock copy={content.voice.dock} variant="bottom" industry="hotels">
+    <Icons slot="icon-talk" name="bell" />
+    <Icons slot="icon-write" name="nib" />
+    <Icons slot="icon-log" name="slip" />
+    <Icons slot="icon-mute" name="mute" />
+    <Icons slot="icon-switch" name="handset" />
+    <Icons slot="icon-end" name="end" />
+  </Dock>
+  <Transcript copy={content.transcript}>
+    <Icons slot="icon-send" name="nib" />
+  </Transcript>
+  <StartSheet copy={content.voice.sheet} industry="hotels" />
+  <FollowNote lead={followLead} action={content.follow.action} />
+  <Toast />
+</Base>
+
+<script>
+  import './ui';
+</script>

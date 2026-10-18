@@ -1,0 +1,46 @@
+---
+// VIII · 07:00 · The morning handover (#handover): the ROI as a note on the owner's desk. Blank ruled lines
+// until there are rooms or calls; then the lines count up (ui.ts writes them from content.handover so the
+// wording stays in one place). The OTA line appears only once the visitor types their own rate. Print gives
+// one A4 page; 'Send it to my GM' is a mailto with the same lines.
+import { content } from '../../../data/content/hotels';
+import LogEntry from './LogEntry.astro';
+import Icons from './Icons.astro';
+
+const chapter = content.chapters.find((c) => c.id === 'handover')!;
+const { handover: h, roi } = content;
+---
+<LogEntry chapter={chapter}>
+  <article class="panel note" data-handover data-empty aria-labelledby="handover-heading">
+    <p class="eyebrow">{h.eyebrow}</p>
+    <h3 id="handover-heading" class="note-head" data-handover-heading>{h.heading(h.defaultName, 'tomorrow')}</h3>
+    <p class="note-empty" data-note-empty>{h.empty}</p>
+    <ol class="note-lines" role="list">
+      <li class="note-line" data-line="missed"></li>
+      <li class="note-line" data-line="revenue"></li>
+      <li class="note-line" data-line="hours"></li>
+      <li class="note-line" data-line="payback"></li>
+      <li class="note-line note-line--small" data-line="minutes"></li>
+      <li class="note-line note-line--small" data-line="ota" hidden></li>
+    </ol>
+    <p class="note-basis" data-basis></p>
+    <p class="note-disclaimer">{roi.disclaimer}</p>
+
+    <div class="note-inputs">
+      <div class="field field--inline">
+        <label for="h-ota">{h.ota.label}</label>
+        <input id="h-ota" name="ota" type="text" inputmode="decimal" autocomplete="off" data-ota />
+      </div>
+      <div class="field field--inline" data-variant="restaurant">
+        <label for="h-spend">{h.restaurant.spendLabel}</label>
+        <input id="h-spend" name="spend" type="text" inputmode="decimal" autocomplete="off" data-spend />
+      </div>
+      <p class="note-needs" data-variant="restaurant">{h.restaurant.needs}</p>
+    </div>
+
+    <div class="note-actions">
+      <button type="button" class="line-btn" data-handover-print><Icons name="ledger" /><span>{h.print}</span></button>
+      <a class="line-btn" data-handover-send href={`mailto:?subject=${encodeURIComponent(h.mail.subject(h.defaultName))}`}><Icons name="slip" /><span>{h.send}</span></a>
+    </div>
+  </article>
+</LogEntry>

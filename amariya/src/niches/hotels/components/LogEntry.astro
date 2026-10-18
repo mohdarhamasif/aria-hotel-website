@@ -1,0 +1,135 @@
+---
+// One entry in the night log, and the shell every chapter after the prologue uses: running head, the hour
+// numeral hanging into the log column, the h2 that names the hour and room in words, the night-log lines,
+// 'What she does here', the scripted calls as real ordered lists (first line static), the slips, the outcome
+// stamp and the room's annotation label. Panels (property card, handover, key rack, registration, questions)
+// go in the default slot. A restaurant-only house swaps in the [data-variant="restaurant"] copy.
+import { content } from '../../../data/content/hotels';
+import type { HotelChapter, NicheCall } from '../../../data/content/types';
+
+interface Props {
+  chapter: HotelChapter;
+}
+const { chapter: c } = Astro.props;
+const r = c.restaurant;
+
+const SECTIONS = new Set(['welcome', 'profile', 'features', 'pricing', 'demo', 'faq', 'footer']);
+const section = c.section ?? (c.id === 'faq' ? 'faq' : undefined);
+const callsById = new Map(content.calls.map((call) => [call.id, call]));
+const callsOf = (ids: string[]) => ids.map((id) => callsById.get(id)).filter((x): x is NicheCall => !!x);
+// '23:48 — Room 214: …' → the hour is said by the numeral, so screen readers alone hear it in the heading
+const split = (h2: string) => {
+  const i = h2.indexOf(' — ');
+  return i < 0 ? ['', h2] : [h2.slice(0, i), h2.slice(i + 3)];
+};
+// Numbers set in the display face's tabular lining figures (the body face has none)
+const parts = (s: string) => s.split(/(\d[\d:.,]*\d|\d)/);
+// Each stamp sits at its own angle, −3° to 2°, the same on every visit
+const rot = ([...c.id].reduce((a, ch) => a + ch.charCodeAt(0), 0) % 6) - 3;
+const clocked = c.hour !== '' && c.hour !== 'now';
+const hasCalls = c.calls.length > 0 || !!r?.calls.length;
+const feature = c.feature ? content.features[c.feature] : null;
+const who = (w: 'g' | 'a') => (w === 'a' ? content.transcript.her : 'Guest');
+const variants: { kind: 'hotel' | 'restaurant' | null; v: { h2: string; lede: string; log: string[]; stamp?: string; calls: string[]; annotation: string } }[] = r
+  ? [{ kind: 'hotel', v: c }, { kind: 'restaurant', v: r }]
+  : [{ kind: null, v: c }];
+---
+<section
+  id={c.id}
+  class:list={['chapter', `chapter--${c.id}`, { 'chapter--entry': hasCalls }]}
+  data-chapter={c.id}
+  data-section={section && SECTIONS.has(section) ? section : undefined}
+  data-hour={c.hour}
+  data-room={c.room}
+  data-span={c.span}
+  data-feature={c.feature}
+  style={c.span !== 'auto' ? `--span: ${c.span}` : undefined}
+  aria-labelledby={`${c.id}-title`}
+>
+  <div class="log" data-log-col>
+    <p class="running-head" aria-hidden="true"><span data-running-head>{content.runningHead.tonight}</span>{hasCalls && <span> · Scripted call</span>}</p>
+    {clocked && (
+      <p class="hour" aria-hidden="true" data-hour-num={c.hour}><span class="hour-num">{c.hour}</span><span class="hour-ap" data-hour-ap></span></p>
+    )}
+    {variants.map(({ kind, v }) => {
+      const [hh, rest] = split(v.h2);
+      return (
+        <div class="entry-head" data-variant={kind ?? undefined}>
+          <p class="annotation-label" aria-hidden="true">{v.annotation}</p>
+          <h2 id={kind === 'restaurant' ? `${c.id}-title-r` : `${c.id}-title`} class="entry-title" tabindex="-1">
+            {hh && <span class="sr-only">{hh} — </span>}{rest}
+          </h2>
+          <p class="entry-lede">{v.lede}</p>
+        </div>
+      );
+    })}
+
+    {/* One span per line: the li is a two-column grid (tick, text), and loose text runs would each take a cell */}
+    {(c.log.length > 0 || c.hotelLog || r?.log.length) && (
+      <ul class="log-lines" role="list">
+        {variants.map(({ kind, v }) => v.log.map((line) => (
+          <li data-variant={kind ?? undefined}><span>{parts(line).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</span></li>
+        )))}
+        {c.hotelLog?.map((line) => <li data-variant="hotel"><span>{parts(line).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</span></li>)}
+      </ul>
+    )}
+
+    {c.does && feature && (
+      <details class="does" data-does>
+        <summary><span>What she does here</span><span class="does-feature"> · {feature.title}</span></summary>
+        <p>{c.does}</p>
+      </details>
+    )}
+
+    {c.id === 'lobby' && (
+      <>
+        <ul class="greetings" role="list" aria-label="Greetings in nine languages" data-greetings>
+          {content.greetings.map((g) => <li lang={g.lang} dir={g.dir} data-lang={g.lang} title={g.name}>{g.text}</li>)}
+        </ul>
+        <ul data-translations hidden>
+          {callsOf([...c.calls, ...(r?.calls ?? [])]).flatMap((call) => call.lines.filter((l) => l.gloss).map((l) => (
+            <li lang={l.lang} data-lang={l.lang} data-src={l.gloss} data-text={l.text}>{l.text}</li>
+          )))}
+        </ul>
+      </>
+    )}
+
+    {variants.map(({ kind, v }) => v.calls.length > 0 && (
+      <div class="calls" data-variant={kind ?? undefined} data-calls>
+        {callsOf(v.calls).map((call) => (
+          <figure class="call" data-call={call.id} aria-labelledby={`call-${call.id}`}>
+            <figcaption class="call-cap">
+              <span class="led" aria-hidden="true"></span>
+              <h3 id={`call-${call.id}`} class="call-title">{call.time && <span class="n">{call.time}</span>}{call.time && ' · '}{call.title}</h3>
+              <span class="call-meta">Scripted call · {parts(call.meta).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</span>
+            </figcaption>
+            <ol class="call-lines" data-call-lines>
+              {call.lines.map((l, i) => (
+                <li data-static={i === 0 ? '' : undefined} data-reserve={i > 0 ? '' : undefined} data-who={l.who} dir={l.dir ?? 'auto'}>
+                  <b class="who" lang="en">{who(l.who)}</b>{' '}<span lang={l.lang}>{l.text}</span>
+                  {l.gloss && <span class="gloss" lang="en" dir="ltr">{l.gloss}</span>}
+                </li>
+              ))}
+              <li data-reserve data-done>{call.done}</li>
+            </ol>
+            <button type="button" class="next-line" data-next-line hidden>Next line</button>
+            {call.slips && (
+              <ul class="slips" role="list" data-slips>
+                {call.slips.map((s) => <li class="slip"><b class="slip-stamp">{s.stamp}</b><span>{parts(s.text).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</span></li>)}
+              </ul>
+            )}
+          </figure>
+        ))}
+        {c.id === 'restaurant' && <p class="calls-note">{content.callsNote}</p>}
+      </div>
+    ))}
+
+    {variants.map(({ kind, v }) => v.stamp && (
+      <p class="stamp" style={`--rot: ${rot}deg`} aria-hidden="true" data-variant={kind ?? undefined} data-stamp>{parts(v.stamp).map((p, i) => (i % 2 ? <span class="n">{p}</span> : p))}</p>
+    ))}
+
+    {c.closing && <p class="closing" data-closing data-day={c.closing.day} data-night={c.closing.night}>{c.closing.night}</p>}
+
+    <slot />
+  </div>
+</section>

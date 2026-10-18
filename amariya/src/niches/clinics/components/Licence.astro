@@ -1,0 +1,97 @@
+---
+// 06 · Founding licence (#pricing): the price, the spot plate of thirty wells (open, held, issued by shape),
+// the inclusions, the edition mark read off the orb's base, and on the team's side what holds a place,
+// the seven-day Course on the line's ticks, the guarantee ring, after the 30 and clinic groups.
+import { content } from '../../../data/content/clinics';
+import { given } from '../../../data/content/types';
+import { ledgerCounts } from '../../../scripts/apply/adapter';
+
+const { licence, offer, sides, chapters } = content;
+const ch = chapters[6];
+const counts = ledgerCounts('clinics');
+const next = counts.issued + counts.held + 1;
+const why = given(offer.why);
+const wells = Array.from({ length: offer.cap }, (_, i) => (i < counts.issued ? 'issued' : i < counts.issued + counts.held ? 'held' : 'open'));
+const COLS = 6;
+---
+<section id={ch.id} class="ch ch-licence" data-chapter={ch.id} data-section="pricing" data-split={ch.split} style={`--split:${ch.split}`} aria-labelledby="pricing-title">
+  <a class="point" href={`#${ch.id}`} data-point={ch.point}><span class="sr-only">Point {ch.point}: {ch.title}</span><span class="point-num" aria-hidden="true">{ch.point}</span></a>
+
+  <header class="ch-head her" data-plan="founding">
+    <p class="eyebrow mono">{ch.point} · {ch.title}</p>
+    <h2 id="pricing-title" class="price" data-ask={`The founding licence: ${licence.price}`}><span class="sr-only">{ch.title}: </span>{licence.price}</h2>
+    <p class="price-for">{licence.for}</p>
+    <p class="plan-reason" data-plan-reason hidden></p>
+  </header>
+
+  <div class="her side" data-side="her">
+    <h3 class="side-label">{sides.her} <span class="side-sub">{licence.plateLabel}</span></h3>
+    <ol class="margin-notes" data-margin-notes aria-label="Amariya’s notes" role="list"></ol>
+    <div class="licence-anchor" data-orb-anchor></div>
+
+    <figure class="plate-wrap">
+      <div class="plate" data-plate data-ask={licence.plateLabel}>
+        <svg class="plate-svg" viewBox={`0 0 ${COLS * 60} ${(offer.cap / COLS) * 60}`} aria-hidden="true">
+          {wells.map((state, i) => {
+            const cx = 30 + (i % COLS) * 60, cy = 30 + Math.floor(i / COLS) * 60;
+            return (
+              <g class:list={['well', `well-${state}`, { 'well-next': i === next - 1 }]} transform={`translate(${cx} ${cy})`}>
+                <circle class="well-cup" r="19" />
+                <path class="well-shade" d="M-16.5 -9.5A19 19 0 0 1 9.5 -16.5" />
+                <path class="well-light" d="M16.5 9.5A19 19 0 0 1 -9.5 16.5" />
+                {state === 'held' && <path class="well-fill" d="M0 -13A13 13 0 0 1 0 13Z" />}
+                {state === 'issued' && <circle class="well-fill" r="13" />}
+                {i === next - 1 && <path class="well-bracket" d="M-27 -19v-8h8M27 -19v-8h-8M-27 19v8h8M27 19v8h-8" />}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+      <figcaption class="plate-ledger mono">{offer.ledger(counts)}</figcaption>
+    </figure>
+
+    <ul class="inclusions" role="list" data-ask="What the founding licence includes">
+      {offer.inclusions.map((x) => <li>{x}</li>)}
+    </ul>
+
+    <div class="mark" data-mark>
+      <p class="mark-caption mono" data-mark-caption>{licence.mark.caption(next)}</p>
+      <p class="mark-actions">
+        <a class="btn btn-primary" href="#apply" data-mark-apply>{licence.mark.apply(next)}</a>
+        <button type="button" class="btn-link mono" data-show-mark hidden>Show the mark</button>
+      </p>
+    </div>
+  </div>
+
+  <div class="team side" data-side="team">
+    <h3 class="side-label">{sides.team} <span class="side-sub">{licence.holdsHeading}</span></h3>
+    <p class="holds">{offer.holds}</p>
+    <p class="held-note mono">{offer.heldNote}</p>
+
+    <section class="course" aria-labelledby="course-title" data-ask="The seven-day Course and the guarantee">
+      <h4 class="mono rule-label" id="course-title">{licence.course.title}</h4>
+      <ol class="course-days" role="list" data-line-ticks>
+        {licence.course.days.map((d) => {
+          const timing = given(d.timing);
+          return (
+            <li data-day={d.day}>
+              <span class="course-day mono">DAY {d.day}</span>
+              <span class="course-title">{d.title}</span>
+              {timing && <span class="course-timing mono">{timing}</span>}
+            </li>
+          );
+        })}
+      </ol>
+      <p class="course-ring mono"><span class="ring-glyph" aria-hidden="true"></span>{licence.course.ring}</p>
+    </section>
+
+    <p class="licence-payback" data-licence-payback hidden></p>
+    {why && <p class="why">{why}</p>}
+    <p class="after">{offer.after}</p>
+    <div class="groups" data-plan="groups">
+      <p>{offer.groupsNote}</p>
+      <p class="plan-reason" data-plan-reason hidden></p>
+    </div>
+    <p><a class="btn btn-ghost" href="#apply">{content.topBar.apply}<i class="arrow" aria-hidden="true"></i></a></p>
+  </div>
+</section>
