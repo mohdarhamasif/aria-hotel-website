@@ -875,7 +875,7 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
     <button class="btn btn-dark js-apply" type="button" data-program="founding">Apply for a founding licence</button>
     <ol class="path">
       <li><span><b>Apply</b> in 3 minutes</span></li>
-      <li><span><b>Call</b> for 20 minutes</span></li>
+      <li><span><b>Call</b> for 30 minutes</span></li>
       <li><span><b>Invoice</b>, no surprises</span></li>
       <li><span><b>Live</b> within 7 days</span></li>
     </ol>
@@ -1752,7 +1752,7 @@ const dock = $('#dock')
 const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
 const APPLY_WEBHOOK = '/api/apply' // the site's own server function, which sends each application to HubSpot; if it fails, the visitor can book or email instead
 const CONTACT_EMAIL = 'marketing@legitdesign.studio'
-const BOOKING_URL = 'https://calendly.com/hello-legitdesign/discovery-call' // the 20-minute call
+const BOOKING_URL = 'https://calendly.com/hello-legitdesign/discovery-call' // the 30-minute call
 // A one-time pass from our own server (/api/convai), so only this site can start a conversation.
 // If the server can't give one, the public agent ID is tried; that works until authentication is switched on.
 async function credential(mode) {
@@ -1768,7 +1768,7 @@ async function credential(mode) {
 const track = (name, data) => { try { window.va?.('event', { name, data }) } catch {} }
 const IDLE = ['Amariya is ready to talk', 'Press the orb and say hello.']
 const greeting = (part) => `Good ${part}, I’m Amariya, an AI receptionist. I answer the phones for hotels, restaurants, clinics and dental practices. What kind of business do you run?`
-const contextFor = () => 'Your name is Amariya; always call yourself Amariya. The visitor is on the main Amariya page, which covers hotels, restaurants, clinics and dental practices. There are two ways to buy. First, the founding licence, paid once: $2,500 for hotels and restaurants, $3,500 for clinics, $3,000 for dental practices, for the first 30 businesses in each niche. It includes Professional features for life, 500 call minutes a month (extra minutes at cost, unused minutes do not roll over), done-for-you setup and one location per licence. She goes live within 7 days or the money is refunded in full, and after she goes live there are 7 more days to ask for a refund for any reason. Second, monthly plans: Starter at $299 a month (one location, 500 calls, bookings and FAQs, 5 languages), Professional at $799 a month (up to 3 locations, 2,500 calls, books into their software, 30+ languages, upsells and analytics) and Enterprise, priced on request (multi-location, custom voice, a dedicated success manager, unlimited calls). Do not state cancellation or minimum-term terms; say the team confirms terms on the call. Never give medical or clinical advice; clinical questions are for the clinic’s own team. Make no claims about HIPAA or GDPR. To apply, collect the visitor’s name, business name, email, phone and a good time for a 20-minute call; call fill_demo_form with what you have, then submit_demo_request. The team follows up to arrange the call, then sends an invoice. Profile fields: hotel_name is the business name, business_type is hotel, restaurant, clinic or dental, rooms is rooms, practitioners or chairs, monthly_calls is calls per month. Sections you can show with navigate_to_section: top, story, problem, demo, features, setup, pricing, questions.'
+const contextFor = () => 'Your name is Amariya; always call yourself Amariya. The visitor is on the main Amariya page, which covers hotels, restaurants, clinics and dental practices. There are two ways to buy. First, the founding licence, paid once: $2,500 for hotels and restaurants, $3,500 for clinics, $3,000 for dental practices, for the first 30 businesses in each niche. It includes Professional features for life, 500 call minutes a month (extra minutes at cost, unused minutes do not roll over), done-for-you setup and one location per licence. She goes live within 7 days or the money is refunded in full, and after she goes live there are 7 more days to ask for a refund for any reason. Second, monthly plans: Starter at $299 a month (one location, 500 calls, bookings and FAQs, 5 languages), Professional at $799 a month (up to 3 locations, 2,500 calls, books into their software, 30+ languages, upsells and analytics) and Enterprise, priced on request (multi-location, custom voice, a dedicated success manager, unlimited calls). Do not state cancellation or minimum-term terms; say the team confirms terms on the call. Never give medical or clinical advice; clinical questions are for the clinic’s own team. Make no claims about HIPAA or GDPR. To apply, collect the visitor’s name, business name, email, phone and a good time for a 30-minute call; call fill_demo_form with what you have, then submit_demo_request. The team follows up to arrange the call, then sends an invoice. Profile fields: hotel_name is the business name, business_type is hotel, restaurant, clinic or dental, rooms is rooms, practitioners or chairs, monthly_calls is calls per month. Sections you can show with navigate_to_section: top, story, problem, demo, features, setup, pricing, questions.'
 let vstate = 'idle', convo = null, convoMode = null, sdk = null
 const PROFILE = {}, APPLICATION = {}
 const loadSdk = () => sdk || (sdk = import('https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/+esm').then((m) => m.Conversation, (e) => { sdk = null; throw e }))
@@ -1865,11 +1865,11 @@ async function sendApplication(data) {
   track(sent ? 'Application sent' : 'Application failed', { program: data.program || 'founding', type: data.kind || data.business_type || '', source: data.source || 'form', page: 'home' })
   return sent
 }
-// The 20-minute call is booked inside the application window: Calendly's scheduler in a frame, in the page's
+// The 30-minute call is booked inside the application window: Calendly's scheduler in a frame, in the page's
 // colours (Calendly applies colours on paid plans), with the visitor's name and email already filled in
 function openBooking(d, title, text) {
   const q = new URLSearchParams({ embed_domain: location.hostname, embed_type: 'Inline', hide_gdpr_banner: '1', hide_event_type_details: '1', name: String(d.name || '').trim(), email: String(d.email || '').trim(), background_color: '0d0d10', text_color: 'f3f1ec', primary_color: '86d6c4' })
-  $('#booking').innerHTML = `<iframe title="Book your 20-minute call" src="${BOOKING_URL}?${q}"></iframe>`
+  $('#booking').innerHTML = `<iframe title="Book your 30-minute call" src="${BOOKING_URL}?${q}"></iframe>`
   $('#booking').hidden = false
   $('#doneTitle').textContent = title; $('#doneText').textContent = text
   if (!dlg.open) { dlg.showModal(); lenis?.stop() }
@@ -1932,13 +1932,13 @@ const TOOLS = {
     if (miss.length) return `Cannot submit yet. Missing: ${miss.join(', ')}.`
     const data = { ...APPLICATION, source: 'voice', page: location.href, at: new Date().toISOString() }
     if (!(await sendApplication(data))) {
-      openBooking(data, 'Book your call', `Your application didn’t go through, but you can still pick a time for your 20-minute call here, or email your details to ${CONTACT_EMAIL}.`)
+      openBooking(data, 'Book your call', `Your application didn’t go through, but you can still pick a time for your 30-minute call here, or email your details to ${CONTACT_EMAIL}.`)
       setDock(vstate, null, 'The application didn’t go through. You can still book your call.')
-      return `The application did not go through. Tell them so plainly. The page now shows a calendar where they can still book the 20-minute call, or they can email their details to ${CONTACT_EMAIL}.`
+      return `The application did not go through. Tell them so plainly. The page now shows a calendar where they can still book the 30-minute call, or they can email their details to ${CONTACT_EMAIL}.`
     }
-    openBooking(data, `Thank you, ${String(data.name).trim().split(' ')[0]}.`, `We’ll email ${String(data.email).trim()} to confirm. Pick a time for your 20-minute call below.`)
+    openBooking(data, `Thank you, ${String(data.name).trim().split(' ')[0]}.`, `We’ll email ${String(data.email).trim()} to confirm. Pick a time for your 30-minute call below.`)
     setDock(vstate, null, `Application received for ${data.hotel_name}.`)
-    return `Application recorded for ${data.name} (${data.email}). Tell them the page now shows a calendar where they can pick a time for the 20-minute call.`
+    return `Application recorded for ${data.name} (${data.email}). Tell them the page now shows a calendar where they can pick a time for the 30-minute call.`
   },
 }
 TOOLS.update_business_profile = TOOLS.update_hotel_profile
@@ -1999,12 +1999,12 @@ form.addEventListener('submit', async (e) => {
   const sent = await sendApplication({ ...data, source: 'form', page: location.href, at: new Date().toISOString() })
   next.disabled = false; next.textContent = 'Send application'
   if (!sent) {
-    error.innerHTML = `We couldn’t send your application. You can still <button class="link" type="button" id="bookInstead">book your 20-minute call here</button>, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
+    error.innerHTML = `We couldn’t send your application. You can still <button class="link" type="button" id="bookInstead">book your 30-minute call here</button>, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
     error.hidden = false
-    $('#bookInstead').addEventListener('click', () => openBooking(data, 'Book your call', `Pick a time for your 20-minute call, and we’ll go through your business on it. You can also email your application to ${CONTACT_EMAIL}.`))
+    $('#bookInstead').addEventListener('click', () => openBooking(data, 'Book your call', `Pick a time for your 30-minute call, and we’ll go through your business on it. You can also email your application to ${CONTACT_EMAIL}.`))
     return
   }
-  openBooking(data, `Thank you, ${data.name.trim().split(' ')[0]}.`, `We’ll email ${data.email.trim()} to confirm. Pick a time for your 20-minute call below.`)
+  openBooking(data, `Thank you, ${data.name.trim().split(' ')[0]}.`, `We’ll email ${data.email.trim()} to confirm. Pick a time for your 30-minute call below.`)
 })
 $('#back').addEventListener('click', () => go(step - 1))
 new IntersectionObserver(([e], o) => { if (e.isIntersecting) { track('Pricing viewed', { page: 'home' }); o.disconnect() } }, { threshold: 0.3 }).observe($('#pricing'))

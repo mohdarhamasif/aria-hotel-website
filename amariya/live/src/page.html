@@ -693,7 +693,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
           <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
           <p class="form-error" id="demoError" role="alert" hidden></p>
           <button class="btn btn-primary" type="submit" id="demoSubmit">Send application</button>
-          <p class="form-note">We follow up to arrange a 20-minute call, then send the invoice. No payment today. We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
+          <p class="form-note">We follow up to arrange a 30-minute call, then send the invoice. No payment today. We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
         </form>
         <div class="done" id="demoDone" hidden tabindex="-1"><h3>Thank you.</h3><p class="lead" id="doneText"></p></div>
         <div class="booking" id="booking" hidden></div>
@@ -1048,7 +1048,7 @@ function render(n) {
 const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
 const APPLY_WEBHOOK = '/api/apply' // the site's own server function, which sends each application to HubSpot; if it fails, the visitor can book or email instead
 const CONTACT_EMAIL = 'marketing@legitdesign.studio'
-const BOOKING_URL = 'https://calendly.com/hello-legitdesign/discovery-call' // the 20-minute call
+const BOOKING_URL = 'https://calendly.com/hello-legitdesign/discovery-call' // the 30-minute call
 // A one-time pass from our own server (/api/convai), so only this site can start a conversation.
 // If the server can't give one, the public agent ID is tried; that works until authentication is switched on.
 async function credential(mode) {
@@ -1070,7 +1070,7 @@ const SPEAK = {
   dental: 'talk about patients, check-ups, cleanings and urgent visits. Never give clinical advice; urgent dental problems go to the practice team',
 }
 // Until each niche has its own agent, the page briefs the shared one: who the visitor is, how to guide them, and today's prices
-const contextFor = (n) => `Your name is Amariya; always call yourself Amariya, and you are an AI receptionist. The visitor is on the Amariya page for ${WHO[n]}, so ${SPEAK[n]}. You are their guide to this page, and the page follows you: each tool call below fills in what is on screen and moves to its section, so keep talking naturally while it does. Learn about their business and call update_hotel_profile as soon as you hear anything (it fills in the form as they watch), then call get_roi_estimate and say the estimate in your own words, using its exact figures. Call highlight_feature when you talk about something you do. When they ask about price, or after the estimate, call recommend_plan with starter, professional, enterprise or founding and a short reason. To apply, collect their name, business name, email, phone and a good time for a 20-minute call; call fill_demo_form as you go, then submit_demo_request once they agree. The team follows up to arrange the call, then sends an invoice. Profile fields: ${C[n].fields}. Feature keys: ${C[n].featureKeys}. Monthly plans: ${C[n].plansBrief}. The founding licence is ${C[n].price} once, for the first 30 ${WHO[n]}: Professional features for life, 500 call minutes a month (extra minutes at cost, unused minutes do not roll over), done-for-you setup and one location; she is live in 7 days or the money is refunded in full. Do not state cancellation or minimum-term terms; the team confirms terms on the call. Make no claims about HIPAA or GDPR. Sections for navigate_to_section: welcome, story, profile, features, pricing, demo, questions.`
+const contextFor = (n) => `Your name is Amariya; always call yourself Amariya, and you are an AI receptionist. The visitor is on the Amariya page for ${WHO[n]}, so ${SPEAK[n]}. You are their guide to this page, and the page follows you: each tool call below fills in what is on screen and moves to its section, so keep talking naturally while it does. Learn about their business and call update_hotel_profile as soon as you hear anything (it fills in the form as they watch), then call get_roi_estimate and say the estimate in your own words, using its exact figures. Call highlight_feature when you talk about something you do. When they ask about price, or after the estimate, call recommend_plan with starter, professional, enterprise or founding and a short reason. To apply, collect their name, business name, email, phone and a good time for a 30-minute call; call fill_demo_form as you go, then submit_demo_request once they agree. The team follows up to arrange the call, then sends an invoice. Profile fields: ${C[n].fields}. Feature keys: ${C[n].featureKeys}. Monthly plans: ${C[n].plansBrief}. The founding licence is ${C[n].price} once, for the first 30 ${WHO[n]}: Professional features for life, 500 call minutes a month (extra minutes at cost, unused minutes do not roll over), done-for-you setup and one location; she is live in 7 days or the money is refunded in full. Do not state cancellation or minimum-term terms; the team confirms terms on the call. Make no claims about HIPAA or GDPR. Sections for navigate_to_section: welcome, story, profile, features, pricing, demo, questions.`
 const pickOne = (a) => a[Math.floor(Math.random() * a.length)]
 let voice = 'idle', convo = null, convoMode = null, sdk = null, muted = false, agentPlan = null
 const PROFILE = {}
@@ -1441,13 +1441,13 @@ async function sendApplication(data) {
   track(sent ? 'Application sent' : 'Application failed', meta)
   return sent
 }
-// The 20-minute call is booked on the page itself: Calendly's scheduler in a frame, in the niche's colours
+// The 30-minute call is booked on the page itself: Calendly's scheduler in a frame, in the niche's colours
 // (Calendly applies colours on paid plans), with the visitor's name and email already filled in
 function showBooking(d) {
   const css = getComputedStyle(root), hex = (v) => (/^#[0-9a-f]{6}$/i.test(css.getPropertyValue(v).trim()) ? css.getPropertyValue(v).trim().slice(1) : '')
   const q = new URLSearchParams({ embed_domain: location.hostname, embed_type: 'Inline', hide_gdpr_banner: '1', hide_event_type_details: '1', name: String(d.name || '').trim(), email: String(d.email || '').trim(), background_color: hex('--bg'), text_color: hex('--text'), primary_color: hex('--accent') })
   const box = $('#booking')
-  box.innerHTML = `<iframe title="Book your 20-minute call" src="${BOOKING_URL}?${q}"></iframe>`
+  box.innerHTML = `<iframe title="Book your 30-minute call" src="${BOOKING_URL}?${q}"></iframe>`
   box.hidden = false
 }
 // Calendly tells the page when a time is booked
@@ -1470,13 +1470,13 @@ async function submitDemo(source) {
   const sent = await sendApplication(data)
   btn.disabled = false; btn.textContent = 'Send application'
   if (!sent) {
-    error.innerHTML = `We couldn’t send your application. You can still book your 20-minute call below, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
+    error.innerHTML = `We couldn’t send your application. You can still book your 30-minute call below, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
     error.hidden = false
     showBooking(data)
     goTo('demo', source === 'voice')
     return null
   }
-  $('#doneText').textContent = `We’ll email ${data.email} to confirm. Pick a time for your 20-minute call below${data.preferred_time ? `; you mentioned ${data.preferred_time}` : ''}.`
+  $('#doneText').textContent = `We’ll email ${data.email} to confirm. Pick a time for your 30-minute call below${data.preferred_time ? `; you mentioned ${data.preferred_time}` : ''}.`
   showBooking(data)
   demoForm.hidden = true
   const done = $('#demoDone'); done.hidden = false
@@ -1548,9 +1548,9 @@ const TOOLS = {
     const missing = missingDemoFields()
     if (missing.length) return `Cannot submit yet. Missing: ${missing.join(', ')}.`
     const data = await submitDemo('voice')
-    if (!data) return `The application did not go through. Tell them so plainly, and that they can still book the 20-minute call in the calendar now showing under the form, or email the application to ${CONTACT_EMAIL}.`
+    if (!data) return `The application did not go through. Tell them so plainly, and that they can still book the 30-minute call in the calendar now showing under the form, or email the application to ${CONTACT_EMAIL}.`
     activity('Application sent')
-    return `Application recorded for ${data.name} (${data.email}). Tell them the page now shows a calendar where they can pick a time for the 20-minute call.`
+    return `Application recorded for ${data.name} (${data.email}). Tell them the page now shows a calendar where they can pick a time for the 30-minute call.`
   },
 }
 TOOLS.update_business_profile = TOOLS.update_hotel_profile
