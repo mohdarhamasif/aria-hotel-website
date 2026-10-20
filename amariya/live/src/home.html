@@ -440,6 +440,7 @@ main { overflow-x: clip; padding-left: var(--gutter-l); padding-right: var(--gut
 .dots { display: grid; grid-template-columns: repeat(15, 7px); justify-content: space-between; row-gap: 6px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); transition: opacity .4s var(--ease), transform .4s var(--ease); transition-delay: calc(var(--i) * 18ms); }
 .js .dots.off i { opacity: 0; transform: scale(.4); }
+.dots i.taken { opacity: .18; }
 .seat-label { margin: 0; font-size: var(--small-size); color: rgba(11, 11, 13, .62); }
 .seat-label b { color: var(--ink); font-weight: 500; }
 .promises { display: grid; gap: 8px; margin: 0 0 22px; padding: 14px 16px; border-radius: 14px; background: rgba(11, 11, 13, .05); }
@@ -530,7 +531,21 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
 .field label, .field legend { font-size: var(--small-size); font-weight: 500; color: var(--muted); padding: 0; }
 .field input, .field select { min-height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, .04); color: var(--text); font-size: var(--body-size); }
 .field select option { background: #0d0d10; }
-.field input:focus, .field select:focus { outline: none; border-color: rgba(255, 255, 255, .45); box-shadow: 0 0 0 4px rgba(255, 255, 255, .06); }
+.field input:focus, .field select:focus { border-color: rgba(255, 255, 255, .45); }
+.field input:focus-visible, .field select:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.field .opt { font-weight: 400; color: var(--faint); }
+.form-error { margin: 0; font-size: var(--card-size); line-height: 1.5; color: #ffb4a6; }
+.form-error a, .note a { color: inherit; text-underline-offset: 3px; }
+.done-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+.skip { position: fixed; left: 16px; top: -80px; z-index: 1000; padding: 10px 18px; border-radius: 999px; background: var(--light); color: var(--ink); font-size: var(--small-size); font-weight: 500; text-decoration: none; }
+.skip:focus { top: calc(16px + env(safe-area-inset-top, 0px)); }
+.hero-title:focus { outline: none; }
+/* Touch: 44px targets for the small pills and icon buttons */
+@media (pointer: coarse) {
+  .niches a, .top-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  .btn-sm, .seg button, .checks label { min-height: 44px; }
+  .icon-btn { width: 44px; height: 44px; }
+}
 .field .err { font-size: var(--small-size); color: #ffb4a6; }
 .checks { display: flex; flex-wrap: wrap; gap: 8px; }
 .checks label { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); font-size: var(--small-size); color: var(--text); cursor: pointer; }
@@ -609,6 +624,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
 </svg>
 
+<a class="skip" href="#heroTitle">Skip to content</a>
 <canvas class="fx" aria-hidden="true"></canvas>
 
 <main>
@@ -621,7 +637,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
       <button class="btn btn-dark btn-sm js-apply" type="button" data-program="founding">Apply</button>
     </nav>
     <button class="hero-orb js-talk" type="button" aria-label="Talk to Amariya"><span class="hero-orb-label">Tap to talk</span></button>
-    <h1 class="hero-title" id="heroTitle" data-split="in">Pick up every call. Without picking up the phone.</h1>
+    <h1 class="hero-title" id="heroTitle" data-split="in" tabindex="-1">Pick up every call. Without picking up the phone.</h1>
     <div class="hero-foot">
       <div class="hero-intro">
         <p class="lede">An AI receptionist for hotels, restaurants, clinics and dental practices. She answers, books, and hands over to your team.</p>
@@ -768,7 +784,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
             <h3>Yours for life</h3>
             <p class="plan-for">For the first 30 <span data-who>hotels and restaurants</span>.</p>
             <p class="price"><span data-price>$2,500</span><small>once</small></p>
-            <div class="seats"><div class="dots off" id="dots" aria-hidden="true"></div><p class="seat-label"><b>30</b> of 30 seats open. The founding price ends when all 30 are taken.</p></div>
+            <div class="seats"><div class="dots off" id="dots" aria-hidden="true"></div><p class="seat-label"><b id="seatsOpen">5</b> of 30 seats open. The founding price ends when all 30 are taken.</p></div>
             <div class="promises">
               <p class="promise"><img src="/icons/shield.webp" width="22" height="22" alt="" loading="lazy" decoding="async">Live in 7 days, or a full refund.</p>
               <p class="promise"><img src="/icons/repeat.webp" width="22" height="22" alt="" loading="lazy" decoding="async">Then 7 days to change your mind, for any reason.</p>
@@ -826,7 +842,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
   </div>
   <p class="wordmark" aria-hidden="true">Amariya</p>
   <div class="footer-meta">
-    <p>Amariya, an AI receptionist by Legit Design Studio · © 2026</p>
+    <p>Amariya, an AI receptionist by Legit Design Studio · © 2026 · <a href="/privacy">Privacy</a></p>
     <nav aria-label="Amariya for your business"><a href="https://amariya.legitdesign.studio/hotels">Hotels</a><a href="https://amariya.legitdesign.studio/clinics">Clinics</a><a href="https://amariya.legitdesign.studio/dental">Dental</a></nav>
   </div>
 </footer>
@@ -860,25 +876,27 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
         <div class="field"><label for="kind">Business type</label><select id="kind" name="kind"><option value="hotel">Hotel</option><option value="restaurant">Restaurant</option><option value="clinic">Clinic</option><option value="dental">Dental practice</option></select></div>
         <div class="field"><label for="locations">Locations</label><input id="locations" name="locations" type="number" min="1" value="1" inputmode="numeric"></div>
       </div>
-      <div class="field"><label for="business">Business name</label><input id="business" name="business" autocomplete="organization" required><span class="err" data-for="business"></span></div>
+      <div class="field"><label for="business">Business name</label><input id="business" name="business" autocomplete="organization" required aria-describedby="businessErr"><span class="err" id="businessErr" data-for="business"></span></div>
     </div>
     <div class="fields" data-step="2" hidden>
       <div class="field"><label for="calls">Calls per month</label><select id="calls" name="calls"><option>Under 300</option><option selected>300 to 1,000</option><option>1,000 to 3,000</option><option>More than 3,000</option></select></div>
       <fieldset class="field"><legend>When do calls go unanswered?</legend><div class="checks"><label><input type="checkbox" name="missed" value="busy">Busy hours</label><label><input type="checkbox" name="missed" value="after">After hours</label><label><input type="checkbox" name="missed" value="weekend">Weekends</label><label><input type="checkbox" name="missed" value="breaks">Breaks</label></div></fieldset>
-      <div class="field"><label for="software">Booking or practice software (optional)</label><input id="software" name="software" autocomplete="off"></div>
+      <div class="field"><label for="software">Booking or practice software <span class="opt">(optional)</span></label><input id="software" name="software" autocomplete="off"></div>
     </div>
     <div class="fields" data-step="3" hidden>
-      <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required><span class="err" data-for="name"></span></div>
+      <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required aria-describedby="nameErr"><span class="err" id="nameErr" data-for="name"></span></div>
       <div class="two">
-        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required><span class="err" data-for="email"></span></div>
-        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required><span class="err" data-for="phone"></span></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required aria-describedby="emailErr"><span class="err" id="emailErr" data-for="email"></span></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required aria-describedby="phoneErr"><span class="err" id="phoneErr" data-for="phone"></span></div>
       </div>
-      <div class="field"><label for="country">Country</label><input id="country" name="country" autocomplete="country-name"></div>
+      <div class="field"><label for="country">Country <span class="opt">(optional)</span></label><input id="country" name="country" autocomplete="country-name"></div>
+      <p class="note">We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
+      <p class="form-error" id="applyError" role="alert" hidden></p>
     </div>
     <div class="fields" data-step="4" hidden>
       <h2 id="doneTitle">Thank you.</h2>
       <p class="muted" id="doneText"></p>
-      <button class="btn btn-dark" type="button" id="doneClose">Back to the page</button>
+      <div class="done-actions"><a class="btn btn-dark" id="doneBook" href="#" target="_blank" rel="noopener">Pick a time for your call</a><button class="link" type="button" id="doneClose">Back to the page</button></div>
     </div>
     <div class="apply-actions" id="applyActions">
       <button class="link" type="button" id="back" hidden>Back</button>
@@ -913,7 +931,8 @@ const LISTS = {
   professional: ['Everything in Starter', 'Books into your software', '30+ languages', 'Upsells and analytics', '2,500 calls a month'],
   enterprise: ['Everything in Professional', 'Multi-location setup', 'Custom voice', 'Dedicated success manager', 'Unlimited calls'],
 }
-const OFFER = { hospitality: ['$2,500', 'hotels and restaurants'], clinics: ['$3,500', 'clinics'], dental: ['$3,000', 'dental practices'] }
+// The third value is seats still open, typed in by hand (the niche pages use the same numbers)
+const OFFER = { hospitality: ['$2,500', 'hotels and restaurants', 5], clinics: ['$3,500', 'clinics', 7], dental: ['$3,000', 'dental practices', 12] }
 const FAQ = [
   ['Will callers know they are talking to an AI?', 'Yes. She introduces herself as Amariya, the AI receptionist, in her first sentence. EU law has required this since August 2026, and it is how we would want it anyway.'],
   ['What happens when a caller wants a person?', 'She transfers the call to your team, or takes a message with a short summary when no one is free.'],
@@ -934,10 +953,12 @@ $('#orbit').innerHTML = PILLS.map(([ic, t, d]) => `<li class="orbit-slot"><div c
 for (const ul of $$('[data-list]')) ul.innerHTML = LISTS[ul.dataset.list].map((t) => `<li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">${t}</li>`).join('')
 $('#qs').innerHTML = FAQ.map(([q, a]) => `<details class="card reveal"><summary>${q}<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>${a}</p></details>`).join('')
 $('#dots').innerHTML = Array.from({ length: 30 }, (_, i) => `<i style="--i:${i}"></i>`).join('')
+const showSeats = (open) => { $$('#dots i').forEach((d, i) => d.classList.toggle('taken', i >= open)); $('#seatsOpen').textContent = open }
+showSeats(OFFER.hospitality[2])
 $$('#priceTabs button').forEach((b) => b.addEventListener('click', () => {
   $$('#priceTabs button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)))
-  const [price, who] = OFFER[b.dataset.n]
-  $('[data-price]').textContent = price; $('[data-who]').textContent = who
+  const [price, who, seats] = OFFER[b.dataset.n]
+  $('[data-price]').textContent = price; $('[data-who]').textContent = who; showSeats(seats)
 }))
 
 // ---------- The story opens at the visitor's own time ----------
@@ -1687,7 +1708,9 @@ if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 500 })
 // ---------- Amariya, for real: voice and text through the ElevenLabs agent ----------
 const dock = $('#dock')
 const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
-const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here also receives each application as JSON
+const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here receives each application as JSON; until it is set, applications fall back to email
+const CONTACT_EMAIL = 'marketing@legitdesign.studio'
+const BOOKING_URL = 'https://calendly.com/hello-legitdesign/discovery-call' // the 20-minute call
 // A one-time pass from our own server (/api/convai), so only this site can start a conversation.
 // If the server can't give one, the public agent ID is tried; that works until authentication is switched on.
 async function credential(mode) {
@@ -1730,11 +1753,11 @@ function visitVars() {
   const h = new Date().getHours()
   return { time_of_day: h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening', visitor_status: returning ? 'returning' : 'new', visitor_device: matchMedia('(max-width: 734px), (pointer: coarse)').matches ? 'mobile' : 'desktop' }
 }
-async function startConvo(mode, opener) {
+async function startConvo(mode, opener, note) {
   if (convo) { if (opener) send(opener); return }
   if (vstate === 'connecting') return
   convoMode = mode; dock.dataset.mode = mode === 'text' ? 'text' : 'voice'
-  setDock('connecting', 'Connecting', mode === 'voice' ? 'Allow the microphone to talk with Amariya.' : 'Opening the chat…')
+  setDock('connecting', 'Connecting', note || (mode === 'voice' ? 'Allow the microphone to talk with Amariya. Your voice goes to our voice provider, ElevenLabs, to run the call.' : 'Opening the chat…'))
   try {
     if (mode === 'voice') (await navigator.mediaDevices.getUserMedia({ audio: true })).getTracks().forEach((t) => t.stop())
     const Conversation = await loadSdk(), vars = visitVars()
@@ -1765,7 +1788,7 @@ async function startConvo(mode, opener) {
     if (mode === 'text') $('#dockInput').focus({ preventScroll: true })
   } catch (err) {
     console.error(err); convo = null
-    if (err?.name === 'NotAllowedError' && mode === 'voice') { convoMode = null; vstate = 'idle'; return startConvo('text', opener) }
+    if (err?.name === 'NotAllowedError' && mode === 'voice') { convoMode = null; vstate = 'idle'; return startConvo('text', opener, 'No microphone access, so Amariya will chat by text.') }
     convoMode = null; dock.dataset.mode = 'voice'; setDock('idle', 'Couldn’t connect', 'Please try again in a moment.')
     track('Talk failed', { mode, page: 'home', reason: String(err?.message || err).slice(0, 120) })
   }
@@ -1795,9 +1818,18 @@ const FEATURE = { bookings: 0, integrations: 0, multilingual: 1, answering: 2, g
 const money = (n) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 const missing = (a) => ['name', 'hotel_name', 'email'].filter((k) => !String(a[k] || '').trim())
 async function sendApplication(data) {
-  track('Application sent', { program: data.program || 'founding', type: data.kind || data.business_type || '', source: data.source || 'form', page: 'home' })
-  if (!APPLY_WEBHOOK) return false
-  try { await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); return true } catch (e) { console.error(e); return false }
+  let sent = false
+  if (APPLY_WEBHOOK) { try { sent = (await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })).ok } catch (e) { console.error(e) } }
+  track(sent ? 'Application sent' : 'Application failed', { program: data.program || 'founding', type: data.kind || data.business_type || '', source: data.source || 'form', page: 'home' })
+  return sent
+}
+// The call booking, with the visitor's name and email already filled in
+const bookingFor = (d) => `${BOOKING_URL}?${new URLSearchParams({ name: String(d.name || '').trim(), email: String(d.email || '').trim() })}`
+// When sending fails, the visitor can still book the call, or email the application, already written out
+function mailtoFor(d) {
+  const lines = [['Program', d.program], ['Business type', d.kind || d.business_type], ['Locations', d.locations], ['Business', d.business || d.hotel_name], ['Calls per month', d.calls || d.monthly_calls], ['Missed calls', [].concat(d.missed || []).join(', ')], ['Software', d.software], ['Name', d.name], ['Email', d.email], ['Phone', d.phone], ['Country', d.country]]
+    .filter(([, v]) => String(v || '').trim()).map(([k, v]) => `${k}: ${v}`)
+  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Amariya application: ${d.business || d.hotel_name || ''}`)}&body=${encodeURIComponent(lines.join('\n'))}`
 }
 function prefill() {
   for (const [key, sel] of [['hotel_name', '#business'], ['name', '#name'], ['email', '#email'], ['phone', '#phone']]) {
@@ -1840,7 +1872,10 @@ const TOOLS = {
     const miss = missing(APPLICATION)
     if (miss.length) return `Cannot submit yet. Missing: ${miss.join(', ')}.`
     const data = { ...APPLICATION, source: 'voice', page: location.href, at: new Date().toISOString() }
-    await sendApplication(data)
+    if (!(await sendApplication(data))) {
+      setDock(vstate, null, `The application didn’t go through. You can book your call at ${BOOKING_URL.replace('https://', '')}`)
+      return `The application did not go through. Tell them so plainly. They can book the 20-minute call at calendly.com/hello-legitdesign/discovery-call, or email their details to ${CONTACT_EMAIL}.`
+    }
     setDock(vstate, null, `Application received for ${data.hotel_name}.`)
     return `Application recorded for ${data.name} (${data.email}). Tell them the team will follow up to arrange the 20-minute call.`
   },
@@ -1857,7 +1892,8 @@ $('#dockForm').addEventListener('submit', (e) => {
   convo ? send(v) : startConvo('text', v)
 })
 $('#dockInput').addEventListener('input', () => { try { convo?.sendUserActivity() } catch {} })
-$$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+$('.skip').addEventListener('click', (e) => { e.preventDefault(); showSection('top'); $('#heroTitle').focus({ preventScroll: true }) })
+$$('a[href^="#"]:not(.skip)').forEach((a) => a.addEventListener('click', (e) => {
   const t = $(a.getAttribute('href')); if (!t || !lenis) return
   e.preventDefault(); lenis.scrollTo(t, { duration: 1.4 })
 }))
@@ -1872,7 +1908,7 @@ function go(n) {
   $$('.steps i', form).forEach((el, i) => el.classList.toggle('on', i < Math.min(n, 3)))
   $('#stepNote').hidden = n > 3; $('#applyActions').hidden = n > 3
   if (n <= 3) $('#stepNote').textContent = NOTES[n - 1]
-  $('#back').hidden = n === 1 || n > 3
+  $('#back').hidden = n === 1 || n > 3; $('#applyError').hidden = true
   $('#next').textContent = n === 3 ? 'Send application' : 'Continue'
   $(`[data-step="${n}"] input, [data-step="${n}"] select, [data-step="${n}"] button`, form)?.focus()
 }
@@ -1891,14 +1927,23 @@ function check(n) {
 }
 $$('.js-apply').forEach((b) => b.addEventListener('click', () => { track('Apply opened', { program: b.dataset.program || 'founding', from: b.closest('section, header, footer')?.id || b.closest('section, header, footer')?.className.split(' ')[0] || 'page' }); $('#program').value = b.dataset.program || 'founding'; prefill(); dlg.showModal(); go(1); lenis?.stop() }))
 dlg.addEventListener('close', () => lenis?.start())
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault()
   if (!check(step)) return
   if (step < 3) { track('Apply step', { step: step + 1 }); return go(step + 1) }
-  const data = Object.fromEntries(new FormData(form))
-  sendApplication({ ...data, source: 'form', page: location.href, at: new Date().toISOString() })
+  const fd = new FormData(form), data = { ...Object.fromEntries(fd), missed: fd.getAll('missed') }
+  const next = $('#next'), error = $('#applyError')
+  next.disabled = true; next.textContent = 'Sending…'; error.hidden = true
+  const sent = await sendApplication({ ...data, source: 'form', page: location.href, at: new Date().toISOString() })
+  next.disabled = false; next.textContent = 'Send application'
+  if (!sent) {
+    error.innerHTML = `We couldn’t send your application. You can still <a href="${bookingFor(data)}" target="_blank" rel="noopener">book your 20-minute call</a>, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
+    error.hidden = false
+    return
+  }
   $('#doneTitle').textContent = `Thank you, ${data.name.trim().split(' ')[0]}.`
-  $('#doneText').textContent = `We will email ${data.email.trim()} to book your 20-minute call.`
+  $('#doneText').textContent = `We’ll email ${data.email.trim()} to confirm. Pick a time for your 20-minute call now.`
+  $('#doneBook').href = bookingFor(data)
   go(4)
 })
 $('#back').addEventListener('click', () => go(step - 1))

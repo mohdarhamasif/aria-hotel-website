@@ -9,6 +9,7 @@ const NICHES = ['hotels', 'clinics', 'dental']
 const src = readFileSync(join(here, 'src/page.html'), 'utf8')
 const body = src.slice(src.indexOf('<style>')) // the lines above are only for the claude.ai preview
 const homeBody = readFileSync(join(here, 'src/home.html'), 'utf8')
+const privacyPage = readFileSync(join(here, 'src/privacy.html'), 'utf8')
 const FONTS = ['ranade-400', 'supreme-400', 'supreme-500', 'boska-400', 'bonanova-400', 'bonanova-400-ext']
 // Bona Nova is split like Google Fonts serves it: Latin, and the extended Latin range
 const BONA_EXT = 'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF'
@@ -31,6 +32,16 @@ const LOOK = {
 }
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c')
+// The hero copy, read from the niche copy in page.html (hotels, clinics, dental in order) and written into
+// each page's HTML, so the headline, intro and price are there before any script runs
+const heroCopy = (key) => [...src.matchAll(new RegExp(`^\\s+${key}: (.*),$`, 'gm'))].map((m) => m[1])
+const h1s = heroCopy('h1'), leads = heroCopy('lead')
+if (h1s.length !== NICHES.length || leads.length !== NICHES.length) throw new Error('hero copy not found for every niche in src/page.html')
+const HERO = Object.fromEntries(NICHES.map((n, i) => [n, {
+  h1: JSON.parse(h1s[i].replace(/'/g, '"')).map(([w]) => w).filter((w) => w.trim()).join(' '), // ['\n'] is a line break, not a word
+  lead: leads[i].slice(1, -1),
+}]))
+const fill = (html, from, to) => { if (!html.includes(from)) throw new Error(`build: ${from} not found in src/page.html`); return html.replace(from, () => to) }
 
 function page(n, path) {
   const m = META[n], l = LOOK[n]
@@ -63,7 +74,8 @@ ${ANALYTICS}
 </head>
 <body>
 <script type="application/json" id="site-meta">${json(META)}</script>
-${body.replace('/*FONTS*/', () => faces)}
+${[['<h1 id="h1" tabindex="-1"></h1>', `<h1 id="h1" tabindex="-1">${esc(HERO[n].h1)}</h1>`], ['<p class="lead" id="lead"></p>', `<p class="lead" id="lead">${esc(HERO[n].lead)}</p>`], ['<span id="price"></span>', `<span id="price">$${l.price.toLocaleString('en-US')}</span>`]]
+  .reduce((html, [from, to]) => fill(html, from, to), body.replace('/*FONTS*/', () => faces))}
 </body>
 </html>
 `
@@ -122,6 +134,8 @@ mkdirSync(out, { recursive: true })
 for (const f of readdirSync(out)) if (f !== '.vercel') rmSync(join(out, f), { recursive: true, force: true })
 for (const n of NICHES) { mkdirSync(join(out, n), { recursive: true }); writeFileSync(join(out, n, 'index.html'), page(n, '/' + n)) }
 writeFileSync(join(out, 'index.html'), home())
+mkdirSync(join(out, 'privacy'), { recursive: true })
+writeFileSync(join(out, 'privacy', 'index.html'), privacyPage.replace('/*FONTS*/', () => faces))
 mkdirSync(join(out, 'fonts'), { recursive: true })
 for (const f of FONTS) copyFileSync(join(here, 'src/fonts', f + '.woff2'), join(out, 'fonts', f + '.woff2'))
 mkdirSync(join(out, 'vendor'), { recursive: true })
@@ -132,7 +146,7 @@ const favicon = (bg, ring) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="
 for (const [n, l] of Object.entries(LOOK)) writeFileSync(join(out, `favicon-${n}.svg`), favicon(l.bg, l.ring))
 writeFileSync(join(out, 'favicon-home.svg'), favicon(HOME.bg, HOME.ring))
 writeFileSync(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`)
-writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', ...NICHES].map((n) => `  <url><loc>${BASE}/${n}</loc></url>`).join('\n')}\n</urlset>\n`)
+writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', ...NICHES, 'privacy'].map((n) => `  <url><loc>${BASE}/${n}</loc></url>`).join('\n')}\n</urlset>\n`)
 writeFileSync(join(out, 'vercel.json'), JSON.stringify({
   cleanUrls: true,
   trailingSlash: false,

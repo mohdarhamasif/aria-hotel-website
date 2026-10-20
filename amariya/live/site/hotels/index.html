@@ -163,6 +163,14 @@ a { color: inherit; text-decoration: none; }
 svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.skip { position: fixed; left: 16px; top: -80px; z-index: 100; padding: 10px 18px; border-radius: 999px; background: var(--text); color: var(--bg); font-size: var(--small); font-weight: 500; }
+.skip:focus { top: calc(16px + env(safe-area-inset-top, 0px)); }
+#h1:focus { outline: none; }
+/* Touch: 44px targets for the niche switch and the dock buttons */
+@media (pointer: coarse) {
+  .seg a { display: inline-flex; align-items: center; min-height: 44px; }
+  .icon-btn { width: 44px; height: 44px; }
+}
 .eyebrow { font-size: var(--eyebrow); line-height: 1.33; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
 .wrap { max-width: 1440px; margin: 0 auto; padding-inline: calc(var(--pad) - 16px); }
 .w { display: inline-block; }
@@ -382,6 +390,7 @@ select.blank option { background: var(--bg); color: var(--text); }
 .seal .dots i { position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--dot); transform: rotate(var(--a)) translateY(-142px); }
 .seal .price { justify-content: center; }
 .seal .eyebrow { color: var(--accent); }
+.seal .dots i.taken { opacity: .22; }
 .seal .seat-label { font-size: var(--small); color: var(--muted); }
 .seal .seat-label b { color: var(--text); font-weight: 500; }
 .incl { list-style: none; padding: 0; display: grid; gap: 8px; justify-items: start; width: fit-content; margin: 0 auto; text-align: left; }
@@ -405,7 +414,11 @@ textarea.line-in { height: 64px; padding-top: 10px; resize: none; }
 select.line-in option { background: var(--bg); }
 .form .btn { justify-self: start; }
 .form-note { grid-column: 1 / -1; font-size: var(--small); line-height: 1.5; color: var(--faint); }
+.form-note a, .form-error a, .foot a, .done a:not(.btn) { text-decoration: underline; text-underline-offset: 3px; }
+.fld label .opt { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.form-error { grid-column: 1 / -1; font-size: var(--card); line-height: 1.5; color: var(--err); }
 .done { display: grid; gap: 12px; }
+.done .btn { justify-self: start; }
 .done:focus { outline: none; }
 .done h3 { font: 400 calc(var(--h2) * var(--ds))/var(--h2-lh) var(--font-display); }
 
@@ -580,11 +593,12 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 <canvas id="orbfx" aria-hidden="true"></canvas>
 <div class="tags" id="tags" aria-hidden="true"></div>
 
+<a class="skip" href="#h1" id="skip">Skip to content</a>
 <header class="nav">
   <div class="nav-in">
-    <button class="brand" id="brand" type="button"><i class="ring" aria-hidden="true"></i>Amariya</button>
+    <a class="brand" href="/" aria-label="Amariya home"><i class="ring" aria-hidden="true"></i>Amariya</a>
     <div class="nav-right">
-      <button class="sound glass" id="sound" type="button" aria-pressed="false" aria-label="Play music"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">Music</span></button>
+      <button class="sound glass" id="sound" type="button" aria-pressed="false" aria-label="Music"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">Music</span></button>
       <nav class="seg glass" aria-label="Choose your business">
         <a href="/hotels" data-n="hotels"><span class="long">Hotels &amp; restaurants</span><span class="short">Hotels</span></a>
         <a href="/clinics" data-n="clinics">Clinics</a>
@@ -596,12 +610,12 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 
 <main>
   <section class="hero" aria-label="Introduction">
-    <h1 id="h1"></h1>
+    <h1 id="h1" tabindex="-1">Every call tonight, answered.</h1>
     <button class="tap glass" id="tap" type="button"><i aria-hidden="true"></i>Tap to talk</button>
     <div class="hero-foot">
       <div class="wrap">
         <div class="hero-copy">
-          <p class="lead" id="lead"></p>
+          <p class="lead" id="lead">Amariya is the AI receptionist for hotels and restaurants. She picks up every call, day and night, books rooms and tables straight into your system and speaks your guests’ language.</p>
           <div class="ctas">
             <button class="btn btn-primary" id="talk" type="button"><svg aria-hidden="true"><use href="#i-mic"></use></svg>Talk to Amariya</button>
             <button class="btn glass" id="chat" type="button"><svg aria-hidden="true"><use href="#i-keys"></use></svg>Chat by text</button>
@@ -665,8 +679,8 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
         <div class="seal">
           <div class="dots" id="dots" aria-hidden="true"></div>
           <p class="eyebrow">Founding licence</p>
-          <p class="price"><span id="price"></span><small>once</small></p>
-          <p class="seat-label"><b>30</b> of 30 seats open</p>
+          <p class="price"><span id="price">$2,500</span><small>once</small></p>
+          <p class="seat-label"><b id="seatsOpen">30</b> of 30 seats open</p>
         </div>
         <p class="lead" id="offerFor"></p>
         <ul class="incl" id="incl"></ul>
@@ -703,12 +717,13 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
           <div class="fld"><label for="dEmail">Email</label><input class="line-in" id="dEmail" name="email" type="email" autocomplete="email" aria-describedby="eEmail"><span class="err" id="eEmail" data-for="email"></span></div>
           <div class="fld"><label for="dPhone">Phone</label><input class="line-in" id="dPhone" name="phone" type="tel" autocomplete="tel" aria-describedby="ePhone"><span class="err" id="ePhone" data-for="phone"></span></div>
           <div class="fld"><label for="dPlan">Plan</label><select class="line-in" id="dPlan" name="plan"><option value="founding">Founding licence</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select></div>
-          <div class="fld"><label for="dTime">Good time for a call</label><input class="line-in" id="dTime" name="preferred_time" placeholder="e.g. Tuesday morning"></div>
-          <div class="fld full"><label for="dNotes">Anything we should know</label><textarea class="line-in" id="dNotes" name="notes"></textarea></div>
-          <button class="btn btn-primary" type="submit">Send application</button>
-          <p class="form-note">We follow up to arrange a 20-minute call, then send the invoice. No payment today.</p>
+          <div class="fld"><label for="dTime">Good time for a call <span class="opt">(optional)</span></label><input class="line-in" id="dTime" name="preferred_time" placeholder="e.g. Tuesday morning"></div>
+          <div class="fld full"><label for="dNotes">Anything we should know <span class="opt">(optional)</span></label><textarea class="line-in" id="dNotes" name="notes"></textarea></div>
+          <p class="form-error" id="demoError" role="alert" hidden></p>
+          <button class="btn btn-primary" type="submit" id="demoSubmit">Send application</button>
+          <p class="form-note">We follow up to arrange a 20-minute call, then send the invoice. No payment today. We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
         </form>
-        <div class="done" id="demoDone" hidden tabindex="-1"><h3>Thank you.</h3><p class="lead" id="doneText"></p></div>
+        <div class="done" id="demoDone" hidden tabindex="-1"><h3>Thank you.</h3><p class="lead" id="doneText"></p><a class="btn btn-primary" id="doneBook" href="#" target="_blank" rel="noopener">Pick a time for your call</a></div>
       </div>
     </div>
   </section>
@@ -723,8 +738,8 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 
   <footer class="foot">
     <div class="wrap">
-      <span class="brand"><i class="ring" aria-hidden="true"></i>Amariya</span>
-      <span>AI receptionist by Legit Design Studio · © 2026</span>
+      <a class="brand" href="/"><i class="ring" aria-hidden="true"></i>Amariya</a>
+      <span>AI receptionist by Legit Design Studio · © 2026 · <a href="/privacy">Privacy</a></span>
     </div>
   </footer>
 </main>
@@ -755,6 +770,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
   <form method="dialog">
     <h2 id="sheetTitle">Talk or type?</h2>
     <p>Amariya is an AI receptionist. She will show you around and answer anything, in about three minutes. You can switch to typing at any time.</p>
+    <p>Your voice or messages go to our voice provider, ElevenLabs, to run the conversation. <a href="/privacy">How we handle it</a></p>
     <div class="sheet-actions">
       <button class="btn btn-primary" value="voice"><svg aria-hidden="true"><use href="#i-mic"></use></svg>Talk</button>
       <button class="btn btn-line" value="text"><svg aria-hidden="true"><use href="#i-keys"></use></svg>Type</button>
@@ -800,7 +816,7 @@ const C = {
       { key: 'upsells', icon: 'dine', title: 'Smart upsells', desc: 'Offers upgrades, breakfast and spa packages at the right moment, and never pushes.' },
       { key: 'integrations', icon: 'link', title: 'Books into your system', desc: 'We connect her to your booking system during setup. She hands calls to your team with a short summary.' },
     ],
-    price: '$2,500', offerFor: 'A lifetime licence for the first 30 hotels and restaurants.',
+    price: '$2,500', seats: 5, offerFor: 'A lifetime licence for the first 30 hotels and restaurants.',
     noun: 'hotel', label: 'Your hotel', biz: 'Hotel or restaurant',
     profileTitle: [['Tell Amariya about your hotel,'], ['and see what the missed calls cost.', 1]],
     types: ['Boutique hotel', 'City hotel', 'Resort', 'Hotel group', 'B&B or guesthouse', 'Serviced apartments', 'Restaurant'],
@@ -844,7 +860,7 @@ const C = {
       { key: 'upsells', icon: 'repeat', title: 'Rebooking', desc: 'Reminds patients about their next session and offers packages at the right moment.' },
       { key: 'integrations', icon: 'link', title: 'Books into your system', desc: 'We connect her to your booking software during setup, and she hands calls over with a summary.' },
     ],
-    price: '$3,500', offerFor: 'A lifetime licence for the first 30 clinics.',
+    price: '$3,500', seats: 7, offerFor: 'A lifetime licence for the first 30 clinics.',
     noun: 'clinic', label: 'Your clinic', biz: 'Clinic',
     profileTitle: [['Tell Amariya about your clinic,'], ['and see what the missed calls cost.', 1]],
     types: ['Medical clinic', 'Aesthetics clinic', 'Laser and skin clinic', 'Physiotherapy clinic', 'Dermatology clinic', 'Clinic group'],
@@ -888,7 +904,7 @@ const C = {
       { key: 'upsells', icon: 'repeat', title: 'Recalls and rebooking', desc: 'Fills gaps in your day by rebooking overdue patients and offering cancelled slots.' },
       { key: 'integrations', icon: 'link', title: 'Books into your system', desc: 'We connect her to your practice software during setup, and she hands calls over with a summary.' },
     ],
-    price: '$3,000', offerFor: 'A lifetime licence for the first 30 dental practices.',
+    price: '$3,000', seats: 12, offerFor: 'A lifetime licence for the first 30 dental practices.',
     noun: 'practice', label: 'Your practice', biz: 'Practice',
     profileTitle: [['Tell Amariya about your practice,'], ['and see what the missed calls cost.', 1]],
     types: ['General dentistry', 'Cosmetic dentistry', 'Orthodontics', 'Children’s dentistry', 'Specialist practice', 'Dental group'],
@@ -1000,7 +1016,7 @@ const Music = (() => {
   }
 })()
 const soundBtn = $('#sound')
-soundBtn.addEventListener('click', () => { const on = Music.toggle(); soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.setAttribute('aria-label', on ? 'Pause music' : 'Play music') })
+soundBtn.addEventListener('click', () => { const on = Music.toggle(); soundBtn.setAttribute('aria-pressed', String(on)) })
 document.addEventListener('visibilitychange', () => Music.visible(!document.hidden))
 
 // ---------- Page ----------
@@ -1038,10 +1054,11 @@ function render(n) {
   $('#price').textContent = c.price
   $('#offerFor').textContent = c.offerFor
   $('#incl').innerHTML = INCL.map((t) => `<li><img class="i3d sm" src="${icon3d('check', n)}" alt="" loading="lazy" decoding="async"><span>${t}</span></li>`).join('')
-  $('#dots').innerHTML = Array.from({ length: 30 }, (_, i) => `<i style="--a:${i * 12}deg"></i>`).join('')
+  $('#dots').innerHTML = Array.from({ length: 30 }, (_, i) => `<i style="--a:${i * 12}deg"${i >= c.seats ? ' class="taken"' : ''}></i>`).join('')
+  $('#seatsOpen').textContent = c.seats
   $('#demoTitle').innerHTML = words(c.demoTitle)
   $('#dBizLabel').textContent = c.biz
-  demoForm.reset(); demoForm.hidden = false; $('#demoDone').hidden = true
+  demoForm.reset(); demoForm.hidden = false; $('#demoDone').hidden = true; $('#demoError').hidden = true
   $('#qs').innerHTML = c.faq.map(([q, a]) => `<details><summary>${q}${icon('plus')}</summary><p>${a}</p></details>`).join('')
   $('#steps').innerHTML = STEP_KEYS.map((k, i) => `<a href="#${k}" data-go="${k}"><span>${['Welcome', c.label, 'What she does', 'Plans', 'Apply'][i]}</span></a>`).join('')
   beats = $$('.beat'); pills = $$('.pill')
@@ -1056,7 +1073,9 @@ function render(n) {
 
 // ---------- Amariya, for real: she guides the visitor through the page by voice or text (ElevenLabs agent) ----------
 const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
-const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here also receives each application as JSON
+const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here receives each application as JSON; until it is set, applications fall back to email
+const CONTACT_EMAIL = 'marketing@legitdesign.studio'
+const BOOKING_URL = 'https://calendly.com/hello-legitdesign/discovery-call' // the 20-minute call
 // A one-time pass from our own server (/api/convai), so only this site can start a conversation.
 // If the server can't give one, the public agent ID is tried; that works until authentication is switched on.
 async function credential(mode) {
@@ -1443,15 +1462,33 @@ function showDemoErrors() {
   return !first
 }
 async function sendApplication(data) {
-  track('Application sent', { program: data.plan || 'founding', type: data.niche || niche, source: data.source || 'form', page: niche })
-  try { const all = JSON.parse(localStorage.getItem('amariya_applications') || '[]'); all.push(data); localStorage.setItem('amariya_applications', JSON.stringify(all)) } catch {}
-  if (!APPLY_WEBHOOK) return false
-  try { const r = await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); return r.ok } catch (e) { console.error(e); return false }
+  const meta = { program: data.plan || 'founding', type: data.niche || niche, source: data.source || 'form', page: niche }
+  let sent = false
+  if (APPLY_WEBHOOK) { try { sent = (await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })).ok } catch (e) { console.error(e) } }
+  track(sent ? 'Application sent' : 'Application failed', meta)
+  return sent
+}
+// The call booking, with the visitor's name and email already filled in
+const bookingFor = (d) => `${BOOKING_URL}?${new URLSearchParams({ name: String(d.name || '').trim(), email: String(d.email || '').trim() })}`
+// When sending fails, the visitor can still book the call, or email the application, already written out
+function mailtoFor(d) {
+  const lines = [['Name', d.name], ['Business', d.hotel_name], ['Email', d.email], ['Phone', d.phone], ['Plan', d.plan], ['Good time for a call', d.preferred_time], ['Notes', d.notes]].filter(([, v]) => String(v || '').trim()).map(([k, v]) => `${k}: ${v}`)
+  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Amariya application: ${d.hotel_name || ''}`)}&body=${encodeURIComponent(lines.join('\n'))}`
 }
 async function submitDemo(source) {
   const data = { ...Object.fromEntries(new FormData(demoForm)), profile: readProfile(), niche, source, page: location.href, at: new Date().toISOString(), conversation_id: convo?.getId?.() ?? null }
-  sendApplication(data)
-  $('#doneText').textContent = `We’ll email ${data.email} to arrange your 20-minute call${data.preferred_time ? `, ideally ${data.preferred_time}` : ''}.`
+  const btn = $('#demoSubmit'), error = $('#demoError')
+  btn.disabled = true; btn.textContent = 'Sending…'; error.hidden = true
+  const sent = await sendApplication(data)
+  btn.disabled = false; btn.textContent = 'Send application'
+  if (!sent) {
+    error.innerHTML = `We couldn’t send your application. You can still <a href="${bookingFor(data)}" target="_blank" rel="noopener">book your 20-minute call</a>, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
+    error.hidden = false
+    goTo('demo', source === 'voice')
+    return null
+  }
+  $('#doneText').textContent = `We’ll email ${data.email} to confirm. Pick a time for your 20-minute call now${data.preferred_time ? `; you mentioned ${data.preferred_time}` : ''}.`
+  $('#doneBook').href = bookingFor(data)
   demoForm.hidden = true
   const done = $('#demoDone'); done.hidden = false
   goTo('demo', source === 'voice'); done.focus({ preventScroll: true })
@@ -1461,7 +1498,7 @@ demoForm.addEventListener('submit', async (e) => {
   e.preventDefault()
   if (!showDemoErrors()) return
   const data = await submitDemo('form')
-  contextUpdate(`The visitor sent the application form themselves: ${JSON.stringify(data)}.`)
+  if (data) contextUpdate(`The visitor sent the application form themselves: ${JSON.stringify(data)}.`)
 })
 // a field's message clears as soon as it is being put right
 demoForm.addEventListener('input', (e) => {
@@ -1522,8 +1559,9 @@ const TOOLS = {
     const missing = missingDemoFields()
     if (missing.length) return `Cannot submit yet. Missing: ${missing.join(', ')}.`
     const data = await submitDemo('voice')
+    if (!data) return `The application did not go through. Tell them so plainly, and that the form on the page now has a link to book the 20-minute call directly, or to email the application to ${CONTACT_EMAIL}.`
     activity('Application sent')
-    return `Application recorded for ${data.name} (${data.email}). Tell them the team will email to arrange the 20-minute call.`
+    return `Application recorded for ${data.name} (${data.email}). Tell them the page now shows a button to pick a time for the 20-minute call.`
   },
 }
 TOOLS.update_business_profile = TOOLS.update_hotel_profile
@@ -1549,7 +1587,7 @@ $('#dockForm').addEventListener('submit', (e) => {
   convo ? send(v) : startConvo('text', v)
 })
 $('#dockInput').addEventListener('input', () => { try { convo?.sendUserActivity() } catch {} })
-$('#brand').addEventListener('click', () => scrollToY(0))
+$('#skip').addEventListener('click', (e) => { e.preventDefault(); scrollToY(0); $('#h1').focus({ preventScroll: true }) })
 $('#cue').addEventListener('click', () => scrollToY(L.s0 + 2))
 
 // Premium 3D icons: polished wire in each niche's finish, rendered once by icons.mjs
@@ -1821,7 +1859,8 @@ function go(n, first) {
   track('Niche switched', { from: niche, to: n })
   root.classList.add('switching')
   // the page comes back once the new building is drawn (or after a moment, if the world is slow or missing)
-  const swap = () => { apply(); switching = n; if (world3) setTimeout(() => finishSwitch(n), 1500); else finishSwitch(n) }
+  // focus lands on the new headline so screen readers hear the new page
+  const swap = () => { apply(); $('#h1').focus({ preventScroll: true }); switching = n; if (world3) setTimeout(() => finishSwitch(n), 1500); else finishSwitch(n) }
   if (reduce) swap(); else setTimeout(swap, 420)
 }
 const fromPath = () => { const p = location.pathname.split('/')[1]; return NICHES.includes(p) ? p : root.dataset.niche || 'hotels' }
