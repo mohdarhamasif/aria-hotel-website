@@ -571,6 +571,12 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
 .form-error { margin: 0; font-size: var(--card-size); line-height: 1.5; color: #ffb4a6; }
 .form-error a, .note a { color: inherit; text-underline-offset: 3px; }
 .done-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+/* The call is booked inside the application: Calendly's scheduler in a frame, in a wider window */
+dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
+.booking iframe { display: block; width: 100%; height: 680px; border: 0; color-scheme: normal; }
+#doneTitle:focus { outline: none; }
+.booking .booked { margin: 0; padding: 18px 20px; font-size: var(--card-size); line-height: 1.5; color: var(--orb-mint); }
+.form-error .link { font-size: inherit; color: inherit; }
 .skip { position: fixed; left: 16px; top: -80px; z-index: 1000; padding: 10px 18px; border-radius: 999px; background: var(--light); color: var(--ink); font-size: var(--small-size); font-weight: 500; text-decoration: none; }
 .skip:focus { top: calc(16px + env(safe-area-inset-top, 0px)); }
 .hero-title:focus { outline: none; }
@@ -929,9 +935,10 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
       <p class="form-error" id="applyError" role="alert" hidden></p>
     </div>
     <div class="fields" data-step="4" hidden>
-      <h2 id="doneTitle">Thank you.</h2>
+      <h2 id="doneTitle" tabindex="-1">Thank you.</h2>
       <p class="muted" id="doneText"></p>
-      <div class="done-actions"><a class="btn btn-dark" id="doneBook" href="#" target="_blank" rel="noopener">Pick a time for your call</a><button class="link" type="button" id="doneClose">Back to the page</button></div>
+      <div class="booking" id="booking" hidden></div>
+      <div class="done-actions"><button class="link" type="button" id="doneClose">Back to the page</button></div>
     </div>
     <div class="apply-actions" id="applyActions">
       <button class="link" type="button" id="back" hidden>Back</button>
@@ -1858,8 +1865,25 @@ async function sendApplication(data) {
   track(sent ? 'Application sent' : 'Application failed', { program: data.program || 'founding', type: data.kind || data.business_type || '', source: data.source || 'form', page: 'home' })
   return sent
 }
-// The call booking, with the visitor's name and email already filled in
-const bookingFor = (d) => `${BOOKING_URL}?${new URLSearchParams({ name: String(d.name || '').trim(), email: String(d.email || '').trim() })}`
+// The 20-minute call is booked inside the application window: Calendly's scheduler in a frame, in the page's
+// colours (Calendly applies colours on paid plans), with the visitor's name and email already filled in
+function openBooking(d, title, text) {
+  const q = new URLSearchParams({ embed_domain: location.hostname, embed_type: 'Inline', hide_gdpr_banner: '1', hide_event_type_details: '1', name: String(d.name || '').trim(), email: String(d.email || '').trim(), background_color: '0d0d10', text_color: 'f3f1ec', primary_color: '86d6c4' })
+  $('#booking').innerHTML = `<iframe title="Book your 20-minute call" src="${BOOKING_URL}?${q}"></iframe>`
+  $('#booking').hidden = false
+  $('#doneTitle').textContent = title; $('#doneText').textContent = text
+  if (!dlg.open) { dlg.showModal(); lenis?.stop() }
+  // the window opens at its top, on the title, not scrolled down to the last button
+  go(4); $('#doneTitle').focus({ preventScroll: true }); dlg.scrollTop = 0
+}
+// Calendly tells the page when a time is booked
+addEventListener('message', (e) => {
+  if (e.origin !== 'https://calendly.com' || e.data?.event !== 'calendly.event_scheduled') return
+  track('Call booked', { page: 'home' })
+  const p = document.createElement('p'); p.className = 'booked'; p.setAttribute('role', 'status')
+  p.textContent = 'Booked. Your calendar invite is on its way by email.'
+  $('#booking').prepend(p)
+})
 // When sending fails, the visitor can still book the call, or email the application, already written out
 function mailtoFor(d) {
   const lines = [['Program', d.program], ['Business type', d.kind || d.business_type], ['Locations', d.locations], ['Business', d.business || d.hotel_name], ['Calls per month', d.calls || d.monthly_calls], ['Missed calls', [].concat(d.missed || []).join(', ')], ['Software', d.software], ['Name', d.name], ['Email', d.email], ['Phone', d.phone], ['Country', d.country]]
@@ -1908,11 +1932,13 @@ const TOOLS = {
     if (miss.length) return `Cannot submit yet. Missing: ${miss.join(', ')}.`
     const data = { ...APPLICATION, source: 'voice', page: location.href, at: new Date().toISOString() }
     if (!(await sendApplication(data))) {
-      setDock(vstate, null, `The application didn’t go through. You can book your call at ${BOOKING_URL.replace('https://', '')}`)
-      return `The application did not go through. Tell them so plainly. They can book the 20-minute call at calendly.com/hello-legitdesign/discovery-call, or email their details to ${CONTACT_EMAIL}.`
+      openBooking(data, 'Book your call', `Your application didn’t go through, but you can still pick a time for your 20-minute call here, or email your details to ${CONTACT_EMAIL}.`)
+      setDock(vstate, null, 'The application didn’t go through. You can still book your call.')
+      return `The application did not go through. Tell them so plainly. The page now shows a calendar where they can still book the 20-minute call, or they can email their details to ${CONTACT_EMAIL}.`
     }
+    openBooking(data, `Thank you, ${String(data.name).trim().split(' ')[0]}.`, `We’ll email ${String(data.email).trim()} to confirm. Pick a time for your 20-minute call below.`)
     setDock(vstate, null, `Application received for ${data.hotel_name}.`)
-    return `Application recorded for ${data.name} (${data.email}). Tell them the team will follow up to arrange the 20-minute call.`
+    return `Application recorded for ${data.name} (${data.email}). Tell them the page now shows a calendar where they can pick a time for the 20-minute call.`
   },
 }
 TOOLS.update_business_profile = TOOLS.update_hotel_profile
@@ -1944,6 +1970,7 @@ function go(n) {
   $('#stepNote').hidden = n > 3; $('#applyActions').hidden = n > 3
   if (n <= 3) $('#stepNote').textContent = NOTES[n - 1]
   $('#back').hidden = n === 1 || n > 3; $('#applyError').hidden = true
+  dlg.classList.toggle('wide', n > 3)
   $('#next').textContent = n === 3 ? 'Send application' : 'Continue'
   $(`[data-step="${n}"] input, [data-step="${n}"] select, [data-step="${n}"] button`, form)?.focus()
 }
@@ -1972,14 +1999,12 @@ form.addEventListener('submit', async (e) => {
   const sent = await sendApplication({ ...data, source: 'form', page: location.href, at: new Date().toISOString() })
   next.disabled = false; next.textContent = 'Send application'
   if (!sent) {
-    error.innerHTML = `We couldn’t send your application. You can still <a href="${bookingFor(data)}" target="_blank" rel="noopener">book your 20-minute call</a>, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
+    error.innerHTML = `We couldn’t send your application. You can still <button class="link" type="button" id="bookInstead">book your 20-minute call here</button>, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
     error.hidden = false
+    $('#bookInstead').addEventListener('click', () => openBooking(data, 'Book your call', `Pick a time for your 20-minute call, and we’ll go through your business on it. You can also email your application to ${CONTACT_EMAIL}.`))
     return
   }
-  $('#doneTitle').textContent = `Thank you, ${data.name.trim().split(' ')[0]}.`
-  $('#doneText').textContent = `We’ll email ${data.email.trim()} to confirm. Pick a time for your 20-minute call now.`
-  $('#doneBook').href = bookingFor(data)
-  go(4)
+  openBooking(data, `Thank you, ${data.name.trim().split(' ')[0]}.`, `We’ll email ${data.email.trim()} to confirm. Pick a time for your 20-minute call below.`)
 })
 $('#back').addEventListener('click', () => go(step - 1))
 new IntersectionObserver(([e], o) => { if (e.isIntersecting) { track('Pricing viewed', { page: 'home' }); o.disconnect() } }, { threshold: 0.3 }).observe($('#pricing'))

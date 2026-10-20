@@ -419,7 +419,9 @@ select.line-in option { background: var(--bg); }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; } /* a field only bots fill in */
 .form-error { grid-column: 1 / -1; font-size: var(--card); line-height: 1.5; color: var(--err); }
 .done { display: grid; gap: 12px; }
-.done .btn { justify-self: start; }
+/* The call is booked here on the page: Calendly's scheduler in a frame */
+.booking iframe { display: block; width: 100%; height: 700px; border: 0; color-scheme: normal; }
+.booking .booked { padding: 22px 24px; font-size: var(--card); line-height: 1.5; }
 .done:focus { outline: none; }
 .done h3 { font: 400 calc(var(--h2) * var(--ds))/var(--h2-lh) var(--font-display); }
 
@@ -725,7 +727,8 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
           <button class="btn btn-primary" type="submit" id="demoSubmit">Send application</button>
           <p class="form-note">We follow up to arrange a 20-minute call, then send the invoice. No payment today. We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
         </form>
-        <div class="done" id="demoDone" hidden tabindex="-1"><h3>Thank you.</h3><p class="lead" id="doneText"></p><a class="btn btn-primary" id="doneBook" href="#" target="_blank" rel="noopener">Pick a time for your call</a></div>
+        <div class="done" id="demoDone" hidden tabindex="-1"><h3>Thank you.</h3><p class="lead" id="doneText"></p></div>
+        <div class="booking" id="booking" hidden></div>
       </div>
     </div>
   </section>
@@ -1060,7 +1063,7 @@ function render(n) {
   $('#seatsOpen').textContent = c.seats
   $('#demoTitle').innerHTML = words(c.demoTitle)
   $('#dBizLabel').textContent = c.biz
-  demoForm.reset(); demoForm.hidden = false; $('#demoDone').hidden = true; $('#demoError').hidden = true
+  demoForm.reset(); demoForm.hidden = false; $('#demoDone').hidden = true; $('#demoError').hidden = true; $('#booking').hidden = true; $('#booking').innerHTML = ''
   $('#qs').innerHTML = c.faq.map(([q, a]) => `<details><summary>${q}${icon('plus')}</summary><p>${a}</p></details>`).join('')
   $('#steps').innerHTML = STEP_KEYS.map((k, i) => `<a href="#${k}" data-go="${k}"><span>${['Welcome', c.label, 'What she does', 'Plans', 'Apply'][i]}</span></a>`).join('')
   beats = $$('.beat'); pills = $$('.pill')
@@ -1470,8 +1473,23 @@ async function sendApplication(data) {
   track(sent ? 'Application sent' : 'Application failed', meta)
   return sent
 }
-// The call booking, with the visitor's name and email already filled in
-const bookingFor = (d) => `${BOOKING_URL}?${new URLSearchParams({ name: String(d.name || '').trim(), email: String(d.email || '').trim() })}`
+// The 20-minute call is booked on the page itself: Calendly's scheduler in a frame, in the niche's colours
+// (Calendly applies colours on paid plans), with the visitor's name and email already filled in
+function showBooking(d) {
+  const css = getComputedStyle(root), hex = (v) => (/^#[0-9a-f]{6}$/i.test(css.getPropertyValue(v).trim()) ? css.getPropertyValue(v).trim().slice(1) : '')
+  const q = new URLSearchParams({ embed_domain: location.hostname, embed_type: 'Inline', hide_gdpr_banner: '1', hide_event_type_details: '1', name: String(d.name || '').trim(), email: String(d.email || '').trim(), background_color: hex('--bg'), text_color: hex('--text'), primary_color: hex('--accent') })
+  const box = $('#booking')
+  box.innerHTML = `<iframe title="Book your 20-minute call" src="${BOOKING_URL}?${q}"></iframe>`
+  box.hidden = false
+}
+// Calendly tells the page when a time is booked
+addEventListener('message', (e) => {
+  if (e.origin !== 'https://calendly.com' || e.data?.event !== 'calendly.event_scheduled') return
+  track('Call booked', { page: niche })
+  const p = document.createElement('p'); p.className = 'booked'; p.setAttribute('role', 'status')
+  p.textContent = 'Booked. Your calendar invite is on its way by email.'
+  $('#booking').prepend(p)
+})
 // When sending fails, the visitor can still book the call, or email the application, already written out
 function mailtoFor(d) {
   const lines = [['Name', d.name], ['Business', d.hotel_name], ['Email', d.email], ['Phone', d.phone], ['Plan', d.plan], ['Good time for a call', d.preferred_time], ['Notes', d.notes]].filter(([, v]) => String(v || '').trim()).map(([k, v]) => `${k}: ${v}`)
@@ -1484,13 +1502,14 @@ async function submitDemo(source) {
   const sent = await sendApplication(data)
   btn.disabled = false; btn.textContent = 'Send application'
   if (!sent) {
-    error.innerHTML = `We couldn’t send your application. You can still <a href="${bookingFor(data)}" target="_blank" rel="noopener">book your 20-minute call</a>, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
+    error.innerHTML = `We couldn’t send your application. You can still book your 20-minute call below, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
     error.hidden = false
+    showBooking(data)
     goTo('demo', source === 'voice')
     return null
   }
-  $('#doneText').textContent = `We’ll email ${data.email} to confirm. Pick a time for your 20-minute call now${data.preferred_time ? `; you mentioned ${data.preferred_time}` : ''}.`
-  $('#doneBook').href = bookingFor(data)
+  $('#doneText').textContent = `We’ll email ${data.email} to confirm. Pick a time for your 20-minute call below${data.preferred_time ? `; you mentioned ${data.preferred_time}` : ''}.`
+  showBooking(data)
   demoForm.hidden = true
   const done = $('#demoDone'); done.hidden = false
   goTo('demo', source === 'voice'); done.focus({ preventScroll: true })
@@ -1561,9 +1580,9 @@ const TOOLS = {
     const missing = missingDemoFields()
     if (missing.length) return `Cannot submit yet. Missing: ${missing.join(', ')}.`
     const data = await submitDemo('voice')
-    if (!data) return `The application did not go through. Tell them so plainly, and that the form on the page now has a link to book the 20-minute call directly, or to email the application to ${CONTACT_EMAIL}.`
+    if (!data) return `The application did not go through. Tell them so plainly, and that they can still book the 20-minute call in the calendar now showing under the form, or email the application to ${CONTACT_EMAIL}.`
     activity('Application sent')
-    return `Application recorded for ${data.name} (${data.email}). Tell them the page now shows a button to pick a time for the 20-minute call.`
+    return `Application recorded for ${data.name} (${data.email}). Tell them the page now shows a calendar where they can pick a time for the 20-minute call.`
   },
 }
 TOOLS.update_business_profile = TOOLS.update_hotel_profile

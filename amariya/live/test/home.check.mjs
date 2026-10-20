@@ -108,7 +108,10 @@ check('voice: submit', async (page) => {
   await page.evaluate((s) => TOOLS.fill_demo_form(s), SAM)
   // With no webhook set, nothing can be sent, so the agent must say so rather than claim it was recorded
   const reply = await page.evaluate(() => TOOLS.submit_demo_request())
-  assert(reply.startsWith('The application did not go through.') && reply.includes('calendly.com/hello-legitdesign/discovery-call'), `reply was "${reply}"`)
+  assert(reply.startsWith('The application did not go through.') && reply.includes('calendar'), `reply was "${reply}"`)
+  // The calendar opens on the page, in the application window
+  const b = await page.evaluate(() => ({ open: document.querySelector('#apply').open, step4: !document.querySelector('[data-step="4"]').hidden, src: document.querySelector('#booking iframe')?.getAttribute('src') || '' }))
+  assert(b.open && b.step4 && b.src.startsWith('https://calendly.com/hello-legitdesign/discovery-call?') && b.src.includes('name=Sam+Lee'), `booking ${JSON.stringify(b)}`)
 })
 check('apply: errors and failed send', async (page) => {
   await open(page, '/')
@@ -121,10 +124,15 @@ check('apply: errors and failed send', async (page) => {
   await page.type('#name', 'Sam Lee'); await page.type('#email', 'sam@example.com'); await page.type('#phone', '+44 20 7946 0000')
   await page.evaluate(() => document.querySelector('#next').click())
   await page.waitForFunction(() => !document.querySelector('#applyError').hidden, { timeout: 4000 })
-  const r = await page.evaluate(() => ({ text: document.querySelector('#applyError').textContent, links: [...document.querySelectorAll('#applyError a')].map((a) => a.getAttribute('href')), step3: !document.querySelector('[data-step="3"]').hidden, next: document.querySelector('#next').textContent }))
+  const r = await page.evaluate(() => ({ text: document.querySelector('#applyError').textContent, mail: document.querySelector('#applyError a')?.getAttribute('href') || '', step3: !document.querySelector('[data-step="3"]').hidden, next: document.querySelector('#next').textContent }))
   assert(r.text.startsWith('We couldn’t send your application.') && r.step3 && r.next === 'Send application', `failed send ${JSON.stringify(r)}`)
-  assert(r.links[0] === 'https://calendly.com/hello-legitdesign/discovery-call?name=Sam+Lee&email=sam%40example.com', `booking link ${r.links[0]}`)
-  assert(r.links[1].startsWith('mailto:marketing@legitdesign.studio?subject=') && decodeURIComponent(r.links[1]).includes('Business: Harbour House'), `mailto ${r.links[1]}`)
+  assert(r.mail.startsWith('mailto:marketing@legitdesign.studio?subject=') && decodeURIComponent(r.mail).includes('Business: Harbour House'), `mailto ${r.mail}`)
+  // "Book your call here" opens the calendar inside the window, with name and email filled in
+  await page.evaluate(() => document.querySelector('#bookInstead').click())
+  const b = await page.evaluate(() => { const f = document.querySelector('#booking iframe'); return { step4: !document.querySelector('[data-step="4"]').hidden, wide: document.querySelector('#apply').classList.contains('wide'), src: f?.getAttribute('src') || '', h: f ? Math.round(f.getBoundingClientRect().height) : 0, title: document.querySelector('#doneTitle').textContent } })
+  const q = new URL(b.src || 'https://x').searchParams
+  assert(b.step4 && b.wide && b.h >= 600 && b.title === 'Book your call', `booking view ${JSON.stringify(b)}`)
+  assert(b.src.startsWith('https://calendly.com/hello-legitdesign/discovery-call?') && q.get('name') === 'Sam Lee' && q.get('email') === 'sam@example.com' && q.get('embed_type') === 'Inline', `calendly src ${b.src}`)
 })
 check('seats and privacy', async (page) => {
   await open(page, '/')
