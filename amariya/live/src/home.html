@@ -534,6 +534,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
 .field input:focus, .field select:focus { border-color: rgba(255, 255, 255, .45); }
 .field input:focus-visible, .field select:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .field .opt { font-weight: 400; color: var(--faint); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; } /* a field only bots fill in */
 .form-error { margin: 0; font-size: var(--card-size); line-height: 1.5; color: #ffb4a6; }
 .form-error a, .note a { color: inherit; text-underline-offset: 3px; }
 .done-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
@@ -891,6 +892,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
       </div>
       <div class="field"><label for="country">Country <span class="opt">(optional)</span></label><input id="country" name="country" autocomplete="country-name"></div>
       <p class="note">We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
+      <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
       <p class="form-error" id="applyError" role="alert" hidden></p>
     </div>
     <div class="fields" data-step="4" hidden>
@@ -1708,7 +1710,7 @@ if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 500 })
 // ---------- Amariya, for real: voice and text through the ElevenLabs agent ----------
 const dock = $('#dock')
 const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
-const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here receives each application as JSON; until it is set, applications fall back to email
+const APPLY_WEBHOOK = '/api/apply' // the site's own server function, which sends each application to HubSpot; if it fails, the visitor can book or email instead
 const CONTACT_EMAIL = 'marketing@legitdesign.studio'
 const BOOKING_URL = 'https://calendly.com/hello-legitdesign/discovery-call' // the 20-minute call
 // A one-time pass from our own server (/api/convai), so only this site can start a conversation.

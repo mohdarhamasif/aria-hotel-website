@@ -416,6 +416,7 @@ select.line-in option { background: var(--bg); }
 .form-note { grid-column: 1 / -1; font-size: var(--small); line-height: 1.5; color: var(--faint); }
 .form-note a, .form-error a, .foot a, .done a:not(.btn) { text-decoration: underline; text-underline-offset: 3px; }
 .fld label .opt { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; } /* a field only bots fill in */
 .form-error { grid-column: 1 / -1; font-size: var(--card); line-height: 1.5; color: var(--err); }
 .done { display: grid; gap: 12px; }
 .done .btn { justify-self: start; }
@@ -719,6 +720,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
           <div class="fld"><label for="dPlan">Plan</label><select class="line-in" id="dPlan" name="plan"><option value="founding">Founding licence</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select></div>
           <div class="fld"><label for="dTime">Good time for a call <span class="opt">(optional)</span></label><input class="line-in" id="dTime" name="preferred_time" placeholder="e.g. Tuesday morning"></div>
           <div class="fld full"><label for="dNotes">Anything we should know <span class="opt">(optional)</span></label><textarea class="line-in" id="dNotes" name="notes"></textarea></div>
+          <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
           <p class="form-error" id="demoError" role="alert" hidden></p>
           <button class="btn btn-primary" type="submit" id="demoSubmit">Send application</button>
           <p class="form-note">We follow up to arrange a 20-minute call, then send the invoice. No payment today. We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
@@ -1073,7 +1075,7 @@ function render(n) {
 
 // ---------- Amariya, for real: she guides the visitor through the page by voice or text (ElevenLabs agent) ----------
 const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
-const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here receives each application as JSON; until it is set, applications fall back to email
+const APPLY_WEBHOOK = '/api/apply' // the site's own server function, which sends each application to HubSpot; if it fails, the visitor can book or email instead
 const CONTACT_EMAIL = 'marketing@legitdesign.studio'
 const BOOKING_URL = 'https://calendly.com/hello-legitdesign/discovery-call' // the 20-minute call
 // A one-time pass from our own server (/api/convai), so only this site can start a conversation.
