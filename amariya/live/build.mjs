@@ -1,6 +1,6 @@
 // Builds the live Amariya site from the approved page in src/page.html: node build.mjs
 // Output: ./site, deployed with the Vercel CLI to the project behind amariya.legitdesign.studio.
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, cpSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -9,6 +9,7 @@ const NICHES = ['hotels', 'clinics', 'dental']
 const src = readFileSync(join(here, 'src/page.html'), 'utf8')
 const body = src.slice(src.indexOf('<style>')) // the lines above are only for the claude.ai preview
 const homeBody = readFileSync(join(here, 'src/home.html'), 'utf8')
+const privacyPage = readFileSync(join(here, 'src/privacy.html'), 'utf8')
 const FONTS = ['ranade-400', 'supreme-400', 'supreme-500', 'boska-400']
 const faces = [['Ranade', 400, 'ranade-400'], ['Supreme', 400, 'supreme-400'], ['Supreme', 500, 'supreme-500'], ['Boska', 400, 'boska-400']]
   .map(([f, w, file]) => `@font-face{font-family:"${f}";font-weight:${w};font-style:normal;font-display:swap;src:url(/fonts/${file}.woff2) format("woff2")}`).join('\n')
@@ -25,6 +26,15 @@ const LOOK = {
 }
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c')
+// The hero copy, read from the niche copy in page.html (hotels, clinics, dental in order) and written into
+// each page's HTML, so the headline, intro and price are there before any script runs
+const heroCopy = (key) => [...src.matchAll(new RegExp(`^\\s+${key}: (.*),$`, 'gm'))].map((m) => m[1])
+const h1s = heroCopy('h1'), leads = heroCopy('lead')
+if (h1s.length !== NICHES.length || leads.length !== NICHES.length) throw new Error('hero copy not found for every niche in src/page.html')
+const HERO = Object.fromEntries(NICHES.map((n, i) => [n, {
+  h1: JSON.parse(h1s[i].replace(/'/g, '"')).map(([w]) => w).join(' '),
+  lead: leads[i].slice(1, -1),
+}]))
 
 function page(n, path) {
   const m = META[n], l = LOOK[n]
@@ -58,7 +68,10 @@ ${l.font ? `<link rel="preload" href="/fonts/${l.font}.woff2" as="font" type="fo
 </head>
 <body>
 <script type="application/json" id="site-meta">${json(META)}</script>
-${body.replace('/*FONTS*/', () => faces)}
+${body.replace('/*FONTS*/', () => faces)
+  .replace('<h1 id="h1" tabindex="-1"></h1>', () => `<h1 id="h1" tabindex="-1">${esc(HERO[n].h1)}</h1>`)
+  .replace('<p class="lead" id="lead"></p>', () => `<p class="lead" id="lead">${esc(HERO[n].lead)}</p>`)
+  .replace('<span id="price"></span>', () => `<span id="price">$${l.price.toLocaleString('en-US')}</span>`)}
 </body>
 </html>
 `
@@ -114,15 +127,19 @@ ${homeBody.replace('/*FONTS*/', () => faces).replace('<!--LENIS-->', () => '<scr
 mkdirSync(out, { recursive: true })
 for (const n of NICHES) { mkdirSync(join(out, n), { recursive: true }); writeFileSync(join(out, n, 'index.html'), page(n, '/' + n)) }
 writeFileSync(join(out, 'index.html'), home())
+mkdirSync(join(out, 'privacy'), { recursive: true })
+writeFileSync(join(out, 'privacy', 'index.html'), privacyPage.replace('/*FONTS*/', () => faces))
 mkdirSync(join(out, 'fonts'), { recursive: true })
 for (const f of FONTS) copyFileSync(join(here, 'src/fonts', f + '.woff2'), join(out, 'fonts', f + '.woff2'))
 mkdirSync(join(out, 'vendor'), { recursive: true })
 copyFileSync(join(here, '../node_modules/lenis/dist/lenis.min.js'), join(out, 'vendor/lenis.min.js'))
+// three.js 0.160.0, served from the site itself so the pages don't depend on a third-party CDN
+cpSync(join(here, 'src/vendor/three'), join(out, 'vendor/three'), { recursive: true })
 const favicon = (bg, ring) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${ring[0]}"/><stop offset=".58" stop-color="${ring[1]}"/><stop offset="1" stop-color="${ring[2]}"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="${bg}"/><circle cx="32" cy="32" r="16.5" fill="none" stroke="url(#g)" stroke-width="6.5"/></svg>`
 for (const [n, l] of Object.entries(LOOK)) writeFileSync(join(out, `favicon-${n}.svg`), favicon(l.bg, l.ring))
 writeFileSync(join(out, 'favicon-home.svg'), favicon(HOME.bg, HOME.ring))
 writeFileSync(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`)
-writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', ...NICHES].map((n) => `  <url><loc>${BASE}/${n}</loc></url>`).join('\n')}\n</urlset>\n`)
+writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', ...NICHES, 'privacy'].map((n) => `  <url><loc>${BASE}/${n}</loc></url>`).join('\n')}\n</urlset>\n`)
 writeFileSync(join(out, 'vercel.json'), JSON.stringify({
   cleanUrls: true,
   trailingSlash: false,
