@@ -18,12 +18,12 @@
 <meta name="theme-color" content="#101d14">
 <link rel="icon" href="/favicon-hotels.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bona+Nova:wght@400&display=swap">
+<link rel="preload" href="/fonts/bonanova-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Amariya","description":"Amariya answers every call, day and night, books rooms and tables straight into your system and speaks your guests’ language. A founding licence for the first 30 hotels and restaurants.","brand":{"@type":"Brand","name":"Legit Design Studio"},"offers":{"@type":"Offer","price":2500,"priceCurrency":"USD","availability":"https://schema.org/LimitedAvailability","url":"https://amariya.legitdesign.studio/hotels"}}</script>
 <script src="/vendor/lenis.min.js" defer></script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments) }</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <script type="application/json" id="site-meta">{"hotels":{"title":"Amariya · AI receptionist for hotels and restaurants","desc":"Amariya answers every call, day and night, books rooms and tables straight into your system and speaks your guests’ language. A founding licence for the first 30 hotels and restaurants."},"clinics":{"title":"Amariya · AI receptionist for clinics","desc":"Amariya answers every call, books consultations and appointments, sends deposit links and passes anything clinical to your team. A founding licence for the first 30 clinics."},"dental":{"title":"Amariya · AI receptionist for dental practices","desc":"Amariya answers every call, books check-ups and urgent visits and moves appointments, in your patients’ language. A founding licence for the first 30 dental practices."}}</script>
@@ -32,6 +32,8 @@
 @font-face{font-family:"Supreme";font-weight:400;font-style:normal;font-display:swap;src:url(/fonts/supreme-400.woff2) format("woff2")}
 @font-face{font-family:"Supreme";font-weight:500;font-style:normal;font-display:swap;src:url(/fonts/supreme-500.woff2) format("woff2")}
 @font-face{font-family:"Boska";font-weight:400;font-style:normal;font-display:swap;src:url(/fonts/boska-400.woff2) format("woff2")}
+@font-face{font-family:"Bona Nova";font-weight:400;font-style:normal;font-display:swap;src:url(/fonts/bonanova-400-ext.woff2) format("woff2");unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:"Bona Nova";font-weight:400;font-style:normal;font-display:swap;src:url(/fonts/bonanova-400.woff2) format("woff2");unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 /* Layout: one calm stage per screen over a fixed 3D model of the customer's own building; glass only where Amariya speaks, acts or sells */
 :root {
   --font-body: "Supreme", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -54,7 +56,7 @@
   --muted: rgba(248, 247, 244, .72);
   --faint: rgba(248, 247, 244, .58);
   --accent: #d8c08d;
-  --danger: #ffb4a6;
+  --err: #ffb4a6;
   --button: #bba16a;
   --button-text: #101d14;
   --button-shadow: rgba(187, 161, 106, .24);
@@ -86,7 +88,7 @@
   --muted: rgba(16, 31, 46, .74);
   --faint: rgba(16, 31, 46, .64);
   --accent: #3b5979;
-  --danger: #b3261e;
+  --err: #b3261e;
   --button: #2f445b;
   --button-text: #ffffff;
   --button-shadow: rgba(47, 68, 91, .22);
@@ -118,7 +120,7 @@
   --muted: rgba(44, 24, 24, .74);
   --faint: rgba(44, 24, 24, .64);
   --accent: #7d424e;
-  --danger: #a1221b;
+  --err: #b3261e;
   --button: #7d424e;
   --button-text: #ffffff;
   --button-shadow: rgba(125, 66, 78, .22);
@@ -161,9 +163,6 @@ a { color: inherit; text-decoration: none; }
 svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.skip { position: fixed; left: 16px; top: -80px; z-index: 100; padding: 10px 18px; border-radius: 999px; background: var(--text); color: var(--bg); font-size: var(--small); font-weight: 500; }
-.skip:focus { top: calc(16px + env(safe-area-inset-top, 0px)); }
-#h1:focus { outline: none; }
 .eyebrow { font-size: var(--eyebrow); line-height: 1.33; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 500; }
 .wrap { max-width: 1440px; margin: 0 auto; padding-inline: calc(var(--pad) - 16px); }
 .w { display: inline-block; }
@@ -175,6 +174,7 @@ html.lenis, html.lenis body { height: auto; }
 
 #world { position: fixed; inset: 0; width: 100%; height: 100vh; display: block; z-index: 0; touch-action: pan-y; opacity: 0; transition: opacity .9s var(--ease); }
 #world[data-ready] { opacity: 1; }
+.flat #tags { display: none; }
 /* The orb is drawn on its own layer above the building, so no wall or pillar can ever cut it */
 #orbfx { position: fixed; inset: 0; width: 100%; height: 100vh; display: block; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .9s var(--ease); }
 #orbfx[data-ready] { opacity: 1; }
@@ -247,6 +247,8 @@ main a, main button, main input, main details, .glass { pointer-events: auto; }
 .lead { font-size: var(--lead); line-height: var(--lead-lh); color: var(--muted); }
 .ctas { display: flex; flex-wrap: wrap; gap: 10px; }
 .note { font-size: var(--small); line-height: 1.5; color: var(--faint); }
+.note a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; }
+.note a:hover { color: var(--text); }
 .cue { display: inline-flex; align-items: center; gap: 14px; padding: 8px 0; border: 0; background: none; font-size: var(--small); font-weight: 500; color: var(--muted); cursor: pointer; animation: fade 1s 1.2s var(--ease) both; }
 .cue i { width: 1px; height: 40px; background: linear-gradient(var(--text), transparent); transform-origin: top; animation: drip 2.4s var(--ease) infinite; }
 @keyframes drip { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
@@ -350,8 +352,9 @@ select.blank option { background: var(--bg); color: var(--text); }
 .est-note { font-size: var(--small); line-height: 1.5; color: var(--faint); max-width: 56ch; }
 
 /* Pricing: the plans on a scale of your business, and the founding licence as a seal ringed by its 30 seats */
-.pricing { min-height: 100vh; min-height: 100svh; display: grid; align-items: center; padding-block: 120px; --wash: radial-gradient(120% 90% at 50% 50%, var(--scrim) 38%, transparent 80%); }
-.pricing-in { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 72px; align-items: center; }
+.pricing { min-height: 100vh; min-height: 100svh; display: grid; align-items: center; padding-block: 96px; --wash: radial-gradient(120% 90% at 50% 50%, var(--scrim) 38%, transparent 80%); }
+.pricing-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 28px 72px; align-items: center; }
+.pricing-head { grid-column: 1 / -1; }
 .scale { margin-top: 48px; }
 .scale-track { position: relative; display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: 6px; }
 .tier { display: grid; gap: 4px; padding: 14px 0 0; border: 0; background: none; text-align: left; cursor: pointer; color: var(--muted); box-shadow: inset 0 2px 0 var(--line); transition: color .3s, box-shadow .4s var(--ease); }
@@ -372,12 +375,11 @@ select.blank option { background: var(--bg); color: var(--text); }
 .ticks li { display: flex; align-items: flex-start; gap: 10px; font-size: var(--card); line-height: 1.5; }
 .ticks svg { width: 16px; height: 16px; margin-top: 3px; color: var(--accent); }
 .plan-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
-.licence { display: grid; justify-items: center; gap: 22px; text-align: center; }
+.licence { display: grid; justify-items: center; gap: 18px; text-align: center; }
 .seal { position: relative; width: 300px; aspect-ratio: 1; display: grid; place-content: center; gap: 4px; justify-items: center; }
 .seal::before { content: ""; position: absolute; inset: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line); }
 .seal .dots { position: absolute; inset: 0; }
 .seal .dots i { position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--dot); transform: rotate(var(--a)) translateY(-142px); }
-.seal .dots i.taken { opacity: .22; }
 .seal .price { justify-content: center; }
 .seal .eyebrow { color: var(--accent); }
 .seal .seat-label { font-size: var(--small); color: var(--muted); }
@@ -396,16 +398,13 @@ select.blank option { background: var(--bg); color: var(--text); }
 .line-in { width: 100%; height: 42px; padding: 0 2px; border: 0; border-radius: 0; background: transparent; color: var(--text); font: 400 var(--body)/1.4 var(--font-body); box-shadow: inset 0 -1px 0 var(--line); appearance: none; transition: box-shadow .3s var(--ease), background-color .3s var(--ease); }
 textarea.line-in { height: 64px; padding-top: 10px; resize: none; }
 .line-in:focus { outline: none; box-shadow: inset 0 -2px 0 var(--accent); }
-.line-in::placeholder { color: var(--faint); }
+.line-in::placeholder { color: var(--faint); opacity: .7; }
+.fld .err { min-height: 0; font-size: var(--small); line-height: 1.4; color: var(--err); }
+.fld .err:empty { display: none; }
+.line-in[aria-invalid="true"] { box-shadow: inset 0 -2px 0 var(--err); }
 select.line-in option { background: var(--bg); }
 .form .btn { justify-self: start; }
 .form-note { grid-column: 1 / -1; font-size: var(--small); line-height: 1.5; color: var(--faint); }
-.form-note a, .form-error a, .foot a { text-decoration: underline; text-underline-offset: 3px; }
-.fld label .opt { text-transform: none; letter-spacing: 0; font-weight: 400; }
-.fld .err { font-size: var(--small); line-height: 1.4; color: var(--danger); }
-.fld .err:empty { display: none; }
-.line-in[aria-invalid="true"] { box-shadow: inset 0 -2px 0 var(--danger); }
-.form-error { grid-column: 1 / -1; font-size: var(--card); line-height: 1.5; color: var(--danger); }
 .done { display: grid; gap: 12px; }
 .done:focus { outline: none; }
 .done h3 { font: 400 calc(var(--h2) * var(--ds))/var(--h2-lh) var(--font-display); }
@@ -504,12 +503,6 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 .toast { position: fixed; left: 50%; top: calc(84px + env(safe-area-inset-top, 0px)); z-index: 60; transform: translate(-50%, -10px); padding: 10px 16px; border-radius: 999px; font-size: var(--small); opacity: 0; pointer-events: none; transition: opacity .3s var(--ease), transform .3s var(--ease); }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* Touch: 44px targets for the niche switch and the dock buttons */
-@media (pointer: coarse) {
-  .seg a { display: inline-flex; align-items: center; min-height: 44px; }
-  .icon-btn { width: 44px; height: 44px; }
-}
-
 @media (max-width: 1068px) {
   :root { --h1: 56px; --h1-lh: 1.07; --h1-ls: -.006em; --h2: 28px; --pad: 32px; }
   .call { width: 380px; }
@@ -518,6 +511,8 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 }
 @media (max-width: 734px) {
   :root { --h1: 40px; --h1-lh: 1.1; --h1-ls: 0em; --h2: 26px; --h2-lh: 1.15; --lead: 17px; --stat: 30px; --pad: 16px; }
+  .dock { transition: translate .35s var(--ease); }
+  .form-focus .dock { translate: 0 calc(100% + 40px); }
   .long { display: none; } .short { display: inline; }
   .seg a { padding: 7px 9px; }
   .nav-in { gap: 8px; }
@@ -585,12 +580,11 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 <canvas id="orbfx" aria-hidden="true"></canvas>
 <div class="tags" id="tags" aria-hidden="true"></div>
 
-<a class="skip" href="#h1" id="skip">Skip to content</a>
 <header class="nav">
   <div class="nav-in">
-    <a class="brand" href="/" aria-label="Amariya home"><i class="ring" aria-hidden="true"></i>Amariya</a>
+    <button class="brand" id="brand" type="button"><i class="ring" aria-hidden="true"></i>Amariya</button>
     <div class="nav-right">
-      <button class="sound glass" id="sound" type="button" aria-pressed="false" aria-label="Music"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">Music</span></button>
+      <button class="sound glass" id="sound" type="button" aria-pressed="false" aria-label="Play music"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">Music</span></button>
       <nav class="seg glass" aria-label="Choose your business">
         <a href="/hotels" data-n="hotels"><span class="long">Hotels &amp; restaurants</span><span class="short">Hotels</span></a>
         <a href="/clinics" data-n="clinics">Clinics</a>
@@ -602,17 +596,17 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 
 <main>
   <section class="hero" aria-label="Introduction">
-    <h1 id="h1" tabindex="-1">Every call tonight, answered.</h1>
+    <h1 id="h1"></h1>
     <button class="tap glass" id="tap" type="button"><i aria-hidden="true"></i>Tap to talk</button>
     <div class="hero-foot">
       <div class="wrap">
         <div class="hero-copy">
-          <p class="lead" id="lead">Amariya is the AI receptionist for hotels and restaurants. She picks up every call, day and night, books rooms and tables straight into your system and speaks your guests’ language.</p>
+          <p class="lead" id="lead"></p>
           <div class="ctas">
             <button class="btn btn-primary" id="talk" type="button"><svg aria-hidden="true"><use href="#i-mic"></use></svg>Talk to Amariya</button>
             <button class="btn glass" id="chat" type="button"><svg aria-hidden="true"><use href="#i-keys"></use></svg>Chat by text</button>
           </div>
-          <p class="note">About 3 minutes · switch to typing any time</p>
+          <p class="note">About 3 minutes · switch to typing any time · <a href="#demo" id="skipApply">or apply directly</a></p>
         </div>
         <button class="cue" id="cue" type="button">Scroll to explore<i aria-hidden="true"></i></button>
       </div>
@@ -663,9 +657,24 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 
   <section class="pricing wash" id="pricing" aria-labelledby="pricingTitle">
     <div class="wrap pricing-in">
+      <div class="pricing-head">
+        <p class="eyebrow">Pricing</p>
+        <h2 class="h2" id="pricingTitle"></h2>
+      </div>
+      <div class="licence" id="offer">
+        <div class="seal">
+          <div class="dots" id="dots" aria-hidden="true"></div>
+          <p class="eyebrow">Founding licence</p>
+          <p class="price"><span id="price"></span><small>once</small></p>
+          <p class="seat-label"><b>30</b> of 30 seats open</p>
+        </div>
+        <p class="lead" id="offerFor"></p>
+        <ul class="incl" id="incl"></ul>
+        <p class="guarantee"><img class="i3d sm" id="guaranteeIcon" alt="">Live in 7 days or your money back.</p>
+        <button class="btn btn-primary" id="applyLicence" type="button">Apply for a founding licence</button>
+      </div>
       <div class="plans">
         <p class="eyebrow">Monthly plans</p>
-        <h2 class="h2" id="pricingTitle"></h2>
         <div class="scale">
           <div class="scale-track" id="tiers" role="group" aria-label="Plans by size">
             <span class="you" id="you" aria-hidden="true"><i></i><span id="youLabel"></span></span>
@@ -678,18 +687,6 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
           <div class="plan-actions"><button class="btn btn-line" id="choosePlan" type="button"></button></div>
         </div>
       </div>
-      <div class="licence" id="offer">
-        <div class="seal">
-          <div class="dots" id="dots" aria-hidden="true"></div>
-          <p class="eyebrow">Founding licence</p>
-          <p class="price"><span id="price">$2,500</span><small>once</small></p>
-          <p class="seat-label"><b id="seatsOpen">30</b> of 30 seats open</p>
-        </div>
-        <p class="lead" id="offerFor"></p>
-        <ul class="incl" id="incl"></ul>
-        <p class="guarantee"><img class="i3d sm" id="guaranteeIcon" alt="">Live in 7 days or your money back.</p>
-        <button class="btn btn-primary" id="applyLicence" type="button">Apply for a founding licence</button>
-      </div>
     </div>
   </section>
 
@@ -701,16 +698,15 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
           <h2 class="h2" id="demoTitle"></h2>
         </div>
         <form class="form" id="demoForm" novalidate>
-          <div class="fld"><label for="dName">Your name</label><input class="line-in" id="dName" name="name" autocomplete="name" required aria-describedby="dNameErr"><span class="err" id="dNameErr"></span></div>
-          <div class="fld"><label for="dBiz" id="dBizLabel">Business</label><input class="line-in" id="dBiz" name="hotel_name" autocomplete="organization" required aria-describedby="dBizErr"><span class="err" id="dBizErr"></span></div>
-          <div class="fld"><label for="dEmail">Email</label><input class="line-in" id="dEmail" name="email" type="email" autocomplete="email" required aria-describedby="dEmailErr"><span class="err" id="dEmailErr"></span></div>
-          <div class="fld"><label for="dPhone">Phone <span class="opt">(optional)</span></label><input class="line-in" id="dPhone" name="phone" type="tel" autocomplete="tel"></div>
+          <div class="fld"><label for="dName">Your name</label><input class="line-in" id="dName" name="name" autocomplete="name" aria-describedby="eName"><span class="err" id="eName" data-for="name"></span></div>
+          <div class="fld"><label for="dBiz" id="dBizLabel">Business</label><input class="line-in" id="dBiz" name="hotel_name" autocomplete="organization" aria-describedby="eBiz"><span class="err" id="eBiz" data-for="hotel_name"></span></div>
+          <div class="fld"><label for="dEmail">Email</label><input class="line-in" id="dEmail" name="email" type="email" autocomplete="email" aria-describedby="eEmail"><span class="err" id="eEmail" data-for="email"></span></div>
+          <div class="fld"><label for="dPhone">Phone</label><input class="line-in" id="dPhone" name="phone" type="tel" autocomplete="tel" aria-describedby="ePhone"><span class="err" id="ePhone" data-for="phone"></span></div>
           <div class="fld"><label for="dPlan">Plan</label><select class="line-in" id="dPlan" name="plan"><option value="founding">Founding licence</option><option value="starter">Starter</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select></div>
-          <div class="fld"><label for="dTime">Good time for a call <span class="opt">(optional)</span></label><input class="line-in" id="dTime" name="preferred_time" placeholder="Tuesday morning"></div>
-          <div class="fld full"><label for="dNotes">Anything we should know <span class="opt">(optional)</span></label><textarea class="line-in" id="dNotes" name="notes"></textarea></div>
-          <p class="form-error" id="demoError" role="alert" hidden></p>
-          <button class="btn btn-primary" type="submit" id="demoSubmit">Send application</button>
-          <p class="form-note">We follow up to arrange a 20-minute call, then send the invoice. No payment today. We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
+          <div class="fld"><label for="dTime">Good time for a call</label><input class="line-in" id="dTime" name="preferred_time" placeholder="e.g. Tuesday morning"></div>
+          <div class="fld full"><label for="dNotes">Anything we should know</label><textarea class="line-in" id="dNotes" name="notes"></textarea></div>
+          <button class="btn btn-primary" type="submit">Send application</button>
+          <p class="form-note">We follow up to arrange a 20-minute call, then send the invoice. No payment today.</p>
         </form>
         <div class="done" id="demoDone" hidden tabindex="-1"><h3>Thank you.</h3><p class="lead" id="doneText"></p></div>
       </div>
@@ -727,8 +723,8 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 
   <footer class="foot">
     <div class="wrap">
-      <a class="brand" href="/"><i class="ring" aria-hidden="true"></i>Amariya</a>
-      <span>AI receptionist by Legit Design Studio · © 2026 · <a href="/privacy">Privacy</a></span>
+      <span class="brand"><i class="ring" aria-hidden="true"></i>Amariya</span>
+      <span>AI receptionist by Legit Design Studio · © 2026</span>
     </div>
   </footer>
 </main>
@@ -759,7 +755,6 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
   <form method="dialog">
     <h2 id="sheetTitle">Talk or type?</h2>
     <p>Amariya is an AI receptionist. She will show you around and answer anything, in about three minutes. You can switch to typing at any time.</p>
-    <p>Your voice or messages go to our voice provider, ElevenLabs, to run the conversation. <a href="/privacy">How we handle it</a></p>
     <div class="sheet-actions">
       <button class="btn btn-primary" value="voice"><svg aria-hidden="true"><use href="#i-mic"></use></svg>Talk</button>
       <button class="btn btn-line" value="text"><svg aria-hidden="true"><use href="#i-keys"></use></svg>Type</button>
@@ -768,15 +763,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 </dialog>
 <p class="toast glass" id="toast" role="status"></p>
 
-<script type="importmap">
-{ "imports": { "three": "/vendor/three/build/three.module.js", "three/addons/": "/vendor/three/examples/jsm/" } }
-</script>
 <script type="module">
-import * as THREE from 'three'
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { SVGLoader } from 'three/addons/loaders/SVGLoader.js'
-
 const $ = (s, el = document) => el.querySelector(s)
 const $$ = (s, el = document) => [...el.querySelectorAll(s)]
 const root = document.documentElement
@@ -785,8 +772,8 @@ const NICHES = ['hotels', 'clinics', 'dental']
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t) }
 const icon = (id) => `<svg aria-hidden="true"><use href="#i-${id}"></use></svg>`
-const words = (segs) => { let i = 0; return segs.map(([s, a]) => { const w = s.split(' ').map((x) => `<span class="w" style="--i:${i++}">${x}</span>`).join(' '); return a ? `<em>${w}</em>` : w }).join(' ') }
-function seeded(s) { return () => { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 } }
+// a headline's segments, word by word; a segment of '\n' starts a new line
+const words = (segs) => { let i = 0; return segs.map(([s, a]) => { if (s === '\n') return '<br>'; const w = s.split(' ').map((x) => `<span class="w" style="--i:${i++}">${x}</span>`).join(' '); return a ? `<em>${w}</em>` : w }).join(' ') }
 
 // ---------- Copy ----------
 const HANDOFF = 'Amariya hands the call to your team with a short summary, or takes a message when no one is free.'
@@ -813,14 +800,14 @@ const C = {
       { key: 'upsells', icon: 'dine', title: 'Smart upsells', desc: 'Offers upgrades, breakfast and spa packages at the right moment, and never pushes.' },
       { key: 'integrations', icon: 'link', title: 'Books into your system', desc: 'We connect her to your booking system during setup. She hands calls to your team with a short summary.' },
     ],
-    price: '$2,500', seats: 30, offerFor: 'A lifetime licence for the first 30 hotels and restaurants.',
+    price: '$2,500', offerFor: 'A lifetime licence for the first 30 hotels and restaurants.',
     noun: 'hotel', label: 'Your hotel', biz: 'Hotel or restaurant',
     profileTitle: [['Tell Amariya about your hotel,'], ['and see what the missed calls cost.', 1]],
     types: ['Boutique hotel', 'City hotel', 'Resort', 'Hotel group', 'B&B or guesthouse', 'Serviced apartments', 'Restaurant'],
     unitWord: 'rooms or tables', unitPh: '80', callsPh: '1200', langPh: 'English, Spanish', painPh: 'calls at night', namePh: 'Your hotel',
     roi: { missedCallRate: .25, bookingConversion: .3, avgBookingValue: 220, minutesPerCall: 4, callsPerUnit: 12 },
     revenue: 'in extra direct bookings', estimatedFrom: 'estimated from your rooms or tables',
-    plansTitle: [['Monthly plans that fit'], ['your property', 1]],
+    plansTitle: [['Pay once', 1], ['for life, or by the month']],
     scale: { by: 'rooms', cuts: [40, 150] },
     plans: {
       starter: { for: 'Up to 40 rooms', price: '$299', items: ['24/7 call answering', 'FAQs and guest requests', '5 languages', '500 calls a month'] },
@@ -831,7 +818,7 @@ const C = {
     faq: [AI_FAQ, ['What happens when a guest needs a real person?', HANDOFF], ['Which languages does she speak?', 'More than 30 on Professional, Enterprise and the founding licence, and 5 on Starter. She hears the caller’s language in the first sentence and switches.'], ['Does she work with my booking system?', 'We connect her to your property management or booking system during setup, so she can check availability, quote your rates and book directly. Tell us which system you use on your call.'], ['What is the founding licence?', 'A one-off payment instead of a monthly plan, for the first 30 hotels and restaurants. It includes Professional features for life and 500 call minutes a month, with extra minutes at cost.'], SETUP],
     greet: {
       fresh: ['Good {part}! I’m Amariya, an AI receptionist for hotels and restaurants, and I’ll be showing you around today. So, first things first, what’s your place called?', 'Hi, lovely to meet you. I’m Amariya, an AI receptionist. I run the phones for hotels and restaurants, and I’ll walk you through how. What’s the name of your place?', 'Hello, and good {part}! I’m Amariya, an AI receptionist for hotels and restaurants. I’d love to hear a little about your place before I show you anything. What’s it called?'],
-      returning: ['Oh, welcome back! It’s Amariya, the AI receptionist, again. Remind me, what’s the name of your place?', 'You’re back! Amariya here, your AI guide. Let’s pick up where we left off. What’s your place called?'],
+      returning: ['Oh, welcome back! It’s Amariya, the AI receptionist, again. Remind me, what’s the name of your place?'],
       evening: 'Good evening, and thanks for stopping by this late. I’m Amariya, an AI receptionist for hotels and restaurants, and I’ll show you around. So, what’s your place called?',
     },
     fields: 'hotel_name is the hotel or restaurant name, hotel_type is the type of property, rooms is the number of rooms (or tables for a restaurant), monthly_calls is calls per month, languages is guest languages, pain_points is their biggest front-desk challenge',
@@ -857,14 +844,14 @@ const C = {
       { key: 'upsells', icon: 'repeat', title: 'Rebooking', desc: 'Reminds patients about their next session and offers packages at the right moment.' },
       { key: 'integrations', icon: 'link', title: 'Books into your system', desc: 'We connect her to your booking software during setup, and she hands calls over with a summary.' },
     ],
-    price: '$3,500', seats: 30, offerFor: 'A lifetime licence for the first 30 clinics.',
+    price: '$3,500', offerFor: 'A lifetime licence for the first 30 clinics.',
     noun: 'clinic', label: 'Your clinic', biz: 'Clinic',
     profileTitle: [['Tell Amariya about your clinic,'], ['and see what the missed calls cost.', 1]],
     types: ['Medical clinic', 'Aesthetics clinic', 'Laser and skin clinic', 'Physiotherapy clinic', 'Dermatology clinic', 'Clinic group'],
     unitWord: 'practitioners', locations: true, unitPh: '4', callsPh: '600', langPh: 'English, Arabic', painPh: 'calls during treatments', namePh: 'Your clinic',
     roi: { missedCallRate: .25, bookingConversion: .25, avgBookingValue: 435, minutesPerCall: 5, callsPerUnit: 150 },
     revenue: 'in extra consultations', estimatedFrom: 'estimated from your practitioners',
-    plansTitle: [['Monthly plans that fit'], ['your clinic', 1]],
+    plansTitle: [['Pay once', 1], ['for life, or by the month']],
     scale: { by: 'locations', cuts: [1, 3] },
     plans: {
       starter: { for: 'One clinic', price: '$299', items: ['24/7 call answering', 'Consultation booking and FAQs', '5 languages', '500 calls a month'] },
@@ -875,7 +862,7 @@ const C = {
     faq: [AI_FAQ, ['Does she give medical advice?', 'No. Anything clinical, such as symptoms, medication, suitability or results, goes to your team with a summary. Anyone worried after a treatment is put through to your team straight away.'], ['How do deposits work?', 'She texts the caller a secure payment link. She never takes card numbers over the phone.'], ['Does she work with my booking software?', 'We connect her to your booking system during setup, so she can check availability and book directly. Tell us which system you use on your call.'], ['What happens when a patient needs a real person?', HANDOFF], SETUP],
     greet: {
       fresh: ['Good {part}! I’m Amariya, an AI receptionist for clinics, and I’ll be showing you around today. So, first things first, what’s your clinic called?', 'Hi, lovely to meet you. I’m Amariya, an AI receptionist. I answer the phones for clinics. What’s the name of yours?', 'Hello, and good {part}! I’m Amariya, an AI receptionist for clinics. I’d love to hear a little about your clinic before I show you anything. What’s it called?'],
-      returning: ['Oh, welcome back! It’s Amariya, the AI receptionist, again. Remind me, what’s the name of your clinic?', 'You’re back! Amariya here, your AI guide. Let’s pick up where we left off. What’s your clinic called?'],
+      returning: ['Oh, welcome back! It’s Amariya, the AI receptionist, again. Remind me, what’s the name of your clinic?'],
       evening: 'Good evening, and thanks for stopping by this late. I’m Amariya, an AI receptionist for clinics, and I’ll show you around. So, what’s your clinic called?',
     },
     fields: 'hotel_name is the clinic name, hotel_type is the type of clinic, rooms is the number of practitioners, monthly_calls is calls per month, languages is patient languages, pain_points is their biggest front-desk challenge',
@@ -883,7 +870,7 @@ const C = {
     plansBrief: 'starter is $299 a month for one clinic and 500 calls; professional is $799 a month for up to 3 locations and 2,500 calls; enterprise is custom pricing for clinic groups',
   },
   dental: {
-    h1: [['A front desk that'], ['never', 1], ['misses a patient.']],
+    h1: [['She takes the calls.'], ['\n'], ['Your team stays chairside.', 1]],
     lead: 'Amariya is the AI receptionist for dental practices. She answers every call, books check-ups and urgent visits, moves appointments and speaks your patients’ language.',
     stops: [
       { time: '08:40', place: 'Reception', line: 'A toothache at 8:40 gets the first free slot of the day.', who: 'New patient', said: 'I’ve cracked a tooth and it really hurts.', reply: 'We have an urgent slot at 9:10 with Dr. Patel. Can you make it?', chip: 'Urgent visit · 09:10' },
@@ -901,14 +888,14 @@ const C = {
       { key: 'upsells', icon: 'repeat', title: 'Recalls and rebooking', desc: 'Fills gaps in your day by rebooking overdue patients and offering cancelled slots.' },
       { key: 'integrations', icon: 'link', title: 'Books into your system', desc: 'We connect her to your practice software during setup, and she hands calls over with a summary.' },
     ],
-    price: '$3,000', seats: 30, offerFor: 'A lifetime licence for the first 30 dental practices.',
+    price: '$3,000', offerFor: 'A lifetime licence for the first 30 dental practices.',
     noun: 'practice', label: 'Your practice', biz: 'Practice',
     profileTitle: [['Tell Amariya about your practice,'], ['and see what the missed calls cost.', 1]],
     types: ['General dentistry', 'Cosmetic dentistry', 'Orthodontics', 'Children’s dentistry', 'Specialist practice', 'Dental group'],
     unitWord: 'dental chairs', locations: true, unitPh: '5', callsPh: '900', langPh: 'English, Spanish', painPh: 'calls at lunch', namePh: 'Your practice',
     roi: { missedCallRate: .25, bookingConversion: .3, avgBookingValue: 200, minutesPerCall: 4, callsPerUnit: 180 },
     revenue: 'in extra appointments', estimatedFrom: 'estimated from your dental chairs',
-    plansTitle: [['Monthly plans that fit'], ['your practice', 1]],
+    plansTitle: [['Pay once', 1], ['for life, or by the month']],
     scale: { by: 'locations', cuts: [1, 3] },
     plans: {
       starter: { for: 'One practice', price: '$299', items: ['24/7 call answering', 'Booking and FAQs', '5 languages', '500 calls a month'] },
@@ -919,7 +906,7 @@ const C = {
     faq: [AI_FAQ, ['How does she handle urgent calls?', 'She recognises urgent calls, such as severe pain, swelling or a knocked-out tooth, and offers the earliest urgent slot or puts the caller straight through to your team. She never gives clinical advice.'], ['Can she book new and existing patients?', 'Yes. She books new-patient visits and takes their details, and lets existing patients move or cancel without waiting on hold.'], ['Does she work with my practice software?', 'We connect her to your practice management system during setup, so she can see free slots and book directly. Tell us which system you use on your call.'], ['What happens when a patient needs a real person?', HANDOFF], SETUP],
     greet: {
       fresh: ['Good {part}! I’m Amariya, an AI receptionist for dental practices, and I’ll be showing you around today. So, first things first, what’s your practice called?', 'Hi, lovely to meet you. I’m Amariya, an AI receptionist. I answer the phones for dental practices. What’s the name of yours?', 'Hello, and good {part}! I’m Amariya, an AI receptionist for dental practices. I’d love to hear a little about your practice before I show you anything. What’s it called?'],
-      returning: ['Oh, welcome back! It’s Amariya, the AI receptionist, again. Remind me, what’s the name of your practice?', 'You’re back! Amariya here, your AI guide. Let’s pick up where we left off. What’s your practice called?'],
+      returning: ['Oh, welcome back! It’s Amariya, the AI receptionist, again. Remind me, what’s the name of your practice?'],
       evening: 'Good evening, and thanks for stopping by this late. I’m Amariya, an AI receptionist for dental practices, and I’ll show you around. So, what’s your practice called?',
     },
     fields: 'hotel_name is the practice name, hotel_type is the type of practice, rooms is the number of dental chairs, monthly_calls is calls per month, languages is patient languages, pain_points is their biggest front-desk challenge',
@@ -1013,7 +1000,7 @@ const Music = (() => {
   }
 })()
 const soundBtn = $('#sound')
-soundBtn.addEventListener('click', () => { const on = Music.toggle(); soundBtn.setAttribute('aria-pressed', String(on)) })
+soundBtn.addEventListener('click', () => { const on = Music.toggle(); soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.setAttribute('aria-label', on ? 'Pause music' : 'Play music') })
 document.addEventListener('visibilitychange', () => Music.visible(!document.hidden))
 
 // ---------- Page ----------
@@ -1041,7 +1028,7 @@ function render(n) {
   $('#doesTitle').innerHTML = words(c.doesH2)
   $('#doesLede').textContent = c.doesLede
   $('#featureNote').innerHTML = ''
-  orbitEl.innerHTML = c.features.map((f) => `<li class="pill glass" data-feature="${f.key}" tabindex="0"><img class="i3d" src="${icon3d(f.icon, n)}" alt=""><span>${f.title}</span></li>`).join('')
+  orbitEl.innerHTML = c.features.map((f) => `<li class="pill glass" data-feature="${f.key}" tabindex="0"><img class="i3d" src="${icon3d(f.icon, n)}" alt="" loading="lazy" decoding="async"><span>${f.title}</span></li>`).join('')
   $('#profileEyebrow').textContent = c.label
   $('#profileTitle').innerHTML = words(c.profileTitle)
   profileForm.innerHTML = sentence(c)
@@ -1050,12 +1037,11 @@ function render(n) {
   $('#tiers').innerHTML = $('#you').outerHTML + ['starter', 'professional', 'enterprise'].map((k) => `<button class="tier" type="button" data-plan="${k}" aria-pressed="false"><b>${PLAN_NAMES[k]}</b><span>${c.plans[k].for}</span></button>`).join('')
   $('#price').textContent = c.price
   $('#offerFor').textContent = c.offerFor
-  $('#incl').innerHTML = INCL.map((t) => `<li><img class="i3d sm" src="${icon3d('check', n)}" alt=""><span>${t}</span></li>`).join('')
-  $('#dots').innerHTML = Array.from({ length: 30 }, (_, i) => `<i style="--a:${i * 12}deg"${i >= c.seats ? ' class="taken"' : ''}></i>`).join('')
-  $('#seatsOpen').textContent = c.seats
+  $('#incl').innerHTML = INCL.map((t) => `<li><img class="i3d sm" src="${icon3d('check', n)}" alt="" loading="lazy" decoding="async"><span>${t}</span></li>`).join('')
+  $('#dots').innerHTML = Array.from({ length: 30 }, (_, i) => `<i style="--a:${i * 12}deg"></i>`).join('')
   $('#demoTitle').innerHTML = words(c.demoTitle)
   $('#dBizLabel').textContent = c.biz
-  demoForm.reset(); clearDemoErrors(); demoForm.hidden = false; $('#demoDone').hidden = true
+  demoForm.reset(); demoForm.hidden = false; $('#demoDone').hidden = true
   $('#qs').innerHTML = c.faq.map(([q, a]) => `<details><summary>${q}${icon('plus')}</summary><p>${a}</p></details>`).join('')
   $('#steps').innerHTML = STEP_KEYS.map((k, i) => `<a href="#${k}" data-go="${k}"><span>${['Welcome', c.label, 'What she does', 'Plans', 'Apply'][i]}</span></a>`).join('')
   beats = $$('.beat'); pills = $$('.pill')
@@ -1070,8 +1056,20 @@ function render(n) {
 
 // ---------- Amariya, for real: she guides the visitor through the page by voice or text (ElevenLabs agent) ----------
 const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
-const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here receives each application as JSON; until it is set, applications fall back to email
-const CONTACT_EMAIL = 'marketing@legitdesign.studio'
+const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here also receives each application as JSON
+// A one-time pass from our own server (/api/convai), so only this site can start a conversation.
+// If the server can't give one, the public agent ID is tried; that works until authentication is switched on.
+async function credential(mode) {
+  try {
+    const r = await fetch(`/api/convai?mode=${mode}`, { method: 'POST', signal: AbortSignal.timeout(6000) })
+    const c = r.ok ? await r.json() : {}
+    if (mode === 'voice' && c.conversationToken) return { conversationToken: c.conversationToken, connectionType: 'webrtc' }
+    if (mode === 'text' && c.signedUrl) return { signedUrl: c.signedUrl, textOnly: true }
+  } catch {}
+  return mode === 'voice' ? { agentId: AGENT_ID, connectionType: 'webrtc' } : { agentId: AGENT_ID, textOnly: true }
+}
+// Funnel events for Vercel Web Analytics (no cookies, no personal details): see the project's Analytics tab
+const track = (name, data) => { try { window.va?.('event', { name, data }) } catch {} }
 const IDLE = ['Amariya is ready to talk', 'Press the orb and say hello.']
 const WHO = { hotels: 'hotels and restaurants', clinics: 'clinics', dental: 'dental practices' }
 const SPEAK = {
@@ -1085,7 +1083,14 @@ const pickOne = (a) => a[Math.floor(Math.random() * a.length)]
 let voice = 'idle', convo = null, convoMode = null, sdk = null, muted = false, agentPlan = null
 const PROFILE = {}
 const loadSdk = () => sdk || (sdk = import('https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/+esm').then((m) => m.Conversation).catch((e) => { sdk = null; throw e }))
-addEventListener('load', () => setTimeout(() => loadSdk().catch(() => {}), 1500), { once: true })
+// The SDK warms up when the visitor first moves, scrolls or taps, so the first load stays light
+const WARM = ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll']
+function warmSdk() {
+  for (const t of WARM) removeEventListener(t, warmSdk)
+  const later = window.requestIdleCallback ? (f) => requestIdleCallback(f, { timeout: 3000 }) : (f) => setTimeout(f, 200)
+  later(() => loadSdk().catch(() => {}))
+}
+for (const t of WARM) addEventListener(t, warmSdk, { passive: true })
 const clean = (t) => String(t || '').replace(/\[[^\]]{1,32}\]\s*/g, '').replace(/\s+/g, ' ').trim()
 // The orb in the dock takes the colour of her tone, read from tags like [warmly] in her lines
 const TONES = { excited: 'bright', playfully: 'bright', 'laughs softly': 'bright', softly: 'soft', sighs: 'soft', thoughtful: 'soft', reassuring: 'calm', warmly: 'warm', curious: 'warm' }
@@ -1165,8 +1170,7 @@ async function startConvo(mode, opener) {
     if (mode === 'voice') (await navigator.mediaDevices.getUserMedia({ audio: true })).getTracks().forEach((t) => t.stop())
     const Conversation = await loadSdk(), visit = visitVars()
     const session = Conversation.startSession({
-      agentId: AGENT_ID,
-      ...(mode === 'voice' ? { connectionType: 'webrtc' } : { textOnly: true }),
+      ...(await credential(mode)),
       dynamicVariables: visit.vars,
       overrides: { agent: { firstMessage: greeting(niche, visit) } },
       clientTools: TOOLS,
@@ -1194,6 +1198,7 @@ async function startConvo(mode, opener) {
     session.then((c) => { if (timedOut) c.endSession().catch(() => {}) }, () => {})
     try { convo = await Promise.race([session, timeout]) } finally { clearTimeout(timer) }
     setDock(voice === 'connecting' ? 'thinking' : voice)
+    track('Talk started', { mode, page: niche })
     convo.sendContextualUpdate(contextFor(niche))
     const p = readProfile()
     if (Object.values(p).some(Boolean)) contextUpdate(`What the visitor has already typed into the ${C[niche].noun} profile: ${JSON.stringify(p)}. ${roiSummary()}`)
@@ -1203,6 +1208,7 @@ async function startConvo(mode, opener) {
     console.error(err); convo = null; removeTyping()
     if (err?.name === 'NotAllowedError' && mode === 'voice') { convoMode = null; voice = 'idle'; toast('No microphone access, so Amariya will chat by text.'); return startConvo('text', opener) }
     convoMode = null; dock.dataset.mode = 'voice'; setDock('idle', 'Couldn’t connect', 'Please try again in a moment.')
+    track('Talk failed', { mode, page: niche, reason: String(err?.message || err).slice(0, 120) })
   }
 }
 function send(text) { convo.sendUserMessage(text); addMsg('user', text); showTyping(); setDock(convoMode === 'text' ? 'thinking' : voice, convoMode === 'text' ? 'Amariya is typing' : null, 'You: ' + text) }
@@ -1315,8 +1321,8 @@ function renderRoi() {
   countUp($('[data-roi="revenue"]'), roi.revenue, fmtMoney)
   countUp($('[data-roi="hours"]'), roi.hours)
   $('#estNote').textContent = example
-    ? `An example for ${c.unitPh} ${c.unitWord}: about ${roi.calls.toLocaleString('en-US')} calls a month, ${Math.round(c.roi.missedCallRate * 100)}% of them missed today, and an average booking of ${fmtMoney(c.roi.avgBookingValue)}. Fill in your own, or tell Amariya and she will.`
-    : `Based on ${roi.calls.toLocaleString('en-US')} calls a month${roi.estimatedCalls ? ` (${c.estimatedFrom})` : ''}, ${Math.round(c.roi.missedCallRate * 100)}% of them missed today, and an average booking of ${fmtMoney(c.roi.avgBookingValue)}. A rough estimate, not a promise.`
+    ? `An example for ${c.unitPh} ${c.unitWord}: about ${roi.calls.toLocaleString('en-US')} calls a month, ${Math.round(c.roi.missedCallRate * 100)}% of them missed today, and an average booking of ${fmtMoney(c.roi.avgBookingValue)}. It assumes ${Math.round(c.roi.bookingConversion * 100)}% of the answered calls become a booking. Fill in your own, or tell Amariya and she will.`
+    : `Based on ${roi.calls.toLocaleString('en-US')} calls a month${roi.estimatedCalls ? ` (${c.estimatedFrom})` : ''}, ${Math.round(c.roi.missedCallRate * 100)}% of them missed today, and an average booking of ${fmtMoney(c.roi.avgBookingValue)}. It assumes ${Math.round(c.roi.bookingConversion * 100)}% of the answered calls become a booking. A rough estimate, not a promise.`
   updateYou()
   if (!agentPlan) showPlan(planFor(p), null)
 }
@@ -1397,8 +1403,9 @@ function showPlan(key, reason) {
 }
 $('#tiers').addEventListener('click', (e) => { const t = e.target.closest('.tier'); if (!t) return; agentPlan = t.dataset.plan; showPlan(t.dataset.plan) })
 function chooseAndApply(plan) { demoForm.elements.plan.value = plan; goTo('demo'); setTimeout(() => demoForm.elements.name.focus({ preventScroll: true }), 900) }
-$('#choosePlan').addEventListener('click', (e) => chooseAndApply(e.currentTarget.dataset.plan))
-$('#applyLicence').addEventListener('click', () => chooseAndApply('founding'))
+$('#choosePlan').addEventListener('click', (e) => { track('Apply opened', { program: e.currentTarget.dataset.plan, from: 'plans', page: niche }); chooseAndApply(e.currentTarget.dataset.plan) })
+$('#applyLicence').addEventListener('click', () => { track('Apply opened', { program: 'founding', from: 'founding licence', page: niche }); chooseAndApply('founding') })
+new IntersectionObserver(([e], o) => { if (e.isIntersecting) { track('Pricing viewed', { page: niche }); o.disconnect() } }, { threshold: 0.3 }).observe($('#pricing'))
 function spotlight(key) {
   const f = C[niche].features.find((x) => x.key === key)
   if (!f) return false
@@ -1411,71 +1418,63 @@ orbitEl.addEventListener('focusin', (e) => { const p = e.target.closest('.pill')
 
 // ---------- Apply ----------
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-function missingDemoFields(d = Object.fromEntries(new FormData(demoForm))) {
-  const missing = []
-  if (!String(d.name || '').trim()) missing.push('name')
-  if (!String(d.hotel_name || '').trim()) missing.push(`${C[niche].noun} name`)
-  if (!String(d.email || '').trim()) missing.push('email')
-  else if (!EMAIL_RE.test(String(d.email).trim())) missing.push('a valid email address')
-  return missing
+// What each field still needs, in the words shown under it; the agent hears the same list
+function demoErrors(d = Object.fromEntries(new FormData(demoForm))) {
+  const e = {}, phone = String(d.phone || '').replace(/[^\d]/g, '')
+  if (!String(d.name || '').trim()) e.name = ['name', 'Add your name.']
+  if (!String(d.hotel_name || '').trim()) e.hotel_name = [`${C[niche].noun} name`, `Add your ${C[niche].noun} name.`]
+  if (!String(d.email || '').trim()) e.email = ['email', 'Add an email we can reach you at.']
+  else if (!EMAIL_RE.test(String(d.email).trim())) e.email = ['a valid email address', 'Check the email address, it looks incomplete.']
+  if (!phone) e.phone = ['phone', 'Add a phone number with the area code.']
+  else if (phone.length < 7) e.phone = ['a full phone number with the area code', 'That number looks short. Include the area code.']
+  return e
 }
-// Each required field shows its own message under it; the first one that needs fixing gets focus
-function checkDemoFields() {
-  const d = Object.fromEntries(new FormData(demoForm)), email = String(d.email || '').trim()
-  const errs = {
-    dName: String(d.name || '').trim() ? '' : 'Add your name.',
-    dBiz: String(d.hotel_name || '').trim() ? '' : `Add your ${C[niche].noun} name.`,
-    dEmail: !email ? 'Add an email we can reach you at.' : EMAIL_RE.test(email) ? '' : 'Check the email address. It needs an @ and a domain.',
-  }
+const missingDemoFields = (d) => Object.values(demoErrors(d)).map(([what]) => what)
+function showDemoErrors() {
+  const e = demoErrors()
   let first = null
-  for (const [id, msg] of Object.entries(errs)) {
-    $(`#${id}Err`).textContent = msg; $('#' + id).setAttribute('aria-invalid', String(!!msg))
-    if (msg && !first) first = $('#' + id)
+  for (const input of $$('input[aria-describedby]', demoForm)) {
+    const msg = e[input.name]?.[1] || ''
+    $('#' + input.getAttribute('aria-describedby')).textContent = msg
+    input.setAttribute('aria-invalid', String(!!msg))
+    if (msg && !first) first = input
   }
   first?.focus()
   return !first
 }
-function clearDemoErrors() {
-  $$('.err', demoForm).forEach((el) => (el.textContent = '')); $$('[aria-invalid]', demoForm).forEach((el) => el.removeAttribute('aria-invalid'))
-  $('#demoError').hidden = true
-}
 async function sendApplication(data) {
+  track('Application sent', { program: data.plan || 'founding', type: data.niche || niche, source: data.source || 'form', page: niche })
+  try { const all = JSON.parse(localStorage.getItem('amariya_applications') || '[]'); all.push(data); localStorage.setItem('amariya_applications', JSON.stringify(all)) } catch {}
   if (!APPLY_WEBHOOK) return false
   try { const r = await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); return r.ok } catch (e) { console.error(e); return false }
 }
-// When sending fails, the visitor can still email the application, already written out
-function mailtoFor(d) {
-  const lines = [['Name', d.name], ['Business', d.hotel_name], ['Email', d.email], ['Phone', d.phone], ['Plan', d.plan], ['Good time for a call', d.preferred_time], ['Notes', d.notes]].filter(([, v]) => String(v || '').trim()).map(([k, v]) => `${k}: ${v}`)
-  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Amariya application: ${d.hotel_name || ''}`)}&body=${encodeURIComponent(lines.join('\n'))}`
-}
 async function submitDemo(source) {
   const data = { ...Object.fromEntries(new FormData(demoForm)), profile: readProfile(), niche, source, page: location.href, at: new Date().toISOString(), conversation_id: convo?.getId?.() ?? null }
-  const btn = $('#demoSubmit'), error = $('#demoError')
-  btn.disabled = true; btn.textContent = 'Sending…'; error.hidden = true
-  const sent = await sendApplication(data)
-  btn.disabled = false; btn.textContent = 'Send application'
-  if (!sent) {
-    error.innerHTML = `We couldn’t send your application. Please try again, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
-    error.hidden = false
-    goTo('demo', source === 'voice')
-    return null
-  }
+  sendApplication(data)
   $('#doneText').textContent = `We’ll email ${data.email} to arrange your 20-minute call${data.preferred_time ? `, ideally ${data.preferred_time}` : ''}.`
   demoForm.hidden = true
   const done = $('#demoDone'); done.hidden = false
   goTo('demo', source === 'voice'); done.focus({ preventScroll: true })
   return data
 }
-demoForm.addEventListener('input', (e) => {
-  const err = $(`#${e.target.id}Err`)
-  if (err && e.target.getAttribute('aria-invalid') === 'true') { err.textContent = ''; e.target.removeAttribute('aria-invalid') }
-})
 demoForm.addEventListener('submit', async (e) => {
   e.preventDefault()
-  if (!checkDemoFields()) return
+  if (!showDemoErrors()) return
   const data = await submitDemo('form')
-  if (data) contextUpdate(`The visitor sent the application form themselves: ${JSON.stringify(data)}.`)
+  contextUpdate(`The visitor sent the application form themselves: ${JSON.stringify(data)}.`)
 })
+// a field's message clears as soon as it is being put right
+demoForm.addEventListener('input', (e) => {
+  const el = e.target
+  if (el.getAttribute('aria-invalid') !== 'true') return
+  el.setAttribute('aria-invalid', 'false'); $('#' + el.getAttribute('aria-describedby')).textContent = ''
+})
+$('#skipApply').addEventListener('click', (e) => { e.preventDefault(); track('Apply opened', { program: 'founding', from: 'hero link', page: niche }); goTo('demo') })
+// On a phone the dock steps aside while you type into a form, so it never covers the fields or the button
+for (const f of [profileForm, demoForm]) {
+  f.addEventListener('focusin', () => root.classList.add('form-focus'))
+  f.addEventListener('focusout', (e) => { if (!f.contains(e.relatedTarget)) root.classList.remove('form-focus') })
+}
 
 // ---------- The client tools: the agent drives the page through these (names kept from the previous site, so the agent needs no changes) ----------
 let pendingTyping = Promise.resolve()
@@ -1523,7 +1522,6 @@ const TOOLS = {
     const missing = missingDemoFields()
     if (missing.length) return `Cannot submit yet. Missing: ${missing.join(', ')}.`
     const data = await submitDemo('voice')
-    if (!data) return `The application did not go through. Tell them so plainly, and that the form on the page now has a link to email it to ${CONTACT_EMAIL} instead.`
     activity('Application sent')
     return `Application recorded for ${data.name} (${data.email}). Tell them the team will email to arrange the 20-minute call.`
   },
@@ -1551,492 +1549,93 @@ $('#dockForm').addEventListener('submit', (e) => {
   convo ? send(v) : startConvo('text', v)
 })
 $('#dockInput').addEventListener('input', () => { try { convo?.sendUserActivity() } catch {} })
-$('#skip').addEventListener('click', (e) => { e.preventDefault(); scrollToY(0); $('#h1').focus({ preventScroll: true }) })
+$('#brand').addEventListener('click', () => scrollToY(0))
 $('#cue').addEventListener('click', () => scrollToY(L.s0 + 2))
 
-// ---------- The 3D world: a model of the customer's own building ----------
-const canvas = $('#world')
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' })
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5))
-renderer.outputColorSpace = THREE.SRGBColorSpace
-renderer.toneMapping = THREE.ACESFilmicToneMapping
-renderer.shadowMap.type = THREE.PCFSoftShadowMap
-const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, .1, 300)
-scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture
+// Premium 3D icons: polished wire in each niche's finish, rendered once by icons.mjs
+function icon3d(id, n) { return `/icons/${n}/${id}.webp` }
 
-function radial(stops, size = 128) {
-  const c = document.createElement('canvas'); c.width = c.height = size
-  const x = c.getContext('2d'), g = x.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
-  stops.forEach(([o, col]) => g.addColorStop(o, col)); x.fillStyle = g; x.fillRect(0, 0, size, size)
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t
+// ---------- The orb (orb.js) and the 3D world (world.js) draw in a worker where the browser allows WebGL there, so they never hold up the page ----------
+const W = 6.4, D = 5, H = 3.2, XS = [-W, 0, W] // the building's measures, as in world.js
+const dark = () => niche === 'hotels' // the hotel is the night scene
+const canvas = $('#world'), orbCanvas = $('#orbfx')
+const view = () => ({ w: innerWidth, h: innerHeight, dpr: devicePixelRatio || 1, ow: orbCanvas.clientWidth, oh: orbCanvas.clientHeight })
+let world3 = null, switching = null, worldWarned = false
+function finishSwitch(n) { if (switching === n) { switching = null; requestAnimationFrame(() => root.classList.remove('switching')) } }
+// a frame is on screen: the orb shows first, the building once it is drawn ('ready'), and a niche switch ends then.
+// Without a GPU there is no building ('none'): the page keeps the orb and drops the room tags, which would point at nothing.
+function drawn(n, world) {
+  if (!orbCanvas.dataset.ready) orbCanvas.dataset.ready = '1'
+  if (world === 'loading') return
+  if (world === 'ready' && !canvas.dataset.ready) canvas.dataset.ready = '1'
+  if (world === 'none') root.classList.add('flat')
+  finishSwitch(n)
 }
-const glowTex = radial([[0, 'rgba(255,255,255,1)'], [.22, 'rgba(255,255,255,.45)'], [1, 'rgba(255,255,255,0)']])
-const dotTex = radial([[0, 'rgba(255,255,255,1)'], [.45, 'rgba(255,255,255,.5)'], [1, 'rgba(255,255,255,0)']], 32)
-
-// Premium 3D icons: each line icon becomes polished wire in the niche's material, rendered once per niche and cached
-const ICON_MAT = {
-  hotels: () => new THREE.MeshStandardMaterial({ color: '#e4c582', metalness: 1, roughness: .24, envMapIntensity: 1.35 }),
-  clinics: () => new THREE.MeshPhysicalMaterial({ color: '#2f4a68', roughness: .2, clearcoat: 1, clearcoatRoughness: .06, envMapIntensity: 1.25 }),
-  dental: () => new THREE.MeshStandardMaterial({ color: '#deaa94', metalness: 1, roughness: .26, envMapIntensity: 1.35 }),
-}
-const iconCache = new Map()
-let iconKit = null
-function icon3d(id, n) {
-  const key = n + ':' + id
-  if (iconCache.has(key)) return iconCache.get(key)
-  if (!iconKit) {
-    const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
-    r.setPixelRatio(1); r.setSize(160, 160, false); r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.1
-    const s = new THREE.Scene(), sun = new THREE.DirectionalLight('#ffffff', 1.4)
-    s.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), .04).texture
-    sun.position.set(-4, 6, 8); s.add(sun)
-    const cam = new THREE.PerspectiveCamera(26, 1, 1, 200); cam.position.set(0, 0, 62)
-    iconKit = { r, s, cam }
+async function worldOnPage() {
+  let O = null, orb = null, w3 = null, state = 'loading'
+  const sizeOrb = (v) => { const d = Math.min(v.dpr, 2); orb?.size(Math.round(v.ow * d), Math.round(v.oh * d), d) }
+  const paint = (n) => orb?.setPoints(O.orbPoints(orb.count, O.ORB_PAL[n]))
+  world3 = {
+    niche: (n) => { paint(n); w3?.setNiche(n) },
+    size: (v) => { sizeOrb(v); w3?.setSize(v.w, v.h, v.dpr) },
+    frame: (f) => { w3?.frame(f); orb?.draw(f.draw); if (orb || w3) drawn(niche, state) },
   }
-  const { r, s, cam } = iconKit, g = new THREE.Group(), mat = ICON_MAT[n](), R = 1.5
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">${$('#i-' + id).innerHTML}</svg>`
-  for (const path of new SVGLoader().parse(svg).paths) for (const sub of path.subPaths) {
-    const pts = []
-    for (const p of sub.getPoints(16)) { const v = new THREE.Vector3(p.x - 12, 12 - p.y, 0); if (!pts.length || v.distanceTo(pts[pts.length - 1]) > .02) pts.push(v) }
-    const closed = pts.length > 2 && pts[0].distanceTo(pts[pts.length - 1]) < .05
-    if (closed) pts.pop()
-    if (pts.length < 2 || (pts.length === 2 && pts[0].distanceTo(pts[1]) < .3)) { const dot = new THREE.Mesh(new THREE.SphereGeometry(R * 1.1, 16, 12), mat); dot.position.copy(pts[0]); g.add(dot); continue }
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, closed, 'catmullrom', .05), Math.max(12, pts.length * 4), R, 12, closed), mat))
-    if (!closed) for (const p of [pts[0], pts[pts.length - 1]]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(R, 16, 12), mat); cap.position.copy(p); g.add(cap) }
+  try { O = await import('/orb.js'); orb = new O.ParticleOrb(orbCanvas, innerWidth < 735 ? 11000 : 26000); sizeOrb(view()); paint(niche) } catch (err) { orb = null; console.warn('Orb unavailable', err.message) }
+  // as in world-worker.js: the building only where WebGL runs on a GPU
+  const gpu = (() => { try { const c = document.createElement('canvas'), o = { failIfMajorPerformanceCaveat: true }; return !!(c.getContext('webgl2', o) || c.getContext('webgl', o)) } catch { return false } })()
+  if (!gpu) { state = 'none'; return }
+  try { const w = await import('/world.js'); w.init({ canvas, ...view(), reduced: reduce }); w.setNiche(niche); w3 = w; state = 'ready' } catch (err) { state = 'none'; console.warn('3D world unavailable', err.message) }
+}
+function startWorld() {
+  if (!('transferControlToOffscreen' in canvas)) return worldOnPage()
+  let worker
+  try { worker = new Worker('/world-worker.js', { type: 'module' }) } catch { return worldOnPage() }
+  let decided = false, busy = false, next = null
+  const decide = (ok) => {
+    if (decided) return
+    decided = true
+    if (!ok) { worker.terminate(); return worldOnPage() }
+    const off = canvas.transferControlToOffscreen(), orbOff = orbCanvas.transferControlToOffscreen()
+    worker.postMessage({ type: 'init', canvas: off, orbCanvas: orbOff, niche, ...view(), reduced: reduce }, [off, orbOff])
+    world3 = {
+      niche: (n) => worker.postMessage({ type: 'niche', niche: n }),
+      size: (v) => worker.postMessage({ type: 'size', ...v }),
+      // one frame in flight at a time; if the worker falls behind, only the newest frame waits
+      frame: (f) => { f.type = 'frame'; if (busy) next = f; else { busy = true; worker.postMessage(f) } },
+    }
   }
-  g.rotation.set(-.42, .55, 0); s.add(g)
-  r.render(s, cam)
-  const url = r.domElement.toDataURL('image/png')
-  s.remove(g); g.traverse((o) => o.geometry?.dispose()); mat.dispose()
-  iconCache.set(key, url)
-  return url
-}
-
-const W = 6.4, D = 5, H = 3.2, T = .14, XS = [-W, 0, W], ZB = -D / 2 + T
-const PAL = {
-  hotels: { dark: true, exposure: 1.25, bg: '#101d14', sky: '#030805', fog: [32, 84], floor: '#1a2c20', wall: '#15241a', slab: '#1b2f22', furn: '#22382a', fabric: '#2a4434', fabric2: '#b79b62', wood: '#3b3226', linen: '#d8d0bc', metal: '#c8a96a', rug: '#1d3125', lamp: '#ffd79c', window: '#0a1520', edge: '#d8c08d', edgeA: .26, halo: '#e9c98a', haloA: .16 },
-  clinics: { dark: false, exposure: 1.08, bg: '#f5f7f9', sky: '#fdfeff', fog: [36, 92], floor: '#e7edf2', wall: '#f7f9fb', slab: '#eef2f6', furn: '#fbfcfd', fabric: '#2f445b', fabric2: '#b3c6da', wood: '#d9cbb8', linen: '#ffffff', metal: '#a5b6c8', rug: '#dfe7ee', lamp: '#fff3df', window: '#d6e4f2', plant: '#91a798', edge: '#2f445b', edgeA: .13, ground: '#dde5ee', shadow: '#2c3e52', dust: '#86a3c2', halo: '#a9c4e4', haloA: .26 },
-  dental: { dark: false, exposure: 1.08, bg: '#fbf5f5', sky: '#fffefe', fog: [36, 92], floor: '#f2e6e3', wall: '#fcf6f5', slab: '#f6eceb', furn: '#fefbfa', fabric: '#c48d86', fabric2: '#ead0ca', wood: '#dcc6b5', linen: '#ffffff', metal: '#d09e83', rug: '#eedfdb', lamp: '#fff1e6', window: '#f1dfdb', plant: '#9dad95', edge: '#7d424e', edgeA: .13, ground: '#efe0dc', shadow: '#5b3232', dust: '#cf9d92', halo: '#efc6bf', haloA: .3 },
-}
-let world, P, M, EM, orb, hit, sparks
-
-function skyTex() {
-  const c = document.createElement('canvas'); c.width = 2; c.height = 256
-  const x = c.getContext('2d'), g = x.createLinearGradient(0, 0, 0, 256)
-  g.addColorStop(0, P.sky); g.addColorStop(.5, P.bg); g.addColorStop(1, P.bg)
-  x.fillStyle = g; x.fillRect(0, 0, 2, 256)
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t
-}
-function mats() {
-  const env = P.dark ? .3 : .7
-  const S = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: .82, metalness: 0, envMapIntensity: env, ...o })
-  const B = (color) => new THREE.MeshBasicMaterial({ color, toneMapped: false })
-  const metal = S(P.metal, { metalness: .9, roughness: .3, envMapIntensity: 1.2 })
-  return {
-    floor: S(P.floor, { roughness: .92 }), wall: S(P.wall), slab: S(P.slab), furn: S(P.furn, { roughness: .55 }),
-    fabric: S(P.fabric, { roughness: .95 }), fabric2: S(P.fabric2, { roughness: .95 }), wood: S(P.wood, { roughness: .65 }),
-    linen: S(P.linen, { roughness: .95 }), plant: S(P.plant || '#8ea595', { roughness: .9 }), rug: S(P.rug, { roughness: 1 }),
-    metal, frame: P.dark ? metal : S(P.furn, { roughness: .5 }), pane: B(P.window), emit: B(P.lamp),
-    top: P.dark ? S(P.linen, { roughness: .9 }) : S(P.wood, { roughness: .65 }),
-    screen: B(P.dark ? '#3a5845' : P.window), light: B(P.dark ? '#e8dcc0' : '#f6f9fc'),
-    art: new THREE.MeshStandardMaterial({ map: artTex(), roughness: .9, envMapIntensity: env }),
+  worker.onerror = () => decide(false)
+  worker.onmessage = ({ data: m }) => {
+    if (m.type === 'probe') return decide(m.ok)
+    if (m.type === 'fail') { if (!worldWarned) console.warn('3D world unavailable', m.message); worldWarned = true; return }
+    if (m.type === 'frame') { drawn(m.niche, m.world); if (next) { worker.postMessage(next); next = null } else busy = false }
   }
-}
-function mesh(geo, m, x, y, z, o = {}) {
-  const me = new THREE.Mesh(geo, m), g = o.g || world
-  me.position.set(x, y, z)
-  if (o.rx) me.rotation.x = o.rx
-  if (o.ry) me.rotation.y = o.ry
-  me.castShadow = !P.dark && o.cast !== false; me.receiveShadow = !P.dark
-  g.add(me)
-  if (o.edge) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), EM); e.position.copy(me.position); e.rotation.copy(me.rotation); g.add(e) }
-  return me
-}
-const box = (w, h, d, x, y, z, m, o = {}) => mesh(o.r ? new RoundedBoxGeometry(w, h, d, 2, Math.min(o.r, w / 2 - .002, h / 2 - .002, d / 2 - .002)) : new THREE.BoxGeometry(w, h, d), m, x, y + h / 2, z, o)
-const cyl = (rt, rb, h, x, y, z, m, o = {}) => mesh(new THREE.CylinderGeometry(rt, rb, h, o.seg || 28), m, x, y + h / 2, z, o)
-const ball = (r, x, y, z, m, o = {}) => mesh(new THREE.SphereGeometry(r, 28, 18), m, x, y, z, o)
-function group(x, z, ry = 0) { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; world.add(g); return g }
-function glow(x, y, z, size, opacity) {
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: P.lamp, transparent: true, opacity: P.dark ? opacity : opacity * .3, depthWrite: false, blending: P.dark ? THREE.AdditiveBlending : THREE.NormalBlending }))
-  s.position.set(x, y, z); s.scale.setScalar(size); world.add(s)
-}
-function roomLight(x, intensity) { if (!P.dark) return; const l = new THREE.PointLight(P.lamp, intensity, 9, 2); l.position.set(x, H - .5, .3); world.add(l) }
-
-// ---------- Living details: phones that ring with their room's call, clocks at the visitor's own time, art on the walls ----------
-let RINGS = [], CLOCKS = [], WINDOWS = [], ROOMGLOW = [], curRoom = 0, clockAt = -9, winAt = 0
-const ringTex = (() => {
-  const c = document.createElement('canvas'); c.width = c.height = 128
-  const x = c.getContext('2d'); x.strokeStyle = '#fff'; x.lineWidth = 7; x.shadowColor = '#fff'; x.shadowBlur = 10
-  x.beginPath(); x.arc(64, 64, 50, 0, Math.PI * 2); x.stroke()
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t
-})()
-// a quiet abstract print in the niche's colours
-function artTex() {
-  const c = document.createElement('canvas'); c.width = 160; c.height = 200
-  const x = c.getContext('2d'), [bg, a, b] = P.dark ? ['#16261b', '#c9a764', '#2f4a39'] : P.fabric === '#2f445b' ? ['#eef2f6', '#2f445b', '#a9c8ea'] : ['#f8eeeb', '#7d424e', '#e6c3bd']
-  x.fillStyle = bg; x.fillRect(0, 0, 160, 200)
-  x.fillStyle = b; x.beginPath(); x.arc(58, 118, 54, 0, Math.PI * 2); x.fill()
-  x.strokeStyle = a; x.lineWidth = 3; x.beginPath(); x.arc(98, 86, 40, Math.PI * .1, Math.PI * 1.35); x.stroke()
-  x.fillStyle = a; x.beginPath(); x.arc(112, 150, 9, 0, Math.PI * 2); x.fill()
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t
-}
-function art(x, y, w, h) {
-  const z = ZB + .02
-  box(w + .07, h + .07, .03, x, y - .035, z, M.frame, { cast: false })
-  mesh(new THREE.PlaneGeometry(w, h), M.art, x, y + h / 2, z + .02, { cast: false })
-}
-// a desk phone; its ring of light pulses while its room's call is on screen
-function phone(x, y, z, ry = 0) {
-  const g = group(x, z, ry); g.position.y = y
-  box(.24, .05, .2, 0, 0, 0, M.furn, { r: .02, g }); box(.27, .05, .075, 0, .05, -.045, M.fabric, { r: .03, g })
-  box(.08, .012, .06, .06, .05, .05, M.screen, { g, cast: false })
-  const ring = new THREE.Sprite(new THREE.SpriteMaterial({ map: ringTex, color: P.dark ? P.lamp : P.edge, transparent: true, opacity: 0, depthWrite: false, blending: P.dark ? THREE.AdditiveBlending : THREE.NormalBlending }))
-  ring.position.set(x, y + .22, z); world.add(ring)
-  RINGS.push({ ring, room: curRoom, phase: (curRoom * .37) % 1 })
-}
-// a wall clock whose hands show the visitor's own time
-function wallClock(x, y) {
-  const z = ZB + .02
-  cyl(.27, .27, .02, x, y, z, M.metal, { rx: Math.PI / 2, cast: false, seg: 40 })
-  cyl(.24, .24, .03, x, y, z + .012, M.linen, { rx: Math.PI / 2, cast: false, seg: 40 })
-  const hand = (len, wd) => { const g = new THREE.Group(); g.position.set(x, y + .015, z + .04); world.add(g); box(wd, len, .01, 0, 0, 0, M.fabric, { g, cast: false }); return g }
-  CLOCKS.push({ h: hand(.12, .022), m: hand(.18, .014) })
-}
-function monitor(x, y, z, ry = 0) {
-  const g = group(x, z, ry); g.position.y = y
-  box(.05, .14, .05, 0, 0, 0, M.metal, { g }); box(.18, .015, .12, 0, 0, 0, M.metal, { g })
-  box(.5, .32, .03, 0, .14, 0, M.furn, { r: .012, g }); box(.46, .28, .006, 0, .16, .017, M.screen, { g, cast: false })
-}
-function liveDetails(time, t) {
-  for (const r of RINGS) {
-    const on = clamp(1 - Math.abs(t - (1 + r.room)) / .45, 0, 1), p = reduce ? .4 : (time * .85 + r.phase) % 1
-    r.ring.material.opacity = on * (1 - p) * (P.dark ? .9 : .6)
-    r.ring.scale.setScalar(.2 + p * .85)
-  }
-  if (time - clockAt > 1) {
-    clockAt = time
-    const d = new Date(), m = d.getMinutes() + d.getSeconds() / 60, h = (d.getHours() % 12) + m / 60
-    for (const c of CLOCKS) { c.m.rotation.z = -m / 60 * Math.PI * 2; c.h.rotation.z = -h / 12 * Math.PI * 2 }
-  }
-  if (WINDOWS.length && !reduce && time > winAt) { winAt = time + 1.6 + Math.random() * 2.6; const w = WINDOWS[(Math.random() * WINDOWS.length) | 0]; w.mesh.material = w.mesh.material === w.lit ? M.pane : w.lit }
-  ROOMGLOW.forEach((g, i) => { const want = i === hotRoom ? (P.dark ? .2 : .32) : 0; g.material.opacity += (want - g.material.opacity) * .12 })
-}
-
-function chair(x, z, ry, seat = M.fabric) {
-  const g = group(x, z, ry)
-  box(.46, .07, .46, 0, .44, 0, seat, { r: .03, g }); box(.46, .46, .06, 0, .51, -.2, seat, { r: .03, g })
-  for (const [a, b] of [[-.19, -.19], [.19, -.19], [-.19, .19], [.19, .19]]) cyl(.015, .015, .44, a, 0, b, M.metal, { g, seg: 8 })
-}
-function armchair(x, z, ry) {
-  const g = group(x, z, ry)
-  box(.86, .38, .8, 0, 0, 0, M.fabric, { r: .1, g }); box(.86, .52, .18, 0, .3, -.31, M.fabric, { r: .08, g })
-  box(.16, .26, .8, -.35, .3, 0, M.fabric, { r: .07, g }); box(.16, .26, .8, .35, .3, 0, M.fabric, { r: .07, g })
-}
-function table(x, z, r) { cyl(r, r, .04, x, .72, z, M.top); cyl(.035, .035, .72, x, 0, z, M.metal, { seg: 12 }); cyl(.22, .22, .02, x, 0, z, M.metal) }
-function plant(x, z, s = 1) {
-  cyl(.2 * s, .16 * s, .42 * s, x, 0, z, M.furn)
-  for (const [a, b, c, r] of [[0, .8, 0, .32], [-.17, .66, .08, .22], [.18, .7, -.06, .24], [.04, 1.02, .05, .22]]) ball(r * s, x + a * s, b * s, z + c * s, M.plant)
-}
-function pendant(x, z, drop) {
-  cyl(.006, .006, drop, x, H - drop, z, M.metal, { seg: 6, cast: false })
-  cyl(.06, .2, .2, x, H - drop - .2, z, M.metal, { seg: 24 })
-  ball(.07, x, H - drop - .2, z, M.emit, { cast: false })
-  glow(x, H - drop - .28, z, 1.1, .5)
-}
-function windowPane(x, y, w, h) {
-  const z = ZB + .012
-  box(w, h, .02, x, y, z, M.pane, { cast: false })
-  for (const [bw, bh, bx, by] of [[w + .08, .05, x, y - .04], [w + .08, .05, x, y + h], [.05, h, x - w / 2, y], [.05, h, x + w / 2, y], [.035, h, x, y]]) box(bw, bh, .05, bx, by, z + .02, M.frame, { cast: false })
-}
-function reception(cx, deskX, chairsSide) {
-  box(4.4, .012, 2.8, cx, 0, .1, M.rug, { cast: false })
-  box(2.6, 1.0, .7, cx + deskX, 0, -1.35, M.furn, { r: .08 }); box(2.72, .05, .82, cx + deskX, 1.0, -1.35, M.wood, { r: .02 })
-  windowPane(cx - deskX * 1.9, 1.0, 1.6, 1.5)
-  for (const z of [-.9, -.25, .4]) chair(cx + chairsSide * 2.75, z, -chairsSide * Math.PI / 2)
-  plant(cx - chairsSide * 2.6, -1.75, 1.1)
-  monitor(cx + deskX + .55, 1.05, -1.45, -deskX * .35); phone(cx + deskX - .65, 1.05, -1.3, deskX * .2)
-  wallClock(cx + deskX, 2.45); art(cx + deskX * 2.3, 1.25, .62, .78)
-  box(.9, .4, .5, cx + chairsSide * 2.0, 0, 1.25, M.wood, { r: .03 })
-}
-
-const ROOMS = {
-  hotels: [
-    (cx) => { // front desk
-      box(4.6, .012, 3, cx, 0, .1, M.rug, { cast: false })
-      box(2.8, 1.0, .72, cx, 0, -1.3, M.furn, { r: .05 }); box(3.0, .05, .9, cx, 1.0, -1.3, M.metal, { r: .02 })
-      mesh(new THREE.SphereGeometry(.1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), M.metal, cx + .95, 1.06, -1.15); cyl(.12, .12, .015, cx + .95, 1.05, -1.15, M.metal)
-      for (let r = 0; r < 3; r++) for (let c = 0; c < 6; c++) box(.12, .16, .02, cx - .9 + c * .36, 1.5 + r * .34, ZB + .02, M.metal, { cast: false })
-      armchair(cx - 2.1, .9, .5); armchair(cx + 2.1, .9, -.5)
-      pendant(cx - .8, -1.3, .8); pendant(cx + .8, -1.3, .8)
-      phone(cx - .85, 1.05, -1.2, .25)
-      const tg = group(cx + 1.75, .15, -.4) // luggage trolley
-      box(.82, .04, .5, 0, .08, 0, M.metal, { g: tg }); for (const s of [-1, 1]) cyl(.018, .018, 1.25, s * .38, .08, 0, M.metal, { g: tg, seg: 8 })
-      mesh(new THREE.CylinderGeometry(.018, .018, .8, 8), M.metal, 0, 1.33, 0, { g: tg, rx: 0 }).rotation.z = Math.PI / 2
-      box(.42, .5, .24, -.16, .12, 0, M.fabric2, { r: .04, g: tg }); box(.32, .38, .22, .2, .12, .02, M.fabric, { r: .04, g: tg })
-      roomLight(cx, 10)
-    },
-    (cx) => { // restaurant
-      box(5.4, .44, .6, cx, 0, ZB + .32, M.fabric, { r: .06 }); box(5.4, .6, .16, cx, .44, ZB + .1, M.fabric, { r: .06 })
-      for (const x of [-1.8, 0, 1.8]) { table(cx + x, -1.15, .36); chair(cx + x, -.55, Math.PI); pendant(cx + x, -1.15, 1.05); cyl(.02, .02, .08, cx + x, .76, -1.15, M.emit, { cast: false }); glow(cx + x, .86, -1.15, .5, .6) }
-      for (const x of [-1.2, 1.2]) { table(cx + x, 1.1, .42); chair(cx + x - .55, 1.1, Math.PI / 2); chair(cx + x + .55, 1.1, -Math.PI / 2) }
-      art(cx - 1.25, 1.45, .7, .5); art(cx + 1.25, 1.45, .7, .5)
-      box(.5, 1.0, .38, cx + 2.55, 0, 1.75, M.wood, { r: .03 }); phone(cx + 2.55, 1.0, 1.75, -.4)
-      roomLight(cx, 8)
-    },
-    (cx) => { // guest room
-      const bx = cx - 1.0
-      box(2.3, 1.2, .1, bx, 0, ZB + .05, M.fabric, { r: .04 })
-      box(2.0, .3, 2.2, bx, 0, ZB + 1.2, M.furn, { r: .04 }); box(1.94, .2, 2.12, bx, .3, ZB + 1.21, M.linen, { r: .08 })
-      box(1.98, .05, 1.1, bx, .5, ZB + 1.7, M.fabric2, { r: .025 })
-      box(.68, .15, .36, bx - .48, .5, ZB + .38, M.linen, { r: .07 }); box(.68, .15, .36, bx + .48, .5, ZB + .38, M.linen, { r: .07 })
-      for (const s of [-1, 1]) { box(.44, .5, .4, bx + s * 1.42, 0, ZB + .3, M.furn, { r: .03 }); cyl(.05, .07, .26, bx + s * 1.42, .5, ZB + .3, M.metal); cyl(.12, .17, .2, bx + s * 1.42, .76, ZB + .3, M.emit, { cast: false }); glow(bx + s * 1.42, .9, ZB + .3, 1.0, .55) }
-      windowPane(cx + 1.9, .9, 1.3, 1.6)
-      armchair(cx + 2.1, .7, -.7)
-      phone(bx - 1.46, .5, ZB + .44, .2)
-      roomLight(cx, 7)
-    },
-  ],
-  clinics: [
-    (cx) => reception(cx, .9, -1),
-    (cx) => { // consulting room
-      box(1.6, .05, .8, cx - 1.7, .72, -1.3, M.wood, { r: .02 }); box(.06, .72, .7, cx - 2.45, 0, -1.3, M.wood); box(.06, .72, .7, cx - .95, 0, -1.3, M.wood)
-      box(.5, .32, .03, cx - 1.7, .82, -1.58, M.fabric); cyl(.02, .02, .08, cx - 1.7, .76, -1.58, M.metal, { seg: 8 })
-      chair(cx - 1.7, -2.0, 0); chair(cx - 2.05, -.55, Math.PI); chair(cx - 1.35, -.55, Math.PI)
-      box(.7, .6, 1.9, cx + 1.9, 0, -1.0, M.furn, { r: .04 }); box(.72, .12, 1.9, cx + 1.9, .6, -1.0, M.fabric2, { r: .05 }); box(.72, .1, .65, cx + 1.9, .74, -1.75, M.fabric2, { r: .04, rx: .5 })
-      windowPane(cx, 1.15, 1.5, 1.3)
-      monitor(cx - 1.35, .77, -1.45, .3); phone(cx - 2.15, .77, -1.25, -.2); art(cx + 1.9, 1.5, .6, .74)
-    },
-    (cx) => { // after-hours lounge
-      box(2.4, .4, .9, cx - 1.0, 0, ZB + .55, M.fabric, { r: .1 }); box(2.4, .5, .22, cx - 1.0, .3, ZB + .16, M.fabric, { r: .09 })
-      box(.22, .3, .9, cx - 2.11, .3, ZB + .55, M.fabric, { r: .08 }); box(.22, .3, .9, cx + .11, .3, ZB + .55, M.fabric, { r: .08 })
-      cyl(.45, .45, .04, cx - 1.0, .4, -.6, M.wood); cyl(.04, .04, .4, cx - 1.0, 0, -.6, M.metal, { seg: 12 })
-      cyl(.15, .15, .02, cx + .7, 0, ZB + .4, M.metal); cyl(.012, .012, 1.5, cx + .7, 0, ZB + .4, M.metal, { seg: 6 }); cyl(.1, .18, .22, cx + .7, 1.5, ZB + .4, M.emit, { cast: false })
-      windowPane(cx + 1.8, .7, 1.5, 1.9)
-      plant(cx + 2.6, .9, 1.25)
-      phone(cx - 1.0, .44, -.6, .4); art(cx - 1.0, 1.42, 1.1, .62)
-    },
-  ],
-  dental: [
-    (cx) => reception(cx, -.9, 1),
-    (cx) => dentalRoom(cx, 1),
-    (cx) => dentalRoom(cx, -1),
-  ],
-}
-function dentalChair(x, z, ry) {
-  const g = group(x, z, ry)
-  cyl(.24, .3, .3, 0, 0, 0, M.furn, { g }); cyl(.08, .08, .26, 0, .3, 0, M.metal, { g })
-  box(.62, .14, .78, 0, .54, .05, M.fabric, { r: .06, g })
-  box(.6, .12, .9, 0, .62, -.68, M.fabric, { r: .06, g, rx: .5 })
-  box(.34, .1, .3, 0, .93, -1.18, M.fabric, { r: .05, g, rx: .5 })
-  box(.54, .12, .7, 0, .43, .68, M.fabric, { r: .06, g, rx: .32 })
-  box(.08, .05, .5, .36, .78, -.05, M.furn, { r: .02, g })
-}
-function dentalRoom(cx, f) {
-  dentalChair(cx - 1.25 * f, -.6, .35 * f)
-  cyl(.022, .022, .95, cx - 1.05 * f, H - .95, -.4, M.metal, { cast: false, seg: 8 })
-  box(.46, .07, .26, cx - 1.05 * f, H - 1.02, -.4, M.furn, { r: .03 }); box(.3, .015, .14, cx - 1.05 * f, H - 1.035, -.4, M.emit, { cast: false })
-  box(2.2, .86, .58, cx + 1.3 * f, 0, ZB + .3, M.furn, { r: .03 }); box(2.26, .04, .62, cx + 1.3 * f, .86, ZB + .31, M.wood, { r: .015 })
-  cyl(.16, .14, .03, cx + 1.0 * f, .9, ZB + .32, M.metal)
-  box(2.2, .6, .34, cx + 1.3 * f, 1.75, ZB + .17, M.furn, { r: .03 })
-  cyl(.2, .2, .06, cx - .3 * f, .5, .3, M.fabric); cyl(.03, .03, .5, cx - .3 * f, 0, .3, M.metal, { seg: 8 })
-  windowPane(cx - 1.2 * f, 1.25, 1.2, 1.2)
-  box(.62, .46, .03, cx - .2 * f, 1.3, ZB + .03, M.frame, { cast: false }); box(.56, .4, .01, cx - .2 * f, 1.33, ZB + .05, M.light, { cast: false })
-  phone(cx + 1.85 * f, .9, ZB + .36, -.2 * f)
-}
-function hotelUpper() {
-  const y0 = H + .22, fh = 2.5, w = W * 3 + T, d = D - .4, z0 = -.2, rnd = seeded(7)
-  box(w, fh * 2, d, 0, y0, z0, M.wall, { edge: true, cast: false })
-  box(w + .06, .08, d + .06, 0, y0 + fh - .04, z0, M.metal, { cast: false })
-  box(w + .2, .26, d + .2, 0, y0 + fh * 2, z0, M.slab, { edge: true, cast: false })
-  const zf = z0 + d / 2 + .006, cols = 14
-  for (let f = 0; f < 2; f++) for (let c = 0; c < cols; c++) {
-    const x = -w / 2 + .75 + c * ((w - 1.5) / (cols - 1)), lit = rnd() < .45
-    const litMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(P.lamp).multiplyScalar(.14 + rnd() * .24), toneMapped: false })
-    const win = mesh(new THREE.PlaneGeometry(.72, 1.25), lit ? litMat : M.pane, x, y0 + 1.2 + f * fh, zf, { cast: false })
-    WINDOWS.push({ mesh: win, lit: litMat })
-  }
-  const city = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: P.halo, transparent: true, opacity: .1, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }))
-  city.position.set(0, 2, -40); city.scale.set(90, 26, 1); world.add(city)
-}
-function points(n, spread, size, color, opacity, fog) {
-  const pos = new Float32Array(n * 3), spd = new Float32Array(n), rnd = seeded(5)
-  for (let i = 0; i < n; i++) { spread(pos, i, rnd); spd[i] = .04 + rnd() * .08 }
-  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-  const p = new THREE.Points(g, new THREE.PointsMaterial({ size, map: dotTex, color, transparent: true, opacity, depthWrite: false, fog }))
-  world.add(p); return { p, spd }
-}
-// Each niche's orb is the homepage's particle sphere in the niche's own colours: champagne gold for hotels,
-// ink blue for clinics, rosé for dental. It is drawn on its own canvas above the building, so it is always whole.
-const VERT = `
-precision highp float;
-attribute vec3 aPos;
-attribute vec3 aColor;
-attribute vec4 aAlt;
-attribute vec2 aMisc;
-uniform float uTime, uRot, uTilt, uPoint, uLevel;
-uniform float uConnect, uThink, uListen, uSpeak, uAlpha;
-uniform vec2 uCenter, uScale;
-varying vec3 vColor;
-varying float vAlpha;
-vec3 rotY(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(c * p.x + s * p.z, p.y, -s * p.x + c * p.z); }
-vec3 rotX(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(p.x, c * p.y - s * p.z, s * p.y + c * p.z); }
-void main() {
-  float seed = aMisc.x;
-  vec3 p = aPos;
-  float n = sin(dot(p, vec3(4.1, 3.3, 2.7)) + uTime * .8 + seed * 6.2831) * .5 + .5;
-  float r = 1. + (n - .5) * .03;
-  r += uLevel * (.05 + n * .2);
-  r += uSpeak * uLevel * .09 * sin(p.y * 12. - uTime * 7.);
-  r += uListen * .035 * sin(p.y * 7. + uTime * 3. + seed * 2.);
-  r += uThink * .03 * sin(uTime * 5. + seed * 40.);
-  r *= 1. - uConnect * .16 * (.6 + .4 * sin(uTime * 5. + seed * 6.2831));
-  vec3 pos = rotX(rotY(p * r, uRot), uTilt);
-  float persp = 1. / (1. - pos.z * .22);
-  gl_Position = vec4(uCenter + pos.xy * persp * uScale, 0., 1.);
-  float front = clamp(pos.z * .5 + .5, 0., 1.);
-  float edge = 1. - abs(pos.z);
-  vColor = aColor * (.9 + uLevel * .45) * mix(1., 1.15, edge);
-  vAlpha = uAlpha * mix(.55, 1.45, edge * edge) * mix(.2, 1., front);
-  gl_PointSize = max(1.2, uPoint * persp * (1. + uLevel * .35));
-}`
-const FRAG = `
-precision mediump float;
-varying vec3 vColor;
-varying float vAlpha;
-void main() {
-  vec2 c = gl_PointCoord - .5;
-  float d = length(c);
-  if (d > .5) discard;
-  float a = min(1., vAlpha * smoothstep(.5, .15, d));
-  gl_FragColor = vec4(vColor * a, a);
-}`
-// Lighter tones above, the niche's signature colour at the middle, its deepest tone below, and a scatter of strays
-const ORB_PAL = {
-  hotels: { top: ['#f7ecd0', '#efdcae', '#fff6df'], mid: ['#e4c886', '#d8c08d', '#c9a764'], bottom: ['#b38a3a', '#9c7631', '#c99a4b'], stray: ['#8fb59a', '#fff6df'] },
-  clinics: { top: ['#7fa6cf', '#6f95bf', '#8eb3da'], mid: ['#4f7aa6', '#588cc0', '#3b5979'], bottom: ['#2f445b', '#263a50', '#344d68'], stray: ['#a9c8ea', '#86a3c2'] },
-  dental: { top: ['#e2b3a8', '#d9a39a', '#e8c0b6'], mid: ['#c48d86', '#d09e83', '#b9796f'], bottom: ['#7d424e', '#8d4d58', '#6b3641'], stray: ['#e6c3bd', '#efc6bf'] },
-}
-const hex = (h) => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255]
-function orbColor(y, pal) {
-  const t = y + (Math.random() - .5) * .6, r = Math.random()
-  const band = t > .15 ? pal.top : t > -.3 ? pal.mid : pal.bottom
-  const c = hex(r < .93 ? band[(Math.random() * band.length) | 0] : pal.stray[(Math.random() * pal.stray.length) | 0])
-  const k = .85 + Math.random() * .25
-  return [c[0] * k, c[1] * k, c[2] * k]
-}
-function orbPoints(count, pal) {
-  const data = new Float32Array(count * 12)
-  for (let i = 0; i < count; i++) {
-    const y = Math.random() * 2 - 1, s = Math.sqrt(1 - y * y), a = Math.random() * Math.PI * 2, [r, g, b] = orbColor(y, pal)
-    data.set([s * Math.cos(a), y, s * Math.sin(a), r, g, b, Math.random() * 2 - 1, Math.random(), Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random(), Math.random() * 2 - 1], i * 12)
-  }
-  return data
-}
-const ORB_UNIFORMS = ['uTime', 'uRot', 'uTilt', 'uPoint', 'uLevel', 'uConnect', 'uThink', 'uListen', 'uSpeak', 'uAlpha', 'uCenter', 'uScale']
-class ParticleOrb {
-  constructor(canvas, count) {
-    const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: true })
-    if (!gl) throw new Error('WebGL unavailable')
-    const shader = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s }
-    const prog = gl.createProgram()
-    gl.attachShader(prog, shader(gl.VERTEX_SHADER, VERT)); gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FRAG)); gl.linkProgram(prog)
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog))
-    gl.useProgram(prog)
-    this.buffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
-    const attr = (name, size, offset) => { const loc = gl.getAttribLocation(prog, name); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 48, offset * 4) }
-    gl.bufferData(gl.ARRAY_BUFFER, count * 48, gl.STATIC_DRAW)
-    attr('aPos', 3, 0); attr('aColor', 3, 3); attr('aAlt', 4, 6); attr('aMisc', 2, 10)
-    this.u = {}; ORB_UNIFORMS.forEach((n) => (this.u[n] = gl.getUniformLocation(prog, n)))
-    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.clearColor(0, 0, 0, 0)
-    Object.assign(this, { gl, canvas, count, dpr: 1 }); this.resize()
-  }
-  setPoints(data) { const { gl } = this; gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW) }
-  resize() {
-    const dpr = Math.min(devicePixelRatio || 1, 2), w = Math.max(1, Math.round(this.canvas.clientWidth * dpr)), h = Math.max(1, Math.round(this.canvas.clientHeight * dpr))
-    if (w !== this.canvas.width || h !== this.canvas.height) { this.canvas.width = w; this.canvas.height = h }
-    this.dpr = dpr; this.gl.viewport(0, 0, w, h)
-  }
-  draw(p) {
-    const { gl, u } = this, st = p.states
-    gl.clear(gl.COLOR_BUFFER_BIT)
-    gl.uniform1f(u.uTime, p.time); gl.uniform1f(u.uRot, p.rot); gl.uniform1f(u.uTilt, p.tilt); gl.uniform1f(u.uPoint, p.point * this.dpr); gl.uniform1f(u.uLevel, p.level)
-    gl.uniform1f(u.uConnect, st.connecting); gl.uniform1f(u.uThink, st.thinking); gl.uniform1f(u.uListen, st.listening); gl.uniform1f(u.uSpeak, st.speaking)
-    gl.uniform1f(u.uAlpha, p.alpha)
-    gl.uniform2f(u.uCenter, p.center[0], p.center[1]); gl.uniform2f(u.uScale, p.scale[0], p.scale[1])
-    gl.drawArrays(gl.POINTS, 0, this.count)
-  }
-}
-let orbGL = null, orbRot = 0
-const vstates = { connecting: 0, listening: 0, thinking: 0, speaking: 0 }
-function buildOrb(n) {
-  // the orb in the scene is only an anchor now: the camera path moves it, and an invisible sphere takes taps
-  orb = new THREE.Group(); world.add(orb)
-  hit = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16), new THREE.MeshBasicMaterial({ visible: false })); orb.add(hit)
-  if (n === 'hotels') orb.add(new THREE.PointLight(P.lamp, 5, 7, 2))
-  try {
-    if (!orbGL) orbGL = new ParticleOrb($('#orbfx'), innerWidth < 735 ? 11000 : 26000)
-    orbGL.setPoints(orbPoints(orbGL.count, ORB_PAL[n]))
-  } catch (err) { console.warn('Orb disabled', err.message); orbGL = null }
-}
-function drawOrb(time, dt) {
-  if (!orbGL) return
-  const o = orbScreen(), r = Math.max(6, o.r)
-  for (const k in vstates) vstates[k] += ((voice === k ? 1 : 0) - vstates[k]) * Math.min(1, dt * 4)
-  if (!reduce) orbRot += dt * (.09 + level * .6 + yawVel)
-  orbGL.resize()
-  orbGL.draw({ time: reduce ? 0 : time, level, states: vstates, rot: orbRot, tilt: .28 - py * .1, point: (P.dark ? 1.4 : 1.75) * clamp(r / 380, .8, 1.15), alpha: 1,
-    center: [o.x / innerWidth * 2 - 1, 1 - o.y / innerHeight * 2], scale: [r / innerWidth * 2, r / innerHeight * 2] })
-  if (!orbGL.canvas.dataset.ready) orbGL.canvas.dataset.ready = '1'
-}
-function buildWorld(n) {
-  if (world) { scene.remove(world); world.traverse((o) => { o.geometry?.dispose(); const m = o.material; if (m) (Array.isArray(m) ? m : [m]).forEach((x) => x.dispose()) }) }
-  P = PAL[n]; world = new THREE.Group(); scene.add(world)
-  RINGS = []; CLOCKS = []; WINDOWS = []; ROOMGLOW = []
-  M = mats()
-  EM = new THREE.LineBasicMaterial({ color: P.edge, transparent: true, opacity: P.edgeA, depthWrite: false })
-  scene.background?.dispose?.(); scene.background = skyTex()
-  scene.fog = new THREE.Fog(P.bg, P.fog[0], P.fog[1])
-  renderer.toneMappingExposure = P.exposure
-  renderer.shadowMap.enabled = !P.dark
-  if (P.dark) {
-    world.add(new THREE.HemisphereLight('#7f9a8c', '#08100b', .6))
-    const moon = new THREE.DirectionalLight('#a9c0cf', .5); moon.position.set(-12, 20, 14); world.add(moon)
-    world.add(new THREE.Mesh(new THREE.PlaneGeometry(400, 400).rotateX(-Math.PI / 2).translate(0, -.4, 0), new THREE.MeshStandardMaterial({ color: P.bg, roughness: 1, envMapIntensity: 0 })))
-  } else {
-    world.add(new THREE.HemisphereLight('#ffffff', P.ground, 1.6))
-    const sun = new THREE.DirectionalLight('#ffffff', 2.6); sun.position.set(-8, 14, 13); sun.castShadow = true
-    sun.shadow.mapSize.set(innerWidth < 735 ? 1024 : 2048, innerWidth < 735 ? 512 : 1024); Object.assign(sun.shadow.camera, { left: -15, right: 15, top: 9, bottom: -9, near: 2, far: 50 })
-    sun.shadow.camera.updateProjectionMatrix(); sun.shadow.bias = -.0005; sun.shadow.normalBias = .03
-    world.add(sun)
-    const catcher = new THREE.Mesh(new THREE.PlaneGeometry(400, 400).rotateX(-Math.PI / 2).translate(0, -.4, 0), new THREE.ShadowMaterial({ color: P.shadow, opacity: .09 }))
-    catcher.receiveShadow = true; world.add(catcher)
-  }
-  // the model: base, back wall, side walls; the roof is lifted off so you can look in, except at the hotel
-  box(W * 3 + 1.2, .4, D + 1.6, 0, -.4, .4, M.floor, { edge: true })
-  box(W * 3 + T, H, T, 0, 0, -D / 2 + T / 2, M.wall, { edge: true })
-  for (const x of [-1.5, -.5, .5, 1.5]) box(T, H, D, x * W, 0, 0, M.wall, { edge: true })
-  ROOMS[n].forEach((fn, i) => { curRoom = i; fn(XS[i]) })
-  if (n === 'hotels') wallClock(XS[0] - 1.8, 2.3)
-  XS.forEach((x) => {
-    const g = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: P.dark ? P.lamp : P.halo, transparent: true, opacity: 0, depthWrite: false, blending: P.dark ? THREE.AdditiveBlending : THREE.NormalBlending }))
-    g.position.set(x, 1.4, 0); g.scale.set(W * 1.05, H * 1.2, 1); world.add(g); ROOMGLOW.push(g)
-  })
-  if (P.dark) {
-    box(W * 3 + T, .22, D, 0, H, 0, M.slab, { edge: true, cast: false })
-    hotelUpper()
-    sparks = points(1100, (a, i, r) => { const th = Math.PI + r() * Math.PI, el = .02 + Math.pow(r(), 1.6) * .55; a.set([Math.cos(th) * Math.cos(el) * 95, Math.sin(el) * 95, Math.sin(th) * Math.cos(el) * 95], i * 3) }, .2, '#f4e9cc', .8, false)
-    sparks.kind = 'stars'
-  } else {
-    sparks = points(220, (a, i, r) => a.set([(r() - .5) * W * 3, .2 + r() * 2.8, -D / 2 + .3 + r() * (D - .2)], i * 3), .028, P.dust, .6, true)
-    sparks.kind = 'dust'
-  }
-  buildOrb(n)
 }
 
 // ---------- The camera's path: hero, three rooms, your business (the whole building), the pills, the plans, applying at the front desk ----------
-const look = new THREE.Vector3(), tmp = new THREE.Vector3()
-let K, camC, lookC, orbC, orbScale = 1
+// Worked out here, as three.js would, so the copy, the tags and taps line up with the drawn world in the same frame
+const TAN = Math.tan(16 * Math.PI / 180) // half the camera's 32° field of view
+const camPos = [0, 0, 0], look = [0, 0, 0], orbPos = [0, 0, 0], AX = [1, 0, 0], AY = [0, 1, 0], AZ = [0, 0, 1]
+let K, camC, lookC, orbC, orbScale = 1, orbS = 1, orbRot = 0
+// three.js's CatmullRomCurve3 (open, centripetal): a smooth glide through the keyframes
+function curve(pts) {
+  const l = pts.length, d2 = (a, b) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2
+  return (u, out) => {
+    let i = Math.floor((l - 1) * u), w = (l - 1) * u - i
+    if (w === 0 && i === l - 1) { i = l - 2; w = 1 }
+    const p1 = pts[i], p2 = pts[i + 1], p0 = i > 0 ? pts[i - 1] : p1.map((v, k) => 2 * v - p2[k]), p3 = i + 2 < l ? pts[i + 2] : p2.map((v, k) => 2 * v - p1[k])
+    let dt0 = Math.pow(d2(p0, p1), .25), dt1 = Math.pow(d2(p1, p2), .25), dt2 = Math.pow(d2(p2, p3), .25)
+    if (dt1 < 1e-4) dt1 = 1
+    if (dt0 < 1e-4) dt0 = dt1
+    if (dt2 < 1e-4) dt2 = dt1
+    for (let k = 0; k < 3; k++) {
+      const t1 = ((p1[k] - p0[k]) / dt0 - (p2[k] - p0[k]) / (dt0 + dt1) + (p2[k] - p1[k]) / dt1) * dt1
+      const t2 = ((p2[k] - p1[k]) / dt1 - (p3[k] - p1[k]) / (dt1 + dt2) + (p3[k] - p2[k]) / dt2) * dt1
+      out[k] = p1[k] + t1 * w + (-3 * p1[k] + 3 * p2[k] - 2 * t1 - t2) * w * w + (2 * p1[k] - 2 * p2[k] + t1 + t2) * w * w * w
+    }
+    return out
+  }
+}
 function setKeys(n) {
   // the hero looks past the building's left end, so the copy sits on open ground and the model stays whole on the right
   const hero = n === 'hotels' ? { cam: [-6, 4.5, 36], look: [-6, 4.5, 0], orb: [-6, 4.85, 16], s: 2.7 } : { cam: [-5, 7.5, 30], look: [-5, 3.2, 0], orb: [-5, 5.4, 14], s: 2.15 }
@@ -2047,45 +1646,61 @@ function setKeys(n) {
     { cam: [0, 6.8, 25], look: [0, 5.0, 0], orb: [0, 5.15, 11], s: 1.65 },
     { cam: [-2.5, 12, 34], look: [0, 3.2, 0], orb: [0, 11.5, 1], s: .55 },
     { cam: [XS[0] + 2.6, 3.3, 9.5], look: [XS[0] + 2.2, 1.5, -1], orb: [XS[0] + 1.3, 3.05, 3.2], s: .5 }]
-  const v = (a) => new THREE.Vector3(...a), curve = (key) => new THREE.CatmullRomCurve3(K.map((k) => v(k[key])), false, 'centripetal')
-  camC = curve('cam'); lookC = curve('look'); orbC = curve('orb')
+  camC = curve(K.map((k) => k.cam)); lookC = curve(K.map((k) => k.look)); orbC = curve(K.map((k) => k.orb))
+}
+// three.js's camera.lookAt (up is +y), then a tilt about the camera's own x axis
+function aim(pitch) {
+  const z = [camPos[0] - look[0], camPos[1] - look[1], camPos[2] - look[2]], zl = Math.hypot(z[0], z[1], z[2])
+  z[0] /= zl; z[1] /= zl; z[2] /= zl
+  const xl = Math.hypot(z[2], z[0]), x = [z[2] / xl, 0, -z[0] / xl]
+  const y = [z[1] * x[2] - z[2] * x[1], z[2] * x[0] - z[0] * x[2], z[0] * x[1] - z[1] * x[0]]
+  const c = Math.cos(pitch), si = Math.sin(pitch)
+  for (let k = 0; k < 3; k++) { AX[k] = x[k]; AY[k] = c * y[k] + si * z[k]; AZ[k] = c * z[k] - si * y[k] }
 }
 let px = 0, py = 0
 function pose(t) {
   const u = clamp(t / (K.length - 1), 0, 1), a = innerWidth / innerHeight, phone = a < .8, k = phone ? 1.7 : a < 1.25 ? 1.3 : 1
-  camC.getPoint(u, camera.position); lookC.getPoint(u, look); orbC.getPoint(u, orb.position)
-  camera.position.sub(look).multiplyScalar(k).add(look)
-  if (phone) { const dx = orb.position.x - look.x; look.x += dx; camera.position.x += dx } // on a phone the orb stays centred
-  camera.position.x += px * .3; camera.position.y += py * .15
-  camera.lookAt(look)
-  if (phone) camera.rotateX(-.1) // and sits higher, clear of the copy at the bottom
+  camC(u, camPos); lookC(u, look); orbC(u, orbPos)
+  for (let i = 0; i < 3; i++) camPos[i] = (camPos[i] - look[i]) * k + look[i]
+  if (phone) { const dx = orbPos[0] - look[0]; look[0] += dx; camPos[0] += dx } // on a phone the orb stays centred
+  camPos[0] += px * .3; camPos[1] += py * .15
   const w = 1 - smooth(0, .7, t) // on short screens the hero lifts the orb and headline clear of the intro copy
-  if (fit.pitch) camera.rotateX(-fit.pitch * w)
-  camera.updateMatrixWorld()
+  aim((phone ? -.1 : 0) - fit.pitch * w) // and on a phone the view sits higher, clear of the copy at the bottom
   const i = Math.min(Math.floor(t), K.length - 2), f = smooth(0, 1, t - i)
   orbScale = (K[i].s + (K[i + 1].s - K[i].s) * f) * (a < .8 ? 1.3 : 1) * (1 - (1 - fit.scale) * w)
 }
+// a point in the world to a point on the screen, as three.js's project
+function toScreen(p) {
+  const d = [p[0] - camPos[0], p[1] - camPos[1], p[2] - camPos[2]], dot = (A) => d[0] * A[0] + d[1] * A[1] + d[2] * A[2], z = -dot(AZ)
+  return { x: (dot(AX) / z / (TAN * innerWidth / innerHeight) + 1) / 2 * innerWidth, y: (1 - dot(AY) / z / TAN) / 2 * innerHeight }
+}
 function orbScreen() {
-  tmp.copy(orb.position).project(camera)
-  const dist = camera.position.distanceTo(orb.position)
-  return { x: (tmp.x + 1) / 2 * innerWidth, y: (1 - tmp.y) / 2 * innerHeight, r: orb.scale.x / (dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) * innerHeight / 2 }
+  const o = toScreen(orbPos), dist = Math.hypot(orbPos[0] - camPos[0], orbPos[1] - camPos[1], orbPos[2] - camPos[2])
+  o.r = orbS / (dist * TAN) * innerHeight / 2
+  return o
+}
+// the ray from the camera through the pointer, as three.js's Raycaster.setFromCamera
+function rayAt(e) {
+  const nx = (e.clientX / innerWidth * 2 - 1) * TAN * innerWidth / innerHeight, ny = -(e.clientY / innerHeight * 2 - 1) * TAN
+  const d = [0, 1, 2].map((k) => AX[k] * nx + AY[k] * ny - AZ[k]), l = Math.hypot(d[0], d[1], d[2])
+  return d.map((v) => v / l)
 }
 let fit = { pitch: 0, scale: 1 }
 function heroFit() {
   fit = { pitch: 0, scale: 1 }
   const hero = $('.hero'), h1 = $('#h1'), keep = [px, py]
   hero.style.setProperty('--fit', '1')
-  px = py = 0; pose(0); orb.scale.setScalar(orbScale); [px, py] = keep
+  px = py = 0; pose(0); orbS = orbScale; [px, py] = keep
   const o = orbScreen(), top = $('.nav').getBoundingClientRect().bottom + 12, bottom = $('.hero-foot').offsetTop - 28
   let h = h1.offsetHeight
   if (h > bottom - top) { const f = Math.max(.6, (bottom - top) / h); hero.style.setProperty('--fit', f.toFixed(3)); h *= f }
   const want = Math.min(o.y, bottom - h / 2)
-  if (want < o.y) fit.pitch = Math.atan2((o.y - want) * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), innerHeight / 2)
+  if (want < o.y) fit.pitch = Math.atan2((o.y - want) * TAN, innerHeight / 2)
   fit.scale = Math.min(1, (bottom - top + 60) / (2 * o.r))
 }
 function heroAlign() {
   const keep = [px, py]; px = py = 0
-  pose(0); orb.scale.setScalar(orbScale)
+  pose(0); orbS = orbScale
   const o = orbScreen(), hero = $('.hero'); [px, py] = keep
   hero.style.setProperty('--orb-y', o.y.toFixed(1) + 'px'); hero.style.setProperty('--tap-y', (o.y + o.r + 28).toFixed(1) + 'px')
 }
@@ -2132,7 +1747,7 @@ function orbitUI(t, dt) {
 }
 
 // ---------- The whole building, in the 'your business' view: each room carries a tag; point at a room, or its tag, to replay its call ----------
-const tagsEl = $('#tags'), roomAt = new THREE.Vector3()
+const tagsEl = $('#tags')
 let tags = [], hotRoom = -1
 function buildTags(n) {
   tagsEl.innerHTML = C[n].stops.map((s, i) => `<button class="tag glass" type="button" data-room="${i}" tabindex="-1"><i aria-hidden="true"></i>${s.place} <time>${s.time}</time></button>`).join('')
@@ -2146,19 +1761,20 @@ function tagsUI(t) {
   if (tagsEl._on !== on) { tagsEl._on = on; tags.forEach((g) => { g.style.visibility = on ? 'visible' : 'hidden'; g.tabIndex = on ? 0 : -1; g.style.pointerEvents = on ? 'auto' : 'none' }) }
   if (!on) return
   tags.forEach((g, i) => {
-    roomAt.set(XS[i], H + (P.dark ? 5.6 : .7), 0).project(camera)
-    g.style.transform = `translate(-50%, -50%) translate(${((roomAt.x + 1) / 2 * innerWidth).toFixed(1)}px, ${((1 - roomAt.y) / 2 * innerHeight).toFixed(1)}px)`
+    const at = toScreen([XS[i], H + (dark() ? 5.6 : .7), 0])
+    g.style.transform = `translate(-50%, -50%) translate(${at.x.toFixed(1)}px, ${at.y.toFixed(1)}px)`
     g.style.opacity = vis.toFixed(3)
     g.classList.toggle('hot', i === hotRoom)
   })
 }
 // which room the pointer is over, read off the floor, in the whole-building view only
-const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), floorHit = new THREE.Vector3()
 function roomUnder(e) {
   if (Math.abs(tCur - 4) > .4) return -1
-  ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight * 2 - 1)); ray.setFromCamera(ndc, camera)
-  if (!ray.ray.intersectPlane(floorPlane, floorHit) || Math.abs(floorHit.z) > D / 2 + .3) return -1
-  return XS.findIndex((x) => Math.abs(floorHit.x - x) < W / 2)
+  const d = rayAt(e), t = -camPos[1] / d[1]
+  if (!(t >= 0)) return -1
+  const x = camPos[0] + d[0] * t, z = camPos[2] + d[2] * t
+  if (Math.abs(z) > D / 2 + .3) return -1
+  return XS.findIndex((cx) => Math.abs(x - cx) < W / 2)
 }
 
 // ---------- Pointer: parallax, glass highlights, turn the orb, tap to talk ----------
@@ -2167,9 +1783,13 @@ addEventListener('pointermove', (e) => {
   const el = e.target.closest?.('.live')
   if (el) { const r = el.getBoundingClientRect(); el.style.setProperty('--mx', (e.clientX - r.left).toFixed(0) + 'px'); el.style.setProperty('--my', (e.clientY - r.top).toFixed(0) + 'px') }
 }, { passive: true })
-const ray = new THREE.Raycaster(), ndc = new THREE.Vector2()
 let drag = null, yawVel = 0
-const hitOrb = (e) => { ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight * 2 - 1)); ray.setFromCamera(ndc, camera); return ray.intersectObject(hit, false).length > 0 }
+// does the pointer's ray meet the orb (a sphere of the orb's size at its place)?
+function hitOrb(e) {
+  const d = rayAt(e), m = [camPos[0] - orbPos[0], camPos[1] - orbPos[1], camPos[2] - orbPos[2]]
+  const b = m[0] * d[0] + m[1] * d[1] + m[2] * d[2], c = m[0] * m[0] + m[1] * m[1] + m[2] * m[2] - orbS * orbS
+  return b * b - c >= 0 && (c <= 0 || b <= 0)
+}
 canvas.addEventListener('pointerdown', (e) => {
   if (!hitOrb(e)) { const i = roomUnder(e); if (i >= 0) scrollToY(beatY(i)); return }
   drag = { x: e.clientX, moved: 0 }; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'
@@ -2181,12 +1801,12 @@ canvas.addEventListener('pointermove', (e) => {
 canvas.addEventListener('pointerup', () => { if (drag && drag.moved < 6) requestStart(); drag = null; canvas.style.cursor = '' })
 
 // ---------- Smooth scroll ----------
-const lenis = !reduce && window.Lenis ? new window.Lenis({ lerp: .085, wheelMultiplier: .9 }) : null
+let lenis = null
 function scrollToY(y, smooth = true) { if (lenis) lenis.scrollTo(y, { immediate: !smooth }); else scrollTo({ top: y, behavior: smooth && !reduce ? 'smooth' : 'auto' }) }
 
 // ---------- Switching niche ----------
 function resize() {
-  renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix()
+  world3?.size(view())
   orbitLive = innerWidth > 734
   if (!orbitLive) { orbitEl.removeAttribute('style'); pills.forEach((p) => p.removeAttribute('style')) }
   measure(); heroFit(); heroAlign()
@@ -2196,12 +1816,13 @@ let tCur = 0
 function go(n, first) {
   if (!NICHES.includes(n)) n = 'hotels'
   if (n === niche && !first) return
-  const apply = () => { niche = n; Music.set(n); render(n); buildWorld(n); buildTags(n); setKeys(n); resize(); scrollToY(0, false); tCur = 0 }
-  // After a switch, focus lands on the new headline so screen readers hear the new page
-  const arrive = () => { apply(); if (!first) $('#h1').focus({ preventScroll: true }) }
-  if (first || reduce) return arrive()
+  const apply = () => { niche = n; Music.set(n); render(n); world3?.niche(n); buildTags(n); setKeys(n); resize(); scrollToY(0, false); tCur = 0 }
+  if (first) return apply()
+  track('Niche switched', { from: niche, to: n })
   root.classList.add('switching')
-  setTimeout(() => { arrive(); requestAnimationFrame(() => root.classList.remove('switching')) }, 420)
+  // the page comes back once the new building is drawn (or after a moment, if the world is slow or missing)
+  const swap = () => { apply(); switching = n; if (world3) setTimeout(() => finishSwitch(n), 1500); else finishSwitch(n) }
+  if (reduce) swap(); else setTimeout(swap, 420)
 }
 const fromPath = () => { const p = location.pathname.split('/')[1]; return NICHES.includes(p) ? p : root.dataset.niche || 'hotels' }
 $$('.seg a').forEach((a) => a.addEventListener('click', (e) => {
@@ -2213,6 +1834,7 @@ addEventListener('popstate', () => go(fromPath()))
 
 // ---------- Frame ----------
 let last = performance.now(), level = 0
+const vstates = { connecting: 0, listening: 0, thinking: 0, speaking: 0 }
 function frame(now) {
   requestAnimationFrame(frame)
   const dt = Math.min((now - last) / 1000, .05); last = now
@@ -2225,24 +1847,21 @@ function frame(now) {
   const target = convoLevel()
   level += (target - level) * Math.min(1, dt * 10)
   dock.style.setProperty('--level', Math.max(0, level).toFixed(3))
-  orb.scale.setScalar(orbScale * (1 + (reduce ? 0 : Math.sin(time * 1.25) * .012) + level * .06))
-  if (!reduce) {
-    orb.position.y += Math.sin(time * .9) * .03 * orbScale
-    yawVel *= Math.pow(.05, dt)
-    if (sparks.kind === 'stars') sparks.p.rotation.y = Math.sin(time * .02) * .02
-    else {
-      const a = sparks.p.geometry.attributes.position
-      for (let k = 0; k < a.count; k++) { let y = a.getY(k) + sparks.spd[k] * dt; if (y > 3.05) y = .2; a.setY(k, y) }
-      a.needsUpdate = true
-    }
-  }
-  liveDetails(time, tCur)
-  renderer.render(scene, camera)
-  if (!canvas.dataset.ready) canvas.dataset.ready = '1'
-  drawOrb(time, dt)
+  orbS = orbScale * (1 + (reduce ? 0 : Math.sin(time * 1.25) * .012) + level * .06)
+  if (!reduce) { orbPos[1] += Math.sin(time * .9) * .03 * orbScale; yawVel *= Math.pow(.05, dt) }
+  // the orb's look: its voice, its spin and where it sits on screen
+  const o = orbScreen(), r = Math.max(6, o.r)
+  for (const k in vstates) vstates[k] += ((voice === k ? 1 : 0) - vstates[k]) * Math.min(1, dt * 4)
+  if (!reduce) orbRot += dt * (.09 + level * .6 + yawVel)
+  world3?.frame({ cam: [...camPos, ...AX, ...AY, ...AZ], orb: [...orbPos, orbS], t: tCur, time, hot: hotRoom,
+    draw: { time: reduce ? 0 : time, level, states: vstates, rot: orbRot, tilt: .28 - py * .1, point: (dark() ? 1.4 : 1.75) * clamp(r / 380, .8, 1.15), alpha: 1,
+      center: [o.x / innerWidth * 2 - 1, 1 - o.y / innerHeight * 2], scale: [r / innerWidth * 2, r / innerHeight * 2] } })
   storyUI(tCur); orbitUI(tCur, dt); tagsUI(tCur); trackSection()
 }
 go(fromPath(), true)
+// smooth scrolling starts once the page is laid out, so it measures the page once, not twice
+lenis = !reduce && window.Lenis ? new window.Lenis({ lerp: .085, wheelMultiplier: .9 }) : null
+startWorld()
 requestAnimationFrame(frame)
 </script>
 

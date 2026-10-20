@@ -61,9 +61,6 @@ a { color: inherit; }
 svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-.skip { position: fixed; left: 16px; top: -80px; z-index: 1000; padding: 10px 18px; border-radius: 999px; background: var(--light); color: var(--ink); font-size: var(--small-size); font-weight: 500; text-decoration: none; }
-.skip:focus { top: calc(16px + env(safe-area-inset-top, 0px)); }
-.hero-title:focus { outline: none; }
 
 /* Buttons: a light pill for the main action, an outline for the rest */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: .9em 1.55em; border-radius: 999px; border: 1px solid transparent; font: 500 var(--body-size)/1 var(--sans); text-decoration: none; cursor: pointer; white-space: nowrap; transition: background-color .3s, border-color .3s, box-shadow .3s, transform .2s var(--ease); }
@@ -442,7 +439,6 @@ main { overflow-x: clip; padding-left: var(--gutter-l); padding-right: var(--gut
 .seats { display: grid; gap: 8px; margin: -6px 0 18px; }
 .dots { display: grid; grid-template-columns: repeat(15, 7px); justify-content: space-between; row-gap: 6px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); transition: opacity .4s var(--ease), transform .4s var(--ease); transition-delay: calc(var(--i) * 18ms); }
-.dots i.taken { opacity: .18; }
 .js .dots.off i { opacity: 0; transform: scale(.4); }
 .seat-label { margin: 0; font-size: var(--small-size); color: rgba(11, 11, 13, .62); }
 .seat-label b { color: var(--ink); font-weight: 500; }
@@ -534,27 +530,14 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
 .field label, .field legend { font-size: var(--small-size); font-weight: 500; color: var(--muted); padding: 0; }
 .field input, .field select { min-height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, .04); color: var(--text); font-size: var(--body-size); }
 .field select option { background: #0d0d10; }
-.field input:focus, .field select:focus { border-color: rgba(255, 255, 255, .45); }
-.field input:focus-visible, .field select:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.field input[aria-invalid="true"] { border-color: #ffb4a6; }
+.field input:focus, .field select:focus { outline: none; border-color: rgba(255, 255, 255, .45); box-shadow: 0 0 0 4px rgba(255, 255, 255, .06); }
 .field .err { font-size: var(--small-size); color: #ffb4a6; }
-.field .err:empty { display: none; }
-.field .opt { font-weight: 400; color: var(--faint); }
-.form-error { margin: 0; font-size: var(--card-size); line-height: 1.5; color: #ffb4a6; }
-.form-error a, .note a { color: inherit; text-underline-offset: 3px; }
 .checks { display: flex; flex-wrap: wrap; gap: 8px; }
 .checks label { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); font-size: var(--small-size); color: var(--text); cursor: pointer; }
 .checks input { accent-color: var(--orb-mint); width: 16px; height: 16px; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .apply-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .note { margin: 0; font-size: var(--small-size); line-height: var(--small-lh); color: var(--faint); }
-
-/* Touch: 44px targets for the small pills and icon buttons */
-@media (pointer: coarse) {
-  .niches a, .top-nav a { display: inline-flex; align-items: center; min-height: 44px; }
-  .btn-sm, .seg button, .checks label { min-height: 44px; }
-  .icon-btn { width: 44px; height: 44px; }
-}
 
 /* Below 1320px the intro would run into the orb, so the hero centres: a smaller orb, the words beneath it */
 @media (max-width: 1320px) {
@@ -626,7 +609,6 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
 </svg>
 
-<a class="skip" href="#heroTitle">Skip to content</a>
 <canvas class="fx" aria-hidden="true"></canvas>
 
 <main>
@@ -639,7 +621,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
       <button class="btn btn-dark btn-sm js-apply" type="button" data-program="founding">Apply</button>
     </nav>
     <button class="hero-orb js-talk" type="button" aria-label="Talk to Amariya"><span class="hero-orb-label">Tap to talk</span></button>
-    <h1 class="hero-title" id="heroTitle" data-split="in" tabindex="-1">Pick up every call. Without picking up the phone.</h1>
+    <h1 class="hero-title" id="heroTitle" data-split="in">Pick up every call. Without picking up the phone.</h1>
     <div class="hero-foot">
       <div class="hero-intro">
         <p class="lede">An AI receptionist for hotels, restaurants, clinics and dental practices. She answers, books, and hands over to your team.</p>
@@ -786,10 +768,10 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
             <h3>Yours for life</h3>
             <p class="plan-for">For the first 30 <span data-who>hotels and restaurants</span>.</p>
             <p class="price"><span data-price>$2,500</span><small>once</small></p>
-            <div class="seats"><div class="dots off" id="dots" aria-hidden="true"></div><p class="seat-label"><b id="seatsOpen">30</b> of 30 seats open. The founding price ends when all 30 are taken.</p></div>
+            <div class="seats"><div class="dots off" id="dots" aria-hidden="true"></div><p class="seat-label"><b>30</b> of 30 seats open. The founding price ends when all 30 are taken.</p></div>
             <div class="promises">
-              <p class="promise"><img data-icon="shield" alt="">Live in 7 days, or a full refund.</p>
-              <p class="promise"><img data-icon="repeat" alt="">Then 7 days to change your mind, for any reason.</p>
+              <p class="promise"><img src="/icons/shield.webp" width="22" height="22" alt="" loading="lazy" decoding="async">Live in 7 days, or a full refund.</p>
+              <p class="promise"><img src="/icons/repeat.webp" width="22" height="22" alt="" loading="lazy" decoding="async">Then 7 days to change your mind, for any reason.</p>
             </div>
             <ul data-list="founding"></ul>
             <button class="btn btn-dark btn-block js-apply" type="button" data-program="founding">Apply for a founding licence</button>
@@ -844,7 +826,7 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
   </div>
   <p class="wordmark" aria-hidden="true">Amariya</p>
   <div class="footer-meta">
-    <p>Amariya, an AI receptionist by Legit Design Studio · © 2026 · <a href="/privacy">Privacy</a></p>
+    <p>Amariya, an AI receptionist by Legit Design Studio · © 2026</p>
     <nav aria-label="Amariya for your business"><a href="https://amariya.legitdesign.studio/hotels">Hotels</a><a href="https://amariya.legitdesign.studio/clinics">Clinics</a><a href="https://amariya.legitdesign.studio/dental">Dental</a></nav>
   </div>
 </footer>
@@ -871,29 +853,27 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
       <div class="steps" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
       <button class="icon-btn" type="button" id="applyClose" aria-label="Close the application"><svg aria-hidden="true"><use href="#i-x"></use></svg></button>
     </div>
-    <p class="note" id="stepNote">Step 1 of 3. Your business.</p>
+    <p class="note" id="stepNote">Step 1 of 3. Your business. About 3 minutes in all.</p>
     <div class="fields" data-step="1">
       <div class="field"><label for="program">Program</label><select id="program" name="program"><option value="founding">Founding licence</option><option value="starter">Starter, $299 a month</option><option value="professional">Professional, $799 a month</option><option value="enterprise">Enterprise</option></select></div>
       <div class="two">
         <div class="field"><label for="kind">Business type</label><select id="kind" name="kind"><option value="hotel">Hotel</option><option value="restaurant">Restaurant</option><option value="clinic">Clinic</option><option value="dental">Dental practice</option></select></div>
         <div class="field"><label for="locations">Locations</label><input id="locations" name="locations" type="number" min="1" value="1" inputmode="numeric"></div>
       </div>
-      <div class="field"><label for="business">Business name</label><input id="business" name="business" autocomplete="organization" required aria-describedby="businessErr"><span class="err" id="businessErr" data-for="business"></span></div>
+      <div class="field"><label for="business">Business name</label><input id="business" name="business" autocomplete="organization" required><span class="err" data-for="business"></span></div>
     </div>
     <div class="fields" data-step="2" hidden>
       <div class="field"><label for="calls">Calls per month</label><select id="calls" name="calls"><option>Under 300</option><option selected>300 to 1,000</option><option>1,000 to 3,000</option><option>More than 3,000</option></select></div>
       <fieldset class="field"><legend>When do calls go unanswered?</legend><div class="checks"><label><input type="checkbox" name="missed" value="busy">Busy hours</label><label><input type="checkbox" name="missed" value="after">After hours</label><label><input type="checkbox" name="missed" value="weekend">Weekends</label><label><input type="checkbox" name="missed" value="breaks">Breaks</label></div></fieldset>
-      <div class="field"><label for="software">Booking or practice software <span class="opt">(optional)</span></label><input id="software" name="software" autocomplete="off"></div>
+      <div class="field"><label for="software">Booking or practice software (optional)</label><input id="software" name="software" autocomplete="off"></div>
     </div>
     <div class="fields" data-step="3" hidden>
-      <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required aria-describedby="nameErr"><span class="err" id="nameErr" data-for="name"></span></div>
+      <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" required><span class="err" data-for="name"></span></div>
       <div class="two">
-        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required aria-describedby="emailErr"><span class="err" id="emailErr" data-for="email"></span></div>
-        <div class="field"><label for="phone">Phone <span class="opt">(optional)</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" aria-describedby="phoneErr"><span class="err" id="phoneErr" data-for="phone"></span></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required><span class="err" data-for="email"></span></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required><span class="err" data-for="phone"></span></div>
       </div>
-      <div class="field"><label for="country">Country <span class="opt">(optional)</span></label><input id="country" name="country" autocomplete="country-name"></div>
-      <p class="note">We use these details only to arrange your call. <a href="/privacy">Privacy</a></p>
-      <p class="form-error" id="applyError" role="alert" hidden></p>
+      <div class="field"><label for="country">Country</label><input id="country" name="country" autocomplete="country-name"></div>
     </div>
     <div class="fields" data-step="4" hidden>
       <h2 id="doneTitle">Thank you.</h2>
@@ -933,8 +913,7 @@ const LISTS = {
   professional: ['Everything in Starter', 'Books into your software', '30+ languages', 'Upsells and analytics', '2,500 calls a month'],
   enterprise: ['Everything in Professional', 'Multi-location setup', 'Custom voice', 'Dedicated success manager', 'Unlimited calls'],
 }
-// The third value is seats still open; lower it only as founding licences are actually sold
-const OFFER = { hospitality: ['$2,500', 'hotels and restaurants', 30], clinics: ['$3,500', 'clinics', 30], dental: ['$3,000', 'dental practices', 30] }
+const OFFER = { hospitality: ['$2,500', 'hotels and restaurants'], clinics: ['$3,500', 'clinics'], dental: ['$3,000', 'dental practices'] }
 const FAQ = [
   ['Will callers know they are talking to an AI?', 'Yes. She introduces herself as Amariya, the AI receptionist, in her first sentence. EU law has required this since August 2026, and it is how we would want it anyway.'],
   ['What happens when a caller wants a person?', 'She transfers the call to your team, or takes a message with a short summary when no one is free.'],
@@ -950,17 +929,15 @@ const CALLS = [
   { meta: 'Linden Dental · 7:58 am', done: 'Urgent visit · Today 09:10', lines: [['a', 'Good morning, Linden Dental. I’m Amariya, the practice’s AI receptionist.'], ['g', 'I cracked a tooth last night and it really hurts.'], ['a', 'I’m sorry. I can see you at 9:10 today, and I’ve flagged it as urgent.'], ['g', 'Thank you.']] },
 ]
 
-// ---------- Content the motion below reads (icons are filled in by the module at the end) ----------
-$('#orbit').innerHTML = PILLS.map(([ic, t, d]) => `<li class="orbit-slot"><div class="pill" tabindex="0"><img class="pill-ico" data-icon="${ic}" alt=""><h3>${t}</h3><p>${d}</p></div></li>`).join('')
-for (const ul of $$('[data-list]')) ul.innerHTML = LISTS[ul.dataset.list].map((t) => `<li><img data-icon="check" alt="">${t}</li>`).join('')
+// ---------- Content the motion below reads (the silver icons are rendered once by icons.mjs) ----------
+$('#orbit').innerHTML = PILLS.map(([ic, t, d]) => `<li class="orbit-slot"><div class="pill" tabindex="0"><img class="pill-ico" src="/icons/${ic}.webp" width="30" height="30" alt="" loading="lazy" decoding="async"><h3>${t}</h3><p>${d}</p></div></li>`).join('')
+for (const ul of $$('[data-list]')) ul.innerHTML = LISTS[ul.dataset.list].map((t) => `<li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">${t}</li>`).join('')
 $('#qs').innerHTML = FAQ.map(([q, a]) => `<details class="card reveal"><summary>${q}<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>${a}</p></details>`).join('')
 $('#dots').innerHTML = Array.from({ length: 30 }, (_, i) => `<i style="--i:${i}"></i>`).join('')
-const showSeats = (open) => { $$('#dots i').forEach((d, i) => d.classList.toggle('taken', i >= open)); $('#seatsOpen').textContent = open }
-showSeats(OFFER.hospitality[2])
 $$('#priceTabs button').forEach((b) => b.addEventListener('click', () => {
   $$('#priceTabs button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)))
-  const [price, who, seats] = OFFER[b.dataset.n]
-  $('[data-price]').textContent = price; $('[data-who]').textContent = who; showSeats(seats)
+  const [price, who] = OFFER[b.dataset.n]
+  $('[data-price]').textContent = price; $('[data-who]').textContent = who
 }))
 
 // ---------- The story opens at the visitor's own time ----------
@@ -992,16 +969,19 @@ function splitText(el) {
   const sr = document.createElement('span'); sr.className = 'sr-only'; sr.textContent = label
   el.append(sr, visual)
 }
+// The orbs start once the headline is on screen, so their setup never holds up the first view
+let heroShown
+const heroReady = new Promise((r) => (heroShown = r))
 if (!reducedMotion) {
   $$('[data-split]').forEach(splitText)
-  const heroTitle = $('.hero-title'), show = () => heroTitle.classList.add('is-in')
+  const heroTitle = $('.hero-title'), show = () => { heroTitle.classList.add('is-in'); heroShown() }
   ;(document.fonts?.ready || Promise.resolve()).then(() => setTimeout(show, 120)); setTimeout(show, 1500)
   const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (!e.isIntersecting) return; e.target.classList.add('is-in'); io.unobserve(e.target) }), { rootMargin: '0px 0px -18% 0px' })
   $$('[data-split="in"]').filter((el) => el !== heroTitle).forEach((el) => io.observe(el))
   const rio = new IntersectionObserver((entries) => entries.forEach((e) => { if (!e.isIntersecting) return; e.target.classList.add('in'); rio.unobserve(e.target) }), { rootMargin: '0px 0px -10% 0px' })
   $$('.reveal').forEach((el) => rio.observe(el))
   new IntersectionObserver(([e], o) => { if (e.isIntersecting) { $('#dots').classList.remove('off'); o.disconnect() } }, { rootMargin: '0px 0px -25% 0px' }).observe($('.plan.recommended'))
-} else { $$('.reveal').forEach((el) => el.classList.add('in')); $('#dots').classList.remove('off') }
+} else { $$('.reveal').forEach((el) => el.classList.add('in')); $('#dots').classList.remove('off'); heroShown() }
 
 // ---------- Particle sphere (WebGL): the original Amariya orb ----------
 const VERT = `
@@ -1081,9 +1061,11 @@ function colorFor(y) {
 }
 function buildPoints(count) {
   const data = new Float32Array(count * 12)
-  for (let i = 0; i < count; i++) {
-    const y = Math.random() * 2 - 1, s = Math.sqrt(1 - y * y), a = Math.random() * Math.PI * 2, [r, g, b] = colorFor(y)
-    data.set([s * Math.cos(a), y, s * Math.sin(a), r, g, b, Math.random() * 2 - 1, Math.random(), Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random(), Math.random() * 2 - 1], i * 12)
+  for (let i = 0, o = 0; i < count; i++, o += 12) {
+    const y = Math.random() * 2 - 1, s = Math.sqrt(1 - y * y), a = Math.random() * Math.PI * 2, c = colorFor(y)
+    data[o] = s * Math.cos(a); data[o + 1] = y; data[o + 2] = s * Math.sin(a); data[o + 3] = c[0]; data[o + 4] = c[1]; data[o + 5] = c[2]
+    data[o + 6] = Math.random() * 2 - 1; data[o + 7] = Math.random(); data[o + 8] = Math.random() * 2 - 1
+    data[o + 9] = Math.random() * 2 - 1; data[o + 10] = Math.random(); data[o + 11] = Math.random() * 2 - 1
   }
   return data
 }
@@ -1102,10 +1084,14 @@ class ParticleOrb {
     attr('aPos', 3, 0); attr('aColor', 3, 3); attr('aAlt', 4, 6); attr('aMisc', 2, 10)
     this.u = {}; UNIFORMS.forEach((n) => (this.u[n] = gl.getUniformLocation(prog, n)))
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.clearColor(0, 0, 0, 0)
-    Object.assign(this, { gl, canvas, count, dpr: 1 }); this.resize()
+    Object.assign(this, { gl, canvas, count, dpr: 1 })
   }
   resize() {
-    const dpr = Math.min(devicePixelRatio || 1, 2), w = Math.max(1, Math.round(this.canvas.clientWidth * dpr)), h = Math.max(1, Math.round(this.canvas.clientHeight * dpr))
+    const dpr = Math.min(devicePixelRatio || 1, 2)
+    this.size(Math.round(this.canvas.clientWidth * dpr), Math.round(this.canvas.clientHeight * dpr), dpr)
+  }
+  size(w, h, dpr) {
+    w = Math.max(1, w); h = Math.max(1, h)
     if (w !== this.canvas.width || h !== this.canvas.height) { this.canvas.width = w; this.canvas.height = h }
     this.dpr = dpr; this.gl.viewport(0, 0, w, h)
   }
@@ -1121,6 +1107,62 @@ class ParticleOrb {
     gl.uniform2f(u.uCenter, p.center[0], p.center[1]); gl.uniform2f(u.uScale, p.scale[0], p.scale[1])
     gl.drawArrays(gl.POINTS, 0, this.count)
   }
+}
+// Where the browser allows it, the orbs draw in a worker on an OffscreenCanvas, so starting
+// WebGL and drawing each frame never hold up scrolling or taps. The page sends each frame's numbers.
+const orbWorkerSource = () => [
+  `const VERT = ${JSON.stringify(VERT)}, FRAG = ${JSON.stringify(FRAG)}, PALETTE = ${JSON.stringify(PALETTE)}, UNIFORMS = ${JSON.stringify(UNIFORMS)}`,
+  `const pick = ${pick}`, colorFor, buildPoints, ParticleOrb,
+  `const orbs = {}
+onmessage = ({ data: m }) => {
+  if (m.probe) { let ok = false; try { const gl = new OffscreenCanvas(1, 1).getContext('webgl'); ok = !!gl; gl?.getExtension('WEBGL_lose_context')?.loseContext() } catch {} postMessage({ probe: ok }); return }
+  if (m.canvas) { try { orbs[m.id] = new ParticleOrb(m.canvas, m.count) } catch (err) { postMessage({ id: m.id, fail: err.message }) } return }
+  const orb = orbs[m.id]
+  if (orb) { orb.size(m.w, m.h, m.dpr); orb.draw(m.p) }
+  postMessage({ id: m.id })
+}`].join('\n')
+class WorkerOrb {
+  static all = []
+  constructor(worker, canvas, count) {
+    const off = canvas.transferControlToOffscreen()
+    Object.assign(this, { worker, canvas, id: WorkerOrb.all.length, busy: false, next: null, w: 1, h: 1, dpr: 1 })
+    WorkerOrb.all.push(this)
+    worker.postMessage({ id: this.id, canvas: off, count }, [off])
+  }
+  resize() {
+    this.dpr = Math.min(devicePixelRatio || 1, 2)
+    this.w = Math.round(this.canvas.clientWidth * this.dpr); this.h = Math.round(this.canvas.clientHeight * this.dpr)
+  }
+  // One frame in flight at a time; if the worker falls behind, only the newest frame waits
+  draw(p) {
+    const m = { id: this.id, w: this.w, h: this.h, dpr: this.dpr, p }
+    if (this.busy) this.next = m; else { this.busy = true; this.worker.postMessage(m) }
+  }
+  done() {
+    const m = this.next; this.next = null
+    if (m) this.worker.postMessage(m); else this.busy = false
+  }
+}
+let makeOrb = null
+function startOrbs(ready) {
+  const local = () => { makeOrb = (canvas, count) => new ParticleOrb(canvas, count); ready() }
+  let worker = null
+  if ('transferControlToOffscreen' in HTMLCanvasElement.prototype) try { worker = new Worker(URL.createObjectURL(new Blob([orbWorkerSource()], { type: 'text/javascript' }))) } catch { worker = null }
+  if (!worker) return local()
+  let decided = false
+  const decide = (ok) => {
+    if (decided) return
+    decided = true
+    if (!ok) { worker.terminate(); return local() }
+    makeOrb = (canvas, count) => new WorkerOrb(worker, canvas, count); ready()
+  }
+  worker.onerror = () => decide(false)
+  worker.onmessage = ({ data }) => {
+    if ('probe' in data) return decide(data.probe)
+    if (data.fail) console.warn('Particle orb disabled', data.fail)
+    WorkerOrb.all[data.id]?.done()
+  }
+  worker.postMessage({ probe: true })
 }
 const pointer = { x: 0, y: 0, sx: 0, sy: 0 }
 addEventListener('pointermove', (e) => { pointer.x = e.clientX / innerWidth - 0.5; pointer.y = e.clientY / innerHeight - 0.5 }, { passive: true })
@@ -1139,7 +1181,7 @@ const SCENES = [
   { el: $('#faq'), field: 1, alpha: 0.4 },
   { el: $('.footer'), anchor: $('.wordmark'), r: 0.17, alpha: 1 },
 ]
-const view = { cx: innerWidth / 2, cy: innerHeight * 0.45, radius: 300, wave: 0, ring: 0, field: 0, alpha: 0 }
+const view = { cx: 0, cy: 0, radius: 300, wave: 0, ring: 0, field: 0, alpha: 0 } // centred when the orbs start (reading the window size here would force a layout)
 let storyP = 0, rot = 0, lastCount = '', sceneTarget = null
 function storyProgress() { const r = story.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? clamp(-r.top / span) : 0 }
 function updateStory(p) {
@@ -1480,7 +1522,10 @@ function updateSetup() {
   setupT = t; renderSetup(t)
 }
 function drawSetupOrb(dt) {
-  if (!setupOrb || !setupOn) return
+  if (!setupOn || !fieldGL) return
+  // Made the first time Day 7 comes into view, so the page starts lighter
+  if (setupOrb === null) try { setupOrb = { gl: makeOrb(setupOrbCanvas, 5000), rot: 1 } } catch { setupOrb = false }
+  if (!setupOrb) return
   setupOrb.rot += dt * 0.3
   setupOrb.gl.resize()
   setupOrb.gl.draw({ time, level: 0.1 + 0.08 * Math.sin(time * 2.4), rot: setupOrb.rot, tilt: 0.3, point: 1.3, alpha: 1, center: [0, 0], scale: [0.8, 0.8] })
@@ -1601,11 +1646,11 @@ let mini = null, lenis = null
 const states = { connecting: 0, listening: 0, thinking: 0, speaking: 0 }
 let level = 0
 function createGL() {
-  try { fieldGL = new ParticleOrb(fxCanvas, innerWidth < 700 ? 11000 : 26000) } catch (err) { console.warn('Particle field disabled', err.message); return }
+  view.cx = innerWidth / 2; view.cy = innerHeight * 0.45
+  try { fieldGL = makeOrb(fxCanvas, innerWidth < 700 ? 11000 : 26000) } catch (err) { console.warn('Particle field disabled', err.message); return }
   const host = $('.dock .orb-sm'), canvas = document.createElement('canvas')
   canvas.setAttribute('aria-hidden', 'true'); host.append(canvas)
-  try { mini = { host, gl: new ParticleOrb(canvas, 1400), rot: Math.random() * 6 } } catch { canvas.remove() }
-  try { setupOrb = { gl: new ParticleOrb(setupOrbCanvas, 5000), rot: 1 } } catch { setupOrb = null }
+  try { mini = { host, gl: makeOrb(canvas, 1400), rot: Math.random() * 6 } } catch { canvas.remove() }
 }
 function drawMini(dt) {
   if (!mini) return
@@ -1632,25 +1677,44 @@ function stillFrames() {
   still(); addEventListener('resize', still); addEventListener('scroll', still, { passive: true })
 }
 function boot() {
-  createGL()
+  const afterPaint = (f) => requestAnimationFrame(() => requestAnimationFrame(f))
+  heroReady.then(() => afterPaint(() => startOrbs(() => { createGL(); if (reducedMotion) stillFrames() })))
   if (window.Lenis && !reducedMotion && !matchMedia('(pointer: coarse)').matches) lenis = new window.Lenis({ lerp: 0.09, smoothWheel: true, autoRaf: false })
-  if (reducedMotion) stillFrames()
-  else requestAnimationFrame((now) => { last = now; frame(now) })
+  if (!reducedMotion) requestAnimationFrame((now) => { last = now; frame(now) })
 }
 if ('requestIdleCallback' in window) requestIdleCallback(boot, { timeout: 500 }); else setTimeout(boot, 120)
 
 // ---------- Amariya, for real: voice and text through the ElevenLabs agent ----------
 const dock = $('#dock')
 const AGENT_ID = 'agent_9101m3n1hwxffey830jzf43chj6x'
-const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here receives each application as JSON; until it is set, applications fall back to email
-const CONTACT_EMAIL = 'marketing@legitdesign.studio'
+const APPLY_WEBHOOK = '' // a Zapier, Make or HubSpot webhook URL here also receives each application as JSON
+// A one-time pass from our own server (/api/convai), so only this site can start a conversation.
+// If the server can't give one, the public agent ID is tried; that works until authentication is switched on.
+async function credential(mode) {
+  try {
+    const r = await fetch(`/api/convai?mode=${mode}`, { method: 'POST', signal: AbortSignal.timeout(6000) })
+    const c = r.ok ? await r.json() : {}
+    if (mode === 'voice' && c.conversationToken) return { conversationToken: c.conversationToken, connectionType: 'webrtc' }
+    if (mode === 'text' && c.signedUrl) return { signedUrl: c.signedUrl, textOnly: true }
+  } catch {}
+  return mode === 'voice' ? { agentId: AGENT_ID, connectionType: 'webrtc' } : { agentId: AGENT_ID, textOnly: true }
+}
+// Funnel events for Vercel Web Analytics (no cookies, no personal details): see the project's Analytics tab
+const track = (name, data) => { try { window.va?.('event', { name, data }) } catch {} }
 const IDLE = ['Amariya is ready to talk', 'Press the orb and say hello.']
 const greeting = (part) => `Good ${part}, I’m Amariya, an AI receptionist. I answer the phones for hotels, restaurants, clinics and dental practices. What kind of business do you run?`
 const contextFor = () => 'Your name is Amariya; always call yourself Amariya. The visitor is on the main Amariya page, which covers hotels, restaurants, clinics and dental practices. There are two ways to buy. First, the founding licence, paid once: $2,500 for hotels and restaurants, $3,500 for clinics, $3,000 for dental practices, for the first 30 businesses in each niche. It includes Professional features for life, 500 call minutes a month (extra minutes at cost, unused minutes do not roll over), done-for-you setup and one location per licence. She goes live within 7 days or the money is refunded in full, and after she goes live there are 7 more days to ask for a refund for any reason. Second, monthly plans: Starter at $299 a month (one location, 500 calls, bookings and FAQs, 5 languages), Professional at $799 a month (up to 3 locations, 2,500 calls, books into their software, 30+ languages, upsells and analytics) and Enterprise, priced on request (multi-location, custom voice, a dedicated success manager, unlimited calls). Do not state cancellation or minimum-term terms; say the team confirms terms on the call. Never give medical or clinical advice; clinical questions are for the clinic’s own team. Make no claims about HIPAA or GDPR. To apply, collect the visitor’s name, business name, email, phone and a good time for a 20-minute call; call fill_demo_form with what you have, then submit_demo_request. The team follows up to arrange the call, then sends an invoice. Profile fields: hotel_name is the business name, business_type is hotel, restaurant, clinic or dental, rooms is rooms, practitioners or chairs, monthly_calls is calls per month. Sections you can show with navigate_to_section: top, story, problem, demo, features, setup, pricing, questions.'
 let vstate = 'idle', convo = null, convoMode = null, sdk = null
 const PROFILE = {}, APPLICATION = {}
 const loadSdk = () => sdk || (sdk = import('https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/+esm').then((m) => m.Conversation, (e) => { sdk = null; throw e }))
-addEventListener('load', () => setTimeout(() => loadSdk().catch(() => {}), 1500), { once: true })
+// The SDK warms up when the visitor first moves, scrolls or taps, so the first load stays light
+const WARM = ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll']
+function warmSdk() {
+  for (const t of WARM) removeEventListener(t, warmSdk)
+  const later = window.requestIdleCallback ? (f) => requestIdleCallback(f, { timeout: 3000 }) : (f) => setTimeout(f, 200)
+  later(() => loadSdk().catch(() => {}))
+}
+for (const t of WARM) addEventListener(t, warmSdk, { passive: true })
 const clean = (t) => String(t || '').replace(/\[[^\]]*\]/g, '').replace(/\s+/g, ' ').trim()
 function setDock(state, status, text) {
   vstate = state; dock.dataset.state = state; dock.classList.toggle('in-call', !!convo)
@@ -1666,18 +1730,17 @@ function visitVars() {
   const h = new Date().getHours()
   return { time_of_day: h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening', visitor_status: returning ? 'returning' : 'new', visitor_device: matchMedia('(max-width: 734px), (pointer: coarse)').matches ? 'mobile' : 'desktop' }
 }
-async function startConvo(mode, opener, note) {
+async function startConvo(mode, opener) {
   if (convo) { if (opener) send(opener); return }
   if (vstate === 'connecting') return
   convoMode = mode; dock.dataset.mode = mode === 'text' ? 'text' : 'voice'
-  setDock('connecting', 'Connecting', note || (mode === 'voice' ? 'Allow the microphone to talk with Amariya. Your voice goes to our voice provider, ElevenLabs, to run the call.' : 'Opening the chat…'))
+  setDock('connecting', 'Connecting', mode === 'voice' ? 'Allow the microphone to talk with Amariya.' : 'Opening the chat…')
   try {
     if (mode === 'voice') (await navigator.mediaDevices.getUserMedia({ audio: true })).getTracks().forEach((t) => t.stop())
     const Conversation = await loadSdk(), vars = visitVars()
     let timedOut = false, timer
     const session = Conversation.startSession({
-      agentId: AGENT_ID,
-      ...(mode === 'voice' ? { connectionType: 'webrtc' } : { textOnly: true }),
+      ...(await credential(mode)),
       dynamicVariables: vars,
       overrides: { agent: { firstMessage: greeting(vars.time_of_day) } },
       clientTools: TOOLS,
@@ -1696,13 +1759,15 @@ async function startConvo(mode, opener, note) {
     session.then((c) => { if (timedOut) c.endSession().catch(() => {}) }, () => {})
     try { convo = await Promise.race([session, new Promise((_, reject) => { timer = setTimeout(() => { timedOut = true; reject(new Error('Connection timed out')) }, 15000) })]) } finally { clearTimeout(timer) }
     setDock(vstate === 'connecting' ? 'thinking' : vstate)
+    track('Talk started', { mode, page: 'home' })
     convo.sendContextualUpdate(contextFor())
     if (opener) send(opener)
     if (mode === 'text') $('#dockInput').focus({ preventScroll: true })
   } catch (err) {
     console.error(err); convo = null
-    if (err?.name === 'NotAllowedError' && mode === 'voice') { convoMode = null; vstate = 'idle'; return startConvo('text', opener, 'No microphone access, so Amariya will chat by text.') }
+    if (err?.name === 'NotAllowedError' && mode === 'voice') { convoMode = null; vstate = 'idle'; return startConvo('text', opener) }
     convoMode = null; dock.dataset.mode = 'voice'; setDock('idle', 'Couldn’t connect', 'Please try again in a moment.')
+    track('Talk failed', { mode, page: 'home', reason: String(err?.message || err).slice(0, 120) })
   }
 }
 function send(text) { convo.sendUserMessage(text); setDock(convoMode === 'text' ? 'thinking' : vstate, convoMode === 'text' ? 'Amariya is typing' : null, 'You: ' + text) }
@@ -1730,14 +1795,9 @@ const FEATURE = { bookings: 0, integrations: 0, multilingual: 1, answering: 2, g
 const money = (n) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 const missing = (a) => ['name', 'hotel_name', 'email'].filter((k) => !String(a[k] || '').trim())
 async function sendApplication(data) {
+  track('Application sent', { program: data.program || 'founding', type: data.kind || data.business_type || '', source: data.source || 'form', page: 'home' })
   if (!APPLY_WEBHOOK) return false
-  try { const r = await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); return r.ok } catch (e) { console.error(e); return false }
-}
-// When sending fails, the visitor can still email the application, already written out
-function mailtoFor(d) {
-  const lines = [['Program', d.program], ['Business type', d.kind || d.business_type], ['Locations', d.locations], ['Business', d.business || d.hotel_name], ['Calls per month', d.calls || d.monthly_calls], ['Missed calls', [].concat(d.missed || []).join(', ')], ['Software', d.software], ['Name', d.name], ['Email', d.email], ['Phone', d.phone], ['Country', d.country]]
-    .filter(([, v]) => String(v || '').trim()).map(([k, v]) => `${k}: ${v}`)
-  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Amariya application: ${d.business || d.hotel_name || ''}`)}&body=${encodeURIComponent(lines.join('\n'))}`
+  try { await fetch(APPLY_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); return true } catch (e) { console.error(e); return false }
 }
 function prefill() {
   for (const [key, sel] of [['hotel_name', '#business'], ['name', '#name'], ['email', '#email'], ['phone', '#phone']]) {
@@ -1780,10 +1840,7 @@ const TOOLS = {
     const miss = missing(APPLICATION)
     if (miss.length) return `Cannot submit yet. Missing: ${miss.join(', ')}.`
     const data = { ...APPLICATION, source: 'voice', page: location.href, at: new Date().toISOString() }
-    if (!(await sendApplication(data))) {
-      setDock(vstate, null, `The application didn’t go through. You can email it to ${CONTACT_EMAIL}.`)
-      return `The application did not go through. Tell them so plainly, and ask them to email their details to ${CONTACT_EMAIL}, or to try the Apply form.`
-    }
+    await sendApplication(data)
     setDock(vstate, null, `Application received for ${data.hotel_name}.`)
     return `Application recorded for ${data.name} (${data.email}). Tell them the team will follow up to arrange the 20-minute call.`
   },
@@ -1800,8 +1857,7 @@ $('#dockForm').addEventListener('submit', (e) => {
   convo ? send(v) : startConvo('text', v)
 })
 $('#dockInput').addEventListener('input', () => { try { convo?.sendUserActivity() } catch {} })
-$('.skip').addEventListener('click', (e) => { e.preventDefault(); showSection('top'); $('#heroTitle').focus({ preventScroll: true }) })
-$$('a[href^="#"]:not(.skip)').forEach((a) => a.addEventListener('click', (e) => {
+$$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
   const t = $(a.getAttribute('href')); if (!t || !lenis) return
   e.preventDefault(); lenis.scrollTo(t, { duration: 1.4 })
 }))
@@ -1809,19 +1865,22 @@ $$('a[href^="#"]:not(.skip)').forEach((a) => a.addEventListener('click', (e) => 
 // ---------- The application: three short steps ----------
 const dlg = $('#apply'), form = $('#applyForm')
 let step = 1
-const NOTES = ['Step 1 of 3. Your business.', 'Step 2 of 3. Your calls.', 'Step 3 of 3. How we reach you.']
+const NOTES = ['Step 1 of 3. Your business. About 3 minutes in all.', 'Step 2 of 3. Your calls.', 'Step 3 of 3. How we reach you. No payment today.']
 function go(n) {
   step = n
   $$('[data-step]', form).forEach((el) => (el.hidden = +el.dataset.step !== n))
   $$('.steps i', form).forEach((el, i) => el.classList.toggle('on', i < Math.min(n, 3)))
   $('#stepNote').hidden = n > 3; $('#applyActions').hidden = n > 3
   if (n <= 3) $('#stepNote').textContent = NOTES[n - 1]
-  $('#back').hidden = n === 1 || n > 3; $('#applyError').hidden = true
+  $('#back').hidden = n === 1 || n > 3
   $('#next').textContent = n === 3 ? 'Send application' : 'Continue'
   $(`[data-step="${n}"] input, [data-step="${n}"] select, [data-step="${n}"] button`, form)?.focus()
 }
 function check(n) {
-  const rules = { 1: { business: (v) => (v.trim() ? '' : 'Add your business name.') }, 3: { name: (v) => (v.trim() ? '' : 'Add your name.'), email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Add an email we can reach you at.'), phone: (v) => (!v.trim() || v.replace(/[^\d]/g, '').length >= 7 ? '' : 'Add the full number, with the area code.') } }[n] || {}
+  // a missing answer and a malformed one get different words
+  const email = (v) => (!v.trim() ? 'Add an email we can reach you at.' : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Check the email address, it looks incomplete.')
+  const phone = (v) => { const d = v.replace(/[^\d]/g, '').length; return !d ? 'Add a phone number with the area code.' : d < 7 ? 'That number looks short. Include the area code.' : '' }
+  const rules = { 1: { business: (v) => (v.trim() ? '' : 'Add your business name.') }, 3: { name: (v) => (v.trim() ? '' : 'Add your name.'), email, phone } }[n] || {}
   let ok = true
   for (const [id, rule] of Object.entries(rules)) {
     const msg = rule($('#' + id).value)
@@ -1830,74 +1889,20 @@ function check(n) {
   }
   return ok
 }
-$$('.js-apply').forEach((b) => b.addEventListener('click', () => { $('#program').value = b.dataset.program || 'founding'; prefill(); dlg.showModal(); go(1); lenis?.stop() }))
+$$('.js-apply').forEach((b) => b.addEventListener('click', () => { track('Apply opened', { program: b.dataset.program || 'founding', from: b.closest('section, header, footer')?.id || b.closest('section, header, footer')?.className.split(' ')[0] || 'page' }); $('#program').value = b.dataset.program || 'founding'; prefill(); dlg.showModal(); go(1); lenis?.stop() }))
 dlg.addEventListener('close', () => lenis?.start())
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault()
   if (!check(step)) return
-  if (step < 3) return go(step + 1)
-  const fd = new FormData(form), data = { ...Object.fromEntries(fd), missed: fd.getAll('missed') }
-  const next = $('#next'), error = $('#applyError')
-  next.disabled = true; next.textContent = 'Sending…'; error.hidden = true
-  const sent = await sendApplication({ ...data, source: 'form', page: location.href, at: new Date().toISOString() })
-  next.disabled = false; next.textContent = 'Send application'
-  if (!sent) {
-    error.innerHTML = `We couldn’t send your application. Please try again, or <a href="${mailtoFor(data)}">email it to ${CONTACT_EMAIL}</a>.`
-    error.hidden = false
-    return
-  }
+  if (step < 3) { track('Apply step', { step: step + 1 }); return go(step + 1) }
+  const data = Object.fromEntries(new FormData(form))
+  sendApplication({ ...data, source: 'form', page: location.href, at: new Date().toISOString() })
   $('#doneTitle').textContent = `Thank you, ${data.name.trim().split(' ')[0]}.`
   $('#doneText').textContent = `We will email ${data.email.trim()} to book your 20-minute call.`
   go(4)
 })
 $('#back').addEventListener('click', () => go(step - 1))
+new IntersectionObserver(([e], o) => { if (e.isIntersecting) { track('Pricing viewed', { page: 'home' }); o.disconnect() } }, { threshold: 0.3 }).observe($('#pricing'))
 for (const id of ['#applyClose', '#doneClose']) $(id).addEventListener('click', () => dlg.close())
 dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close() })
-</script>
-<script type="importmap">
-{ "imports": { "three": "/vendor/three/build/three.module.js", "three/addons/": "/vendor/three/examples/jsm/" } }
-</script>
-<script type="module">
-import * as THREE from 'three'
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
-import { SVGLoader } from 'three/addons/loaders/SVGLoader.js'
-
-// Premium 3D icons: each line icon becomes polished silver wire, rendered once into an image
-const cache = new Map()
-let kit = null
-function icon3d(id) {
-  if (cache.has(id)) return cache.get(id)
-  let url = ''
-  try {
-    if (!kit) {
-      const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
-      r.setPixelRatio(1); r.setSize(160, 160, false); r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.15
-      const s = new THREE.Scene(), sun = new THREE.DirectionalLight('#ffffff', 1.4)
-      s.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture
-      sun.position.set(-4, 6, 8); s.add(sun)
-      const cam = new THREE.PerspectiveCamera(26, 1, 1, 200); cam.position.set(0, 0, 60)
-      kit = { r, s, cam, mat: new THREE.MeshStandardMaterial({ color: '#dfe4ea', metalness: 1, roughness: 0.22, envMapIntensity: 1.4 }) }
-    }
-    const { r, s, cam, mat } = kit, g = new THREE.Group(), R = 1.5
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">${document.getElementById('i-' + id).innerHTML}</svg>`
-    for (const path of new SVGLoader().parse(svg).paths) for (const sub of path.subPaths) {
-      const pts = []
-      for (const p of sub.getPoints(16)) { const v = new THREE.Vector3(p.x - 12, 12 - p.y, 0); if (!pts.length || v.distanceTo(pts[pts.length - 1]) > 0.02) pts.push(v) }
-      const closed = pts.length > 2 && pts[0].distanceTo(pts[pts.length - 1]) < 0.05
-      if (closed) pts.pop()
-      if (pts.length < 2 || (pts.length === 2 && pts[0].distanceTo(pts[1]) < 0.3)) { const dot = new THREE.Mesh(new THREE.SphereGeometry(R * 1.1, 16, 12), mat); dot.position.copy(pts[0]); g.add(dot); continue }
-      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, closed, 'catmullrom', 0.05), Math.max(12, pts.length * 4), R, 12, closed), mat))
-      if (!closed) for (const p of [pts[0], pts[pts.length - 1]]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(R, 16, 12), mat); cap.position.copy(p); g.add(cap) }
-    }
-    g.rotation.set(-0.42, 0.55, 0); s.add(g)
-    r.render(s, cam)
-    url = r.domElement.toDataURL('image/png')
-    s.remove(g); g.traverse((o) => o.geometry?.dispose())
-  } catch (err) { console.warn('3D icon unavailable', id, err.message) }
-  cache.set(id, url)
-  return url
-}
-for (const img of document.querySelectorAll('img[data-icon]')) { const url = icon3d(img.dataset.icon); if (url) img.src = url }
-// The icons are drawn once, so the renderer can let go of its GPU context
-if (kit) { kit.r.dispose(); kit.r.forceContextLoss() }
 </script>
