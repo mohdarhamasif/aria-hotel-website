@@ -10,6 +10,7 @@ const src = readFileSync(join(here, 'src/page.html'), 'utf8')
 const body = src.slice(src.indexOf('<style>')) // the lines above are only for the claude.ai preview
 const homeBody = readFileSync(join(here, 'src/home.html'), 'utf8')
 const privacyPage = readFileSync(join(here, 'src/privacy.html'), 'utf8')
+const bookedPage = readFileSync(join(here, 'src/booked.html'), 'utf8') // where visitors land after booking the call
 const FONTS = ['ranade-400', 'supreme-400', 'supreme-500', 'boska-400', 'bonanova-400', 'bonanova-400-ext']
 // Bona Nova is split like Google Fonts serves it: Latin, and the extended Latin range
 const BONA_EXT = 'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF'
@@ -136,6 +137,8 @@ for (const n of NICHES) { mkdirSync(join(out, n), { recursive: true }); writeFil
 writeFileSync(join(out, 'index.html'), home())
 mkdirSync(join(out, 'privacy'), { recursive: true })
 writeFileSync(join(out, 'privacy', 'index.html'), privacyPage.replace('/*FONTS*/', () => faces))
+mkdirSync(join(out, 'booked'), { recursive: true })
+writeFileSync(join(out, 'booked', 'index.html'), bookedPage.replace('/*FONTS*/', () => faces).replace('<!--ANALYTICS-->', () => ANALYTICS))
 mkdirSync(join(out, 'fonts'), { recursive: true })
 for (const f of FONTS) copyFileSync(join(here, 'src/fonts', f + '.woff2'), join(out, 'fonts', f + '.woff2'))
 mkdirSync(join(out, 'vendor'), { recursive: true })

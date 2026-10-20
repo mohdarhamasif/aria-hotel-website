@@ -389,7 +389,6 @@ select.line-in option { background: var(--bg); }
 .done { display: grid; gap: 12px; }
 /* The call is booked here on the page: Calendly's scheduler in a frame */
 .booking iframe { display: block; width: 100%; height: 700px; border: 0; color-scheme: normal; }
-.booking .booked { padding: 22px 24px; font-size: var(--card); line-height: 1.5; }
 .done:focus { outline: none; }
 .done h3 { font: 400 calc(var(--h2) * var(--ds))/var(--h2-lh) var(--font-display); }
 
@@ -1449,14 +1448,15 @@ function showBooking(d) {
   const box = $('#booking')
   box.innerHTML = `<iframe title="Book your 30-minute call" src="${BOOKING_URL}?${q}"></iframe>`
   box.hidden = false
+  bookedName = String(d.name || '').trim()
 }
-// Calendly tells the page when a time is booked
+let bookedName = ''
+// Calendly tells the page the moment a time is booked. The calendar closes at once and the visitor goes to
+// Amariya's own thank-you page, so the event's redirect (to the Legit Design site) never gets to run.
 addEventListener('message', (e) => {
   if (e.origin !== 'https://calendly.com' || e.data?.event !== 'calendly.event_scheduled') return
-  track('Call booked', { page: niche })
-  const p = document.createElement('p'); p.className = 'booked'; p.setAttribute('role', 'status')
-  p.textContent = 'Booked. Your calendar invite is on its way by email.'
-  $('#booking').prepend(p)
+  $('#booking').innerHTML = ''
+  location.assign(`/booked?${new URLSearchParams({ name: bookedName, from: '/' + niche })}`)
 })
 // When sending fails, the visitor can still book the call, or email the application, already written out
 function mailtoFor(d) {

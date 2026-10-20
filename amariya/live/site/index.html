@@ -575,7 +575,6 @@ dialog.apply::backdrop { background: rgba(5, 5, 6, .66); -webkit-backdrop-filter
 dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
 .booking iframe { display: block; width: 100%; height: 680px; border: 0; color-scheme: normal; }
 #doneTitle:focus { outline: none; }
-.booking .booked { margin: 0; padding: 18px 20px; font-size: var(--card-size); line-height: 1.5; color: var(--orb-mint); }
 .form-error .link { font-size: inherit; color: inherit; }
 .skip { position: fixed; left: 16px; top: -80px; z-index: 1000; padding: 10px 18px; border-radius: 999px; background: var(--light); color: var(--ink); font-size: var(--small-size); font-weight: 500; text-decoration: none; }
 .skip:focus { top: calc(16px + env(safe-area-inset-top, 0px)); }
@@ -1870,19 +1869,19 @@ async function sendApplication(data) {
 function openBooking(d, title, text) {
   const q = new URLSearchParams({ embed_domain: location.hostname, embed_type: 'Inline', hide_gdpr_banner: '1', hide_event_type_details: '1', name: String(d.name || '').trim(), email: String(d.email || '').trim(), background_color: '0d0d10', text_color: 'f3f1ec', primary_color: '86d6c4' })
   $('#booking').innerHTML = `<iframe title="Book your 30-minute call" src="${BOOKING_URL}?${q}"></iframe>`
-  $('#booking').hidden = false
+  $('#booking').hidden = false; bookedName = String(d.name || '').trim()
   $('#doneTitle').textContent = title; $('#doneText').textContent = text
   if (!dlg.open) { dlg.showModal(); lenis?.stop() }
   // the window opens at its top, on the title, not scrolled down to the last button
   go(4); $('#doneTitle').focus({ preventScroll: true }); dlg.scrollTop = 0
 }
-// Calendly tells the page when a time is booked
+let bookedName = ''
+// Calendly tells the page the moment a time is booked. The calendar closes at once and the visitor goes to
+// Amariya's own thank-you page, so the event's redirect (to the Legit Design site) never gets to run.
 addEventListener('message', (e) => {
   if (e.origin !== 'https://calendly.com' || e.data?.event !== 'calendly.event_scheduled') return
-  track('Call booked', { page: 'home' })
-  const p = document.createElement('p'); p.className = 'booked'; p.setAttribute('role', 'status')
-  p.textContent = 'Booked. Your calendar invite is on its way by email.'
-  $('#booking').prepend(p)
+  $('#booking').innerHTML = ''
+  location.assign(`/booked?${new URLSearchParams({ name: bookedName, from: '/' })}`)
 })
 // When sending fails, the visitor can still book the call, or email the application, already written out
 function mailtoFor(d) {
