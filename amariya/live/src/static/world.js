@@ -18,13 +18,25 @@ function radial(stops, size = 128) {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t
 }
 const glowTex = radial([[0, 'rgba(255,255,255,1)'], [.22, 'rgba(255,255,255,.45)'], [1, 'rgba(255,255,255,0)']])
+// wood grain: long wavy lines and a few knots, in greys the wood colour tints
+const grainTex = (() => {
+  const c = canvas2d(256, 256), x = c.getContext('2d'), r = seeded(11)
+  x.fillStyle = '#f2f2f2'; x.fillRect(0, 0, 256, 256)
+  for (let i = 0; i < 46; i++) {
+    const y0 = r() * 256, amp = 1 + r() * 2.5, f = .008 + r() * .016, ph = r() * 6
+    x.strokeStyle = `rgba(70,70,70,${(.05 + r() * .16).toFixed(3)})`; x.lineWidth = .6 + r() * 2.4
+    x.beginPath(); for (let px = 0; px <= 256; px += 4) x.lineTo(px, y0 + Math.sin(px * f + ph) * amp); x.stroke()
+  }
+  for (let i = 0; i < 3; i++) { x.strokeStyle = 'rgba(60,60,60,.22)'; x.lineWidth = 1.2; const kx = r() * 256, ky = r() * 256; for (let k = 1; k < 5; k++) { x.beginPath(); x.ellipse(kx, ky, k * 5, k * 2, 0, 0, Math.PI * 2); x.stroke() } }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; return t
+})()
 const dotTex = radial([[0, 'rgba(255,255,255,1)'], [.45, 'rgba(255,255,255,.5)'], [1, 'rgba(255,255,255,0)']], 32)
 
 const W = 6.4, D = 5, H = 3.2, T = .14, XS = [-W, 0, W], ZB = -D / 2 + T
 const PAL = {
-  hotels: { dark: true, exposure: 1.25, bg: '#101d14', sky: '#030805', fog: [32, 84], floor: '#1a2c20', wall: '#15241a', slab: '#1b2f22', furn: '#22382a', fabric: '#2a4434', fabric2: '#b79b62', wood: '#3b3226', linen: '#d8d0bc', metal: '#c8a96a', rug: '#1d3125', lamp: '#ffd79c', window: '#0a1520', edge: '#d8c08d', edgeA: .26, halo: '#e9c98a', haloA: .16 },
-  clinics: { dark: false, exposure: 1.08, bg: '#f5f7f9', sky: '#fdfeff', fog: [36, 92], floor: '#e7edf2', wall: '#f7f9fb', slab: '#eef2f6', furn: '#fbfcfd', fabric: '#2f445b', fabric2: '#b3c6da', wood: '#d9cbb8', linen: '#ffffff', metal: '#a5b6c8', rug: '#dfe7ee', lamp: '#fff3df', window: '#d6e4f2', plant: '#91a798', edge: '#2f445b', edgeA: .13, ground: '#dde5ee', shadow: '#2c3e52', dust: '#86a3c2', halo: '#a9c4e4', haloA: .26 },
-  dental: { dark: false, exposure: 1.08, bg: '#fbf5f5', sky: '#fffefe', fog: [36, 92], floor: '#f2e6e3', wall: '#fcf6f5', slab: '#f6eceb', furn: '#fefbfa', fabric: '#c48d86', fabric2: '#ead0ca', wood: '#dcc6b5', linen: '#ffffff', metal: '#d09e83', rug: '#eedfdb', lamp: '#fff1e6', window: '#f1dfdb', plant: '#9dad95', edge: '#7d424e', edgeA: .13, ground: '#efe0dc', shadow: '#5b3232', dust: '#cf9d92', halo: '#efc6bf', haloA: .3 },
+  hotels: { dark: true, exposure: 1.25, bg: '#101d14', sky: '#030805', fog: [32, 84], floor: '#1a2c20', wall: '#15241a', slab: '#1b2f22', furn: '#22382a', fabric: '#2a4434', fabric2: '#b79b62', wood: '#6e4a2c', linen: '#d8d0bc', metal: '#c8a96a', rug: '#1d3125', lamp: '#ffd79c', window: '#0a1520', edge: '#d8c08d', edgeA: .26, halo: '#e9c98a', haloA: .16 },
+  clinics: { dark: false, exposure: 1.08, bg: '#f5f7f9', sky: '#fdfeff', fog: [36, 92], floor: '#e7edf2', wall: '#f7f9fb', slab: '#eef2f6', furn: '#fbfcfd', fabric: '#2f445b', fabric2: '#b3c6da', wood: '#c9a27a', linen: '#ffffff', metal: '#a5b6c8', rug: '#dfe7ee', lamp: '#fff3df', window: '#d6e4f2', plant: '#91a798', edge: '#2f445b', edgeA: .13, ground: '#dde5ee', shadow: '#2c3e52', dust: '#86a3c2', halo: '#a9c4e4', haloA: .26 },
+  dental: { dark: false, exposure: 1.08, bg: '#fbf5f5', sky: '#fffefe', fog: [36, 92], floor: '#f2e6e3', wall: '#fcf6f5', slab: '#f6eceb', furn: '#fefbfa', fabric: '#c48d86', fabric2: '#ead0ca', wood: '#c99d7b', linen: '#ffffff', metal: '#d09e83', rug: '#eedfdb', lamp: '#fff1e6', window: '#f1dfdb', plant: '#9dad95', edge: '#7d424e', edgeA: .13, ground: '#efe0dc', shadow: '#5b3232', dust: '#cf9d92', halo: '#efc6bf', haloA: .3 },
 }
 let world, P, M, EM, orb, sparks
 
@@ -42,10 +54,12 @@ function mats() {
   const metal = S(P.metal, { metalness: .9, roughness: .3, envMapIntensity: 1.2 })
   return {
     floor: S(P.floor, { roughness: .92 }), wall: S(P.wall), slab: S(P.slab), furn: S(P.furn, { roughness: .55 }),
-    fabric: S(P.fabric, { roughness: .95 }), fabric2: S(P.fabric2, { roughness: .95 }), wood: S(P.wood, { roughness: .65 }),
+    fabric: S(P.fabric, { roughness: .95 }), fabric2: S(P.fabric2, { roughness: .95 }), wood: S(P.wood, { roughness: .6, map: grainTex }),
+    // the white coat: bright cloth, a cooler shade for its collar and seams
+    coat: S('#ffffff', { roughness: .9, side: THREE.DoubleSide }), coatTrim: S(P.dark ? '#cfc8b6' : '#e3e8ee', { roughness: .9 }),
     linen: S(P.linen, { roughness: .95 }), plant: S(P.plant || '#8ea595', { roughness: .9 }), rug: S(P.rug, { roughness: 1 }),
     metal, frame: P.dark ? metal : S(P.furn, { roughness: .5 }), pane: B(P.window), emit: B(P.lamp),
-    top: P.dark ? S(P.linen, { roughness: .9 }) : S(P.wood, { roughness: .65 }),
+    top: S(P.wood, { roughness: .55, map: grainTex }),
     screen: B(P.dark ? '#3a5845' : P.window), light: B(P.dark ? '#e8dcc0' : '#f6f9fc'),
     art: new THREE.MeshStandardMaterial({ map: artTex(), roughness: .9, envMapIntensity: env }),
   }
@@ -130,19 +144,42 @@ function liveDetails(time, t) {
   ROOMGLOW.forEach((g, i) => { const want = i === hot ? (P.dark ? .2 : .32) : 0; g.material.opacity += (want - g.material.opacity) * .12 })
 }
 
+// chairs stand on wooden legs (brass at the hotel), with a wooden rail across the back
 function chair(x, z, ry, seat = M.fabric) {
-  const g = group(x, z, ry)
-  box(.46, .07, .46, 0, .44, 0, seat, { r: .03, g }); box(.46, .46, .06, 0, .51, -.2, seat, { r: .03, g })
-  for (const [a, b] of [[-.19, -.19], [.19, -.19], [-.19, .19], [.19, .19]]) cyl(.015, .015, .44, a, 0, b, M.metal, { g, seg: 8 })
+  const g = group(x, z, ry), leg = P.dark ? M.metal : M.wood
+  box(.46, .07, .46, 0, .44, 0, seat, { r: .03, g }); box(.46, .4, .06, 0, .51, -.2, seat, { r: .03, g })
+  box(.48, .05, .07, 0, .9, -.2, M.wood, { r: .015, g })
+  for (const [a, b] of [[-.19, -.19], [.19, -.19], [-.19, .19], [.19, .19]]) cyl(.018, .014, .44, a, 0, b, leg, { g, seg: 8 })
 }
+// armchairs sit on a low wooden plinth, with wooden caps on the arms
 function armchair(x, z, ry) {
   const g = group(x, z, ry)
-  box(.86, .38, .8, 0, 0, 0, M.fabric, { r: .1, g }); box(.86, .52, .18, 0, .3, -.31, M.fabric, { r: .08, g })
+  box(.82, .06, .76, 0, 0, 0, M.wood, { r: .015, g })
+  box(.86, .34, .8, 0, .06, 0, M.fabric, { r: .1, g }); box(.86, .52, .18, 0, .3, -.31, M.fabric, { r: .08, g })
   box(.16, .26, .8, -.35, .3, 0, M.fabric, { r: .07, g }); box(.16, .26, .8, .35, .3, 0, M.fabric, { r: .07, g })
+  for (const s of [-1, 1]) box(.18, .03, .82, s * .35, .56, 0, M.wood, { r: .012, g })
+}
+// a white coat on a wooden stand: hanger, coat with collar and pocket, a pen, a name badge
+function labCoat(x, z, ry = 0) {
+  const g = group(x, z, ry)
+  cyl(.21, .23, .03, 0, 0, 0, M.wood, { g }); cyl(.022, .026, 1.86, 0, .03, 0, M.wood, { g, seg: 12 }); ball(.035, 0, 1.9, 0, M.wood, { g })
+  for (const a of [0, 2.1, 4.2]) mesh(new THREE.CylinderGeometry(.01, .01, .16, 8), M.wood, Math.sin(a) * .06, 1.78, Math.cos(a) * .06, { g, rx: Math.cos(a) * .9 }).rotation.z = -Math.sin(a) * .9
+  const c = new THREE.Group(); c.position.set(0, 0, .09); g.add(c)
+  mesh(new THREE.TorusGeometry(.17, .008, 6, 24, Math.PI), M.metal, 0, 1.62, 0, { g: c })
+  mesh(new THREE.CylinderGeometry(.17, .25, 1.0, 28, 1, true), M.coat, 0, 1.08, 0, { g: c }).scale.z = .42
+  for (const s of [-1, 1]) {
+    mesh(new THREE.SphereGeometry(.07, 16, 10), M.coat, s * .17, 1.56, 0, { g: c })
+    mesh(new THREE.CapsuleGeometry(.055, .62, 6, 12), M.coat, s * .24, 1.2, .01, { g: c }).rotation.z = s * .1
+    mesh(new THREE.BoxGeometry(.05, .4, .012), M.coatTrim, s * .055, 1.42, .085, { g: c }).rotation.z = -s * .38
+  }
+  box(.012, .74, .012, 0, .6, .11, M.coatTrim, { g: c, cast: false })
+  box(.11, .1, .01, .11, 1.18, .1, M.coatTrim, { g: c, cast: false })
+  cyl(.007, .007, .12, .085, 1.24, .107, M.fabric, { g: c, seg: 6, cast: false })
+  box(.07, .035, .008, -.11, 1.37, .1, M.fabric2, { g: c, cast: false })
 }
 function table(x, z, r) { cyl(r, r, .04, x, .72, z, M.top); cyl(.035, .035, .72, x, 0, z, M.metal, { seg: 12 }); cyl(.22, .22, .02, x, 0, z, M.metal) }
 function plant(x, z, s = 1) {
-  cyl(.2 * s, .16 * s, .42 * s, x, 0, z, M.furn)
+  cyl(.2 * s, .16 * s, .42 * s, x, 0, z, M.wood)
   for (const [a, b, c, r] of [[0, .8, 0, .32], [-.17, .66, .08, .22], [.18, .7, -.06, .24], [.04, 1.02, .05, .22]]) ball(r * s, x + a * s, b * s, z + c * s, M.plant)
 }
 function pendant(x, z, drop) {
@@ -159,6 +196,7 @@ function windowPane(x, y, w, h) {
 function reception(cx, deskX, chairsSide) {
   box(4.4, .012, 2.8, cx, 0, .1, M.rug, { cast: false })
   box(2.6, 1.0, .7, cx + deskX, 0, -1.35, M.furn, { r: .08 }); box(2.72, .05, .82, cx + deskX, 1.0, -1.35, M.wood, { r: .02 })
+  for (let i = 0; i < 12; i++) box(.08, .86, .025, cx + deskX - 1.21 + i * .22, .06, -.99, M.wood, { cast: false })
   windowPane(cx - deskX * 1.9, 1.0, 1.6, 1.5)
   for (const z of [-.9, -.25, .4]) chair(cx + chairsSide * 2.75, z, -chairsSide * Math.PI / 2)
   plant(cx - chairsSide * 2.6, -1.75, 1.1)
@@ -172,6 +210,7 @@ const ROOMS = {
     (cx) => { // front desk
       box(4.6, .012, 3, cx, 0, .1, M.rug, { cast: false })
       box(2.8, 1.0, .72, cx, 0, -1.3, M.furn, { r: .05 }); box(3.0, .05, .9, cx, 1.0, -1.3, M.metal, { r: .02 })
+      for (let i = 0; i < 13; i++) box(.09, .86, .025, cx - 1.32 + i * .22, .07, -.93, M.wood, { cast: false })
       mesh(new THREE.SphereGeometry(.1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), M.metal, cx + .95, 1.06, -1.15); cyl(.12, .12, .015, cx + .95, 1.05, -1.15, M.metal)
       for (let r = 0; r < 3; r++) for (let c = 0; c < 6; c++) box(.12, .16, .02, cx - .9 + c * .36, 1.5 + r * .34, ZB + .02, M.metal, { cast: false })
       armchair(cx - 2.1, .9, .5); armchair(cx + 2.1, .9, -.5)
@@ -184,7 +223,7 @@ const ROOMS = {
       roomLight(cx, 10)
     },
     (cx) => { // restaurant
-      box(5.4, .44, .6, cx, 0, ZB + .32, M.fabric, { r: .06 }); box(5.4, .6, .16, cx, .44, ZB + .1, M.fabric, { r: .06 })
+      box(5.4, .44, .6, cx, 0, ZB + .32, M.fabric, { r: .06 }); box(5.4, .6, .16, cx, .44, ZB + .1, M.fabric, { r: .06 }); box(5.44, .05, .2, cx, 1.04, ZB + .1, M.wood, { r: .01 })
       for (const x of [-1.8, 0, 1.8]) { table(cx + x, -1.15, .36); chair(cx + x, -.55, Math.PI); pendant(cx + x, -1.15, 1.05); cyl(.02, .02, .08, cx + x, .76, -1.15, M.emit, { cast: false }); glow(cx + x, .86, -1.15, .5, .6) }
       for (const x of [-1.2, 1.2]) { table(cx + x, 1.1, .42); chair(cx + x - .55, 1.1, Math.PI / 2); chair(cx + x + .55, 1.1, -Math.PI / 2) }
       art(cx - 1.25, 1.45, .7, .5); art(cx + 1.25, 1.45, .7, .5)
@@ -193,11 +232,11 @@ const ROOMS = {
     },
     (cx) => { // guest room
       const bx = cx - 1.0
-      box(2.3, 1.2, .1, bx, 0, ZB + .05, M.fabric, { r: .04 })
+      box(2.5, 1.32, .06, bx, 0, ZB + .02, M.wood, { r: .02 }); box(2.3, 1.2, .1, bx, 0, ZB + .05, M.fabric, { r: .04 })
       box(2.0, .3, 2.2, bx, 0, ZB + 1.2, M.furn, { r: .04 }); box(1.94, .2, 2.12, bx, .3, ZB + 1.21, M.linen, { r: .08 })
       box(1.98, .05, 1.1, bx, .5, ZB + 1.7, M.fabric2, { r: .025 })
       box(.68, .15, .36, bx - .48, .5, ZB + .38, M.linen, { r: .07 }); box(.68, .15, .36, bx + .48, .5, ZB + .38, M.linen, { r: .07 })
-      for (const s of [-1, 1]) { box(.44, .5, .4, bx + s * 1.42, 0, ZB + .3, M.furn, { r: .03 }); cyl(.05, .07, .26, bx + s * 1.42, .5, ZB + .3, M.metal); cyl(.12, .17, .2, bx + s * 1.42, .76, ZB + .3, M.emit, { cast: false }); glow(bx + s * 1.42, .9, ZB + .3, 1.0, .55) }
+      for (const s of [-1, 1]) { box(.44, .5, .4, bx + s * 1.42, 0, ZB + .3, M.wood, { r: .03 }); cyl(.05, .07, .26, bx + s * 1.42, .5, ZB + .3, M.metal); cyl(.12, .17, .2, bx + s * 1.42, .76, ZB + .3, M.emit, { cast: false }); glow(bx + s * 1.42, .9, ZB + .3, 1.0, .55) }
       windowPane(cx + 1.9, .9, 1.3, 1.6)
       armchair(cx + 2.1, .7, -.7)
       phone(bx - 1.46, .5, ZB + .44, .2)
@@ -213,10 +252,12 @@ const ROOMS = {
       box(.7, .6, 1.9, cx + 1.9, 0, -1.0, M.furn, { r: .04 }); box(.72, .12, 1.9, cx + 1.9, .6, -1.0, M.fabric2, { r: .05 }); box(.72, .1, .65, cx + 1.9, .74, -1.75, M.fabric2, { r: .04, rx: .5 })
       windowPane(cx, 1.15, 1.5, 1.3)
       monitor(cx - 1.35, .77, -1.45, .3); phone(cx - 2.15, .77, -1.25, -.2); art(cx + 1.9, 1.5, .6, .74)
+      labCoat(cx + .95, -1.95, -.1)
     },
     (cx) => { // after-hours lounge
-      box(2.4, .4, .9, cx - 1.0, 0, ZB + .55, M.fabric, { r: .1 }); box(2.4, .5, .22, cx - 1.0, .3, ZB + .16, M.fabric, { r: .09 })
-      box(.22, .3, .9, cx - 2.11, .3, ZB + .55, M.fabric, { r: .08 }); box(.22, .3, .9, cx + .11, .3, ZB + .55, M.fabric, { r: .08 })
+      box(2.36, .07, .86, cx - 1.0, 0, ZB + .55, M.wood, { r: .015 })
+      box(2.4, .4, .9, cx - 1.0, .07, ZB + .55, M.fabric, { r: .1 }); box(2.4, .5, .22, cx - 1.0, .37, ZB + .16, M.fabric, { r: .09 })
+      box(.22, .3, .9, cx - 2.11, .37, ZB + .55, M.fabric, { r: .08 }); box(.22, .3, .9, cx + .11, .37, ZB + .55, M.fabric, { r: .08 })
       cyl(.45, .45, .04, cx - 1.0, .4, -.6, M.wood); cyl(.04, .04, .4, cx - 1.0, 0, -.6, M.metal, { seg: 12 })
       cyl(.15, .15, .02, cx + .7, 0, ZB + .4, M.metal); cyl(.012, .012, 1.5, cx + .7, 0, ZB + .4, M.metal, { seg: 6 }); cyl(.1, .18, .22, cx + .7, 1.5, ZB + .4, M.emit, { cast: false })
       windowPane(cx + 1.8, .7, 1.5, 1.9)
@@ -244,6 +285,8 @@ function dentalRoom(cx, f) {
   cyl(.022, .022, .95, cx - 1.05 * f, H - .95, -.4, M.metal, { cast: false, seg: 8 })
   box(.46, .07, .26, cx - 1.05 * f, H - 1.02, -.4, M.furn, { r: .03 }); box(.3, .015, .14, cx - 1.05 * f, H - 1.035, -.4, M.emit, { cast: false })
   box(2.2, .86, .58, cx + 1.3 * f, 0, ZB + .3, M.furn, { r: .03 }); box(2.26, .04, .62, cx + 1.3 * f, .86, ZB + .31, M.wood, { r: .015 })
+  for (let i = 0; i < 4; i++) box(.5, .74, .02, cx + 1.3 * f - .825 + i * .55, .06, ZB + .6, M.wood, { r: .008, cast: false })
+  labCoat(cx - 2.1 * f, -1.95, Math.atan2(.2 + 2.1 * f, 7.6))
   cyl(.16, .14, .03, cx + 1.0 * f, .9, ZB + .32, M.metal)
   box(2.2, .6, .34, cx + 1.3 * f, 1.75, ZB + .17, M.furn, { r: .03 })
   cyl(.2, .2, .06, cx - .3 * f, .5, .3, M.fabric); cyl(.03, .03, .5, cx - .3 * f, 0, .3, M.metal, { seg: 8 })
@@ -362,5 +405,6 @@ export function frame(f) {
     }
   }
   liveDetails(f.time, f.t)
-  renderer.render(scene, camera)
+  // under the page's veil (the plans, applying, the questions) the building is not seen, so it is not drawn
+  if (!f.veiled) renderer.render(scene, camera)
 }
