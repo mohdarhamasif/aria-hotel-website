@@ -2,6 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /*FONTS*/
+/*CREDIT*/
 /* Layout: one calm stage per screen over a fixed 3D model of the customer's own building; glass only where Amariya speaks, acts or sells */
 :root {
   --font-body: "Supreme", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -388,7 +389,7 @@ textarea.line-in { height: 64px; padding-top: 10px; resize: none; }
 select.line-in option { background: var(--bg); }
 .form .btn { justify-self: start; }
 .form-note { grid-column: 1 / -1; font-size: var(--small); line-height: 1.5; color: var(--faint); }
-.form-note a, .form-error a, .foot a, .done a:not(.btn) { text-decoration: underline; text-underline-offset: 3px; }
+.form-note a, .form-error a, .done a:not(.btn) { text-decoration: underline; text-underline-offset: 3px; }
 .fld label .opt { text-transform: none; letter-spacing: 0; font-weight: 400; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; } /* a field only bots fill in */
 .form-error { grid-column: 1 / -1; font-size: var(--card); line-height: 1.5; color: var(--err); }
@@ -532,6 +533,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
   .tags { display: none; }
   .steps { padding-inline: 14px; }
   .beat.closing h2 { top: 14%; }
+  .foot .wrap { flex-direction: column; align-items: flex-start; gap: 14px; }
   .does-head { padding-top: 92px; position: relative; isolation: isolate; }
   .does-head::before { content: ""; position: absolute; inset: 0 0 -48px; z-index: -1; background: linear-gradient(var(--scrim) 72%, transparent); pointer-events: none; }
   .does-head .wrap { display: grid; gap: 12px; }
@@ -719,7 +721,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
   <footer class="foot">
     <div class="wrap">
       <a class="brand" href="/"><i class="ring" aria-hidden="true"></i>Amariya</a>
-      <span>AI receptionist by Legit Design Studio · © 2026 · <a href="/privacy">Privacy</a></span>
+      <!--CREDIT-->
     </div>
   </footer>
 </main>

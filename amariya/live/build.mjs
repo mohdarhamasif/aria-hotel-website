@@ -17,6 +17,23 @@ const BONA_EXT = 'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02F
 const BONA = 'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD'
 const faces = [['Ranade', 400, 'ranade-400'], ['Supreme', 400, 'supreme-400'], ['Supreme', 500, 'supreme-500'], ['Boska', 400, 'boska-400'], ['Bona Nova', 400, 'bonanova-400-ext', BONA_EXT], ['Bona Nova', 400, 'bonanova-400', BONA]]
   .map(([f, w, file, range]) => `@font-face{font-family:"${f}";font-weight:${w};font-style:normal;font-display:swap;src:url(/fonts/${file}.woff2) format("woff2")${range ? `;unicode-range:${range}` : ''}}`).join('\n')
+// The footer credit on every page: "A product of" the Legit Design Studio mark and name, then the rights line.
+// The mark is the studio's own logo; it takes the page's text colour, so it is light on dark pages and dark on light ones.
+const LDS_MARK = '<svg viewBox="0 0 70 24" fill="none" aria-hidden="true" focusable="false"><path d="M24.0657 23.874V0.125431H34.2009C40.6763 0.125431 45.9333 5.44578 45.9333 11.9993C45.9333 18.5528 40.6763 23.8731 34.2009 23.8731H24.0657V23.874Z" fill="currentColor"/><path d="M48.1326 11.874C48.1326 5.32052 53.3895 0.000169754 59.865 0.000169754L70.0002 0.000169754C70.0002 6.55367 64.7432 11.874 58.2678 11.874H48.1326Z" fill="currentColor"/><path d="M48.1316 24C48.1316 17.4465 53.3886 12.1261 59.864 12.1261L69.9992 12.1261C69.9992 18.6796 64.7422 24 58.2668 24H48.1316Z" fill="currentColor"/><path d="M13.1206 10.5958V0.125977H0V10.5958V22.2572V23.8746H21.8676V10.5958H13.1206Z" fill="currentColor"/></svg>'
+const CREDIT = `<p class="credit"><span class="credit-by">A product of <a class="credit-studio" href="https://www.legitdesign.studio" target="_blank" rel="noopener">${LDS_MARK}Legit Design Studio</a></span> <span class="credit-dot credit-join" aria-hidden="true">•</span> <span class="credit-rest">All Rights Reserved 2026 <span class="credit-dot" aria-hidden="true">•</span> <a class="credit-link" href="/privacy">Privacy</a></span></p>`
+const CREDIT_CSS = `.credit { margin: 0; font-size: 13px; line-height: 1.9; color: var(--faint, var(--muted)); text-wrap: balance; }
+.credit .credit-studio { display: inline-flex; align-items: center; gap: 8px; margin: 0 2px 0 6px; vertical-align: middle; color: var(--text); font-weight: 500; text-decoration: none; transition: opacity .2s; }
+.credit .credit-studio:hover { opacity: .75; }
+.credit .credit-studio svg { width: 29px; height: 10px; flex: none; }
+.credit .credit-dot { margin: 0 4px; opacity: .7; }
+.credit .credit-link { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.credit .credit-link:hover { color: var(--text); }
+.credit .credit-by, .credit .credit-rest { white-space: nowrap; }
+@media (max-width: 640px) { .credit .credit-join { display: none; } .credit .credit-by, .credit .credit-rest { display: block; } }`
+const credit = (html, where) => {
+  if (!html.includes('/*CREDIT*/') || !html.includes('<!--CREDIT-->')) throw new Error(`build: the footer credit's placeholders are missing in ${where}`)
+  return html.replace('/*CREDIT*/', () => CREDIT_CSS).replace('<!--CREDIT-->', () => CREDIT)
+}
 // Vercel Web Analytics: funnel events go through window.va
 const ANALYTICS = `<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments) }</script>
 <script defer src="/_vercel/insights/script.js"></script>`
@@ -76,7 +93,7 @@ ${ANALYTICS}
 <body>
 <script type="application/json" id="site-meta">${json(META)}</script>
 ${[['<h1 id="h1" tabindex="-1"></h1>', `<h1 id="h1" tabindex="-1">${esc(HERO[n].h1)}</h1>`], ['<p class="lead" id="lead"></p>', `<p class="lead" id="lead">${esc(HERO[n].lead)}</p>`], ['<span id="price"></span>', `<span id="price">$${l.price.toLocaleString('en-US')}</span>`]]
-  .reduce((html, [from, to]) => fill(html, from, to), body.replace('/*FONTS*/', () => faces))}
+  .reduce((html, [from, to]) => fill(html, from, to), credit(body, 'src/page.html').replace('/*FONTS*/', () => faces))}
 </body>
 </html>
 `
@@ -124,7 +141,7 @@ function home() {
 ${ANALYTICS}
 </head>
 <body>
-${homeBody.replace('/*FONTS*/', () => faces).replace('<!--LENIS-->', () => '<script src="/vendor/lenis.min.js"></script>')}
+${credit(homeBody, 'src/home.html').replace('/*FONTS*/', () => faces).replace('<!--LENIS-->', () => '<script src="/vendor/lenis.min.js"></script>')}
 </body>
 </html>
 `
@@ -136,9 +153,9 @@ for (const f of readdirSync(out)) if (f !== '.vercel') rmSync(join(out, f), { re
 for (const n of NICHES) { mkdirSync(join(out, n), { recursive: true }); writeFileSync(join(out, n, 'index.html'), page(n, '/' + n)) }
 writeFileSync(join(out, 'index.html'), home())
 mkdirSync(join(out, 'privacy'), { recursive: true })
-writeFileSync(join(out, 'privacy', 'index.html'), privacyPage.replace('/*FONTS*/', () => faces))
+writeFileSync(join(out, 'privacy', 'index.html'), credit(privacyPage, 'src/privacy.html').replace('/*FONTS*/', () => faces))
 mkdirSync(join(out, 'booked'), { recursive: true })
-writeFileSync(join(out, 'booked', 'index.html'), bookedPage.replace('/*FONTS*/', () => faces).replace('<!--ANALYTICS-->', () => ANALYTICS))
+writeFileSync(join(out, 'booked', 'index.html'), credit(bookedPage, 'src/booked.html').replace('/*FONTS*/', () => faces).replace('<!--ANALYTICS-->', () => ANALYTICS))
 mkdirSync(join(out, 'fonts'), { recursive: true })
 for (const f of FONTS) copyFileSync(join(here, 'src/fonts', f + '.woff2'), join(out, 'fonts', f + '.woff2'))
 mkdirSync(join(out, 'vendor'), { recursive: true })
