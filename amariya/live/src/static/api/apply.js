@@ -6,6 +6,7 @@ const API = 'https://api.hubapi.com'
 const PLANS = { founding: 'Founding licence', starter: 'Starter', professional: 'Professional', enterprise: 'Enterprise' }
 const FOUNDING = { hotels: 2500, clinics: 3500, dental: 3000 }
 const MONTHLY = { starter: 299, professional: 799 }
+const SETUP = 500 // one-time, paid upfront, on every plan
 
 const str = (v, max = 500) => String(v ?? '').trim().slice(0, max)
 // The homepage asks for a business type, the niche pages know their niche
@@ -15,7 +16,7 @@ function nicheOf(d) {
 }
 function details(d, niche) {
   const rows = [
-    ['Plan', PLANS[str(d.program || d.plan, 20)] || str(d.program || d.plan, 40)], ['Niche', niche], ['Business type', d.kind || d.business_type],
+    ['Setup fee', `$${SETUP}, paid upfront`], ['Plan', PLANS[str(d.program || d.plan, 20)] || str(d.program || d.plan, 40)], ['Niche', niche], ['Business type', d.kind || d.business_type],
     ['Locations', d.locations], ['Rooms, practitioners or chairs', d.rooms], ['Calls per month', d.calls || d.monthly_calls],
     ['Calls go unanswered', [].concat(d.missed || []).join(', ')], ['Booking or practice software', d.software],
     ['Good time for a call', d.preferred_time], ['Notes', d.notes], ['Country', d.country],
@@ -67,7 +68,8 @@ module.exports = async (req, res) => {
     }
     if (!c.ok || !contactId) return res.status(502).json({ error: `HubSpot contact ${c.status}`, message: str(c.data.message, 200) })
 
-    const amount = plan === 'founding' ? FOUNDING[niche] : MONTHLY[plan]
+    // the founding licence's amount is what is paid upfront (licence and setup); monthly plans keep their monthly price, with the setup fee in the description
+    const amount = plan === 'founding' ? FOUNDING[niche] && FOUNDING[niche] + SETUP : MONTHLY[plan]
     const deal = await hubspot(token, 'POST', '/crm/v3/objects/deals', {
       properties: { dealname: `Amariya · ${PLANS[plan]} · ${business}`.slice(0, 250), description: details(d, niche), ...(amount ? { amount: String(amount) } : {}), ...(await firstStage(token)) },
       associations: [{ to: { id: contactId }, types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 3 }] }],

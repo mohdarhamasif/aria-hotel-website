@@ -173,7 +173,7 @@ check('voice: tools', async (page) => {
   assert(JSON.stringify(spot) === '[false,false,false,false,true]', `spot classes ${JSON.stringify(spot)}`)
   await page.evaluate(() => TOOLS.update_business_profile({ business_type: 'dental' }))
   const plan = await page.evaluate(() => TOOLS.recommend_plan())
-  assert(plan === 'Two ways to pay: the founding licence at $3,000 once for the first 30 dental practices, or monthly plans from $299. Showing pricing now.', `plan reply "${plan}"`)
+  assert(plan === 'Two ways to pay: the founding licence at $3,000 once for the first 30 dental practices, or monthly plans from $299. Either way there is a one-time $500 setup fee, paid upfront. Showing pricing now.', `plan reply "${plan}"`)
   const pressed = await page.evaluate(() => document.querySelector('#priceTabs [aria-pressed="true"]').dataset.n)
   assert(pressed === 'dental', `pressed tab ${pressed}`)
   const roi = await page.evaluate(() => TOOLS.get_roi_estimate())

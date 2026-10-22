@@ -49,6 +49,9 @@ const LOOK = {
   clinics: { bg: '#f5f7f9', ring: ['#a9c8ea', '#588cc0', '#2f445b'], font: 'ranade-400', price: 3500 },
   dental: { bg: '#fbf5f5', ring: ['#f4d6cf', '#d09e83', '#7d424e'], font: 'boska-400', price: 3000 },
 }
+// every plan has a one-time setup fee, paid upfront; offers list it as a second part of the price
+const SETUP = 500
+const withSetup = (price, monthly) => ({ '@type': 'CompoundPriceSpecification', priceCurrency: 'USD', priceComponent: [{ '@type': 'UnitPriceSpecification', name: monthly ? 'Monthly price' : 'Founding licence', price, priceCurrency: 'USD', ...(monthly ? { unitCode: 'MON' } : {}) }, { '@type': 'UnitPriceSpecification', name: 'Setup fee, paid upfront', price: SETUP, priceCurrency: 'USD' }] })
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c')
 // The hero copy, read from the niche copy in page.html (hotels, clinics, dental in order) and written into
@@ -64,7 +67,7 @@ const fill = (html, from, to) => { if (!html.includes(from)) throw new Error(`bu
 
 function page(n, path) {
   const m = META[n], l = LOOK[n]
-  const ld = { '@context': 'https://schema.org', '@type': 'Product', name: 'Amariya', description: m.desc, brand: { '@type': 'Brand', name: 'Legit Design Studio' }, offers: { '@type': 'Offer', price: l.price, priceCurrency: 'USD', availability: 'https://schema.org/LimitedAvailability', url: `${BASE}/${n}` } }
+  const ld = { '@context': 'https://schema.org', '@type': 'Product', name: 'Amariya', description: m.desc, brand: { '@type': 'Brand', name: 'Legit Design Studio' }, offers: { '@type': 'Offer', price: l.price, priceCurrency: 'USD', priceSpecification: withSetup(l.price), availability: 'https://schema.org/LimitedAvailability', url: `${BASE}/${n}` } }
   return `<!doctype html>
 <html lang="en" data-niche="${n}">
 <head>
@@ -106,8 +109,8 @@ const HOME = {
   bg: '#050506', ring: ['#3e7fd8', '#86d6c4', '#e8622a'],
 }
 function home() {
-  const founding = (name, price, niche) => ({ '@type': 'Offer', name, price, priceCurrency: 'USD', availability: 'https://schema.org/LimitedAvailability', url: `${BASE}/${niche}` })
-  const monthly = (name, price) => ({ '@type': 'Offer', name, price, priceCurrency: 'USD', priceSpecification: { '@type': 'UnitPriceSpecification', price, priceCurrency: 'USD', unitCode: 'MON' }, url: `${BASE}/#pricing` })
+  const founding = (name, price, niche) => ({ '@type': 'Offer', name, price, priceCurrency: 'USD', priceSpecification: withSetup(price), availability: 'https://schema.org/LimitedAvailability', url: `${BASE}/${niche}` })
+  const monthly = (name, price) => ({ '@type': 'Offer', name, price, priceCurrency: 'USD', priceSpecification: withSetup(price, true), url: `${BASE}/#pricing` })
   const ld = { '@context': 'https://schema.org', '@type': 'Product', name: 'Amariya', description: HOME.desc, brand: { '@type': 'Brand', name: 'Legit Design Studio' }, image: `${BASE}/og-home.jpg`, offers: [
     founding('Founding licence for hotels and restaurants', 2500, 'hotels'),
     founding('Founding licence for clinics', 3500, 'clinics'),

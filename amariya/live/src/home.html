@@ -442,6 +442,8 @@ main { overflow-x: clip; padding-left: var(--gutter-l); padding-right: var(--gut
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); transition: opacity .4s var(--ease), transform .4s var(--ease); transition-delay: calc(var(--i) * 18ms); }
 .js .dots.off i { opacity: 0; transform: scale(.4); }
 .dots i.taken { opacity: .18; }
+.plan-setup { margin: -10px 0 16px; font-size: var(--small-size); color: var(--muted); }
+.plan.recommended .plan-setup { color: rgba(11, 11, 13, .62); }
 .seat-label { margin: 0; font-size: var(--small-size); color: rgba(11, 11, 13, .62); }
 .seat-label b { color: var(--ink); font-weight: 500; }
 .promises { display: grid; gap: 8px; margin: 0 0 22px; padding: 14px 16px; border-radius: 14px; background: rgba(11, 11, 13, .05); }
@@ -791,6 +793,7 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
             <h3>Yours for life</h3>
             <p class="plan-for">For the first 30 <span data-who>hotels and restaurants</span>.</p>
             <p class="price"><span data-price>$2,500</span><small>once</small></p>
+            <p class="plan-setup">+ $500 setup, paid upfront</p>
             <div class="seats"><div class="dots off" id="dots" aria-hidden="true"></div><p class="seat-label"><b id="seatsOpen">5</b> of 30 seats open. The founding price ends when all 30 are taken.</p></div>
             <div class="promises">
               <p class="promise"><img src="/icons/shield.webp" width="22" height="22" alt="" loading="lazy" decoding="async">Live in 7 days, or a full refund.</p>
@@ -803,6 +806,7 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
             <h3>Starter</h3>
             <p class="plan-for">One location</p>
             <p class="price">$299<small>/ month</small></p>
+            <p class="plan-setup">+ $500 setup, paid upfront</p>
             <ul data-list="starter"></ul>
             <button class="btn btn-ghost btn-block js-apply" type="button" data-program="starter">Apply for Starter</button>
           </article>
@@ -810,6 +814,7 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
             <h3>Professional</h3>
             <p class="plan-for">Up to 3 locations</p>
             <p class="price">$799<small>/ month</small></p>
+            <p class="plan-setup">+ $500 setup, paid upfront</p>
             <ul data-list="professional"></ul>
             <button class="btn btn-ghost btn-block js-apply" type="button" data-program="professional">Apply for Professional</button>
           </article>
@@ -817,11 +822,12 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
             <h3>Enterprise</h3>
             <p class="plan-for">Groups and chains</p>
             <p class="price">Custom</p>
+            <p class="plan-setup">+ $500 setup, paid upfront</p>
             <ul data-list="enterprise"></ul>
             <button class="btn btn-ghost btn-block js-apply" type="button" data-program="enterprise">Apply for Enterprise</button>
           </article>
         </div>
-        <p class="pricing-note">Live means Amariya answers calls on your business number. The 7 days start once your licence is signed and we have your setup details, and refunds are paid in full. For scale, a median US receptionist earns $38,010 a year before benefits (<a href="https://www.bls.gov/ooh/office-and-administrative-support/receptionists.htm">BLS, 2025</a>).</p>
+        <p class="pricing-note">Every plan, the founding licence included, has a one-time $500 setup fee, paid upfront. Live means Amariya answers calls on your business number. The 7 days start once your licence is signed and we have your setup details, and refunds are paid in full. For scale, a median US receptionist earns $38,010 a year before benefits (<a href="https://www.bls.gov/ooh/office-and-administrative-support/receptionists.htm">BLS, 2025</a>).</p>
       </div>
     </section>
 
@@ -935,7 +941,7 @@ const PILLS = [
   ['moon', 'After hours', 'Nights, weekends and holidays, answered the same way.'],
 ]
 const LISTS = {
-  founding: ['Professional features, for the life of the licence', '500 call minutes a month, extra minutes at cost', 'Done-for-you setup', 'One location per licence'],
+  founding: ['Professional features, for the life of the licence', '500 call minutes a month, extra minutes at cost', 'Done-for-you setup, $500 paid upfront', 'One location per licence'],
   starter: ['24/7 call answering', 'Bookings and FAQs', '5 languages', '500 calls a month'],
   professional: ['Everything in Starter', 'Books into your software', '30+ languages', 'Upsells and analytics', '2,500 calls a month'],
   enterprise: ['Everything in Professional', 'Multi-location setup', 'Custom voice', 'Dedicated success manager', 'Unlimited calls'],
@@ -947,6 +953,7 @@ const FAQ = [
   ['What happens when a caller wants a person?', 'She transfers the call to your team, or takes a message with a short summary when no one is free.'],
   ['Which systems does she book into?', 'We connect her to your booking or practice software during setup. If your system has no connection, she takes the booking details and sends them to your team straight away.'],
   ['What does live in 7 days mean?', 'Amariya answering real calls on your business number within 7 days of your signed licence and setup details. If she is not, you get a full refund. After she goes live, you still have 7 days to ask for a refund for any reason.'],
+  ['Is there a setup fee?', 'Yes. Every plan, the founding licence included, comes with a one-time $500 setup fee, paid upfront. It covers the setup call, building her on your knowledge and connecting her to your booking system.'],
   ['What does lifetime mean?', 'Your founding licence does not expire. It covers one location and 500 call minutes a month. Extra minutes are billed at cost, and unused minutes do not roll over.'],
   ['Which languages does she speak?', 'More than 30. She answers in the caller’s language and books in yours.'],
 ]
@@ -1735,7 +1742,7 @@ async function credential(mode) {
 const track = (name, data) => { try { window.va?.('event', { name, data }) } catch {} }
 const IDLE = ['Amariya is ready to talk', 'Press the orb and say hello.']
 const greeting = (part) => `Good ${part}, I’m Amariya, an AI receptionist. I answer the phones for hotels, restaurants, clinics and dental practices. What kind of business do you run?`
-const contextFor = () => 'Your name is Amariya; always call yourself Amariya. The visitor is on the main Amariya page, which covers hotels, restaurants, clinics and dental practices. There are two ways to buy. First, the founding licence, paid once: $2,500 for hotels and restaurants, $3,500 for clinics, $3,000 for dental practices, for the first 30 businesses in each niche. It includes Professional features for life, 500 call minutes a month (extra minutes at cost, unused minutes do not roll over), done-for-you setup and one location per licence. She goes live within 7 days or the money is refunded in full, and after she goes live there are 7 more days to ask for a refund for any reason. Second, monthly plans: Starter at $299 a month (one location, 500 calls, bookings and FAQs, 5 languages), Professional at $799 a month (up to 3 locations, 2,500 calls, books into their software, 30+ languages, upsells and analytics) and Enterprise, priced on request (multi-location, custom voice, a dedicated success manager, unlimited calls). Do not state cancellation or minimum-term terms; say the team confirms terms on the call. Never give medical or clinical advice; clinical questions are for the clinic’s own team. Make no claims about HIPAA or GDPR. To apply, collect the visitor’s name, business name, email, phone and a good time for a 30-minute call; call fill_demo_form with what you have, then submit_demo_request. The team follows up to arrange the call, then sends an invoice. Profile fields: hotel_name is the business name, business_type is hotel, restaurant, clinic or dental, rooms is rooms, practitioners or chairs, monthly_calls is calls per month. Sections you can show with navigate_to_section: top, story, problem, demo, features, setup, pricing, questions.'
+const contextFor = () => 'Your name is Amariya; always call yourself Amariya. The visitor is on the main Amariya page, which covers hotels, restaurants, clinics and dental practices. There are two ways to buy. First, the founding licence, paid once: $2,500 for hotels and restaurants, $3,500 for clinics, $3,000 for dental practices, for the first 30 businesses in each niche. Every plan, the founding licence included, has a one-time $500 setup fee, paid upfront. Say so whenever you give a price. The licence includes Professional features for life, 500 call minutes a month (extra minutes at cost, unused minutes do not roll over), done-for-you setup and one location per licence. She goes live within 7 days or the money is refunded in full, and after she goes live there are 7 more days to ask for a refund for any reason. Second, monthly plans: Starter at $299 a month (one location, 500 calls, bookings and FAQs, 5 languages), Professional at $799 a month (up to 3 locations, 2,500 calls, books into their software, 30+ languages, upsells and analytics) and Enterprise, priced on request (multi-location, custom voice, a dedicated success manager, unlimited calls). Do not state cancellation or minimum-term terms; say the team confirms terms on the call. Never give medical or clinical advice; clinical questions are for the clinic’s own team. Make no claims about HIPAA or GDPR. To apply, collect the visitor’s name, business name, email, phone and a good time for a 30-minute call; call fill_demo_form with what you have, then submit_demo_request. The team follows up to arrange the call, then sends an invoice. Profile fields: hotel_name is the business name, business_type is hotel, restaurant, clinic or dental, rooms is rooms, practitioners or chairs, monthly_calls is calls per month. Sections you can show with navigate_to_section: top, story, problem, demo, features, setup, pricing, questions.'
 let vstate = 'idle', convo = null, convoMode = null, sdk = null
 const PROFILE = {}, APPLICATION = {}
 const loadSdk = () => sdk || (sdk = import('https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/+esm').then((m) => m.Conversation, (e) => { sdk = null; throw e }))
@@ -1885,7 +1892,7 @@ const TOOLS = {
     if (tab) $(`#priceTabs [data-n="${tab}"]`).click()
     showSection('pricing')
     const [price, who] = OFFER[$('#priceTabs [aria-pressed="true"]').dataset.n]
-    return `Two ways to pay: the founding licence at ${price} once for the first 30 ${who}, or monthly plans from $299. Showing pricing now.`
+    return `Two ways to pay: the founding licence at ${price} once for the first 30 ${who}, or monthly plans from $299. Either way there is a one-time $500 setup fee, paid upfront. Showing pricing now.`
   },
   fill_demo_form: (p = {}) => {
     Object.assign(APPLICATION, p)
