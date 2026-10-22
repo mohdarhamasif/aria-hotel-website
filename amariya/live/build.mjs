@@ -3,6 +3,7 @@
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, cpSync, readdirSync, rmSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { prerender } from './prerender.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url)), out = join(here, 'site'), BASE = 'https://amariya.legitdesign.studio'
 const NICHES = ['hotels', 'clinics', 'dental']
@@ -177,5 +178,8 @@ writeFileSync(join(out, 'vercel.json'), JSON.stringify({
     { source: '/(.*)', headers: [{ key: 'X-Content-Type-Options', value: 'nosniff' }, { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' }, { key: 'Permissions-Policy', value: 'microphone=(self), camera=(), geolocation=()' }] },
   ],
 }, null, 2))
+// The full text and figures go into the HTML for crawlers (see prerender.mjs); --no-prerender skips it for a quick local build
+if (process.argv.includes('--no-prerender')) console.warn('NOT pre-rendered: do not deploy this build')
+else await prerender(out, [['/', 'index.html'], ...NICHES.map((n) => [`/${n}`, `${n}/index.html`])])
 // Deploys go to the existing project behind the domain (link once with: cd site && npx vercel link --project aria-hotel-website --scope legitdesignstudio)
 console.log('built', out)

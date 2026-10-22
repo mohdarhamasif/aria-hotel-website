@@ -62,6 +62,21 @@ check('niche pages', async (page) => {
     assert(got === n, `/${n} has data-niche ${got}`)
   }
 })
+// Crawlers that don't run JavaScript get the full text and the real figures (prerender.mjs), and visitors see nothing twice
+check('prerendered for crawlers', async (page) => {
+  for (const n of ['hotels', 'clinics', 'dental']) {
+    const html = await get('/' + n)
+    const figures = [...html.matchAll(/<b data-roi="[a-z]+">([^<]*)<\/b>/g)].map((m) => m[1])
+    const faq = (html.slice(html.indexOf('id="qs"')).split('</section>')[0].match(/<details/g) || []).length // the FAQ section only, not the page's script
+    assert(figures.length === 3 && figures.every((f) => /[1-9]/.test(f)), `/${n} figures in the HTML: ${figures}`)
+    assert(faq >= 5 && /id="beats"[^>]*>\s*<article/.test(html), `/${n} questions or story missing from the HTML`)
+    await open(page, '/' + n)
+    const seen = await page.evaluate(() => ({ qs: document.querySelectorAll('#qs details').length, beats: document.querySelectorAll('#beats .beat').length }))
+    assert(seen.qs === faq && seen.beats === 4, `/${n} after the page runs: ${JSON.stringify(seen)} (the HTML has ${faq} questions)`)
+  }
+  const home = await get('/')
+  assert((home.match(/<details/g) || []).length >= 5 && /data-list="founding"[^>]*>\s*<li/.test(home), 'homepage questions or plan lists missing from the HTML')
+})
 check('sitemap', async () => {
   assert((await get('/sitemap.xml')).includes('<loc>https://amariya.legitdesign.studio/</loc>'), 'homepage missing from sitemap')
 })

@@ -764,7 +764,7 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
             <p class="fh-b-title">Everything your front desk does <em>on the phone.</em></p>
           </div>
           <p class="feature-lede muted">She books, answers, switches language and hands over, day and night, the same way every time.</p>
-          <ul class="orbit" id="orbit"></ul>
+          <ul class="orbit" id="orbit"><li class="orbit-slot"><div class="pill" tabindex="0"><img class="pill-ico" src="/icons/cal.webp" width="30" height="30" alt="" loading="lazy" decoding="async"><h3>Bookings</h3><p>Rooms, tables, consultations and check-ups, booked straight into your system.</p></div></li><li class="orbit-slot"><div class="pill" tabindex="0"><img class="pill-ico" src="/icons/globe.webp" width="30" height="30" alt="" loading="lazy" decoding="async"><h3>30+ languages</h3><p>She answers in the caller’s language and books in yours.</p></div></li><li class="orbit-slot"><div class="pill" tabindex="0"><img class="pill-ico" src="/icons/bell.webp" width="30" height="30" alt="" loading="lazy" decoding="async"><h3>Questions</h3><p>Hours, prices, parking and policies, answered from your own details.</p></div></li><li class="orbit-slot"><div class="pill" tabindex="0"><img class="pill-ico" src="/icons/hand.webp" width="30" height="30" alt="" loading="lazy" decoding="async"><h3>Hand-offs</h3><p>A transfer to your team, or a message with a short summary.</p></div></li><li class="orbit-slot"><div class="pill" tabindex="0"><img class="pill-ico" src="/icons/moon.webp" width="30" height="30" alt="" loading="lazy" decoding="async"><h3>After hours</h3><p>Nights, weekends and holidays, answered the same way.</p></div></li></ul>
         </div>
       </div>
     </section>
@@ -832,33 +832,33 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
             <h3>Yours for life</h3>
             <p class="plan-for">For the first 30 <span data-who>hotels and restaurants</span>.</p>
             <p class="price"><span data-price>$2,500</span><small>once</small></p>
-            <div class="seats"><div class="dots off" id="dots" aria-hidden="true"></div><p class="seat-label"><b id="seatsOpen">5</b> of 30 seats open. The founding price ends when all 30 are taken.</p></div>
+            <div class="seats"><div class="dots off" id="dots" aria-hidden="true"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5" class="taken"></i><i style="--i:6" class="taken"></i><i style="--i:7" class="taken"></i><i style="--i:8" class="taken"></i><i style="--i:9" class="taken"></i><i style="--i:10" class="taken"></i><i style="--i:11" class="taken"></i><i style="--i:12" class="taken"></i><i style="--i:13" class="taken"></i><i style="--i:14" class="taken"></i><i style="--i:15" class="taken"></i><i style="--i:16" class="taken"></i><i style="--i:17" class="taken"></i><i style="--i:18" class="taken"></i><i style="--i:19" class="taken"></i><i style="--i:20" class="taken"></i><i style="--i:21" class="taken"></i><i style="--i:22" class="taken"></i><i style="--i:23" class="taken"></i><i style="--i:24" class="taken"></i><i style="--i:25" class="taken"></i><i style="--i:26" class="taken"></i><i style="--i:27" class="taken"></i><i style="--i:28" class="taken"></i><i style="--i:29" class="taken"></i></div><p class="seat-label"><b id="seatsOpen">5</b> of 30 seats open. The founding price ends when all 30 are taken.</p></div>
             <div class="promises">
               <p class="promise"><img src="/icons/shield.webp" width="22" height="22" alt="" loading="lazy" decoding="async">Live in 7 days, or a full refund.</p>
               <p class="promise"><img src="/icons/repeat.webp" width="22" height="22" alt="" loading="lazy" decoding="async">Then 7 days to change your mind, for any reason.</p>
             </div>
-            <ul data-list="founding"></ul>
+            <ul data-list="founding"><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Professional features, for the life of the licence</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">500 call minutes a month, extra minutes at cost</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Done-for-you setup</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">One location per licence</li></ul>
             <button class="btn btn-dark btn-block js-apply" type="button" data-program="founding">Apply for a founding licence</button>
           </article>
           <article class="card plan reveal" style="--d:.08s">
             <h3>Starter</h3>
             <p class="plan-for">One location</p>
             <p class="price">$299<small>/ month</small></p>
-            <ul data-list="starter"></ul>
+            <ul data-list="starter"><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">24/7 call answering</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Bookings and FAQs</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">5 languages</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">500 calls a month</li></ul>
             <button class="btn btn-ghost btn-block js-apply" type="button" data-program="starter">Apply for Starter</button>
           </article>
           <article class="card plan reveal" style="--d:.16s">
             <h3>Professional</h3>
             <p class="plan-for">Up to 3 locations</p>
             <p class="price">$799<small>/ month</small></p>
-            <ul data-list="professional"></ul>
+            <ul data-list="professional"><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Everything in Starter</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Books into your software</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">30+ languages</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Upsells and analytics</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">2,500 calls a month</li></ul>
             <button class="btn btn-ghost btn-block js-apply" type="button" data-program="professional">Apply for Professional</button>
           </article>
           <article class="card plan reveal" style="--d:.24s">
             <h3>Enterprise</h3>
             <p class="plan-for">Groups and chains</p>
             <p class="price">Custom</p>
-            <ul data-list="enterprise"></ul>
+            <ul data-list="enterprise"><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Everything in Professional</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Multi-location setup</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Custom voice</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Dedicated success manager</li><li><img src="/icons/check.webp" width="20" height="20" alt="" loading="lazy" decoding="async">Unlimited calls</li></ul>
             <button class="btn btn-ghost btn-block js-apply" type="button" data-program="enterprise">Apply for Enterprise</button>
           </article>
         </div>
@@ -871,7 +871,7 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
         <h2 id="faqTitle" data-split="in">Straight answers</h2>
         <p class="muted" data-scrub>The short answers. She can go into detail if you ask her.</p>
       </div>
-      <div class="faq-list" id="qs"></div>
+      <div class="faq-list" id="qs"><details class="card reveal in"><summary>Will callers know they are talking to an AI?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>Yes. She introduces herself as Amariya, the AI receptionist, in her first sentence. EU law has required this since August 2026, and it is how we would want it anyway.</p></details><details class="card reveal in"><summary>What happens when a caller wants a person?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>She transfers the call to your team, or takes a message with a short summary when no one is free.</p></details><details class="card reveal in"><summary>Which systems does she book into?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>We connect her to your booking or practice software during setup. If your system has no connection, she takes the booking details and sends them to your team straight away.</p></details><details class="card reveal in"><summary>What does live in 7 days mean?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>Amariya answering real calls on your business number within 7 days of your signed licence and setup details. If she is not, you get a full refund. After she goes live, you still have 7 days to ask for a refund for any reason.</p></details><details class="card reveal in"><summary>What does lifetime mean?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>Your founding licence does not expire. It covers one location and 500 call minutes a month. Extra minutes are billed at cost, and unused minutes do not roll over.</p></details><details class="card reveal in"><summary>Which languages does she speak?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>More than 30. She answers in the caller’s language and books in yours.</p></details></div>
     </section>
   </div>
 </main>

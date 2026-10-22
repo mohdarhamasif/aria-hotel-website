@@ -649,7 +649,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 
   <section class="story" id="story" aria-label="A scripted example">
     <div class="pin" id="pin">
-      <div id="beats"></div>
+      <div id="beats"><article class="beat"><div class="call"><p class="meta"><span class="time">08:40</span><span class="place">Reception</span></p><h2><span class="w" style="--i:0">A</span> <span class="w" style="--i:1">toothache</span> <span class="w" style="--i:2">at</span> <span class="w" style="--i:3">8:40</span> <span class="w" style="--i:4">gets</span> <span class="w" style="--i:5">the</span> <span class="w" style="--i:6">first</span> <span class="w" style="--i:7">free</span> <span class="w" style="--i:8">slot</span> <span class="w" style="--i:9">of</span> <span class="w" style="--i:10">the</span> <span class="w" style="--i:11">day.</span></h2><div class="convo"><p class="turn"><span class="who">New patient</span><span class="said">“I’ve cracked a tooth and it really hurts.”</span></p><p class="turn her"><span class="who">Amariya</span><span class="reply">We have an urgent slot at 9:10 with Dr. Patel. Can you make it?</span></p><p class="chip"><svg aria-hidden="true"><use href="#i-check"></use></svg><span>Urgent visit · 09:10</span></p><p class="example">A scripted example. Names and times are examples.</p></div></div></article><article class="beat"><div class="call"><p class="meta"><span class="time">11:02</span><span class="place">Surgery 1</span></p><h2><span class="w" style="--i:0">Chair</span> <span class="w" style="--i:1">one</span> <span class="w" style="--i:2">is</span> <span class="w" style="--i:3">mid-crown.</span> <span class="w" style="--i:4">A</span> <span class="w" style="--i:5">cleaning</span> <span class="w" style="--i:6">moves</span> <span class="w" style="--i:7">without</span> <span class="w" style="--i:8">anyone</span> <span class="w" style="--i:9">waiting</span> <span class="w" style="--i:10">on</span> <span class="w" style="--i:11">hold.</span></h2><div class="convo"><p class="turn"><span class="who">Existing patient</span><span class="said">“Can I move my cleaning to next week?”</span></p><p class="turn her"><span class="who">Amariya</span><span class="reply">Of course. Would Wednesday at 3:20 pm work?</span></p><p class="chip"><svg aria-hidden="true"><use href="#i-check"></use></svg><span>Moved · Wed 15:20</span></p><p class="example">A scripted example. Names and times are examples.</p></div></div></article><article class="beat"><div class="call"><p class="meta"><span class="time">12:20</span><span class="place">Surgery 2</span></p><h2><span class="w" style="--i:0">Lunchtime,</span> <span class="w" style="--i:1">in</span> <span class="w" style="--i:2">Spanish.</span></h2><div class="convo"><p class="turn"><span class="who">Parent</span><span class="said">“¿Pueden ver a mi hijo esta semana?”</span></p><p class="turn her"><span class="who">Amariya</span><span class="reply">Sí, el jueves a las 4. ¿Cuántos años tiene?</span></p><p class="chip"><svg aria-hidden="true"><use href="#i-check"></use></svg><span>Booked · Thu 16:00 · Child check-up</span></p><p class="example">A scripted example. Names and times are examples.</p></div></div></article><article class="beat closing"><h2><span class="w" style="--i:0">The</span> <span class="w" style="--i:1">booking</span> <span class="w" style="--i:2">lands</span> <span class="w" style="--i:3">in</span> <span class="w" style="--i:4">your</span> <span class="w" style="--i:5">system.</span> <em><span class="w" style="--i:6">Your</span> <span class="w" style="--i:7">team</span> <span class="w" style="--i:8">stays</span> <span class="w" style="--i:9">with</span> <span class="w" style="--i:10">the</span> <span class="w" style="--i:11">patient</span> <span class="w" style="--i:12">in</span> <span class="w" style="--i:13">the</span> <span class="w" style="--i:14">chair.</span></em></h2></article></div>
       <p class="progress" id="progress"><b id="pnum">01</b>/ 03<i aria-hidden="true"></i></p>
     </div>
   </section>
@@ -658,18 +658,18 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
     <div class="wrap">
       <div class="pf">
         <div>
-          <p class="eyebrow" id="profileEyebrow"></p>
-          <h2 class="h2" id="profileTitle"></h2>
+          <p class="eyebrow" id="profileEyebrow">Your practice</p>
+          <h2 class="h2" id="profileTitle"><span class="w" style="--i:0">Tell</span> <span class="w" style="--i:1">Amariya</span> <span class="w" style="--i:2">about</span> <span class="w" style="--i:3">your</span> <span class="w" style="--i:4">practice,</span> <em><span class="w" style="--i:5">and</span> <span class="w" style="--i:6">see</span> <span class="w" style="--i:7">what</span> <span class="w" style="--i:8">the</span> <span class="w" style="--i:9">missed</span> <span class="w" style="--i:10">calls</span> <span class="w" style="--i:11">cost.</span></em></h2>
         </div>
-        <form class="sentence" id="profileForm" autocomplete="off"></form>
+        <form class="sentence" id="profileForm" autocomplete="off"><input class="blank wide" name="hotel_name" placeholder="Your practice" aria-label="Practice name"> is a <select class="blank" name="hotel_type" aria-label="Type of practice"><option value="" disabled="" selected="">type of practice</option><option>General dentistry</option><option>Cosmetic dentistry</option><option>Orthodontics</option><option>Children’s dentistry</option><option>Specialist practice</option><option>Dental group</option></select> with <input class="blank num" name="rooms" inputmode="numeric" placeholder="5" aria-label="Number of dental chairs"> dental chairs at <input class="blank num" name="locations" inputmode="numeric" placeholder="1" aria-label="Number of locations"> <span data-loc="">location</span>. We get about <input class="blank num" name="monthly_calls" inputmode="numeric" placeholder="900" aria-label="Calls a month"> calls a month, in <input class="blank wide" name="languages" placeholder="English, Spanish" aria-label="Languages callers speak">. The hardest part is <input class="blank wide" name="pain_points" placeholder="calls at lunch" aria-label="Biggest front-desk challenge">.</form>
         <div class="est" aria-live="polite">
-          <p class="eyebrow" id="estTitle"></p>
+          <p class="eyebrow" id="estTitle">What Amariya could recover each month</p>
           <div class="est-row">
-            <p><b data-roi="recovered">0</b><span>missed calls answered</span></p>
-            <p><b data-roi="revenue">$0</b><span id="revLabel"></span></p>
-            <p><b data-roi="hours">0</b><span>staff hours freed</span></p>
+            <p><b data-roi="recovered">225</b><span>missed calls answered</span></p>
+            <p><b data-roi="revenue">$13,500</b><span id="revLabel">in extra appointments</span></p>
+            <p><b data-roi="hours">60</b><span>staff hours freed</span></p>
           </div>
-          <p class="est-note" id="estNote"></p>
+          <p class="est-note" id="estNote">An example for 5 dental chairs: about 900 calls a month, 25% of them missed today, and an average booking of $200. It assumes 30% of the answered calls become a booking. Fill in your own, or tell Amariya and she will.</p>
         </div>
       </div>
     </div>
@@ -680,45 +680,43 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
       <div class="wrap">
         <div>
           <p class="eyebrow">What she does</p>
-          <h2 id="doesTitle"></h2>
+          <h2 id="doesTitle"><span class="w" style="--i:0">Everything</span> <span class="w" style="--i:1">your</span> <span class="w" style="--i:2">front</span> <span class="w" style="--i:3">desk</span> <span class="w" style="--i:4">does</span> <em><span class="w" style="--i:5">on</span> <span class="w" style="--i:6">the</span> <span class="w" style="--i:7">phone</span></em></h2>
           <p class="feature-note" id="featureNote" aria-live="polite"></p>
         </div>
-        <p class="lede" id="doesLede"></p>
+        <p class="lede" id="doesLede">Amariya fills the day, moves appointments and answers the everyday questions, and hands off to your team when a call needs a person.</p>
       </div>
     </div>
-    <ul class="orbit" id="orbit" aria-label="What Amariya handles"></ul>
+    <ul class="orbit" id="orbit" aria-label="What Amariya handles"><li class="pill glass" data-feature="answering" tabindex="0"><img class="i3d" src="/icons/dental/clock.webp" alt="" loading="lazy" decoding="async"><span>24/7 answering</span></li><li class="pill glass" data-feature="bookings" tabindex="0"><img class="i3d" src="/icons/dental/cal.webp" alt="" loading="lazy" decoding="async"><span>Appointments booked</span></li><li class="pill glass" data-feature="multilingual" tabindex="0"><img class="i3d" src="/icons/dental/globe.webp" alt="" loading="lazy" decoding="async"><span>30+ languages</span></li><li class="pill glass" data-feature="guest_requests" tabindex="0"><img class="i3d" src="/icons/dental/hand.webp" alt="" loading="lazy" decoding="async"><span>Urgent calls first</span></li><li class="pill glass" data-feature="upsells" tabindex="0"><img class="i3d" src="/icons/dental/repeat.webp" alt="" loading="lazy" decoding="async"><span>Recalls and rebooking</span></li><li class="pill glass" data-feature="integrations" tabindex="0"><img class="i3d" src="/icons/dental/link.webp" alt="" loading="lazy" decoding="async"><span>Books into your system</span></li></ul>
   </section>
 
   <section class="pricing wash" id="pricing" aria-labelledby="pricingTitle">
     <div class="wrap pricing-in">
       <div class="pricing-head">
         <p class="eyebrow">Pricing</p>
-        <h2 class="h2" id="pricingTitle"></h2>
+        <h2 class="h2" id="pricingTitle"><em><span class="w" style="--i:0">Pay</span> <span class="w" style="--i:1">once</span></em> <span class="w" style="--i:2">for</span> <span class="w" style="--i:3">life,</span> <span class="w" style="--i:4">or</span> <span class="w" style="--i:5">by</span> <span class="w" style="--i:6">the</span> <span class="w" style="--i:7">month</span></h2>
       </div>
       <div class="licence" id="offer">
         <div class="seal">
-          <div class="dots" id="dots" aria-hidden="true"></div>
+          <div class="dots" id="dots" aria-hidden="true"><i style="--a:0deg"></i><i style="--a:12deg"></i><i style="--a:24deg"></i><i style="--a:36deg"></i><i style="--a:48deg"></i><i style="--a:60deg"></i><i style="--a:72deg"></i><i style="--a:84deg"></i><i style="--a:96deg"></i><i style="--a:108deg"></i><i style="--a:120deg"></i><i style="--a:132deg"></i><i style="--a:144deg" class="taken"></i><i style="--a:156deg" class="taken"></i><i style="--a:168deg" class="taken"></i><i style="--a:180deg" class="taken"></i><i style="--a:192deg" class="taken"></i><i style="--a:204deg" class="taken"></i><i style="--a:216deg" class="taken"></i><i style="--a:228deg" class="taken"></i><i style="--a:240deg" class="taken"></i><i style="--a:252deg" class="taken"></i><i style="--a:264deg" class="taken"></i><i style="--a:276deg" class="taken"></i><i style="--a:288deg" class="taken"></i><i style="--a:300deg" class="taken"></i><i style="--a:312deg" class="taken"></i><i style="--a:324deg" class="taken"></i><i style="--a:336deg" class="taken"></i><i style="--a:348deg" class="taken"></i></div>
           <p class="eyebrow">Founding licence</p>
           <p class="price"><span id="price">$3,000</span><small>once</small></p>
           <p class="seat-label"><b id="seatsOpen">30</b> of 30 seats open</p>
         </div>
-        <p class="lead" id="offerFor"></p>
-        <ul class="incl" id="incl"></ul>
+        <p class="lead" id="offerFor">A lifetime licence for the first 30 dental practices.</p>
+        <ul class="incl" id="incl"><li><img class="i3d sm" src="/icons/dental/check.webp" alt="" loading="lazy" decoding="async"><span>Professional features for life</span></li><li><img class="i3d sm" src="/icons/dental/check.webp" alt="" loading="lazy" decoding="async"><span>500 call minutes a month, extra at cost</span></li><li><img class="i3d sm" src="/icons/dental/check.webp" alt="" loading="lazy" decoding="async"><span>Done-for-you setup</span></li><li><img class="i3d sm" src="/icons/dental/check.webp" alt="" loading="lazy" decoding="async"><span>One location per licence</span></li></ul>
         <p class="guarantee"><img class="i3d sm" id="guaranteeIcon" alt="">Live in 7 days or your money back.</p>
         <button class="btn btn-primary" id="applyLicence" type="button">Apply for a founding licence</button>
       </div>
       <div class="plans">
         <p class="eyebrow">Monthly plans</p>
         <div class="scale">
-          <div class="scale-track" id="tiers" role="group" aria-label="Plans by size">
-            <span class="you" id="you" aria-hidden="true"><i></i><span id="youLabel"></span></span>
-          </div>
+          <div class="scale-track" id="tiers" role="group" aria-label="Plans by size"><span class="you" id="you" aria-hidden="true"><i></i><span id="youLabel"></span></span><button class="tier" type="button" data-plan="starter" aria-pressed="false"><b>Starter</b><span>One practice</span></button><button class="tier" type="button" data-plan="professional" aria-pressed="true"><b>Professional</b><span>Up to 3 practices</span></button><button class="tier" type="button" data-plan="enterprise" aria-pressed="false"><b>Enterprise</b><span>Dental groups</span></button></div>
         </div>
         <div class="plan-detail" id="planDetail">
-          <p class="price"><span id="planPrice"></span><small id="planPer"></small></p>
+          <p class="price"><span id="planPrice">$799</span><small id="planPer">a month</small></p>
           <p class="reason" id="planReason" hidden></p>
-          <ul class="ticks" id="planItems"></ul>
-          <div class="plan-actions"><button class="btn btn-line" id="choosePlan" type="button"></button></div>
+          <ul class="ticks" id="planItems"><li><svg aria-hidden="true"><use href="#i-check"></use></svg><span>Everything in Starter</span></li><li><svg aria-hidden="true"><use href="#i-check"></use></svg><span>Books into your practice software</span></li><li><svg aria-hidden="true"><use href="#i-check"></use></svg><span>30+ languages</span></li><li><svg aria-hidden="true"><use href="#i-check"></use></svg><span>Recalls and analytics</span></li><li><svg aria-hidden="true"><use href="#i-check"></use></svg><span>2,500 calls a month</span></li></ul>
+          <div class="plan-actions"><button class="btn btn-line" id="choosePlan" type="button">Apply for Professional</button></div>
         </div>
       </div>
     </div>
@@ -729,7 +727,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
       <div class="demo-in">
         <div>
           <p class="eyebrow">Apply</p>
-          <h2 class="h2" id="demoTitle"></h2>
+          <h2 class="h2" id="demoTitle"><span class="w" style="--i:0">Set</span> <span class="w" style="--i:1">Amariya</span> <span class="w" style="--i:2">up</span> <span class="w" style="--i:3">for</span> <em><span class="w" style="--i:4">your</span> <span class="w" style="--i:5">practice</span></em></h2>
         </div>
         <form class="form" id="demoForm" novalidate>
           <div class="fld"><label for="dName">Your name</label><input class="line-in" id="dName" name="name" autocomplete="name" aria-describedby="eName"><span class="err" id="eName" data-for="name"></span></div>
@@ -754,7 +752,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
     <div class="faq-in">
       <p class="eyebrow">Questions</p>
       <h2 id="faqTitle">What people <em>ask us</em></h2>
-      <div class="faq-in" id="qs"></div>
+      <div class="faq-in" id="qs"><details><summary>Will callers know they are talking to an AI?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>Yes. She introduces herself as an AI receptionist in her first sentence. EU law has required this since August 2026, and it is how we would want it anyway.</p></details><details><summary>How does she handle urgent calls?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>She recognises urgent calls, such as severe pain, swelling or a knocked-out tooth, and offers the earliest urgent slot or puts the caller straight through to your team. She never gives clinical advice.</p></details><details><summary>Can she book new and existing patients?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>Yes. She books new-patient visits and takes their details, and lets existing patients move or cancel without waiting on hold.</p></details><details><summary>Does she work with my practice software?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>We connect her to your practice management system during setup, so she can see free slots and book directly. Tell us which system you use on your call.</p></details><details><summary>What happens when a patient needs a real person?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>Amariya hands the call to your team with a short summary, or takes a message when no one is free.</p></details><details><summary>How long does setup take?<svg aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>About a week, and we do it for you. If Amariya isn’t live in 7 days, you get your money back.</p></details></div>
     </div>
   </section>
 
@@ -772,7 +770,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 </div>
 <button class="follow glass" id="follow" type="button" hidden><i aria-hidden="true"></i><span>Amariya is on <b></b></span><svg aria-hidden="true"><use href="#i-arrow"></use></svg></button>
 <div class="dock glass" id="dock" data-state="idle" data-mode="voice">
-  <nav class="steps" id="steps" aria-label="Your tour with Amariya"></nav>
+  <nav class="steps" id="steps" aria-label="Your tour with Amariya"><a href="#welcome" data-go="welcome" aria-current="step"><span>Welcome</span></a><a href="#profile" data-go="profile"><span>Your practice</span></a><a href="#features" data-go="features"><span>What she does</span></a><a href="#pricing" data-go="pricing"><span>Plans</span></a><a href="#demo" data-go="demo"><span>Apply</span></a></nav>
   <div class="dock-bar">
     <button class="dock-orb" id="dockOrb" type="button" aria-label="Talk to Amariya"></button>
     <div class="dock-body">
