@@ -24,7 +24,7 @@ const get = async (path) => (await fetch(URL_BASE + path)).text()
 check('home: title', async (page) => {
   await open(page, '/')
   const t = await page.title()
-  assert(t === 'Amariya · AI receptionist for hotels, restaurants, clinics and dental practices', `title is "${t}"`)
+  assert(t === 'AI Receptionist for Hotels, Clinics & Dentists | Amariya', `title is "${t}"`)
 })
 check('home: canonical', async (page) => {
   await open(page, '/')
@@ -163,7 +163,7 @@ check('seats and privacy', async (page) => {
   assert(links.privacy && links.skip === '#heroTitle', `homepage ${JSON.stringify(links)}`)
   const p = await get('/privacy')
   assert(p.includes('<h1>Privacy</h1>') && p.includes('Calendly') && p.includes('Vercel Web Analytics'), 'privacy page missing or out of date')
-  for (const n of ['hotels', 'clinics', 'dental']) assert(/<h1 id="h1" tabindex="-1">[^<]+<\/h1>/.test(await get('/' + n)), `/${n} has no headline in its HTML`)
+  for (const n of ['hotels', 'clinics', 'dental']) assert(/<h1 id="h1" tabindex="-1"><span class="kicker">AI receptionist for [^<]+<\/span> [^<]+<\/h1>/.test(await get('/' + n)), `/${n} has no headline in its HTML`)
 })
 check('voice: tools', async (page) => {
   await open(page, '/')

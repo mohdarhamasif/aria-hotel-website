@@ -131,7 +131,7 @@ main { overflow-x: clip; padding-left: var(--gutter-l); padding-right: var(--gut
 .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
 
 /* Paragraphs light up word by word as they scroll through */
-.js [data-scrub] .w { color: rgba(243, 241, 236, .2); transition: color .4s var(--ease); }
+.js [data-scrub] .w { color: rgba(243, 241, 236, .52); transition: color .4s var(--ease); }
 .js [data-scrub] .w.on { color: rgba(243, 241, 236, .92); }
 /* Letters that resolve like a live transcript */
 .js [data-split] .ch { opacity: 0; }
@@ -645,7 +645,7 @@ dialog.apply.wide { width: min(780px, calc(100% - 32px)); }
       <a href="#pricing">Pricing</a>
       <button class="btn btn-dark btn-sm js-apply" type="button" data-program="founding">Apply</button>
     </nav>
-    <button class="hero-orb js-talk" type="button" aria-label="Talk to Amariya"><span class="hero-orb-label">Tap to talk</span></button>
+    <button class="hero-orb js-talk" type="button" aria-label="Tap to talk to Amariya"><span class="hero-orb-label">Tap to talk</span></button>
     <h1 class="hero-title" id="heroTitle" data-split="in" tabindex="-1">Pick up every call. Without picking up the phone.</h1>
     <div class="hero-foot">
       <div class="hero-intro">

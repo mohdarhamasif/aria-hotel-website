@@ -40,9 +40,9 @@ const ANALYTICS = `<script>window.va = window.va || function () { (window.vaq = 
 <script defer src="/_vercel/insights/script.js"></script>`
 
 const META = {
-  hotels: { title: 'Amariya · AI receptionist for hotels and restaurants', desc: 'Amariya answers every call, day and night, books rooms and tables straight into your system and speaks your guests’ language. A founding licence for the first 30 hotels and restaurants.' },
-  clinics: { title: 'Amariya · AI receptionist for clinics', desc: 'Amariya answers every call, books consultations and appointments, sends deposit links and passes anything clinical to your team. A founding licence for the first 30 clinics.' },
-  dental: { title: 'Amariya · AI receptionist for dental practices', desc: 'Amariya answers every call, books check-ups and urgent visits and moves appointments, in your patients’ language. A founding licence for the first 30 dental practices.' },
+  hotels: { crumb: 'Hotels and restaurants', kicker: 'AI receptionist for hotels and restaurants', title: 'AI Receptionist for Hotels & Restaurants, 24/7 | Amariya', desc: 'Answers every guest call in their language, day and night, books rooms and tables into your system and hands VIPs to your desk. Live in 7 days.' },
+  clinics: { crumb: 'Clinics', kicker: 'AI receptionist for clinics and med spas', title: 'AI Receptionist for Clinics & Med Spas, 24/7 | Amariya', desc: 'Books consultations, takes deposits and passes anything clinical to your team, day and night, in your patients’ language. Live in 7 days.' },
+  dental: { crumb: 'Dental practices', kicker: 'AI receptionist for dental practices', title: 'AI Receptionist for Dental Practices, 24/7 | Amariya', desc: 'Answers every patient call, books check-ups and urgent visits and moves appointments, in your patients’ language. Live in 7 days or a full refund.' },
 }
 const LOOK = {
   hotels: { bg: '#101d14', ring: ['#f3e3b5', '#bba16a', '#6f5a2c'], font: 'bonanova-400', price: 2500 },
@@ -52,6 +52,12 @@ const LOOK = {
 // every plan has a one-time setup fee, paid upfront; offers list it as a second part of the price
 const SETUP = 500
 const withSetup = (price, monthly) => ({ '@type': 'CompoundPriceSpecification', priceCurrency: 'USD', priceComponent: [{ '@type': 'UnitPriceSpecification', name: monthly ? 'Monthly price' : 'Founding licence', price, priceCurrency: 'USD', ...(monthly ? { unitCode: 'MON' } : {}) }, { '@type': 'UnitPriceSpecification', name: 'Setup fee, paid upfront', price: SETUP, priceCurrency: 'USD' }] })
+// Who makes Amariya, as published on legitdesign.studio. No founding date or ratings: the first isn't settled, the second doesn't exist yet.
+const ORG = { '@type': 'Organization', '@id': 'https://www.legitdesign.studio/#organization', name: 'Legit Design Studio', legalName: 'Legit Design Studio LLC', url: 'https://www.legitdesign.studio', email: 'hello@legitdesign.studio', telephone: '+1-406-300-4254',
+  address: { '@type': 'PostalAddress', streetAddress: '1001 South Main Street, STE 600', addressLocality: 'Kalispell', addressRegion: 'MT', postalCode: '59901', addressCountry: 'US' },
+  sameAs: ['https://www.linkedin.com/company/legitdesignstudio', 'https://x.com/LegitDesignS', 'https://www.facebook.com/legitdesigns.studio/', 'https://www.instagram.com/legitdesign.studio', 'https://www.behance.net/legitdesignstudio', 'https://dribbble.com/legitdesignstudio', 'https://www.youtube.com/@legitdesign.studio', 'https://www.tiktok.com/@legitdesign.studio'] }
+const crumbs = (items) => ({ '@type': 'BreadcrumbList', itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) })
+const graph = (...nodes) => ({ '@context': 'https://schema.org', '@graph': nodes })
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c')
 // The hero copy, read from the niche copy in page.html (hotels, clinics, dental in order) and written into
@@ -67,7 +73,7 @@ const fill = (html, from, to) => { if (!html.includes(from)) throw new Error(`bu
 
 function page(n, path) {
   const m = META[n], l = LOOK[n]
-  const ld = { '@context': 'https://schema.org', '@type': 'Product', name: 'Amariya', description: m.desc, brand: { '@type': 'Brand', name: 'Legit Design Studio' }, offers: { '@type': 'Offer', price: l.price, priceCurrency: 'USD', priceSpecification: withSetup(l.price), availability: 'https://schema.org/LimitedAvailability', url: `${BASE}/${n}` } }
+  const ld = { '@type': 'Product', name: 'Amariya', description: m.desc, brand: { '@id': ORG['@id'] }, image: `${BASE}/og-${n}.jpg`, offers: { '@type': 'Offer', price: l.price, priceCurrency: 'USD', priceSpecification: withSetup(l.price), availability: 'https://schema.org/LimitedAvailability', url: `${BASE}/${n}` } }
   return `<!doctype html>
 <html lang="en" data-niche="${n}">
 <head>
@@ -90,13 +96,13 @@ function page(n, path) {
 <link rel="preload" href="/fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/${l.font}.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<script type="application/ld+json">${json(ld)}</script>
+<script type="application/ld+json">${json(graph(ORG, ld, crumbs([['Amariya', BASE + '/'], [m.crumb, `${BASE}/${n}`]])))}</script>
 <script src="/vendor/lenis.min.js" defer></script>
 ${ANALYTICS}
 </head>
 <body>
 <script type="application/json" id="site-meta">${json(META)}</script>
-${[['<h1 id="h1" tabindex="-1"></h1>', `<h1 id="h1" tabindex="-1">${esc(HERO[n].h1)}</h1>`], ['<p class="lead" id="lead"></p>', `<p class="lead" id="lead">${esc(HERO[n].lead)}</p>`], ['<span id="price"></span>', `<span id="price">$${l.price.toLocaleString('en-US')}</span>`]]
+${[['<h1 id="h1" tabindex="-1"></h1>', `<h1 id="h1" tabindex="-1"><span class="kicker">${esc(META[n].kicker)}</span> ${esc(HERO[n].h1)}</h1>`], ['<p class="lead" id="lead"></p>', `<p class="lead" id="lead">${esc(HERO[n].lead)}</p>`], ['<span id="price"></span>', `<span id="price">$${l.price.toLocaleString('en-US')}</span>`]]
   .reduce((html, [from, to]) => fill(html, from, to), credit(body, 'src/page.html').replace('/*FONTS*/', () => faces))}
 </body>
 </html>
@@ -104,14 +110,14 @@ ${[['<h1 id="h1" tabindex="-1"></h1>', `<h1 id="h1" tabindex="-1">${esc(HERO[n].
 }
 
 const HOME = {
-  title: 'Amariya · AI receptionist for hotels, restaurants, clinics and dental practices',
-  desc: 'Amariya answers every call, books into your system and hands over to your team, in your callers’ language. A founding licence for the first 30 businesses in each niche, or monthly plans from $299.',
+  title: 'AI Receptionist for Hotels, Clinics & Dentists | Amariya',
+  desc: 'An AI receptionist that answers every call 24/7 in 30+ languages, books into your system and hands off to your team. Live in 7 days or your money back.',
   bg: '#050506', ring: ['#3e7fd8', '#86d6c4', '#e8622a'],
 }
 function home() {
   const founding = (name, price, niche) => ({ '@type': 'Offer', name, price, priceCurrency: 'USD', priceSpecification: withSetup(price), availability: 'https://schema.org/LimitedAvailability', url: `${BASE}/${niche}` })
   const monthly = (name, price) => ({ '@type': 'Offer', name, price, priceCurrency: 'USD', priceSpecification: withSetup(price, true), url: `${BASE}/#pricing` })
-  const ld = { '@context': 'https://schema.org', '@type': 'Product', name: 'Amariya', description: HOME.desc, brand: { '@type': 'Brand', name: 'Legit Design Studio' }, image: `${BASE}/og-home.jpg`, offers: [
+  const ld = { '@type': 'Product', name: 'Amariya', description: HOME.desc, brand: { '@id': ORG['@id'] }, image: `${BASE}/og-home.jpg`, offers: [
     founding('Founding licence for hotels and restaurants', 2500, 'hotels'),
     founding('Founding licence for clinics', 3500, 'clinics'),
     founding('Founding licence for dental practices', 3000, 'dental'),
@@ -141,7 +147,7 @@ function home() {
 <link rel="preload" href="/fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/supreme-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<script type="application/ld+json">${json(ld)}</script>
+<script type="application/ld+json">${json(graph(ORG, { '@type': 'WebSite', name: 'Amariya', url: BASE + '/', publisher: { '@id': ORG['@id'] } }, ld))}</script>
 ${ANALYTICS}
 </head>
 <body>
@@ -170,7 +176,10 @@ const favicon = (bg, ring) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="
 for (const [n, l] of Object.entries(LOOK)) writeFileSync(join(out, `favicon-${n}.svg`), favicon(l.bg, l.ring))
 writeFileSync(join(out, 'favicon-home.svg'), favicon(HOME.bg, HOME.ring))
 writeFileSync(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`)
-writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', ...NICHES, 'privacy'].map((n) => `  <url><loc>${BASE}/${n}</loc></url>`).join('\n')}\n</urlset>\n`)
+const today = new Date().toISOString().slice(0, 10)
+writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${['', ...NICHES, 'privacy'].map((n) => `  <url><loc>${BASE}/${n}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`)
+// llms.txt: a plain summary for AI tools (llmstxt.org), from the same facts as the pages
+writeFileSync(join(out, 'llms.txt'), `# Amariya\n\n> ${HOME.desc}\n\nAmariya is an AI voice receptionist by Legit Design Studio (https://www.legitdesign.studio). She tells callers she is an AI in her first sentence, answers in 30+ languages, books into the business's own system and hands calls or summaries to staff.\n\n## Pages\n\n- [Amariya](${BASE}/): overview, pricing and questions for all niches\n${NICHES.map((n) => `- [${META[n].kicker}](${BASE}/${n}): ${META[n].desc}`).join('\n')}\n- [Privacy](${BASE}/privacy)\n\n## Pricing\n\n- Founding licence, paid once, for the first 30 businesses in each niche: $2,500 hotels and restaurants, $3,500 clinics, $3,000 dental practices\n- Monthly: Starter $299, Professional $799, Enterprise priced on a call\n- Every plan has a one-time $500 setup fee, paid upfront\n- Live in 7 days or a full refund, then 7 days to change your mind\n\n## Contact\n\n- marketing@legitdesign.studio\n`)
 writeFileSync(join(out, 'vercel.json'), JSON.stringify({
   cleanUrls: true,
   trailingSlash: false,

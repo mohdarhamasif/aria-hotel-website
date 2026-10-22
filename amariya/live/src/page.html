@@ -214,19 +214,20 @@ main a, main button, main input, main details, .glass { pointer-events: auto; }
   width: min(1040px, 100%); text-align: center; text-shadow: var(--title-shadow);
   font-size: calc(var(--h1) * var(--ds) * var(--fit, 1)); line-height: var(--h1-lh); letter-spacing: var(--h1-ls);
 }
-.hero h1 .w { animation: rise 1.2s var(--ease) both; animation-delay: calc(.25s + var(--i) * 70ms); }
+.hero h1 .kicker { display: block; margin-bottom: 1.2em; font: 500 var(--eyebrow)/1.4 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); text-shadow: none; animation: fade .6s .1s var(--ease) both; }
+.hero h1 .w { animation: rise .9s var(--ease) both; animation-delay: calc(.1s + var(--i) * 45ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(.4em); filter: blur(10px); } }
 @keyframes fade { from { opacity: 0; } }
 .tap {
   position: absolute; left: 50%; top: var(--tap-y, 74%); transform: translateX(-50%);
   display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 18px 0 15px; border: 0; border-radius: 999px;
-  font-size: var(--card); font-weight: 500; cursor: pointer; animation: fade 1s 1s var(--ease) both;
+  font-size: var(--card); font-weight: 500; cursor: pointer; animation: fade .6s .5s var(--ease) both;
 }
 .tap i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: ping 2.4s var(--ease) infinite; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 var(--accent); } 70%, 100% { box-shadow: 0 0 0 9px transparent; } }
 .hero-foot { position: absolute; left: 0; right: 0; bottom: 112px; }
 .hero-foot .wrap { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; }
-.hero-copy { max-width: 440px; display: grid; gap: 22px; animation: fade 1.2s .7s var(--ease) both; }
+.hero-copy { max-width: 440px; display: grid; gap: 22px; animation: fade .8s .3s var(--ease) both; }
 .lead { font-size: var(--lead); line-height: var(--lead-lh); color: var(--muted); }
 .ctas { display: flex; flex-wrap: wrap; gap: 10px; }
 .note { font-size: var(--small); line-height: 1.5; color: var(--faint); }
@@ -426,7 +427,7 @@ details p { padding: 0 2px 24px; max-width: 64ch; color: var(--muted); }
 /* The dock: Amariya, always one tap away */
 .dock {
   position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 50; transform: translateX(-50%);
-  width: min(540px, calc(100% - 32px)); border-radius: 26px; animation: dockIn 1s .9s var(--ease) both;
+  width: min(540px, calc(100% - 32px)); border-radius: 26px; animation: dockIn .8s .5s var(--ease) both;
 }
 @keyframes dockIn { from { opacity: 0; transform: translate(-50%, 18px); } }
 .dock[data-state="listening"], .dock[data-state="speaking"] { box-shadow: inset 0 1px 0 var(--glass-top), var(--glass-shadow), 0 0 0 1px var(--accent); }
@@ -1023,7 +1024,8 @@ function render(n) {
   const c = C[n]
   root.dataset.niche = n
   $$('.seg a').forEach((a) => (a.dataset.n === n ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')))
-  $('#h1').innerHTML = words(c.h1)
+  // the search phrase leads the heading as a small label; the build writes the same into the HTML
+  $('#h1').innerHTML = (META[n]?.kicker ? `<span class="kicker">${META[n].kicker}</span> ` : '') + words(c.h1)
   $('#lead').textContent = c.lead
   $('#beats').innerHTML = c.stops.map((s) => `<article class="beat"><div class="call"><p class="meta"><span class="time">${s.time}</span><span class="place">${s.place}</span></p><h2>${words([[s.line]])}</h2><div class="convo"><p class="turn"><span class="who">${s.who}</span><span class="said">“${s.said}”</span></p><p class="turn her"><span class="who">Amariya</span><span class="reply">${s.reply}</span></p><p class="chip">${icon('check')}<span>${s.chip}</span></p><p class="example">A scripted example. Names and times are examples.</p></div></div></article>`).join('') + `<article class="beat closing"><h2>${words(c.closing)}</h2></article>`
   $('#doesTitle').innerHTML = words(c.doesH2)

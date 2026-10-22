@@ -44,8 +44,12 @@ export async function prerender(out, pages) {
       await page.goto(base + path, { waitUntil: 'domcontentloaded', timeout: 60000 })
       await page.waitForFunction(() => document.querySelector('#qs')?.children.length > 0 && [...document.querySelectorAll('[data-roi]')].every((b) => b.dataset.value), { timeout: 30000 })
       const filled = await page.evaluate((targets) => targets.map((a) => document.querySelector(`[${a}]`)?.innerHTML.trim() ?? ''), targets)
+      const faq = await page.evaluate(() => [...document.querySelectorAll('#qs details')].map((d) => [d.querySelector('summary')?.textContent.trim(), d.querySelector('p')?.textContent.trim()]).filter(([q, a]) => q && a))
       await page.close()
       targets.forEach((a, i) => { if (filled[i]) html = replaceInner(html, a, filled[i]) })
+      // the questions as FAQPage data, from the same rendered questions visitors read
+      const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) }
+      if (faq.length) html = html.replace('</head>', () => `<script type="application/ld+json">${JSON.stringify(faqLd).replace(/</g, '\\u003c')}</script>\n</head>`)
       // self-check: the figures and the questions are in the HTML now
       if (/data-roi="[a-z]+">\$?0</.test(html) || !/id="qs"[^>]*>\s*<details/.test(html)) throw new Error(`prerender: ${path} still has empty figures or questions`)
       writeFileSync(join(out, file), html)
