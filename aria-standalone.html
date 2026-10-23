@@ -779,6 +779,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     ]
   }
   </script>
+  <!-- LDS HQ tracker: visits, clicks, scroll and goals for heatmaps and A/B tests (no cookies) -->
+  <script defer src="https://lds-hq.vercel.app/t.js" data-site="amariya"></script>
 </head>
 <body>
   <a class="skip-link" href="#profile">Skip to content</a>
@@ -823,7 +825,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
         <div class="hero-intro">
           <p class="lede">Amariya is the AI receptionist for hotels and clinics. She picks up 24/7, books straight into your system and speaks your callers' language — warmly, like your best front-desk person.</p>
           <div class="hero-actions">
-            <button class="btn btn-dark btn-lg js-talk"><svg class="btn-ico" aria-hidden="true"><use href="#i-mic" /></svg>Talk to Amariya</button>
+            <button class="btn btn-dark btn-lg js-talk" data-lds-goal="talk"><svg class="btn-ico" aria-hidden="true"><use href="#i-mic" /></svg>Talk to Amariya</button>
             <button class="btn btn-ghost btn-lg js-type">Chat by text</button>
           </div>
           <p class="hero-note">About 3 minutes · switch to typing any time · or just <a href="#profile" data-nav="profile">browse</a></p>
@@ -1028,7 +1030,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
           </ul>
         </div>
         <div class="demo-main">
-          <form class="card demo-form" id="demoForm">
+          <form class="card demo-form" id="demoForm" data-lds-goal="lead">
             <div class="row2">
               <label>Your name<input name="name" required /></label>
               <label>Business<input name="hotel_name" required /></label>
@@ -1091,7 +1093,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: non
     <footer class="footer">
       <div class="footer-cta">
         <h2 data-split="in">Your front desk, <em>never off duty.</em></h2>
-        <button class="btn btn-dark btn-lg js-talk"><svg class="btn-ico" aria-hidden="true"><use href="#i-mic" /></svg>Talk to Amariya</button>
+        <button class="btn btn-dark btn-lg js-talk" data-lds-goal="talk"><svg class="btn-ico" aria-hidden="true"><use href="#i-mic" /></svg>Talk to Amariya</button>
       </div>
       <p class="wordmark" aria-hidden="true">Amariya</p>
       <div class="footer-meta">
